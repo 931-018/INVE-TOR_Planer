@@ -83,6 +83,10 @@ body.tg{padding-top:env(safe-area-inset-top)}
 #storeWarn b{color:var(--gold-soft);font-family:'Oswald',sans-serif;letter-spacing:.5px}
 #storeWarn span{font-size:14px;color:var(--txt-dim);line-height:1.5}
 #storeWarn button{align-self:flex-start;margin-top:6px;background:var(--gold);color:#1a1206;border:none;border-radius:7px;padding:9px 16px;font-family:'Oswald',sans-serif;letter-spacing:.5px;cursor:pointer}
+#syncStat{position:fixed;left:10px;bottom:10px;z-index:55;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.5px;padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:rgba(10,12,16,.88);backdrop-filter:blur(4px);cursor:pointer;display:none;max-width:70vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#syncStat.on{display:block}
+#syncStat.cloud{color:var(--green-bright);border-color:var(--green-deep)}
+#syncStat.local{color:var(--amber);border-color:#5a4a20}
 button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:manipulation}
 ::selection{background:var(--green-deep);color:var(--gold-soft)}
 
@@ -864,6 +868,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:
 </style>
 </head>
 <body>
+<div id="syncStat"></div>
 <div id="storeWarn" style="display:none">
   <div class="sw-inner">
     <b>⚠ Цей переглядач не зберігає дані</b>
@@ -1515,7 +1520,7 @@ function smoothPath(pts){if(!pts||pts.length<2)return pts&&pts[0]?`M${pts[0].x} 
 
 let storageOK=true;
 function tgApp(){return (window.Telegram&&window.Telegram.WebApp)?window.Telegram.WebApp:null;}
-function tgCloud(){const a=tgApp();return (a&&a.CloudStorage&&a.initData&&a.initData.length)?a.CloudStorage:null;}
+function tgCloud(){const a=tgApp();if(!a||!a.CloudStorage)return null;if(a.platform&&a.platform==='unknown')return null;return a.CloudStorage;}
 function cloudSet(cs,k,v){return new Promise((res,rej)=>{try{cs.setItem(k,v,(e,ok)=>e?rej(e):res(ok));}catch(x){rej(x);}});}
 function cloudGet(cs,k){return new Promise((res,rej)=>{try{cs.getItem(k,(e,v)=>e?rej(e):res(v));}catch(x){rej(x);}});}
 async function cloudSave(cs,j){const CH=3800,n=Math.ceil(j.length/CH);await cloudSet(cs,'inv_n',String(n));for(let i=0;i<n;i++){await cloudSet(cs,'inv_'+i,j.slice(i*CH,(i+1)*CH));}}
@@ -2911,9 +2916,17 @@ function maybeWarnStorage(){
   const usingCloud=!!tgCloud(),usingArtifact=!!(window.storage&&window.storage.set),ok=probeStorage();
   if(!ok&&!usingCloud&&!usingArtifact){const el=document.getElementById('storeWarn');if(el)el.style.display='block';}
 }
+function updateSyncStat(){
+  const el=document.getElementById('syncStat');if(!el)return;
+  if(tgCloud()){el.className='on cloud';el.textContent='☁ Синхронізується (Telegram)';}
+  else if(storageOK){el.className='on local';el.textContent='💾 Лише цей пристрій';}
+  else{el.className='on local';el.textContent='⚠ Не зберігається';}
+}
 const swc=document.getElementById('swClose');
 if(swc)swc.onclick=()=>{const el=document.getElementById('storeWarn');if(el)el.style.display='none';};
-(async()=>{initTelegram();await load();snapshot();render();maybeWarnStorage();setInterval(rCd,30000);})();
+const ss=document.getElementById('syncStat');
+if(ss)ss.onclick=()=>{ss.style.display='none';};
+(async()=>{initTelegram();await load();snapshot();render();maybeWarnStorage();updateSyncStat();setInterval(rCd,30000);})();
 </script>
 
 
