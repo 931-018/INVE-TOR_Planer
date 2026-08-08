@@ -1235,7 +1235,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:
 </div></div></div>
 
 <script>
-const APP_BUILD='2026-08-08-syncfix3';
+const APP_BUILD='2026-08-08-telegram-syncfix4';
 const START='2026-08-01',END='2026-12-31',BIG_END='2029-07-31',DISC_START='2026-08-01';
 const WDS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
 const WS7=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
@@ -1587,7 +1587,7 @@ function tgCloudAvailable(){
     return !!(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData&&Telegram.WebApp.CloudStorage);
   }catch(e){return false;}
 }
-function withTimeout(p,ms=1200){
+function withTimeout(p,ms=3500){
   return Promise.race([p,new Promise(resolve=>setTimeout(()=>resolve(''),ms))]);
 }
 async function tgCloudGet(key){
@@ -1616,11 +1616,22 @@ async function persistSyncUid(uid){
   if(uid)await tgCloudSet(TG_SYNC_UID_KEY,uid);else await tgCloudRemove(TG_SYNC_UID_KEY);
 }
 async function readPersistedSyncUid(){
-  let uid='';
-  try{uid=localStorage.getItem(SYNC_UID_KEY)||'';}catch(e){}
-  if(!uid)uid=await tgCloudGet(TG_SYNC_UID_KEY);
-  if(uid){try{localStorage.setItem(SYNC_UID_KEY,uid);}catch(e){}}
-  return uid;
+  let localUid='';
+  try{localUid=localStorage.getItem(SYNC_UID_KEY)||'';}catch(e){}
+
+  // Усередині Telegram спільний CloudStorage є головним джерелом.
+  // Це не дає старому localStorage на окремому телефоні/ПК відкрити іншу Firebase-копію.
+  if(tgCloudAvailable()){
+    const cloudUid=await tgCloudGet(TG_SYNC_UID_KEY);
+    if(cloudUid){
+      try{localStorage.setItem(SYNC_UID_KEY,cloudUid);}catch(e){}
+      return cloudUid;
+    }
+  }
+
+  // У звичайному браузері або якщо Telegram CloudStorage порожній —
+  // використовуємо локально збережений UID.
+  return localUid;
 }
 async function saveLocalRaw(j){
   try{if(window.storage&&window.storage.set)await window.storage.set('inv_v19',j);}catch(e){}
@@ -1704,7 +1715,7 @@ async function initCloudSync(){
     const rec=await cloudRead();
     if(rec&&rec.data)await applyCloudRecord(rec,false);
     else await cloudWrite(true);
-    syncSetStatus('☁ Синхронізація активна.','ok');
+    syncSetStatus('☁ Синхронізація активна · канал '+String(syncUid).slice(-6).toUpperCase(),'ok');
   }catch(e){
     syncLastMessage='Збережене підключення є, але Firebase недоступний: '+(e&&e.message?e.message:'невідома помилка');
     syncLastTone='err';
@@ -1731,7 +1742,7 @@ async function connectCloudFromCode(){
 
     await persistSyncUid(syncUid);
     startCloudPoll();
-    syncSetStatus('☁ Готово. Цей пристрій підключено до спільних даних.','ok');
+    syncSetStatus('☁ Готово · канал '+String(syncUid).slice(-6).toUpperCase()+'. Цей пристрій підключено до спільних даних.','ok');
     syncRenderUI();
   }catch(e){
     syncUid='';
