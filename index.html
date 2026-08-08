@@ -1573,27 +1573,41 @@ function syncRenderUI(){
   const on=!!syncUid;
   const pull=document.getElementById('syncPull'),push=document.getElementById('syncPush'),dis=document.getElementById('syncDisconnect');
   if(pull)pull.disabled=!on;if(push)push.disabled=!on;if(dis)dis.disabled=!on;
-  syncSetStatus(on?(syncLastMessage||'☁ Синхронізація підключена.'):'Синхронізація ще не підключена.',on?(syncLastTone||'ok'):'');
+  if(on){
+    syncSetStatus(syncLastMessage||'☁ Синхронізація підключена.',syncLastTone||'ok');
+  }else if(syncLastTone==='err'){
+    syncSetStatus(syncLastMessage,'err');
+  }else{
+    syncSetStatus('Синхронізація ще не підключена.','');
+  }
+}
+function tgCloudAvailable(){
+  try{
+    return !!(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData&&Telegram.WebApp.CloudStorage);
+  }catch(e){return false;}
+}
+function withTimeout(p,ms=1200){
+  return Promise.race([p,new Promise(resolve=>setTimeout(()=>resolve(''),ms))]);
 }
 async function tgCloudGet(key){
+  if(!tgCloudAvailable())return '';
   try{
-    const cs=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.CloudStorage;
-    if(!cs||!cs.getItem)return '';
-    return await new Promise(resolve=>cs.getItem(key,(err,val)=>resolve(err?'':(val||''))));
+    const cs=Telegram.WebApp.CloudStorage;
+    return await withTimeout(new Promise(resolve=>cs.getItem(key,(err,val)=>resolve(err?'':(val||'')))));
   }catch(e){return '';}
 }
 async function tgCloudSet(key,val){
+  if(!tgCloudAvailable())return;
   try{
-    const cs=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.CloudStorage;
-    if(!cs||!cs.setItem)return;
-    await new Promise(resolve=>cs.setItem(key,val,()=>resolve()));
+    const cs=Telegram.WebApp.CloudStorage;
+    await withTimeout(new Promise(resolve=>cs.setItem(key,val,()=>resolve(true))));
   }catch(e){}
 }
 async function tgCloudRemove(key){
+  if(!tgCloudAvailable())return;
   try{
-    const cs=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.CloudStorage;
-    if(!cs||!cs.removeItem)return;
-    await new Promise(resolve=>cs.removeItem(key,()=>resolve()));
+    const cs=Telegram.WebApp.CloudStorage;
+    await withTimeout(new Promise(resolve=>cs.removeItem(key,()=>resolve(true))));
   }catch(e){}
 }
 async function persistSyncUid(uid){
@@ -1613,9 +1627,19 @@ async function saveLocalRaw(j){
 }
 async function cloudRead(){
   if(!syncUid)return null;
-  const r=await fetch(syncUrl()+`?v=${Date.now()}`,{method:'GET',cache:'no-store'});
-  if(!r.ok)throw new Error('Firebase GET '+r.status);
-  return await r.json();
+  let r;
+  try{
+    r=await fetch(syncUrl()+`?v=${Date.now()}`,{method:'GET',cache:'no-store'});
+  }catch(e){
+    throw new Error('мережева помилка Firebase: '+(e&&e.message?e.message:'fetch failed'));
+  }
+  if(!r.ok){
+    let detail='';
+    try{detail=(await r.text()).slice(0,160);}catch(e){}
+    throw new Error('Firebase GET '+r.status+(detail?' · '+detail:''));
+  }
+  try{return await r.json();}
+  catch(e){throw new Error('Firebase повернув некоректну відповідь');}
 }
 async function cloudWrite(force=false){
   if(!syncUid||syncApplying||syncBusy)return;
@@ -1681,30 +1705,38 @@ async function initCloudSync(){
     else await cloudWrite(true);
     syncSetStatus('☁ Синхронізація активна.','ok');
   }catch(e){
-    syncSetStatus('Підключення збережено, але Firebase зараз недоступний.','warn');
+    syncLastMessage='Збережене підключення є, але Firebase недоступний: '+(e&&e.message?e.message:'невідома помилка');
+    syncLastTone='err';
   }
   startCloudPoll();syncRenderUI();
 }
 async function connectCloudFromCode(){
   const inp=document.getElementById('syncCode');
+  let candidate='';
   try{
     const code=inp?inp.value:'';
-    syncUid=await syncHash(code);
-    await persistSyncUid(syncUid);
+    candidate=await syncHash(code);
+    syncUid=candidate;
     syncSetStatus('Підключаю Firebase…','warn');
+
     const rec=await cloudRead();
     if(rec&&rec.data){
       await applyCloudRecord(rec,true);
     }else{
+      syncDirty=true;
       await cloudWrite(true);
+      if(syncDirty)throw new Error('Firebase не підтвердив запис даних');
     }
+
+    await persistSyncUid(syncUid);
     startCloudPoll();
     syncSetStatus('☁ Готово. Цей пристрій підключено до спільних даних.','ok');
     syncRenderUI();
   }catch(e){
     syncUid='';
     await persistSyncUid('');
-    syncSetStatus('Не вдалося підключити: '+(e&&e.message?e.message:'невідома помилка'),'err');
+    syncLastMessage='Не вдалося підключити: '+(e&&e.message?e.message:'невідома помилка');
+    syncLastTone='err';
     syncRenderUI();
   }
 }
