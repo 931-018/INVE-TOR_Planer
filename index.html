@@ -1348,6 +1348,27 @@ body.sphere-drag-active .snav{
   }
 }
 
+
+/* PC DRAG v4 · елемент буквально слідує за курсором */
+.snav-drop-placeholder{
+  flex:0 0 auto;
+  border:1px dashed var(--gold);
+  border-left:3px solid var(--gold);
+  border-radius:0 7px 7px 0;
+  background:rgba(212,162,78,.07);
+  box-shadow:inset 0 0 0 1px rgba(212,162,78,.05);
+}
+.snav button.navdrag-pc{
+  opacity:.93!important;
+  cursor:grabbing!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.55),0 0 0 1px rgba(212,162,78,.25)!important;
+  border-color:var(--gold)!important;
+  transform:none!important;
+}
+@media(max-width:600px){
+  .snav-drop-placeholder{display:none!important}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -1715,7 +1736,7 @@ body.sphere-drag-active .snav{
 </div></div></div>
 
 <script>
-const APP_BUILD='2026-08-11-finance-v3-dragfix';
+const APP_BUILD='2026-08-11-finance-v4-pcdrag';
 const START='2026-08-01',END='2026-12-31',BIG_END='2029-07-31',DISC_START='2026-08-01';
 const WDS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
 const WS7=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
@@ -2697,70 +2718,144 @@ function initNavDrag(){
   const cont=document.getElementById('snav');
   if(!cont)return;
 
-  // При кожному перемальовуванні прибираємо старі глобальні слухачі.
   if(navDragCleanup){try{navDragCleanup();}catch(e){} navDragCleanup=null;}
 
   let el=null,grip=null,moved=false,sx=0,sy=0,pointerId=null,mode='';
+  let placeholder=null,pcOffX=0,pcOffY=0,oldStyle='';
   const real=()=>[...cont.querySelectorAll('[data-sn]')].filter(b=>!b.dataset.sn.startsWith('__'));
 
   function begin(target,x,y,m,pid=null){
     const row=target.closest('[data-sn]');
     if(!row||row.dataset.sn.startsWith('__'))return;
+
     el=row;grip=target;moved=false;sx=x;sy=y;mode=m;pointerId=pid;
     navMoved=false;
     document.body.classList.add('sphere-drag-active');
+
+    if(m==='pointer' && window.innerWidth>600){
+      const r=row.getBoundingClientRect();
+      pcOffX=x-r.left;
+      pcOffY=y-r.top;
+
+      placeholder=document.createElement('div');
+      placeholder.className='snav-drop-placeholder';
+      placeholder.style.width=r.width+'px';
+      placeholder.style.height=r.height+'px';
+
+      row.parentNode.insertBefore(placeholder,row.nextSibling);
+
+      oldStyle=row.getAttribute('style')||'';
+      row.classList.add('navdrag','navdrag-pc');
+      row.style.position='fixed';
+      row.style.left=r.left+'px';
+      row.style.top=r.top+'px';
+      row.style.width=r.width+'px';
+      row.style.height=r.height+'px';
+      row.style.margin='0';
+      row.style.zIndex='9999';
+      row.style.pointerEvents='none';
+      row.style.transform='none';
+      row.style.transition='none';
+    }
+  }
+
+  function moveMobile(x,y){
+    const others=real().filter(b=>b!==el);
+    if(!others.length)return;
+
+    let inserted=false;
+    for(const o of others){
+      const r=o.getBoundingClientRect();
+      if(y < r.top + r.height/2){
+        cont.insertBefore(el,o);
+        inserted=true;
+        break;
+      }
+    }
+    if(!inserted){
+      const last=others[others.length-1];
+      cont.insertBefore(el,last.nextSibling);
+    }
+  }
+
+  function nearestDesktopTarget(x,y){
+    const items=real().filter(b=>b!==el);
+    if(!items.length)return null;
+
+    let best=null,bestDist=Infinity;
+    for(const o of items){
+      const r=o.getBoundingClientRect();
+      const cx=r.left+r.width/2, cy=r.top+r.height/2;
+      const dx=x-cx,dy=y-cy;
+      const dist=Math.hypot(dx,dy);
+      if(dist<bestDist){bestDist=dist;best={el:o,r,cx,cy};}
+    }
+    return best;
+  }
+
+  function moveDesktop(x,y){
+    if(!el||!placeholder)return;
+
+    // Сам елемент буквально йде за курсором.
+    el.style.left=(x-pcOffX)+'px';
+    el.style.top=(y-pcOffY)+'px';
+
+    const hit=document.elementFromPoint(x,y);
+    let target=hit&&hit.closest?hit.closest('#snav [data-sn]'):null;
+    if(target===el||!target||target.dataset.sn.startsWith('__'))target=null;
+
+    if(target){
+      const r=target.getBoundingClientRect();
+      // Якщо ряд той самий — вирішуємо "до/після" по X.
+      // Якщо курсор вище/нижче іншого ряду — по Y.
+      const sameRow=Math.abs(y-(r.top+r.height/2)) < Math.max(18,r.height*.55);
+      const before=sameRow ? x < r.left+r.width/2 : y < r.top+r.height/2;
+      cont.insertBefore(placeholder,before?target:target.nextSibling);
+      return;
+    }
+
+    // Якщо курсор у проміжку між картками — використовуємо найближчу.
+    const best=nearestDesktopTarget(x,y);
+    if(!best)return;
+
+    const rowDelta=Math.abs(y-best.cy);
+    const before=rowDelta>best.r.height*.55
+      ? y<best.cy
+      : x<best.cx;
+
+    cont.insertBefore(placeholder,before?best.el:best.el.nextSibling);
   }
 
   function moveAt(x,y){
     if(!el)return;
-    if(!moved&&Math.hypot(x-sx,y-sy)<6)return;
+    if(!moved&&Math.hypot(x-sx,y-sy)<5)return;
 
     moved=true;
     navMoved=true;
     el.classList.add('navdrag');
 
-    const others=real().filter(b=>b!==el);
-    if(!others.length)return;
-
-    if(window.innerWidth<=600){
-      // На телефоні сфери стоять вертикально:
-      // беремо середину кожної картки й вставляємо перед/після неї.
-      let inserted=false;
-      for(const o of others){
-        const r=o.getBoundingClientRect();
-        if(y < r.top + r.height/2){
-          cont.insertBefore(el,o);
-          inserted=true;
-          break;
-        }
-      }
-      if(!inserted){
-        const last=others[others.length-1];
-        cont.insertBefore(el,last.nextSibling);
-      }
-    }else{
-      // На ПК — працює і при горизонтальному, і при багаторядковому розташуванні.
-      let best=null,bestDist=Infinity,before=true;
-      for(const o of others){
-        const r=o.getBoundingClientRect();
-        const cx=r.left+r.width/2, cy=r.top+r.height/2;
-        const dist=Math.hypot(x-cx,y-cy);
-        if(dist<bestDist){
-          bestDist=dist;best=o;
-          before=(y<cy-8)||(Math.abs(y-cy)<=8&&x<cx);
-        }
-      }
-      if(best){
-        if(before)cont.insertBefore(el,best);
-        else cont.insertBefore(el,best.nextSibling);
-      }
-    }
+    if(mode==='pointer'&&window.innerWidth>600)moveDesktop(x,y);
+    else moveMobile(x,y);
   }
 
   function finish(){
     if(!el)return;
     const didMove=moved;
-    el.classList.remove('navdrag');
+
+    if(mode==='pointer'&&window.innerWidth>600&&placeholder){
+      if(didMove){
+        cont.insertBefore(el,placeholder);
+      }
+      placeholder.remove();
+      placeholder=null;
+
+      // Повертаємо елемент у звичайний layout.
+      el.setAttribute('style',oldStyle);
+      el.classList.remove('navdrag','navdrag-pc');
+    }else{
+      el.classList.remove('navdrag');
+    }
+
     document.body.classList.remove('sphere-drag-active');
 
     el=null;grip=null;moved=false;pointerId=null;mode='';
@@ -2779,8 +2874,7 @@ function initNavDrag(){
     }
   }
 
-  /* TOUCH — окремо для iPhone / Telegram Mini App.
-     Не покладаємось на setPointerCapture, бо у WebView він може працювати нестабільно. */
+  /* TOUCH — окремо для iPhone / Telegram Mini App */
   cont.querySelectorAll('[data-sdrag]').forEach(h=>{
     h.addEventListener('touchstart',e=>{
       if(!e.touches||!e.touches[0])return;
@@ -2790,7 +2884,7 @@ function initNavDrag(){
       begin(h,t.clientX,t.clientY,'touch');
     },{passive:false});
 
-    // Pointer залишаємо для мишки / стилуса.
+    /* ПК / мишка / стилус */
     h.addEventListener('pointerdown',e=>{
       if(e.pointerType==='touch')return;
       e.preventDefault();
