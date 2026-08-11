@@ -1060,6 +1060,254 @@ button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:
   .stg .t,.stg .tin,.chk .lbl,.chk .hin,.tk-name{font-size:14px}
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE UX v2 · drag handle, stacked spheres, wide tables
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Сфери: перетягування тільки за ручку з 6 крапок */
+.snav button[data-sn]{display:flex;align-items:center;gap:9px}
+.snav-label{display:flex;align-items:center;gap:7px;min-width:0;flex:1}
+.snav-ic{flex:0 0 auto}
+.snav-nm{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.snav-grip{
+  flex:0 0 auto;width:20px;height:28px;display:grid;
+  grid-template-columns:repeat(2,4px);grid-template-rows:repeat(3,4px);
+  gap:3px;align-content:center;justify-content:center;
+  cursor:grab;touch-action:none;user-select:none;
+  border-radius:6px;padding:3px;
+}
+.snav-grip:active{cursor:grabbing;background:rgba(212,162,78,.10)}
+.snav-grip i{width:4px;height:4px;border-radius:50%;background:var(--txt-faint);display:block}
+.snav-grip:hover i{background:var(--gold-soft)}
+.snav button[data-sn]{cursor:pointer!important;touch-action:manipulation!important}
+.snav button.navdrag{cursor:grabbing!important}
+
+/* Компактне оформлення сфери: тільки пензлик збоку */
+.sphere-control{position:relative;padding:16px 62px 16px 18px!important}
+.sphere-control-main{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sphere-brush{
+  position:absolute;right:11px;top:11px;width:40px;height:40px;
+  border:1px solid var(--line);border-radius:50%;
+  background:linear-gradient(135deg,rgba(212,162,78,.12),transparent),var(--panel2);
+  color:var(--gold-soft);font-size:18px;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;z-index:2;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
+}
+.sphere-brush:hover,.sphere-brush.on{border-color:var(--gold);background:rgba(212,162,78,.13)}
+.sc-appear{margin-right:-44px}
+
+/* Згортання великих цілей */
+.gb-headrow{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:10px}
+.gb-headrow .gb-lbl{margin:0}
+.goal-fold-btn{
+  width:30px;height:30px;flex:0 0 30px;border-radius:50%;
+  border:1px solid var(--line);background:var(--panel);color:var(--gold-soft);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;
+  font-family:'Oswald',sans-serif;font-size:15px;
+}
+.goal-fold-btn:hover{border-color:var(--gold)}
+.gblock.goal-folded{grid-template-columns:1fr!important;padding-top:13px;padding-bottom:13px}
+.gblock.goal-folded .gb-txt,
+.gblock.goal-folded .gb-r{display:none!important}
+.gblock.goal-folded .gb-headrow{margin-bottom:0}
+
+/* Таблиці замовлень не стискаються — контейнер скролиться */
+.orders-wrap{
+  width:100%;max-width:100%;overflow-x:auto!important;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;
+  overscroll-behavior-x:contain;padding-bottom:5px;
+}
+.orders-tbl{
+  width:max-content!important;
+  min-width:980px!important;
+  table-layout:auto;
+}
+.orders-tbl th,.orders-tbl td{white-space:nowrap}
+.orders-tbl th:nth-child(1),.orders-tbl td:nth-child(1){min-width:150px}
+.orders-tbl th:nth-child(2),.orders-tbl td:nth-child(2){min-width:170px}
+.orders-tbl th:nth-child(3),.orders-tbl td:nth-child(3){min-width:150px}
+.orders-tbl th:nth-child(4),.orders-tbl td:nth-child(4){min-width:150px}
+.orders-tbl th:nth-child(5),.orders-tbl td:nth-child(5){min-width:100px}
+.orders-tbl th:nth-child(6),.orders-tbl td:nth-child(6){min-width:90px}
+.orders-tbl th:nth-child(7),.orders-tbl td:nth-child(7){min-width:220px}
+.orders-tbl input,.orders-tbl select{min-width:100%}
+.orders-tbl input.opr{width:100%!important}
+
+@media(max-width:600px){
+  /* На телефоні сфери — строго одна під одною, без горизонтальної прокрутки */
+  #snav.snav{
+    display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+    overflow:visible!important;gap:7px!important;padding:0!important;
+  }
+  #snav.snav button{
+    width:100%!important;max-width:none!important;flex:0 0 auto!important;
+    min-height:46px!important;padding:9px 10px!important;
+    font-size:11px!important;line-height:1.35!important;text-align:left!important;
+  }
+  #snav.snav .snav-nm{font-size:11px;line-height:1.35}
+  #snav.snav .snav-grip{width:24px;height:30px}
+
+  /* Блок керування не розтягує екран */
+  .sphere-control{padding:14px 56px 14px 12px!important}
+  .sphere-control-main{gap:9px}
+  .sphere-control-main #sphName{
+    flex:1 1 calc(100% - 52px)!important;
+    min-width:0!important;font-size:13px!important;
+  }
+  .sphere-control-main #sphDel{
+    flex:1 1 100%!important;width:100%;
+  }
+  .sphere-brush{right:9px;top:9px;width:38px;height:38px}
+  .sc-appear{margin-right:-42px}
+
+  /* Цілі в розгорнутому вигляді читабельні, у згорнутому — дуже компактні */
+  .gblock.goal-foldable{position:relative}
+  .gb-headrow{justify-content:space-between;text-align:left}
+  .gb-headrow .gb-lbl{text-align:left;line-height:1.35}
+  .gblock.goal-folded{min-height:0!important;margin-bottom:9px;padding:12px 13px!important}
+
+  /* Замовлення: широка таблиця всередині картки, свайп вбік */
+  .orders-wrap{
+    margin-left:-4px;margin-right:-4px;width:calc(100% + 8px);
+    padding-left:4px;padding-right:4px;
+  }
+  .orders-tbl{min-width:1000px!important}
+  .orders-tbl th{font-size:10px;padding:9px 10px}
+  .orders-tbl td{padding:6px 7px}
+  .orders-tbl input{font-size:14px!important;padding:9px 10px!important}
+  .orders-tbl th:nth-child(1),.orders-tbl td:nth-child(1){min-width:155px}
+  .orders-tbl th:nth-child(2),.orders-tbl td:nth-child(2){min-width:175px}
+  .orders-tbl th:nth-child(7),.orders-tbl td:nth-child(7){min-width:240px}
+
+  /* На вузькому екрані нічого всередині таблиць не стискаємо */
+  .card{min-width:0}
+  .orders-wrap *{box-sizing:border-box}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ФІНАНСОВИЙ ВІДДІЛ · борги та прогрес погашення
+   ═══════════════════════════════════════════════════════════════ */
+.fin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.fin-tab{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--txt-dim);cursor:pointer}
+.fin-tab.on{border-color:var(--gold);color:var(--gold-soft);background:linear-gradient(135deg,rgba(212,162,78,.16),transparent),var(--panel2)}
+.fin-head{position:relative;overflow:hidden}
+.fin-head:before{content:'';position:absolute;inset:-60%;background:radial-gradient(circle at 25% 30%,rgba(212,162,78,.14),transparent 28%),radial-gradient(circle at 75% 65%,rgba(111,184,126,.11),transparent 26%);animation:finAura 9s ease-in-out infinite;pointer-events:none}
+@keyframes finAura{0%,100%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(2%,-1%,0) rotate(4deg)}}
+.fin-overview{position:relative;display:grid;grid-template-columns:190px minmax(0,1fr);gap:22px;align-items:center}
+.fin-ring{width:170px;height:170px;position:relative;margin:auto;display:grid;place-items:center}
+.fin-ring svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.fin-ring .track{fill:none;stroke:rgba(90,98,110,.18);stroke-width:10}
+.fin-ring .prog{fill:none;stroke:var(--gold-soft);stroke-width:10;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1),stroke .4s;filter:drop-shadow(0 0 7px rgba(212,162,78,.35))}
+.fin-ring.done .prog{stroke:var(--green-bright);filter:drop-shadow(0 0 10px rgba(111,184,126,.55))}
+.fin-ring-core{position:absolute;text-align:center}
+.fin-ring-pct{font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;color:var(--gold-soft);line-height:1}
+.fin-ring.done .fin-ring-pct{color:var(--green-bright);animation:finPulse 1.8s ease-in-out infinite}
+.fin-ring-lbl{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--txt-faint);margin-top:7px}
+@keyframes finPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.fin-sparks{position:absolute;inset:0;pointer-events:none;opacity:0}
+.fin-ring.done .fin-sparks{opacity:1}
+.fin-sparks i{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 10px rgba(111,184,126,.8);animation:finSpark 2.4s ease-in-out infinite}
+.fin-sparks i:nth-child(1){left:14%;top:25%;animation-delay:.1s}
+.fin-sparks i:nth-child(2){right:12%;top:31%;animation-delay:.7s}
+.fin-sparks i:nth-child(3){left:28%;bottom:12%;animation-delay:1.2s}
+.fin-sparks i:nth-child(4){right:25%;bottom:10%;animation-delay:1.7s}
+@keyframes finSpark{0%,100%{transform:scale(.4);opacity:.15}50%{transform:scale(1.35);opacity:1}}
+
+.fin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fin-stat{border:1px solid var(--line);border-radius:9px;padding:13px 14px;background:linear-gradient(135deg,rgba(42,74,54,.09),transparent),var(--panel2)}
+.fin-stat .v{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--gold-soft);line-height:1.15;overflow-wrap:anywhere}
+.fin-stat.paid .v{color:var(--green-bright)}
+.fin-stat.rem .v{color:var(--amber)}
+.fin-stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt-faint);margin-top:6px}
+.fin-barbox{margin-top:15px}
+.fin-bar{position:relative;height:13px;border:1px solid var(--line);background:var(--panel);border-radius:999px;overflow:hidden}
+.fin-bar-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-soft),var(--green-bright));border-radius:999px;transition:width .9s cubic-bezier(.2,.8,.2,1);position:relative}
+.fin-bar-fill:after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.32) 45%,transparent 65%);transform:translateX(-130%);animation:finShine 2.6s linear infinite}
+@keyframes finShine{to{transform:translateX(140%)}}
+.fin-marks{display:flex;justify-content:space-between;margin-top:6px;font-family:'Oswald',sans-serif;font-size:8px;color:var(--txt-faint);letter-spacing:.5px}
+
+.fin-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.fin-cur{display:flex;align-items:center;gap:8px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt-faint)}
+.fin-cur select{background:var(--panel2);border:1px solid var(--line);color:var(--gold-soft);border-radius:7px;padding:8px 10px}
+
+.fin-debt{border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:14px 14px 12px;margin-bottom:10px;background:linear-gradient(135deg,rgba(212,162,78,.07),transparent 55%),var(--panel2);transition:border-color .2s,transform .2s}
+.fin-debt:hover{border-color:rgba(212,162,78,.55);border-left-color:var(--gold);transform:translateY(-1px)}
+.fin-debt-grid{display:grid;grid-template-columns:minmax(170px,1.55fr) 88px minmax(110px,.8fr) minmax(110px,.8fr) minmax(110px,.8fr) auto;gap:9px;align-items:end}
+.fin-field label{display:block;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1.3px;text-transform:uppercase;color:var(--txt-faint);margin:0 0 5px 2px}
+.fin-field input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--txt);padding:10px 11px;min-width:0}
+.fin-field input:focus{outline:none;border-color:var(--gold)}
+.fin-field input[type=number]{font-family:'Oswald',sans-serif;color:var(--gold-soft)}
+.fin-rem{height:43px;display:flex;align-items:center;padding:0 11px;border:1px solid var(--line);border-radius:7px;background:rgba(10,12,16,.34);font-family:'Oswald',sans-serif;color:var(--amber);white-space:nowrap}
+.fin-debt-actions{display:flex;gap:6px;align-items:center}
+.fin-close{height:43px;padding:0 12px;border:1px solid rgba(111,184,126,.35);border-radius:7px;background:rgba(111,184,126,.08);color:var(--green-bright);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.fin-close:hover{border-color:var(--green-bright)}
+.fin-mini{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;margin-top:10px}
+.fin-mini-bar{height:6px;border-radius:999px;background:var(--panel);overflow:hidden}
+.fin-mini-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--green-bright));width:0;transition:width .5s}
+.fin-mini-pct{font-family:'Oswald',sans-serif;font-size:10px;color:var(--txt-faint);min-width:34px;text-align:right}
+.fin-note{margin-top:9px;width:100%;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--txt-dim);padding:6px 2px;font-size:14px}
+.fin-note:focus{outline:none;border-bottom-color:var(--gold);color:var(--txt)}
+
+.fin-empty{text-align:center;padding:26px 12px;color:var(--txt-faint);font-style:italic}
+.fin-archive-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:12px 4px;border-top:1px solid rgba(34,42,54,.7)}
+.fin-archive-row:first-child{border-top:none}
+.fin-archive-name{min-width:0}
+.fin-archive-name b{display:block;color:var(--txt);font-size:16px;overflow-wrap:anywhere}
+.fin-archive-name span{display:block;color:var(--txt-faint);font-size:12px;margin-top:2px}
+.fin-archive-amt{font-family:'Oswald',sans-serif;color:var(--green-bright);white-space:nowrap}
+.fin-100{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1px;color:var(--green-bright);border:1px solid rgba(111,184,126,.35);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.fin-restore{border:1px solid var(--line);background:var(--panel2);color:var(--txt-dim);border-radius:7px;padding:7px 9px;cursor:pointer}
+.fin-restore:hover{border-color:var(--gold);color:var(--gold-soft)}
+.fin-note-box{width:100%;min-height:90px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:12px 13px;resize:vertical}
+.fin-note-box:focus{outline:none;border-color:var(--gold)}
+
+@media(max-width:760px){
+  .fin-overview{grid-template-columns:1fr}
+  .fin-ring{width:150px;height:150px}
+  .fin-stats{grid-template-columns:1fr 1fr}
+  .fin-stat:last-child{grid-column:1/-1}
+  .fin-debt-grid{grid-template-columns:1fr 1fr}
+  .fin-field.name{grid-column:1/-1}
+  .fin-debt-actions{grid-column:1/-1}
+  .fin-close{flex:1}
+}
+@media(max-width:430px){
+  .fin-stats{grid-template-columns:1fr}
+  .fin-stat:last-child{grid-column:auto}
+  .fin-debt-grid{grid-template-columns:1fr}
+  .fin-field.name,.fin-debt-actions{grid-column:auto}
+  .fin-archive-row{grid-template-columns:1fr auto}
+  .fin-archive-amt{grid-column:1}
+  .fin-100{grid-column:2;grid-row:1}
+  .fin-restore{grid-column:2;grid-row:2}
+}
+
+
+.fin-field select{
+  width:100%;height:43px;background:var(--panel);border:1px solid var(--line);
+  border-radius:7px;color:var(--gold-soft);padding:0 9px;font-family:'Oswald',sans-serif;
+}
+.fin-field select:focus{outline:none;border-color:var(--gold)}
+.fin-sumlines{display:flex;flex-direction:column;gap:2px}
+.fin-sumlines span{display:block;white-space:nowrap}
+.fin-progress-rule{margin-top:9px;font-size:12px;color:var(--txt-faint);line-height:1.45}
+@media(max-width:760px){
+  .fin-debt-grid{grid-template-columns:1fr 92px}
+  .fin-field.name{grid-column:1/-1}
+  .fin-field.total,.fin-field.paid,.fin-field.remain{grid-column:1}
+  .fin-field.currency{grid-column:2;grid-row:2}
+  .fin-debt-actions{grid-column:1/-1}
+}
+@media(max-width:430px){
+  .fin-debt-grid{grid-template-columns:1fr 86px}
+  .fin-field.name{grid-column:1/-1}
+  .fin-field.total,.fin-field.paid,.fin-field.remain{grid-column:1}
+  .fin-field.currency{grid-column:2;grid-row:2}
+  .fin-debt-actions{grid-column:1/-1}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -1427,7 +1675,7 @@ button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:
 </div></div></div>
 
 <script>
-const APP_BUILD='2026-08-09-mobile-readability1';
+const APP_BUILD='2026-08-11-finance-per-debt-currency-v2';
 const START='2026-08-01',END='2026-12-31',BIG_END='2029-07-31',DISC_START='2026-08-01';
 const WDS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
 const WS7=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
@@ -1436,9 +1684,11 @@ const MNS_S=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','С�
 const MONTHS=[{k:'2026-08',n:'Серпень'},{k:'2026-09',n:'Вересень'},{k:'2026-10',n:'Жовтень'},{k:'2026-11',n:'Листопад'},{k:'2026-12',n:'Грудень'}];
 const PRI=[{v:1,n:'Високий',c:'#c8533a'},{v:2,n:'Середній',c:'#d4a24e'},{v:3,n:'Низький',c:'#5a626e'}];
 const TEXT_ID='s_text';
+const FIN_ID='s_fin';
 const D_SPHERES=[
   {id:'s1',ic:'📺',nm:'YouTube-медіабізнес · Англомовний faceless-канал',c:'#c8533a'},
   {id:TEXT_ID,ic:'✍️',nm:'TEXT Work',c:'#c98a4e'},
+  {id:FIN_ID,ic:'💳',nm:'Фінанси · борги та погашення',c:'#d4a24e'},
   {id:'s3',ic:'💪',nm:"Здоров’я, тіло та енергія",c:'#6fb87e'},
   {id:'s4',ic:'🧠',nm:'Саморозвиток',c:'#5a7d93'},
   {id:'s5',ic:'🤍',nm:'Духовність, стосунки',c:'#8b93a0'}
@@ -1702,10 +1952,11 @@ function blank(){return{
   habitLog:{},
   identity:JSON.parse(JSON.stringify(D_IDENT)),
   spheres:JSON.parse(JSON.stringify(D_SPHERES)),
-  sph:Object.assign(JSON.parse(JSON.stringify(D_SPH)),{[TEXT_ID]:{big:'',year:'',stages:[]}}),
+  sph:Object.assign(JSON.parse(JSON.stringify(D_SPH)),{[TEXT_ID]:{big:'',year:'',stages:[]},[FIN_ID]:{big:'',year:'',stages:[]}}),
   sphNotes:{},
   workspaces:{},
   orders:[],
+  finance:{currency:'PLN',view:'calc',archiveOpen:true,note:'',debts:[]},
   tasks:JSON.parse(JSON.stringify(D_TASKS)),
   ws:JSON.parse(JSON.stringify(D_WS)),
   yt:JSON.parse(JSON.stringify(D_YT)),
@@ -2102,6 +2353,41 @@ function migrate(){
   }
   DB.sph=DB.sph||{};
   if(!DB.sph[TEXT_ID])DB.sph[TEXT_ID]={big:'',year:'',stages:[]};
+
+  // Фінансовий відділ: додаємо лише якщо його ще немає.
+  if(!DB.spheres.some(s=>s.id===FIN_ID)){
+    const def=D_SPHERES.find(s=>s.id===FIN_ID);
+    const i=DB.spheres.findIndex(s=>s.id===TEXT_ID);
+    const node={id:FIN_ID,ic:def.ic,nm:def.nm,c:def.c};
+    if(i>=0)DB.spheres.splice(i+1,0,node);else DB.spheres.push(node);
+  }
+  if(!DB.sph[FIN_ID])DB.sph[FIN_ID]={big:'',year:'',stages:[]};
+
+  DB.finance=(DB.finance&&typeof DB.finance==='object'&&!Array.isArray(DB.finance))?DB.finance:{};
+  if(!DB.finance.currency)DB.finance.currency='PLN'; // сумісність зі старою версією
+  if(!DB.finance.defaultCurrency)DB.finance.defaultCurrency=DB.finance.currency||'PLN';
+  if(!DB.finance.view)DB.finance.view='calc';
+  if(DB.finance.archiveOpen==null)DB.finance.archiveOpen=true;
+  if(DB.finance.note==null)DB.finance.note='';
+  if(!Array.isArray(DB.finance.debts))DB.finance.debts=[];
+  DB.finance.debts=DB.finance.debts.filter(x=>x&&typeof x==='object').map((d,i)=>({
+    id:d.id||('fd_mig_'+i+'_'+Date.now()),
+    name:d.name==null?'':String(d.name),
+    currency:['PLN','UAH','USD','EUR'].includes(d.currency)?d.currency:(DB.finance.defaultCurrency||'PLN'),
+    total:Math.max(0,Number(d.total)||0),
+    paid:Math.max(0,Number(d.paid)||0),
+    note:d.note==null?'':String(d.note),
+    archived:!!d.archived,
+    closedAt:d.closedAt||''
+  }));
+  DB.finance.debts.forEach(d=>{
+    if(d.total>0&&d.paid>=d.total){
+      d.paid=d.total;
+      d.archived=true;
+      if(!d.closedAt)d.closedAt=iso(new Date());
+    }
+  });
+
   (DB.habits||[]).forEach(h=>{
     if(!h.since){
       let first=null;
@@ -2363,61 +2649,87 @@ function rToday(){
   document.getElementById('dNote').value=m.note||'';
 }
 
-/* ═══ ПЕРЕТЯГУВАННЯ У НАВІГАЦІЇ СФЕР ═══ */
+/* ═══ ПЕРЕТЯГУВАННЯ У НАВІГАЦІЇ СФЕР · ЛИШЕ ЗА РУЧКУ З 6 КРАПОК ═══ */
 let navMoved=false;
 function initNavDrag(){
   const cont=document.getElementById('snav');
   if(!cont)return;
-  let el=null,moved=false,sx=0,sy=0;
+  let el=null,handle=null,moved=false,sx=0,sy=0,pid=null;
   const real=()=>[...cont.querySelectorAll('[data-sn]')].filter(b=>!b.dataset.sn.startsWith('__'));
-  real().forEach(btn=>{
-    btn.onpointerdown=e=>{
-      el=btn;moved=false;sx=e.clientX;sy=e.clientY;
-      try{btn.setPointerCapture(e.pointerId);}catch(x){}
+
+  cont.querySelectorAll('[data-sdrag]').forEach(grip=>{
+    grip.onpointerdown=e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      el=grip.closest('[data-sn]');
+      handle=grip;
+      moved=false;sx=e.clientX;sy=e.clientY;pid=e.pointerId;
+      try{grip.setPointerCapture(e.pointerId);}catch(x){}
     };
-    btn.onpointermove=e=>{
-      if(!el)return;
+    grip.onpointermove=e=>{
+      if(!el||handle!==grip)return;
       if(!moved&&Math.hypot(e.clientX-sx,e.clientY-sy)<8)return;
       e.preventDefault();
+      e.stopPropagation();
       moved=true;navMoved=true;
       el.classList.add('navdrag');
+
       const others=real().filter(b=>b!==el);
       let target=null;
       for(const o of others){
         const r=o.getBoundingClientRect();
-        if(e.clientY>=r.top-4&&e.clientY<=r.bottom+4&&e.clientX<r.left+r.width/2){target=o;break;}
+        const vertical=e.clientY<r.top+r.height/2;
+        const horizontal=e.clientX<r.left+r.width/2;
+        if((window.innerWidth<=600 && vertical && e.clientY>=r.top-12) ||
+           (window.innerWidth>600 && e.clientY>=r.top-6&&e.clientY<=r.bottom+6&&horizontal)){
+          target=o;break;
+        }
       }
       if(target){cont.insertBefore(el,target);return;}
+
       const last=others[others.length-1];
       if(last){
         const r=last.getBoundingClientRect();
-        if(e.clientY>r.bottom-4||e.clientX>r.left+r.width/2)cont.insertBefore(el,last.nextSibling);
+        if((window.innerWidth<=600 && e.clientY>r.top+r.height/2) ||
+           (window.innerWidth>600 && (e.clientY>r.bottom-4||e.clientX>r.left+r.width/2))){
+          cont.insertBefore(el,last.nextSibling);
+        }
       }
     };
     const fin=e=>{
-      if(!el)return;
+      if(!el||handle!==grip)return;
       el.classList.remove('navdrag');
-      try{btn.releasePointerCapture(e.pointerId);}catch(x){}
-      el=null;
-      if(moved){
+      try{grip.releasePointerCapture(pid);}catch(x){}
+      const didMove=moved;
+      el=null;handle=null;pid=null;moved=false;
+      if(didMove){
         const order=[...cont.querySelectorAll('[data-sn]')].map(b=>b.dataset.sn).filter(x=>!x.startsWith('__'));
         DB.spheres.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
         save();rSnav();rDash();rToday();
-        setTimeout(()=>{navMoved=false;},80);
+        setTimeout(()=>{navMoved=false;},100);
       }
     };
-    btn.onpointerup=fin;
-    btn.onpointercancel=fin;
+    grip.onpointerup=fin;
+    grip.onpointercancel=fin;
   });
+}
+
+function sphereGripHTML(){
+  return `<span class="snav-grip" data-sdrag title="Перетягни, щоб змінити порядок" aria-label="Змінити порядок">
+    <i></i><i></i><i></i><i></i><i></i><i></i>
+  </span>`;
 }
 
 function rSnav(){
   document.getElementById('snav').innerHTML=spheres().map(s=>
-    `<button class="${curSph===s.id?'on':''}" style="--sc:${s.c}" data-sn="${s.id}">${s.ic} ${s.nm}</button>`).join('')
-    +`<button class="${curSph==='__refl'?'on':''}" style="--sc:#b06fa0;border-left-color:#b06fa0" data-sn="__refl">✎ Саморефлексія</button>`
-    +`<button class="${curSph==='__ident'?'on':''}" style="--sc:var(--gold);border-left-color:var(--gold)" data-sn="__ident">◆ Ідентичність</button>`
-    +`<button style="--sc:var(--green-bright);border-left-color:var(--green-bright)" data-addsph="1">＋ Сфера</button>`;
-  document.querySelectorAll('[data-sn]').forEach(e=>e.onclick=()=>{
+    `<button class="${curSph===s.id?'on':''}" style="--sc:${s.c}" data-sn="${s.id}">
+      ${sphereGripHTML()}<span class="snav-label"><span class="snav-ic">${s.ic}</span><span class="snav-nm">${esc(s.nm)}</span></span>
+    </button>`).join('')
+    +`<button class="${curSph==='__refl'?'on':''}" style="--sc:#b06fa0;border-left-color:#b06fa0" data-sn="__refl"><span class="snav-label">✎ Саморефлексія</span></button>`
+    +`<button class="${curSph==='__ident'?'on':''}" style="--sc:var(--gold);border-left-color:var(--gold)" data-sn="__ident"><span class="snav-label">◆ Ідентичність</span></button>`
+    +`<button style="--sc:var(--green-bright);border-left-color:var(--green-bright)" data-addsph="1"><span class="snav-label">＋ Сфера</span></button>`;
+  document.querySelectorAll('[data-sn]').forEach(e=>e.onclick=ev=>{
+    if(ev.target.closest('[data-sdrag]'))return;
     if(navMoved){navMoved=false;return;}
     curSph=e.dataset.sn;rSnav();rSph();});
   initNavDrag();
@@ -2594,11 +2906,11 @@ function bindTasksCard(sid){
 let appearOpen=false;
 function sphControlHTML(s){
   const hex=/^#[0-9a-fA-F]{6}$/.test(s.c||'')?s.c:'#d4a24e';
-  return `<div class="card sphere-control" style="padding:16px 18px">
-    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+  return `<div class="card sphere-control">
+    <button class="sphere-brush ${appearOpen?'on':''}" id="sphAppear" title="Оформлення сфери" aria-label="Оформлення сфери">🖌</button>
+    <div class="sphere-control-main">
       <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
       <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:6px 0">
-      <button class="dbtn" id="sphAppear">🎨 Оформлення ${appearOpen?'▴':'▾'}</button>
       <button class="dbtn danger" id="sphDel">${pendDel==="sph"+curSph?"Точно видалити?":"Видалити сферу"}</button>
     </div>
     <div class="sc-appear ${appearOpen?'open':''}">
@@ -2635,10 +2947,18 @@ function bindSphControl(){
       curSph=spheres()[0].id;save();rSnav();rSph();rGoals();rToday();},rSph);};
 }
 
+function sphereGoalFoldState(sid){
+  DB.ui=DB.ui||{};
+  DB.ui.sphereGoalFold=DB.ui.sphereGoalFold||{};
+  DB.ui.sphereGoalFold[sid]=DB.ui.sphereGoalFold[sid]||{main:false,year:false};
+  return DB.ui.sphereGoalFold[sid];
+}
+
 function rSph(){
   if(curSph==='__ident'){rIdent();return;}
   if(curSph==='__refl'){rRefl();return;}
   if(curSph===TEXT_ID){rTextWork();return;}
+  if(curSph===FIN_ID){rFinance();return;}
   if(!DB.sph[curSph]){curSph=spheres()[0].id;}
   const s=SCf(curSph),o=DB.sph[curSph];
   const showGoals=(curSph!=='s5');   // Духовність — лише завдання й вільний простір
@@ -2646,8 +2966,10 @@ function rSph(){
   let h=sphereHero(s)+sphControlHTML(s);
 
   if(showGoals){
-    h+=`<div class="gblock main">
-      <div class="gb-l"><div class="gb-lbl">Головна ціль · до 31 липня 2029</div>
+    const gf=sphereGoalFoldState(curSph);
+    h+=`<div class="gblock main goal-foldable ${gf.main?'goal-folded':''}">
+      <div class="gb-l"><div class="gb-headrow"><div class="gb-lbl">Головна ціль · до 31 липня 2029</div>
+        <button class="goal-fold-btn" data-gfold="main" title="${gf.main?'Розгорнути':'Згорнути'}">${gf.main?'▸':'▾'}</button></div>
         <div class="gb-txt" contenteditable="true" data-f="big">${esc(o.big)}</div></div>
       <div class="gb-r goal-decor"><div>
         <div class="goal-badge">Vision 2029</div>
@@ -2655,8 +2977,9 @@ function rSph(){
         <div class="goal-note">Фокус на головному напрямку й діях.</div>
       </div></div>
     </div>
-    <div class="gblock year">
-      <div class="gb-l"><div class="gb-lbl">До 31 грудня 2026</div>
+    <div class="gblock year goal-foldable ${gf.year?'goal-folded':''}">
+      <div class="gb-l"><div class="gb-headrow"><div class="gb-lbl">До 31 грудня 2026</div>
+        <button class="goal-fold-btn" data-gfold="year" title="${gf.year?'Розгорнути':'Згорнути'}">${gf.year?'▸':'▾'}</button></div>
         <div class="gb-txt" contenteditable="true" data-f="year">${esc(o.year)}</div></div>
     </div>`;
   }
@@ -2674,10 +2997,241 @@ function rSph(){
   if(curSph==='s4')bindBooks();
 
   document.querySelectorAll('[data-f]').forEach(e=>e.oninput=()=>{DB.sph[curSph][e.dataset.f]=e.innerText;save();});
+  document.querySelectorAll('[data-gfold]').forEach(e=>e.onclick=()=>{
+    const gf=sphereGoalFoldState(curSph),k=e.dataset.gfold;
+    gf[k]=!gf[k];save();rSph();
+  });
   bindWorkspace();
   bindTasksCard(curSph);
   bindSphControl();
 }
+
+
+/* ═══ ФІНАНСОВИЙ ВІДДІЛ · борги та прогрес погашення ═══ */
+const FIN_CURRENCIES=['PLN','UAH','USD','EUR'];
+function finData(){
+  DB.finance=(DB.finance&&typeof DB.finance==='object'&&!Array.isArray(DB.finance))?DB.finance:{currency:'PLN',defaultCurrency:'PLN',view:'calc',archiveOpen:true,note:'',debts:[]};
+  if(!DB.finance.defaultCurrency)DB.finance.defaultCurrency=DB.finance.currency||'PLN';
+  DB.finance.debts=Array.isArray(DB.finance.debts)?DB.finance.debts:[];
+  DB.finance.debts.forEach(d=>{if(!FIN_CURRENCIES.includes(d.currency))d.currency=DB.finance.defaultCurrency||'PLN';});
+  return DB.finance;
+}
+function finNum(v){const n=parseFloat(v);return Number.isFinite(n)&&n>0?n:0;}
+function finFmt(v){
+  const n=Number(v)||0;
+  return n.toLocaleString('uk-UA',{maximumFractionDigits:2});
+}
+function finDebtPct(d){
+  const t=finNum(d.total),p=d.archived?t:Math.min(finNum(d.paid),t||finNum(d.paid));
+  return t>0?Math.max(0,Math.min(100,p/t*100)):0;
+}
+function finTotals(){
+  const f=finData(),groups={},parts=[];
+  let closed=0;
+  f.debts.forEach(d=>{
+    const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
+    const t=finNum(d.total);
+    let p=finNum(d.paid);
+    if(d.archived&&t>0)p=t;
+    p=Math.min(p,t||p);
+    groups[cur]=groups[cur]||{total:0,paid:0,remaining:0};
+    groups[cur].total+=t;
+    groups[cur].paid+=p;
+    groups[cur].remaining+=Math.max(0,t-p);
+    if(t>0)parts.push(finDebtPct(d));
+    if(d.archived)closed++;
+  });
+  const pct=parts.length?parts.reduce((a,b)=>a+b,0)/parts.length:0;
+  return {groups,pct,closed,counted:parts.length};
+}
+function finGroupHTML(groups,key){
+  const rows=FIN_CURRENCIES
+    .filter(c=>groups[c]&&groups[c][key]>0)
+    .map(c=>`<span>${finFmt(groups[c][key])} ${c}</span>`);
+  return rows.length?`<div class="fin-sumlines">${rows.join('')}</div>`:`<span>0</span>`;
+}
+function finMaybeClose(d){
+  const t=finNum(d.total),p=finNum(d.paid);
+  if(t>0&&p>=t){
+    d.total=t;d.paid=t;d.archived=true;
+    if(!d.closedAt)d.closedAt=iso(new Date());
+    return true;
+  }
+  return false;
+}
+function finProgressHTML(t){
+  const pct=Math.round(t.pct*10)/10;
+  const dash=326.73;
+  const off=dash-(dash*(pct/100));
+  return `<div class="card fin-head">
+    <div class="fin-overview">
+      <div class="fin-ring ${pct>=100&&t.counted>0?'done':''}" id="finRing">
+        <svg viewBox="0 0 120 120" aria-label="Прогрес погашення">
+          <circle class="track" cx="60" cy="60" r="52"></circle>
+          <circle class="prog" id="finRingProg" cx="60" cy="60" r="52" style="stroke-dashoffset:${off}"></circle>
+        </svg>
+        <div class="fin-ring-core"><div class="fin-ring-pct" id="finPct">${pct.toFixed(pct%1?1:0)}%</div><div class="fin-ring-lbl">погашено</div></div>
+        <div class="fin-sparks"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div>
+        <div class="fin-stats">
+          <div class="fin-stat"><div class="v" id="finTotal">${finGroupHTML(t.groups,'total')}</div><div class="l">Загальна сума боргів</div></div>
+          <div class="fin-stat paid"><div class="v" id="finPaid">${finGroupHTML(t.groups,'paid')}</div><div class="l">Вже погашено</div></div>
+          <div class="fin-stat rem"><div class="v" id="finRemain">${finGroupHTML(t.groups,'remaining')}</div><div class="l">Залишилось</div></div>
+        </div>
+        <div class="fin-barbox">
+          <div class="fin-bar"><div class="fin-bar-fill" id="finBar" style="width:${pct}%"></div></div>
+          <div class="fin-marks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+        </div>
+        <div class="fin-tools">
+          <span class="hint" style="margin:0">${t.closed} закритих · архів теж залишається у загальному прогресі.</span>
+        </div>
+        <div class="fin-progress-rule">Якщо борги в різних валютах, суми не змішуються. Загальний відсоток — середній прогрес усіх боргів із вказаною сумою.</div>
+      </div>
+    </div>
+  </div>`;
+}
+function finDebtHTML(d){
+  const t=finNum(d.total),p=Math.min(finNum(d.paid),t||finNum(d.paid)),rem=Math.max(0,t-p),pct=finDebtPct(d);
+  const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
+  return `<div class="fin-debt" data-finrow="${d.id}">
+    <div class="fin-debt-grid">
+      <div class="fin-field name"><label>Назва боргу / кредиту</label><input data-fname="${d.id}" value="${esc(d.name)}" placeholder="Напр. Credit 7"></div>
+      <div class="fin-field currency"><label>Валюта</label>
+        <select data-fcur="${d.id}">${FIN_CURRENCIES.map(c=>`<option value="${c}" ${cur===c?'selected':''}>${c}</option>`).join('')}</select>
+      </div>
+      <div class="fin-field total"><label>Сума боргу</label><input type="number" min="0" step="any" data-ftotal="${d.id}" value="${t||''}" placeholder="0"></div>
+      <div class="fin-field paid"><label>Вже оплачено</label><input type="number" min="0" step="any" data-fpaid="${d.id}" value="${p||''}" placeholder="0"></div>
+      <div class="fin-field remain"><label>Залишок</label><div class="fin-rem" data-frem="${d.id}">${finFmt(rem)} ${cur}</div></div>
+      <div class="fin-debt-actions">
+        <button class="fin-close" data-fclose="${d.id}" title="Позначити борг повністю погашеним">✓ Закрити</button>
+        <span ${delMark('fin'+d.id)} data-fdel="${d.id}" title="Видалити борг">${delIcon('fin'+d.id)}</span>
+      </div>
+    </div>
+    <div class="fin-mini">
+      <div class="fin-mini-bar"><div class="fin-mini-fill" data-fmini="${d.id}" style="width:${pct}%"></div></div>
+      <div class="fin-mini-pct" data-fminip="${d.id}">${Math.round(pct)}%</div>
+    </div>
+    <input class="fin-note" data-fnote="${d.id}" value="${esc(d.note||'')}" placeholder="Примітка — необов'язково">
+  </div>`;
+}
+function finArchiveHTML(list){
+  return list.length?list.slice().sort((a,b)=>(b.closedAt||'').localeCompare(a.closedAt||'')).map(d=>{
+    const t=finNum(d.total),cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
+    const date=d.closedAt?pd(d.closedAt):null;
+    const dl=date?`${date.getDate()} ${MNS[date.getMonth()]} ${date.getFullYear()}`:'дата не вказана';
+    return `<div class="fin-archive-row">
+      <div class="fin-archive-name"><b>${esc(d.name||'Без назви')}</b><span>Закрито: ${dl}${d.note?' · '+esc(d.note):''}</span></div>
+      <div class="fin-archive-amt">${finFmt(t)} ${cur}</div>
+      <div class="fin-100">100%</div>
+      <button class="fin-restore" data-frestore="${d.id}" title="Повернути до активних">↺</button>
+    </div>`;
+  }).join(''):`<div class="fin-empty">Архів поки порожній. Повністю погашені борги автоматично з'являться тут.</div>`;
+}
+function updateFinanceLive(){
+  const f=finData(),t=finTotals(),pct=Math.round(t.pct*10)/10,dash=326.73;
+  const q=id=>document.getElementById(id);
+  if(q('finTotal'))q('finTotal').innerHTML=finGroupHTML(t.groups,'total');
+  if(q('finPaid'))q('finPaid').innerHTML=finGroupHTML(t.groups,'paid');
+  if(q('finRemain'))q('finRemain').innerHTML=finGroupHTML(t.groups,'remaining');
+  if(q('finPct'))q('finPct').textContent=`${pct.toFixed(pct%1?1:0)}%`;
+  if(q('finBar'))q('finBar').style.width=pct+'%';
+  if(q('finRingProg'))q('finRingProg').style.strokeDashoffset=String(dash-(dash*pct/100));
+  if(q('finRing'))q('finRing').classList.toggle('done',pct>=100&&t.counted>0);
+  f.debts.filter(d=>!d.archived).forEach(d=>{
+    const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
+    const tt=finNum(d.total),pp=Math.min(finNum(d.paid),tt||finNum(d.paid)),rr=Math.max(0,tt-pp),dp=finDebtPct(d);
+    const re=document.querySelector(`[data-frem="${d.id}"]`);
+    const mb=document.querySelector(`[data-fmini="${d.id}"]`);
+    const mp=document.querySelector(`[data-fminip="${d.id}"]`);
+    if(re)re.textContent=`${finFmt(rr)} ${cur}`;
+    if(mb)mb.style.width=dp+'%';
+    if(mp)mp.textContent=Math.round(dp)+'%';
+  });
+}
+function rFinance(){
+  const s=SCf(FIN_ID),f=finData(),t=finTotals();
+  const active=f.debts.filter(d=>!d.archived);
+  const archive=f.debts.filter(d=>d.archived);
+  let h=sphereHero(s)+sphControlHTML(s);
+
+  h+=`<div class="fin-tabs">
+    <button class="fin-tab ${f.view==='calc'?'on':''}" data-fview="calc">▤ Розрахунок</button>
+    <button class="fin-tab ${f.view==='archive'?'on':''}" data-fview="archive">✓ Архів · ${archive.length}</button>
+  </div>`;
+
+  h+=finProgressHTML(t);
+
+  if(f.view==='archive'){
+    h+=`<div class="card">
+      <h3 style="color:var(--green-bright)">✓ Історія закритих боргів <span class="sub">${archive.length} закрито</span></h3>
+      ${finArchiveHTML(archive)}
+      <div class="hint">Архів нічого не віднімає від загальної шкали: закритий борг назавжди залишається як 100% погашений у загальній статистиці.</div>
+    </div>`;
+  }else{
+    h+=`<div class="card">
+      <h3>▤ Розрахунок <span class="sub">${active.length} активних</span></h3>
+      <div id="finDebtList">${active.length?active.map(finDebtHTML).join(''):`<div class="fin-empty">Додай перший борг. Після цього загальний прогрес почне рахуватися автоматично.</div>`}</div>
+      <button class="addbtn" id="finAdd">+ Додати борг / кредит</button>
+      <div class="hint">Для кожного боргу вибирай власну валюту. Коли «Оплачено» дорівнює повній сумі, позиція автоматично переходить в архів і продовжує враховуватись як 100%.</div>
+    </div>
+    <div class="card">
+      <h3>✎ Фінансова нотатка</h3>
+      <textarea class="fin-note-box" id="finNote" placeholder="Домовленості, дати, важливі примітки…">${esc(f.note||'')}</textarea>
+    </div>`;
+  }
+
+  document.getElementById('sphDetail').innerHTML=h;
+  bindSphControl();
+
+  document.querySelectorAll('[data-fview]').forEach(e=>e.onclick=()=>{f.view=e.dataset.fview;save();rSph();});
+  const getD=id=>f.debts.find(x=>x.id===id);
+
+  document.querySelectorAll('[data-fname]').forEach(e=>e.oninput=()=>{const d=getD(e.dataset.fname);if(d){d.name=e.value;save();}});
+  document.querySelectorAll('[data-fnote]').forEach(e=>e.oninput=()=>{const d=getD(e.dataset.fnote);if(d){d.note=e.value;save();}});
+  document.querySelectorAll('[data-fcur]').forEach(e=>e.onchange=()=>{
+    const d=getD(e.dataset.fcur);if(!d)return;
+    d.currency=FIN_CURRENCIES.includes(e.value)?e.value:'PLN';
+    f.defaultCurrency=d.currency;
+    save();updateFinanceLive();
+  });
+  document.querySelectorAll('[data-ftotal]').forEach(e=>{
+    e.oninput=()=>{const d=getD(e.dataset.ftotal);if(d){d.total=finNum(e.value);save();updateFinanceLive();}};
+    e.onchange=()=>{const d=getD(e.dataset.ftotal);if(d&&finMaybeClose(d)){save();rSph();}};
+  });
+  document.querySelectorAll('[data-fpaid]').forEach(e=>{
+    e.oninput=()=>{const d=getD(e.dataset.fpaid);if(d){d.paid=finNum(e.value);save();updateFinanceLive();}};
+    e.onchange=()=>{const d=getD(e.dataset.fpaid);if(d&&finMaybeClose(d)){save();rSph();}};
+  });
+  document.querySelectorAll('[data-fclose]').forEach(e=>e.onclick=()=>{
+    const d=getD(e.dataset.fclose);if(!d)return;
+    const t=finNum(d.total);
+    if(!t){alert('Спочатку вкажи повну суму боргу.');return;}
+    d.paid=t;d.archived=true;d.closedAt=iso(new Date());save();rSph();
+  });
+  document.querySelectorAll('[data-frestore]').forEach(e=>e.onclick=()=>{
+    const d=getD(e.dataset.frestore);if(!d)return;
+    d.archived=false;d.closedAt='';
+    if(finNum(d.total)>0&&finNum(d.paid)>=finNum(d.total))d.paid=Math.max(0,finNum(d.total)-0.01);
+    save();rSph();
+  });
+  document.querySelectorAll('[data-fdel]').forEach(e=>e.onclick=()=>askDel('fin'+e.dataset.fdel,()=>{
+    f.debts=f.debts.filter(x=>x.id!==e.dataset.fdel);save();rSph();
+  },rSph));
+
+  const add=document.getElementById('finAdd');
+  if(add)add.onclick=()=>{
+    f.debts.push({
+      id:'fd'+Date.now(),name:'',currency:f.defaultCurrency||'PLN',
+      total:0,paid:0,note:'',archived:false,closedAt:''
+    });
+    save();rSph();
+    setTimeout(()=>{const a=[...document.querySelectorAll('[data-fname]')].pop();if(a)a.focus();},50);
+  };
+  const note=document.getElementById('finNote');
+  if(note)note.oninput=()=>{f.note=note.value;save();};
+}
+
 
 /* ═══ TEXT Work · проєкт текстових робіт ═══ */
 function ordersSorted(list){
