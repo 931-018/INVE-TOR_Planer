@@ -1348,6 +1348,388 @@ body.sphere-drag-active .snav{
   }
 }
 
+
+/* PC DRAG v4 · елемент буквально слідує за курсором */
+.snav-drop-placeholder{
+  flex:0 0 auto;
+  border:1px dashed var(--gold);
+  border-left:3px solid var(--gold);
+  border-radius:0 7px 7px 0;
+  background:rgba(212,162,78,.07);
+  box-shadow:inset 0 0 0 1px rgba(212,162,78,.05);
+}
+.snav button.navdrag-pc{
+  opacity:.93!important;
+  cursor:grabbing!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.55),0 0 0 1px rgba(212,162,78,.25)!important;
+  border-color:var(--gold)!important;
+  transform:none!important;
+}
+@media(max-width:600px){
+  .snav-drop-placeholder{display:none!important}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   FINANCE OS v5 + WORK BLOCKS
+   ═══════════════════════════════════════════════════════════════ */
+.work-open-btn{border-color:rgba(212,162,78,.35)!important;color:var(--gold-soft)!important}
+.block-pill{display:inline-block;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1.2px;padding:3px 6px;margin-right:5px;border-radius:999px;border:1px solid color-mix(in srgb,var(--sc) 55%,transparent);color:var(--sc);background:color-mix(in srgb,var(--sc) 10%,transparent)}
+.work-block-today{font-weight:700}
+.ws-work{color:var(--gold-soft)!important;border-color:rgba(212,162,78,.28)!important;font-size:9px!important;letter-spacing:.4px}
+.ws-work-root{border-color:rgba(212,162,78,.32)!important;color:var(--gold-soft)!important}
+
+/* WORK modal */
+.work-modal-back{position:fixed;inset:0;z-index:99999;background:rgba(3,5,7,.78);backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px}
+.work-modal{width:min(820px,100%);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#14191f,#0e1216);border:1px solid var(--line);border-radius:18px;box-shadow:0 28px 90px rgba(0,0,0,.65);padding:18px}
+.work-modal-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.work-modal-head h2{margin:3px 0 5px;font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:24px}
+.work-modal-head p{margin:0;color:var(--txt-dim);font-size:13px;line-height:1.5;max-width:650px}
+.work-kicker,.fin-kicker{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;color:var(--txt-faint);text-transform:uppercase}
+.work-close{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--txt-dim);font-size:20px}
+.work-presets,.work-range{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-top:15px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+.work-presets label,.work-range label{display:grid;gap:5px;color:var(--txt-faint);font-size:10px;font-family:'Oswald',sans-serif;letter-spacing:.8px;text-transform:uppercase}
+.work-presets input,.work-range input{background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:9px 10px}
+.work-presets button,.work-range button{border:1px solid var(--line);background:var(--panel);color:var(--txt-dim);border-radius:8px;padding:9px 11px}
+.work-cal-head{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin:15px 0 8px}
+.work-cal-head b{text-align:center;font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:17px}
+.work-cal-head button{height:36px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:8px}
+.work-weekdays,.work-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.work-weekdays span{text-align:center;color:var(--txt-faint);font-size:9px;font-family:'Oswald',sans-serif;text-transform:uppercase;padding:4px}
+.work-calendar>span{min-height:42px}
+.work-day{min-height:48px;border:1px solid var(--line);background:var(--panel2);color:var(--txt-dim);border-radius:9px}
+.work-day.today{box-shadow:inset 0 0 0 1px rgba(212,162,78,.45)}
+.work-day.on{background:linear-gradient(135deg,rgba(212,162,78,.24),rgba(111,184,126,.10));border-color:var(--gold);color:var(--gold-soft);font-weight:800}
+.work-selection{margin-top:13px;padding:11px;border:1px solid var(--line);border-radius:11px;background:rgba(10,13,16,.45)}
+.work-selection b{font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:12px}
+.work-selection>div{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.work-selection span{font-size:9px;color:var(--txt-dim);border:1px solid var(--line);border-radius:999px;padding:4px 6px}
+.work-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.work-save{width:auto!important;margin:0!important}
+
+/* Finance app layout */
+.fin-app{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px;align-items:start}
+.fin-rail{position:sticky;top:12px;display:grid;gap:7px;padding:9px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.fin-rail button{position:relative;display:flex;align-items:center;gap:8px;width:100%;border:1px solid transparent;background:transparent;color:var(--txt-faint);padding:11px 10px;border-radius:10px;text-align:left;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.6px;text-transform:uppercase}
+.fin-rail button span{width:20px;text-align:center;font-size:15px}
+.fin-rail button i{margin-left:auto;min-width:20px;text-align:center;border-radius:999px;background:rgba(255,255,255,.05);font-style:normal;font-size:9px;padding:2px 5px}
+.fin-rail button.on{border-color:rgba(212,162,78,.28);background:rgba(212,162,78,.09);color:var(--gold-soft)}
+.fin-page{min-width:0}
+.fin-dashboard-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:13px}
+.fin-dashboard-head h2{margin:2px 0 5px;font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:25px;letter-spacing:.5px}
+.fin-dashboard-head p{margin:0;color:var(--txt-dim);font-size:13px;line-height:1.5}
+.fin-currency-filter{display:grid;gap:5px;font-size:9px;font-family:'Oswald',sans-serif;color:var(--txt-faint);text-transform:uppercase;letter-spacing:1px}
+.fin-currency-filter select{background:var(--panel2);border:1px solid var(--line);color:var(--gold-soft);border-radius:9px;padding:9px}
+.fin-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:12px}
+.fin-summary{min-height:105px;text-align:left;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,rgba(255,255,255,.02),transparent),var(--panel2);padding:13px;color:var(--txt);transition:.18s}
+.fin-summary:hover{transform:translateY(-1px);border-color:rgba(212,162,78,.38)}
+.fin-summary span{display:block;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt-faint)}
+.fin-summary b{display:block;font-family:'Oswald',sans-serif;font-size:21px;color:var(--gold-soft);margin:8px 0 5px;overflow-wrap:anywhere}
+.fin-summary small{display:block;color:var(--txt-faint);font-size:10px;line-height:1.3}
+.fin-summary.income b,.fin-summary.save b{color:var(--green-bright)}
+.fin-summary.expense b,.fin-summary.net.negative b{color:#e8897f}
+.fin-summary.invest b{color:#86aee6}
+.fin-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fin-card{min-width:0}
+.fin-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
+.fin-section-head h3{margin:2px 0 0}
+.fin-mini-link{border:0;background:transparent;color:var(--gold-soft);font-size:10px}
+.fin-muted{color:var(--txt-faint);font-size:11px}
+.fin-chart{height:115px;display:flex;align-items:flex-end;gap:5px;overflow:hidden;padding:5px 2px 17px}
+.fin-chart-day{flex:1;min-width:10px;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center}
+.fin-chart-bars{height:92px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px}
+.fin-chart-bars i{width:38%;max-width:9px;min-width:3px;border-radius:4px 4px 1px 1px}
+.fin-chart-bars i.inc{background:linear-gradient(180deg,#6fb87e,#365b40)}
+.fin-chart-bars i.exp{background:linear-gradient(180deg,#d37b72,#633c39)}
+.fin-chart-day>span{position:absolute;bottom:-14px;color:var(--txt-faint);font-size:8px}
+.fin-chart-leg{display:flex;gap:14px;font-size:9px;color:var(--txt-faint)}
+.fin-chart-leg i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px}
+.fin-chart-leg i.inc{background:#6fb87e}.fin-chart-leg i.exp{background:#d37b72}
+.fin-accounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fin-account{position:relative;border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:11px}
+.fin-account-top{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:6px}
+.fin-account-top input,.fin-account-top select,.fin-account label input{width:100%;background:transparent;border:0;border-bottom:1px dashed var(--line);color:var(--txt);padding:4px 2px}
+.fin-account-top select{color:var(--gold-soft)}
+.fin-account-bal{font-family:'Oswald',sans-serif;font-size:20px;color:var(--gold-soft);margin:11px 0}
+.fin-account-bal small{font-size:10px;color:var(--txt-faint)}
+.fin-account label{display:grid;gap:3px;color:var(--txt-faint);font-size:8px;text-transform:uppercase}
+.fin-account .fin-icon-btn{position:absolute;right:6px;bottom:6px}
+.fin-add-account{border:1px dashed var(--line);border-radius:11px;background:transparent;color:var(--txt-faint);min-height:95px}
+.fin-icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--txt-dim)}
+.fin-quick-transfer{min-width:0}
+.fin-rate{font-family:'Oswald',sans-serif;color:var(--green-bright);font-size:12px;text-align:right}
+.fin-transfer-grid,.fin-txn-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fin-transfer-grid label,.fin-txn-form label,.fin-invest-values label,.fin-save-values label{display:grid;gap:5px;font-size:9px;color:var(--txt-faint);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px}
+.fin-transfer-grid input,.fin-transfer-grid select,.fin-txn-form input,.fin-txn-form select,.fin-invest-card input,.fin-invest-card select,.fin-save-card input,.fin-save-card select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:9px}
+.fin-transfer-grid .wide,.fin-txn-form .wide{grid-column:span 2}
+.fin-goal-mini,.fin-invest-mini{padding:9px 0;border-top:1px solid rgba(255,255,255,.05)}
+.fin-goal-mini:first-of-type,.fin-invest-mini:first-of-type{border-top:0}
+.fin-goal-mini>div:first-child,.fin-invest-mini{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.fin-goal-mini b,.fin-invest-mini b{font-size:12px}.fin-goal-mini span,.fin-invest-mini span{font-size:10px;color:var(--txt-faint)}
+.fin-mini-progress,.fin-save-progress{height:6px;border-radius:999px;background:var(--panel);overflow:hidden;margin-top:7px}
+.fin-mini-progress i,.fin-save-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green-bright));border-radius:999px}
+.fin-invest-mini strong{color:var(--green-bright);font-family:'Oswald',sans-serif}.fin-invest-mini strong.neg,.neg{color:#e8897f!important}
+.fin-txn-list{display:grid;gap:7px}
+.fin-txn-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto 30px;gap:9px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--panel)}
+.fin-txn-icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.04);font-size:18px}
+.fin-txn-row.income .fin-txn-icon{color:var(--green-bright)}.fin-txn-row.expense .fin-txn-icon{color:#e8897f}.fin-txn-row.transfer .fin-txn-icon{color:var(--gold-soft)}
+.fin-txn-main b{display:block;font-size:12px}.fin-txn-main span,.fin-txn-main small{display:block;color:var(--txt-faint);font-size:9px;margin-top:2px}
+.fin-txn-money{text-align:right;font-family:'Oswald',sans-serif;color:var(--green-bright);white-space:nowrap}.fin-txn-money.neg{color:#e8897f}.fin-txn-money small{display:block;color:var(--txt-faint);font-size:9px;margin-top:3px}
+.fin-invest-grid,.fin-save-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.fin-invest-head,.fin-save-head{display:flex;justify-content:space-between;gap:9px;align-items:center}
+.fin-invest-head input,.fin-save-head input{border:0;border-bottom:1px dashed var(--line);font-family:'Oswald',sans-serif;font-size:15px;color:var(--gold-soft)}
+.fin-invest-head span{color:var(--green-bright);font-family:'Oswald',sans-serif;white-space:nowrap}
+.fin-invest-values,.fin-save-values{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.fin-invest-foot,.fin-save-foot{display:grid;grid-template-columns:1fr 80px auto auto;gap:6px;align-items:center;margin-top:8px}
+.fin-save-foot{grid-template-columns:82px 1fr auto}
+.fin-save-progress{height:8px}
+.fin-save-head b{color:var(--gold-soft);font-family:'Oswald',sans-serif}
+
+/* debts overrides */
+.fin-debt-tabs{display:flex;gap:7px;margin-bottom:10px}
+.fin-debt-tabs button{border:1px solid var(--line);background:var(--panel2);color:var(--txt-faint);border-radius:999px;padding:8px 11px}
+.fin-debt-tabs button.on{border-color:rgba(212,162,78,.35);color:var(--gold-soft);background:rgba(212,162,78,.08)}
+.fin-debt{transition:.16s}
+.fin-debt.urgent{border-color:rgba(215,92,83,.5)!important;border-left-color:#d75c53!important;background:linear-gradient(135deg,rgba(215,92,83,.10),transparent 55%),var(--panel2)!important}
+.fin-debt-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.fin-debt-pct{margin-left:auto;font-family:'Oswald',sans-serif;color:var(--txt-faint);font-size:11px}
+.fin-urgent{border:1px solid var(--line);background:transparent;color:var(--txt-faint);border-radius:999px;padding:6px 9px;font-size:9px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px}
+.fin-urgent.on{border-color:rgba(215,92,83,.5);color:#ef9089;background:rgba(215,92,83,.08)}
+.fin-debt-grip{width:27px;height:27px;display:grid;grid-template-columns:repeat(2,4px);grid-template-rows:repeat(3,4px);gap:3px;align-content:center;justify-content:center;cursor:grab;touch-action:none;border-radius:7px}
+.fin-debt-grip i{width:4px;height:4px;border-radius:50%;background:var(--txt-faint)}
+.fin-debt-grip:active{cursor:grabbing;background:rgba(212,162,78,.08)}
+.fin-debt-grip *{pointer-events:none}
+.fin-debt.debt-dragging{opacity:.68;border-color:var(--gold)!important;box-shadow:0 12px 34px rgba(0,0,0,.45);transform:scale(1.01)}
+body.debt-drag-active{overscroll-behavior:none}
+
+/* mobile */
+@media(max-width:900px){
+  .fin-app{grid-template-columns:1fr}
+  .fin-rail{position:sticky;top:0;z-index:12;display:flex;overflow-x:auto;gap:5px;padding:7px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .fin-rail::-webkit-scrollbar{display:none}
+  .fin-rail button{width:auto;min-width:max-content;white-space:nowrap;padding:9px 10px}
+  .fin-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fin-grid2{grid-template-columns:1fr}
+  .fin-accounts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fin-transfer-grid,.fin-txn-form{grid-template-columns:1fr 1fr}
+  .fin-invest-grid,.fin-save-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .sphere-control-main .work-open-btn{flex:1 1 calc(50% - 5px)}
+  .fin-dashboard-head{display:block}
+  .fin-currency-filter{margin-top:10px;max-width:150px}
+  .fin-summary-grid{display:flex;overflow-x:auto;gap:7px;padding-bottom:4px;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .fin-summary-grid::-webkit-scrollbar{display:none}
+  .fin-summary{min-width:158px;scroll-snap-align:start;min-height:100px}
+  .fin-summary b{font-size:18px}
+  .fin-accounts{grid-template-columns:1fr}
+  .fin-transfer-grid,.fin-txn-form{grid-template-columns:1fr}
+  .fin-transfer-grid .wide,.fin-txn-form .wide{grid-column:auto}
+  .fin-chart{overflow-x:auto;min-width:520px}
+  .fin-card:has(.fin-chart){overflow-x:auto}
+  .fin-txn-row{grid-template-columns:32px minmax(0,1fr) 30px}
+  .fin-txn-money{grid-column:2;text-align:left}
+  .fin-txn-row>.fin-icon-btn{grid-column:3;grid-row:1}
+  .fin-invest-values,.fin-save-values{grid-template-columns:1fr}
+  .fin-invest-foot{grid-template-columns:1fr 78px auto}
+  .fin-invest-foot b{grid-column:1}
+  .fin-save-foot{grid-template-columns:82px 1fr auto}
+  .fin-debt-grid{grid-template-columns:1fr 88px!important}
+  .fin-field.name{grid-column:1/-1!important}
+  .fin-field.total,.fin-field.paid,.fin-field.remain{grid-column:1!important}
+  .fin-field.currency{grid-column:2!important;grid-row:2!important}
+  .fin-debt-actions{grid-column:1/-1!important}
+  .work-modal-back{padding:7px}
+  .work-modal{padding:13px;border-radius:14px}
+  .work-modal-head h2{font-size:19px}
+  .work-presets,.work-range{display:grid;grid-template-columns:1fr 1fr}
+  .work-presets label,.work-range label{grid-column:1/-1}
+  .work-calendar{gap:4px}
+  .work-day{min-height:42px;padding:0}
+  .work-modal-actions{position:sticky;bottom:-13px;background:linear-gradient(transparent,#0e1216 20%);padding-top:16px;padding-bottom:5px}
+}
+
+
+/* ═══ Finance OS v6 · місяці, категорії, line chart ═══ */
+.fin-rail-sep{height:1px;background:var(--line);margin:3px 4px}
+.fin-rail .debt-nav{background:rgba(255,255,255,.018)}
+.fin-monthbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:-2px 0 12px;padding:8px;border:1px solid var(--line);border-radius:12px;background:rgba(10,13,16,.32)}
+.fin-monthbar>button{height:35px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--txt-dim);padding:0 11px}
+.fin-monthbar>button:first-child,.fin-monthbar>button:nth-child(3){width:36px;padding:0;font-size:18px}
+.fin-monthbar select{min-width:170px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--gold-soft);padding:8px 10px}
+.fin-month-badge{font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:1.3px;border:1px solid rgba(111,184,126,.3);border-radius:999px;padding:5px 8px;color:var(--green-bright);margin-left:auto}
+.fin-month-badge.arch{border-color:rgba(212,162,78,.3);color:var(--gold-soft)}
+.fin-month-archive{font-size:9px!important;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.fin-month-archive.disabled{opacity:.4;cursor:default}
+.fin-multiline{line-height:1.35!important;font-size:17px!important}
+.fin-line-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fin-line-chart{display:block;width:100%;min-width:640px;height:220px;overflow:visible}
+.fin-line-chart .guide{stroke:rgba(120,132,145,.18);stroke-width:1;stroke-dasharray:4 5}
+.fin-line-chart text{fill:var(--txt-faint);font-family:'Oswald',sans-serif;font-size:9px}
+.fin-line-chart polyline{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.fin-line-chart .income-line{stroke:#69bb78}
+.fin-line-chart .expense-line{stroke:#df746b}
+.fin-category-manager{margin-top:13px;padding:13px;border:1px solid rgba(212,162,78,.20);border-radius:12px;background:rgba(212,162,78,.035)}
+.fin-cat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.fin-cat-section{min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel)}
+.fin-cat-section h4{margin:0 0 8px;font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:12px}
+.fin-cat-list{display:flex;gap:5px;flex-wrap:wrap}
+.fin-cat-list span{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 8px;color:var(--txt-dim);font-size:9px}
+.fin-cat-list button{width:19px;height:19px;border-radius:50%;border:0;background:rgba(255,255,255,.05);color:var(--txt-faint);padding:0}
+.fin-cat-add{display:grid;grid-template-columns:1fr 34px;gap:5px;margin-top:9px}
+.fin-cat-add input,.fin-cat-add button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:8px}
+.fin-cat-add button{padding:0;color:var(--gold-soft)}
+.ft-invest-only.hidden,.ft-transfer-only.hidden{display:none!important}
+.fin-save-overview{display:flex;gap:8px;overflow-x:auto;margin-bottom:10px;padding-bottom:3px}
+.fin-save-overview>div{min-width:145px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:11px}
+.fin-save-overview span{display:block;color:var(--txt-faint);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px}
+.fin-save-overview b{display:block;color:var(--green-bright);font-family:'Oswald',sans-serif;font-size:21px;margin:6px 0 3px}
+.fin-save-overview small{color:var(--txt-faint);font-size:9px}
+.fin-invest-head span{max-width:55%;text-align:right;font-size:10px;line-height:1.35}
+.ws-h{display:flex!important;align-items:center!important;gap:8px!important}
+.ws-title{min-width:0;flex:1}
+.ws-head-work{flex:0 0 auto;border:1px solid rgba(212,162,78,.32);background:rgba(212,162,78,.07);color:var(--gold-soft);border-radius:8px;padding:7px 9px;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.7px}
+@media(max-width:900px){
+  .fin-cat-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .fin-monthbar{display:grid;grid-template-columns:36px minmax(0,1fr) 36px}
+  .fin-monthbar select{min-width:0;width:100%}
+  .fin-month-badge{margin-left:0}
+  .fin-month-badge,.fin-month-archive{grid-column:span 3;width:100%;text-align:center}
+  .fin-summary-grid{display:flex!important}
+  .fin-line-chart{min-width:620px}
+  .fin-cat-grid{grid-template-columns:1fr}
+  .ws-h{flex-wrap:wrap}
+  .ws-head-work{margin-left:30px}
+}
+
+
+/* ═══ v7 · simpler Finance UI + visible Workspace WORK ═══ */
+.ws-global-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-bottom:12px;padding:13px 15px;border:1px solid rgba(212,162,78,.26);
+  border-radius:13px;background:linear-gradient(135deg,rgba(212,162,78,.08),rgba(18,23,28,.72))
+}
+.ws-global-head b{display:block;font-family:'Oswald',sans-serif;color:var(--gold-soft);font-size:16px;letter-spacing:1.2px}
+.ws-global-head span{display:block;margin-top:3px;color:var(--txt-dim);font-size:12px}
+.ws-global-work{
+  flex:0 0 auto;min-width:125px;border:1px solid var(--gold);border-radius:10px;
+  background:rgba(212,162,78,.12);color:var(--gold-soft);
+  padding:11px 16px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px
+}
+.ws-global-work:hover{background:rgba(212,162,78,.18)}
+
+.fin-simple-app{display:block!important}
+.fin-topnav{
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+  margin-bottom:14px;padding:8px;border:1px solid var(--line);border-radius:13px;background:var(--panel2)
+}
+.fin-topnav-main,.fin-topnav-extra{display:flex;gap:6px;flex-wrap:wrap}
+.fin-topnav button{
+  border:1px solid transparent;background:transparent;color:var(--txt-dim);
+  border-radius:9px;padding:10px 13px;font-family:'Oswald',sans-serif;
+  font-size:13px;letter-spacing:.4px
+}
+.fin-topnav button.on{
+  background:rgba(212,162,78,.10);border-color:rgba(212,162,78,.30);color:var(--gold-soft)
+}
+.fin-topnav-extra{padding-left:9px;border-left:1px solid var(--line)}
+.fin-dashboard-head.simple h2{
+  font-family:'Oswald',sans-serif;font-size:30px!important;letter-spacing:.3px;margin:0 0 4px;color:var(--gold-soft)
+}
+.fin-dashboard-head.simple p{font-size:14px!important;line-height:1.45}
+.fin-dashboard-simple .fin-summary-grid.simple{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px
+}
+.fin-dashboard-simple .fin-summary{
+  min-height:92px!important;padding:14px 15px!important
+}
+.fin-dashboard-simple .fin-summary span{font-size:12px!important;letter-spacing:.5px!important}
+.fin-dashboard-simple .fin-summary b{font-size:25px!important;margin:8px 0 0!important}
+.fin-graph-main{padding:16px!important}
+.fin-graph-main h3{font-size:18px!important;margin:0}
+.fin-sub{display:block;color:var(--txt-faint);font-size:12px;margin-top:3px}
+.fin-quick-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0
+}
+.fin-quick-tile{
+  text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--panel2);
+  color:var(--txt);padding:14px
+}
+.fin-quick-tile:hover{border-color:rgba(212,162,78,.32)}
+.fin-quick-tile span{display:block;color:var(--txt-dim);font-size:13px;font-weight:700}
+.fin-quick-tile b{display:block;color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:18px;line-height:1.4;margin:7px 0}
+.fin-quick-tile.save b{color:var(--green-bright)}
+.fin-quick-tile.invest b{color:#8bb5ed}
+.fin-quick-tile small{font-size:11px;color:var(--txt-faint)}
+.fin-dashboard-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.fin-dashboard-actions .addbtn,.fin-dashboard-actions .dbtn{width:auto!important;margin:0!important;font-size:13px!important;padding:10px 14px!important}
+
+.fin-fold{
+  border:1px solid var(--line);border-radius:13px;background:var(--panel2);margin-bottom:10px;overflow:hidden
+}
+.fin-fold>summary{
+  list-style:none;cursor:pointer;padding:13px 15px;font-family:'Oswald',sans-serif;
+  font-size:15px;color:var(--gold-soft);letter-spacing:.4px
+}
+.fin-fold>summary::-webkit-details-marker{display:none}
+.fin-fold>summary:after{content:'▾';float:right;color:var(--txt-faint)}
+.fin-fold:not([open])>summary:after{content:'▸'}
+.fin-fold-body{padding:0 10px 10px}
+.fin-fold-body>.card{margin:0!important}
+
+.fin-page h3{font-size:17px}
+.fin-page .fin-section-head h3{font-size:17px!important}
+.fin-page .fin-kicker{font-size:11px!important}
+.fin-page .fin-muted{font-size:12px!important}
+.fin-page .fin-txn-form label,
+.fin-page .fin-transfer-grid label,
+.fin-page .fin-invest-values label,
+.fin-page .fin-save-values label{
+  font-size:12px!important;letter-spacing:.2px!important;text-transform:none!important
+}
+.fin-page input,.fin-page select,.fin-page textarea{font-size:14px!important}
+.fin-page .fin-txn-main b{font-size:14px!important}
+.fin-page .fin-txn-main span,.fin-page .fin-txn-main small{font-size:11px!important}
+.fin-page .fin-txn-money{font-size:15px!important}
+.fin-page .fin-txn-money small{font-size:10px!important}
+.fin-page .fin-account-bal{font-size:24px!important}
+.fin-page .fin-account label{font-size:11px!important;text-transform:none!important}
+.fin-page .fin-save-overview span{font-size:11px!important}
+.fin-page .fin-save-overview b{font-size:24px!important}
+.fin-page .fin-save-overview small{font-size:11px!important}
+.fin-page .fin-cat-section h4{font-size:14px!important}
+.fin-page .fin-cat-list span{font-size:11px!important}
+.fin-line-chart text{font-size:10px!important}
+
+@media(max-width:900px){
+  .fin-topnav{display:block;overflow:visible}
+  .fin-topnav-main,.fin-topnav-extra{display:flex;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:3px}
+  .fin-topnav-main::-webkit-scrollbar,.fin-topnav-extra::-webkit-scrollbar{display:none}
+  .fin-topnav-extra{border-left:0;border-top:1px solid var(--line);padding:6px 0 0;margin-top:6px}
+  .fin-topnav button{white-space:nowrap;min-width:max-content;font-size:13px}
+}
+@media(max-width:600px){
+  .ws-global-head{align-items:stretch;flex-direction:column}
+  .ws-global-head span{font-size:12px}
+  .ws-global-work{width:100%;font-size:15px}
+  .fin-dashboard-head.simple h2{font-size:27px!important}
+  .fin-dashboard-head.simple p{font-size:13px!important}
+  .fin-dashboard-simple .fin-summary-grid.simple{
+    display:grid!important;grid-template-columns:1fr 1fr!important;overflow:visible!important
+  }
+  .fin-dashboard-simple .fin-summary:last-child{grid-column:1/-1}
+  .fin-dashboard-simple .fin-summary{min-width:0!important}
+  .fin-dashboard-simple .fin-summary b{font-size:21px!important}
+  .fin-quick-grid{grid-template-columns:1fr}
+  .fin-quick-tile{padding:13px}
+  .fin-topnav button{font-size:14px;padding:10px 12px}
+  .fin-fold>summary{font-size:16px}
+  .fin-page input,.fin-page select,.fin-page textarea{font-size:16px!important}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -1462,6 +1844,13 @@ body.sphere-drag-active .snav{
   </div>
 
   <div class="page" id="pg-ws">
+    <div class="ws-global-head">
+      <div>
+        <b>WORKSPACE</b>
+        <span>Плануй не окрему справу, а сам блок роботи на потрібні дні.</span>
+      </div>
+      <button class="ws-global-work" id="wsGlobalWork">▣ WORK</button>
+    </div>
     <div class="ws2">
       <div class="card">
         <h3>▶ У роботі <span class="sub" id="wsCount"></span></h3>
@@ -1715,7 +2104,7 @@ body.sphere-drag-active .snav{
 </div></div></div>
 
 <script>
-const APP_BUILD='2026-08-11-finance-v3-dragfix';
+const APP_BUILD='2026-08-19-finance-v7-simple-ui-workspace-work';
 const START='2026-08-01',END='2026-12-31',BIG_END='2029-07-31',DISC_START='2026-08-01';
 const WDS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
 const WS7=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
@@ -1736,7 +2125,10 @@ const D_SPHERES=[
 const SPH_COLORS=['#e8442e','#ff6a3d','#ff9f1c','#f4c531','#d4a24e','#c98a4e','#a7d129','#3fbf6f','#17b890','#0fb5c9','#2f8fd6','#4b6cf0','#7a5cff','#b06fa0','#e0559b','#ff4d7e','#6fb87e','#5a7d93','#8b93a0','#c85d9c'];
 const SPH_ICONS=['📺','✍️','💼','💰','📈','💪','🧠','🤍','✨','🎯','📘','🔥','⚡','🚀','🎨','🎬','🎧','📷','🌱','⏳','🏆','❤️','🧘','🛠️'];
 function spheres(){return DB.spheres||D_SPHERES;}
-function SCf(id){return spheres().find(s=>s.id===id)||{id,ic:'•',nm:'—',c:'#8b93a0'};}
+function SCf(id){
+  if(id==='__globalws')return{id,ic:'✦',nm:'Workspace',c:'#d4a24e'};
+  return spheres().find(s=>s.id===id)||{id,ic:'•',nm:'—',c:'#8b93a0'};
+}
 
 const D_SPH={
   s1:{bigYearShare:25,big:'Побудувати сильний англомовний faceless YouTube-медіапроєкт: 1 флагманський і 1–2 додаткові прибуткові канали, $7 000+ чистими на місяць та 50–70% повторюваної роботи автоматизовано або делеговано без втрати якості.',
@@ -1996,7 +2388,14 @@ function blank(){return{
   sphNotes:{},
   workspaces:{},
   orders:[],
-  finance:{currency:'PLN',view:'calc',archiveOpen:true,note:'',debts:[]},
+  finance:{
+    currency:'PLN',defaultCurrency:'PLN',view:'dashboard',debtMode:'active',archiveOpen:true,note:'',
+    chartCurrency:'PLN',selectedMonth:'',archivedMonths:[],
+    categories:{expense:[],income:[],investment:[]},categoryManagerOpen:false,
+    accounts:[],transactions:[],investments:[],savings:[],
+    calc:{fromAccount:'',toAccount:'',amount:'',received:'',date:'',note:''},debts:[]
+  },
+  workBlocks:[],
   tasks:JSON.parse(JSON.stringify(D_TASKS)),
   ws:JSON.parse(JSON.stringify(D_WS)),
   yt:JSON.parse(JSON.stringify(D_YT)),
@@ -2355,6 +2754,15 @@ function migrate(){
   // Приховування повторюваного завдання лише на конкретний день.
   // Не змінює саме завдання у сфері й зберігається у резервних копіях.
   DB.daySkip=DB.daySkip||{};
+  // WORK BLOCK OS: окремі блоки сфери/Workspace, які автоматично з'являються у «Сьогодні».
+  if(!Array.isArray(DB.workBlocks))DB.workBlocks=[];
+  DB.workBlocks=DB.workBlocks.filter(x=>x&&typeof x==='object').map((b,i)=>({
+    id:b.id||('wb_mig_'+i+'_'+Date.now()),
+    s:b.s||'s1',
+    source:['workspace','globalws'].includes(b.source)?b.source:'sphere',
+    itemId:b.itemId||'',
+    dates:Array.isArray(b.dates)?[...new Set(b.dates.filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)))].sort():[]
+  })).filter(b=>b.dates.length);
   // порядок етапів
   Object.values(DB.sph||{}).forEach(o=>{
     (o.stages||[]).forEach((x,i)=>{if(typeof x.ord!=='number')x.ord=i;});});
@@ -2404,11 +2812,95 @@ function migrate(){
   if(!DB.sph[FIN_ID])DB.sph[FIN_ID]={big:'',year:'',stages:[]};
 
   DB.finance=(DB.finance&&typeof DB.finance==='object'&&!Array.isArray(DB.finance))?DB.finance:{};
-  if(!DB.finance.currency)DB.finance.currency='PLN'; // сумісність зі старою версією
+  if(!DB.finance.currency)DB.finance.currency='PLN';
   if(!DB.finance.defaultCurrency)DB.finance.defaultCurrency=DB.finance.currency||'PLN';
-  if(!DB.finance.view)DB.finance.view='calc';
+  if(!DB.finance.chartCurrency)DB.finance.chartCurrency=DB.finance.defaultCurrency||'PLN';
+  if(!DB.finance.selectedMonth)DB.finance.selectedMonth=iso(new Date()).slice(0,7);
+  if(!Array.isArray(DB.finance.archivedMonths))DB.finance.archivedMonths=[];
+  DB.finance.archivedMonths=[...new Set(DB.finance.archivedMonths.filter(x=>/^\d{4}-\d{2}$/.test(x)))].sort();
+
+  // Категорії створюються один раз; після цього користувач може вільно додавати/видаляти свої.
+  const FIN_DEFAULT_CATS_MIG={
+    expense:['Продукти','Житло / оренда','Комунальні','Транспорт','Здоровʼя','Спорт / зал','Підписки / сервіси','Кафе / розваги','Одяг / покупки','Освіта','Подарунки','Інше'],
+    income:['Зарплата','Фріланс / текстові роботи','Премія','Повернення коштів','Подарунок','Кешбек','Дохід з інвестицій','Інше'],
+    investment:['ETF / фонди','Акції','Криптовалюта','Облігації','Депозит','Інше']
+  };
+  if(!DB.finance.categories||typeof DB.finance.categories!=='object'||Array.isArray(DB.finance.categories))DB.finance.categories={};
+  ['expense','income','investment'].forEach(k=>{
+    if(!Array.isArray(DB.finance.categories[k]))DB.finance.categories[k]=[...FIN_DEFAULT_CATS_MIG[k]];
+    DB.finance.categories[k]=[...new Set(DB.finance.categories[k].map(x=>String(x||'').trim()).filter(Boolean))];
+  });
+  if(DB.finance.categoryManagerOpen==null)DB.finance.categoryManagerOpen=false;
+
+  if(['calc','archive'].includes(DB.finance.view)||!DB.finance.view)DB.finance.view='dashboard';
+  if(!['dashboard','transactions','investments','savings','debts','tasks'].includes(DB.finance.view))DB.finance.view='dashboard';
+  if(!DB.finance.debtMode)DB.finance.debtMode='active';
   if(DB.finance.archiveOpen==null)DB.finance.archiveOpen=true;
   if(DB.finance.note==null)DB.finance.note='';
+
+  if(!Array.isArray(DB.finance.accounts))DB.finance.accounts=[];
+  if(!DB.finance.accounts.length){
+    DB.finance.accounts=[
+      {id:'fa_pko',name:'PKO BP',currency:'PLN',opening:0},
+      {id:'fa_mono',name:'Monobank',currency:'UAH',opening:0},
+      {id:'fa_cash',name:'Готівка',currency:'PLN',opening:0}
+    ];
+  }
+  DB.finance.accounts=DB.finance.accounts.filter(x=>x&&typeof x==='object').map((a,i)=>({
+    id:a.id||('fa_mig_'+i+'_'+Date.now()),
+    name:a.name==null?'':String(a.name),
+    currency:['PLN','UAH','USD','EUR'].includes(a.currency)?a.currency:'PLN',
+    opening:Number(a.opening)||0
+  }));
+
+  if(!Array.isArray(DB.finance.transactions))DB.finance.transactions=[];
+  DB.finance.transactions=DB.finance.transactions.filter(x=>x&&typeof x==='object').map((t,i)=>({
+    id:t.id||('ft_mig_'+i+'_'+Date.now()),
+    date:/^\d{4}-\d{2}-\d{2}$/.test(t.date||'')?t.date:iso(new Date()),
+    type:['income','expense','transfer','investment_income'].includes(t.type)?t.type:'expense',
+    category:t.category==null?'':String(t.category),
+    investmentId:t.investmentId||'',
+    fromAccount:t.fromAccount||'',
+    toAccount:t.toAccount||'',
+    amount:Math.max(0,Number(t.amount)||0),
+    currency:['PLN','UAH','USD','EUR'].includes(t.currency)?t.currency:(DB.finance.defaultCurrency||'PLN'),
+    received:Math.max(0,Number(t.received)||0),
+    receivedCurrency:['PLN','UAH','USD','EUR'].includes(t.receivedCurrency)?t.receivedCurrency:(DB.finance.defaultCurrency||'PLN'),
+    note:t.note==null?'':String(t.note)
+  }));
+
+  // Нова спрощена модель інвестиції: дата + назва + категорія + сума.
+  if(!Array.isArray(DB.finance.investments))DB.finance.investments=[];
+  DB.finance.investments=DB.finance.investments.filter(x=>x&&typeof x==='object').map((v,i)=>({
+    id:v.id||('fi_mig_'+i+'_'+Date.now()),
+    date:/^\d{4}-\d{2}-\d{2}$/.test(v.date||'')?v.date:iso(new Date()),
+    name:v.name==null?'':String(v.name),
+    category:v.category==null?'Інше':String(v.category),
+    amount:Math.max(0,Number(v.amount!=null?v.amount:(v.invested!=null?v.invested:v.current))||0),
+    currency:['PLN','UAH','USD','EUR'].includes(v.currency)?v.currency:(DB.finance.defaultCurrency||'PLN'),
+    note:v.note==null?'':String(v.note)
+  }));
+
+  if(!Array.isArray(DB.finance.savings))DB.finance.savings=[];
+  DB.finance.savings=DB.finance.savings.filter(x=>x&&typeof x==='object').map((v,i)=>({
+    id:v.id||('fs_mig_'+i+'_'+Date.now()),
+    name:v.name==null?'':String(v.name),
+    target:Math.max(0,Number(v.target)||0),
+    saved:Math.max(0,Number(v.saved)||0),
+    currency:['PLN','UAH','USD','EUR'].includes(v.currency)?v.currency:(DB.finance.defaultCurrency||'PLN'),
+    due:/^\d{4}-\d{2}-\d{2}$/.test(v.due||'')?v.due:'',
+    note:v.note==null?'':String(v.note)
+  }));
+
+  if(!DB.finance.calc||typeof DB.finance.calc!=='object'||Array.isArray(DB.finance.calc))DB.finance.calc={};
+  if(DB.finance.calc.fromAccount==null)DB.finance.calc.fromAccount='';
+  if(DB.finance.calc.toAccount==null)DB.finance.calc.toAccount='';
+  if(DB.finance.calc.amount==null)DB.finance.calc.amount='';
+  if(DB.finance.calc.received==null)DB.finance.calc.received='';
+  if(!DB.finance.calc.date)DB.finance.calc.date=iso(new Date());
+  if(DB.finance.calc.note==null)DB.finance.calc.note='';
+
+  // Борги залишаються окремим модулем і не входять у фінансові показники головної панелі.
   if(!Array.isArray(DB.finance.debts))DB.finance.debts=[];
   DB.finance.debts=DB.finance.debts.filter(x=>x&&typeof x==='object').map((d,i)=>({
     id:d.id||('fd_mig_'+i+'_'+Date.now()),
@@ -2417,6 +2909,7 @@ function migrate(){
     total:Math.max(0,Number(d.total)||0),
     paid:Math.max(0,Number(d.paid)||0),
     note:d.note==null?'':String(d.note),
+    urgent:!!d.urgent,
     archived:!!d.archived,
     closedAt:d.closedAt||''
   }));
@@ -2457,9 +2950,32 @@ function meta(k){if(!DB.meta[k])DB.meta[k]={slp:'',en:0,note:''};return DB.meta[
 function doneOf(k){if(!DB.done[k])DB.done[k]={};return DB.done[k];}
 function skipOf(k){DB.daySkip=DB.daySkip||{};if(!DB.daySkip[k])DB.daySkip[k]={};return DB.daySkip[k];}
 function sphIdx(id){const i=spheres().findIndex(s=>s.id===id);return i<0?999:i;}
+function workBlockLabel(b){
+  if(b.source==='globalws'){
+    const it=b.itemId?(DB.ws||[]).find(x=>x.id===b.itemId):null;
+    return it&&String(it.t||'').trim()?`BLOCK Workspace · ${it.t}`:'BLOCK Workspace';
+  }
+  const s=SCf(b.s);
+  if(b.source==='workspace'){
+    const w=(DB.workspaces&&DB.workspaces[b.s])||null;
+    if(b.itemId&&w&&Array.isArray(w.items)){
+      const it=w.items.find(x=>x.id===b.itemId);
+      if(it&&String(it.t||'').trim())return `BLOCK ${s.nm} · ${it.t}`;
+    }
+    if(w&&String(w.title||'').trim())return `BLOCK ${s.nm} · ${w.title}`;
+  }
+  return `BLOCK ${s.nm}`;
+}
+function workScheduleCount(sid,source='sphere',itemId=''){
+  const b=(DB.workBlocks||[]).find(x=>x.s===sid&&x.source===source&&(x.itemId||'')===(itemId||''));
+  return b&&Array.isArray(b.dates)?b.dates.length:0;
+}
 function scheduledTasksFor(k){const w=mon(k);
-  return DB.tasks.filter(t=>!t.off&&(t.date?t.date===k:(t.days&&t.days.includes(w))))
-    .sort((a,b)=>sphIdx(a.s)-sphIdx(b.s));}
+  const normal=DB.tasks.filter(t=>!t.off&&(t.date?t.date===k:(t.days&&t.days.includes(w))));
+  const blocks=(DB.workBlocks||[]).filter(b=>Array.isArray(b.dates)&&b.dates.includes(k)).map(b=>({
+    id:'work:'+b.id,s:b.s,t:workBlockLabel(b),isWorkBlock:true,workSource:b.source,workItemId:b.itemId||''
+  }));
+  return [...normal,...blocks].sort((a,b)=>sphIdx(a.s)-sphIdx(b.s));}
 function tasksFor(k){const hidden=(DB.daySkip&&DB.daySkip[k])||{};
   return scheduledTasksFor(k).filter(t=>!hidden[t.id]);}
 function ordersDueFor(k){return (DB.orders||[]).filter(o=>o.deadline===k&&(o.stage||'active')==='active');}
@@ -2590,7 +3106,7 @@ function rToday(){
     const showBook=(t.id===bookTaskId)&&activeBook;
     return `<div class="chk ${on?'on':''}" style="--sc:${s.c};${showBook?'flex-wrap:wrap':''}">
       <div class="box" data-tk="${t.id}">${on?'✓':''}</div>
-      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name">${esc(t.t)}</span></div></div>
+      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span></div></div>
       <button class="today-skip" data-tskip="${t.id}" title="Прибрати лише на ${d.getDate()} ${MNS[d.getMonth()]}">×</button>
       ${showBook?`<div class="pgc">
         <span class="pgc-nm">${esc(activeBook.t||'Книга')}</span>
@@ -2697,70 +3213,144 @@ function initNavDrag(){
   const cont=document.getElementById('snav');
   if(!cont)return;
 
-  // При кожному перемальовуванні прибираємо старі глобальні слухачі.
   if(navDragCleanup){try{navDragCleanup();}catch(e){} navDragCleanup=null;}
 
   let el=null,grip=null,moved=false,sx=0,sy=0,pointerId=null,mode='';
+  let placeholder=null,pcOffX=0,pcOffY=0,oldStyle='';
   const real=()=>[...cont.querySelectorAll('[data-sn]')].filter(b=>!b.dataset.sn.startsWith('__'));
 
   function begin(target,x,y,m,pid=null){
     const row=target.closest('[data-sn]');
     if(!row||row.dataset.sn.startsWith('__'))return;
+
     el=row;grip=target;moved=false;sx=x;sy=y;mode=m;pointerId=pid;
     navMoved=false;
     document.body.classList.add('sphere-drag-active');
+
+    if(m==='pointer' && window.innerWidth>600){
+      const r=row.getBoundingClientRect();
+      pcOffX=x-r.left;
+      pcOffY=y-r.top;
+
+      placeholder=document.createElement('div');
+      placeholder.className='snav-drop-placeholder';
+      placeholder.style.width=r.width+'px';
+      placeholder.style.height=r.height+'px';
+
+      row.parentNode.insertBefore(placeholder,row.nextSibling);
+
+      oldStyle=row.getAttribute('style')||'';
+      row.classList.add('navdrag','navdrag-pc');
+      row.style.position='fixed';
+      row.style.left=r.left+'px';
+      row.style.top=r.top+'px';
+      row.style.width=r.width+'px';
+      row.style.height=r.height+'px';
+      row.style.margin='0';
+      row.style.zIndex='9999';
+      row.style.pointerEvents='none';
+      row.style.transform='none';
+      row.style.transition='none';
+    }
+  }
+
+  function moveMobile(x,y){
+    const others=real().filter(b=>b!==el);
+    if(!others.length)return;
+
+    let inserted=false;
+    for(const o of others){
+      const r=o.getBoundingClientRect();
+      if(y < r.top + r.height/2){
+        cont.insertBefore(el,o);
+        inserted=true;
+        break;
+      }
+    }
+    if(!inserted){
+      const last=others[others.length-1];
+      cont.insertBefore(el,last.nextSibling);
+    }
+  }
+
+  function nearestDesktopTarget(x,y){
+    const items=real().filter(b=>b!==el);
+    if(!items.length)return null;
+
+    let best=null,bestDist=Infinity;
+    for(const o of items){
+      const r=o.getBoundingClientRect();
+      const cx=r.left+r.width/2, cy=r.top+r.height/2;
+      const dx=x-cx,dy=y-cy;
+      const dist=Math.hypot(dx,dy);
+      if(dist<bestDist){bestDist=dist;best={el:o,r,cx,cy};}
+    }
+    return best;
+  }
+
+  function moveDesktop(x,y){
+    if(!el||!placeholder)return;
+
+    // Сам елемент буквально йде за курсором.
+    el.style.left=(x-pcOffX)+'px';
+    el.style.top=(y-pcOffY)+'px';
+
+    const hit=document.elementFromPoint(x,y);
+    let target=hit&&hit.closest?hit.closest('#snav [data-sn]'):null;
+    if(target===el||!target||target.dataset.sn.startsWith('__'))target=null;
+
+    if(target){
+      const r=target.getBoundingClientRect();
+      // Якщо ряд той самий — вирішуємо "до/після" по X.
+      // Якщо курсор вище/нижче іншого ряду — по Y.
+      const sameRow=Math.abs(y-(r.top+r.height/2)) < Math.max(18,r.height*.55);
+      const before=sameRow ? x < r.left+r.width/2 : y < r.top+r.height/2;
+      cont.insertBefore(placeholder,before?target:target.nextSibling);
+      return;
+    }
+
+    // Якщо курсор у проміжку між картками — використовуємо найближчу.
+    const best=nearestDesktopTarget(x,y);
+    if(!best)return;
+
+    const rowDelta=Math.abs(y-best.cy);
+    const before=rowDelta>best.r.height*.55
+      ? y<best.cy
+      : x<best.cx;
+
+    cont.insertBefore(placeholder,before?best.el:best.el.nextSibling);
   }
 
   function moveAt(x,y){
     if(!el)return;
-    if(!moved&&Math.hypot(x-sx,y-sy)<6)return;
+    if(!moved&&Math.hypot(x-sx,y-sy)<5)return;
 
     moved=true;
     navMoved=true;
     el.classList.add('navdrag');
 
-    const others=real().filter(b=>b!==el);
-    if(!others.length)return;
-
-    if(window.innerWidth<=600){
-      // На телефоні сфери стоять вертикально:
-      // беремо середину кожної картки й вставляємо перед/після неї.
-      let inserted=false;
-      for(const o of others){
-        const r=o.getBoundingClientRect();
-        if(y < r.top + r.height/2){
-          cont.insertBefore(el,o);
-          inserted=true;
-          break;
-        }
-      }
-      if(!inserted){
-        const last=others[others.length-1];
-        cont.insertBefore(el,last.nextSibling);
-      }
-    }else{
-      // На ПК — працює і при горизонтальному, і при багаторядковому розташуванні.
-      let best=null,bestDist=Infinity,before=true;
-      for(const o of others){
-        const r=o.getBoundingClientRect();
-        const cx=r.left+r.width/2, cy=r.top+r.height/2;
-        const dist=Math.hypot(x-cx,y-cy);
-        if(dist<bestDist){
-          bestDist=dist;best=o;
-          before=(y<cy-8)||(Math.abs(y-cy)<=8&&x<cx);
-        }
-      }
-      if(best){
-        if(before)cont.insertBefore(el,best);
-        else cont.insertBefore(el,best.nextSibling);
-      }
-    }
+    if(mode==='pointer'&&window.innerWidth>600)moveDesktop(x,y);
+    else moveMobile(x,y);
   }
 
   function finish(){
     if(!el)return;
     const didMove=moved;
-    el.classList.remove('navdrag');
+
+    if(mode==='pointer'&&window.innerWidth>600&&placeholder){
+      if(didMove){
+        cont.insertBefore(el,placeholder);
+      }
+      placeholder.remove();
+      placeholder=null;
+
+      // Повертаємо елемент у звичайний layout.
+      el.setAttribute('style',oldStyle);
+      el.classList.remove('navdrag','navdrag-pc');
+    }else{
+      el.classList.remove('navdrag');
+    }
+
     document.body.classList.remove('sphere-drag-active');
 
     el=null;grip=null;moved=false;pointerId=null;mode='';
@@ -2779,8 +3369,7 @@ function initNavDrag(){
     }
   }
 
-  /* TOUCH — окремо для iPhone / Telegram Mini App.
-     Не покладаємось на setPointerCapture, бо у WebView він може працювати нестабільно. */
+  /* TOUCH — окремо для iPhone / Telegram Mini App */
   cont.querySelectorAll('[data-sdrag]').forEach(h=>{
     h.addEventListener('touchstart',e=>{
       if(!e.touches||!e.touches[0])return;
@@ -2790,7 +3379,7 @@ function initNavDrag(){
       begin(h,t.clientX,t.clientY,'touch');
     },{passive:false});
 
-    // Pointer залишаємо для мишки / стилуса.
+    /* ПК / мишка / стилус */
     h.addEventListener('pointerdown',e=>{
       if(e.pointerType==='touch')return;
       e.preventDefault();
@@ -2927,6 +3516,145 @@ function healthBottomHTML(){
 function hydrateEditableTables(root){if(!root)return;root.querySelectorAll('th,td').forEach(cell=>{cell.setAttribute('contenteditable','true');cell.setAttribute('spellcheck','false');});}
 function bindHealthPages(){document.querySelectorAll('[data-health-simple]').forEach(e=>{hydrateEditableTables(e);e.oninput=()=>{DB.healthSimple[e.dataset.healthSimple]=e.innerHTML;save();};});}
 
+
+/* ═══ WORK BLOCK PLANNER · сфера / Workspace → «Сьогодні» ═══ */
+let workPlanUI=null;
+function workBlockFind(sid,source='sphere',itemId=''){
+  return (DB.workBlocks||[]).find(b=>b.s===sid&&b.source===source&&(b.itemId||'')===(itemId||''));
+}
+function workPlanSubject(sid,source,itemId){
+  if(source==='globalws'){
+    const it=itemId?(DB.ws||[]).find(x=>x.id===itemId):null;
+    return it&&it.t?`✦ Workspace · ${it.t}`:'✦ Workspace';
+  }
+  const s=SCf(sid);
+  if(source==='workspace'){
+    const w=wsData(sid);
+    if(itemId){
+      const it=w.items.find(x=>x.id===itemId);
+      return `${s.ic} ${s.nm} · ${it&&it.t?it.t:'пункт Workspace'}`;
+    }
+    return `${s.ic} ${s.nm} · ${w.title||'Workspace'}`;
+  }
+  return `${s.ic} ${s.nm}`;
+}
+function workDateRange(a,b){
+  if(!a||!b||b<a)return[];
+  const out=[],d=pd(a),end=pd(b);
+  while(d<=end){out.push(iso(d));d.setDate(d.getDate()+1);}
+  return out;
+}
+function workMonthKey(dateStr){
+  const d=dateStr?pd(dateStr):new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function workMonthDays(monthKey){
+  const [y,m]=monthKey.split('-').map(Number),first=new Date(y,m-1,1),last=new Date(y,m,0);
+  const pad=(first.getDay()+6)%7,arr=[];
+  for(let i=0;i<pad;i++)arr.push(null);
+  for(let d=1;d<=last.getDate();d++)arr.push(`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+  return arr;
+}
+function openWorkPlanner(sid,source='sphere',itemId=''){
+  DB.workBlocks=DB.workBlocks||[];
+  const ex=workBlockFind(sid,source,itemId);
+  workPlanUI={
+    sid,source,itemId:itemId||'',
+    selected:new Set(ex&&Array.isArray(ex.dates)?ex.dates:[]),
+    month:workMonthKey(cur||iso(new Date()))
+  };
+  renderWorkPlanner();
+}
+function closeWorkPlanner(){
+  const h=document.getElementById('workPlannerHost');if(h)h.remove();
+  workPlanUI=null;
+}
+function workSelectWeek(anchor){
+  if(!workPlanUI||!anchor)return;
+  const d=pd(anchor),dow=(d.getDay()+6)%7;d.setDate(d.getDate()-dow);
+  for(let i=0;i<7;i++){workPlanUI.selected.add(iso(d));d.setDate(d.getDate()+1);}
+  renderWorkPlanner();
+}
+function workSelectMonth(){
+  if(!workPlanUI)return;
+  workMonthDays(workPlanUI.month).filter(Boolean).forEach(k=>workPlanUI.selected.add(k));
+  renderWorkPlanner();
+}
+function workAddRange(a,b){
+  if(!workPlanUI)return;
+  workDateRange(a,b).forEach(k=>workPlanUI.selected.add(k));
+  renderWorkPlanner();
+}
+function workSavePlanner(){
+  if(!workPlanUI)return;
+  DB.workBlocks=DB.workBlocks||[];
+  const ex=workBlockFind(workPlanUI.sid,workPlanUI.source,workPlanUI.itemId);
+  const dates=[...workPlanUI.selected].sort();
+  if(ex){
+    if(dates.length)ex.dates=dates;
+    else DB.workBlocks=DB.workBlocks.filter(x=>x.id!==ex.id);
+  }else if(dates.length){
+    DB.workBlocks.push({
+      id:'wb'+Date.now()+Math.random().toString(36).slice(2,5),
+      s:workPlanUI.sid,source:workPlanUI.source,itemId:workPlanUI.itemId,dates
+    });
+  }
+  save();closeWorkPlanner();rToday();rSph();
+}
+function renderWorkPlanner(){
+  if(!workPlanUI)return;
+  let host=document.getElementById('workPlannerHost');
+  if(!host){host=document.createElement('div');host.id='workPlannerHost';document.body.appendChild(host);}
+  const days=workMonthDays(workPlanUI.month),[y,m]=workPlanUI.month.split('-').map(Number);
+  const mname=MNS_S[m-1]||workPlanUI.month;
+  const selected=[...workPlanUI.selected].sort();
+  host.innerHTML=`<div class="work-modal-back">
+    <div class="work-modal">
+      <div class="work-modal-head">
+        <div><span class="work-kicker">WORK BLOCK</span><h2>${esc(workPlanSubject(workPlanUI.sid,workPlanUI.source,workPlanUI.itemId))}</h2>
+          <p>Вибери конкретні дні, тиждень, місяць або діапазон. У вибрані дні в «Сьогодні» з'явиться BLOCK цієї сфери/Workspace.</p></div>
+        <button class="work-close" data-workclose>×</button>
+      </div>
+      <div class="work-presets">
+        <label>Опорна дата <input type="date" id="workAnchor" value="${cur||iso(new Date())}"></label>
+        <button data-worktoday>Сьогодні</button>
+        <button data-workweek>+ Тиждень</button>
+        <button data-workmonth>+ Весь місяць</button>
+        <button data-workclear>Очистити</button>
+      </div>
+      <div class="work-range">
+        <label>Від <input type="date" id="workFrom" value="${cur||iso(new Date())}"></label>
+        <label>До <input type="date" id="workTo" value="${cur||iso(new Date())}"></label>
+        <button data-workrange>+ Діапазон</button>
+      </div>
+      <div class="work-cal-head">
+        <button data-workprev>‹</button><b>${mname} ${y}</b><button data-worknext>›</button>
+      </div>
+      <div class="work-weekdays">${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="work-calendar">${days.map(k=>k?`<button class="work-day ${workPlanUI.selected.has(k)?'on':''} ${k===iso(new Date())?'today':''}" data-workday="${k}">${+k.slice(-2)}</button>`:'<span></span>').join('')}</div>
+      <div class="work-selection">
+        <b>Вибрано: ${selected.length} дн.</b>
+        <div>${selected.slice(0,12).map(k=>`<span>${k}</span>`).join('')}${selected.length>12?`<span>+${selected.length-12}</span>`:''}</div>
+      </div>
+      <div class="work-modal-actions">
+        <button class="dbtn" data-workclose>Скасувати</button>
+        <button class="addbtn work-save" data-worksave>Зберегти BLOCK</button>
+      </div>
+    </div>
+  </div>`;
+  host.querySelectorAll('[data-workclose]').forEach(e=>e.onclick=closeWorkPlanner);
+  host.querySelectorAll('[data-workday]').forEach(e=>e.onclick=()=>{const k=e.dataset.workday;workPlanUI.selected.has(k)?workPlanUI.selected.delete(k):workPlanUI.selected.add(k);renderWorkPlanner();});
+  host.querySelector('[data-worktoday]').onclick=()=>{workPlanUI.selected.add(iso(new Date()));workPlanUI.month=workMonthKey(iso(new Date()));renderWorkPlanner();};
+  host.querySelector('[data-workweek]').onclick=()=>workSelectWeek(host.querySelector('#workAnchor').value);
+  host.querySelector('[data-workmonth]').onclick=workSelectMonth;
+  host.querySelector('[data-workclear]').onclick=()=>{workPlanUI.selected.clear();renderWorkPlanner();};
+  host.querySelector('[data-workrange]').onclick=()=>workAddRange(host.querySelector('#workFrom').value,host.querySelector('#workTo').value);
+  host.querySelector('[data-workprev]').onclick=()=>{const d=new Date(y,m-2,1);workPlanUI.month=workMonthKey(iso(d));renderWorkPlanner();};
+  host.querySelector('[data-worknext]').onclick=()=>{const d=new Date(y,m,1);workPlanUI.month=workMonthKey(iso(d));renderWorkPlanner();};
+  host.querySelector('[data-worksave]').onclick=workSavePlanner;
+}
+
+
 /* Робочий простір: пункти, підпункти, то-ду; перейменовувана назва; великий шрифт */
 let wsFocusId=null;
 function wsData(sid){
@@ -2945,12 +3673,13 @@ function wsData(sid){
 function workspaceHTML(sid){
   const ws=wsData(sid);
   let h=`<div class="card ws-card">
-    <h3 class="ws-h"><span class="ws-ic">✦</span><input class="ws-title" data-wstitle="${sid}" value="${esc(ws.title||'Робочий простір')}" placeholder="Назва простору"></h3>
+    <h3 class="ws-h"><span class="ws-ic">✦</span><input class="ws-title" data-wstitle="${sid}" value="${esc(ws.title||'Робочий простір')}" placeholder="Назва простору"><button class="ws-head-work" data-wsworkroot="${sid}" title="Запланувати весь Workspace у «Сьогодні»">▣ WORK${workScheduleCount(sid,'workspace','')?' · '+workScheduleCount(sid,'workspace',''):''}</button></h3>
     <div class="ws-list">`;
   h+=ws.items.length?ws.items.map(it=>`<div class="ws-item lvl${it.level||0} ${it.todo?'is-todo':''} ${it.done?'is-done':''}">
       ${it.todo?`<span class="ws-chk" data-wschk="${sid}|${it.id}">${it.done?'✓':''}</span>`:`<span class="ws-dot">${it.level?'◦':'•'}</span>`}
       <input class="ws-t" data-wst="${sid}|${it.id}" value="${esc(it.t)}" placeholder="${it.todo?'Задача…':'Пункт…'}">
       <span class="ws-ctl">
+        <button class="ws-work" data-wswork="${sid}|${it.id}" title="Запланувати цей пункт як BLOCK у «Сьогодні»">WORK${workScheduleCount(sid,'workspace',it.id)?' · '+workScheduleCount(sid,'workspace',it.id):''}</button>
         <button data-wsind="${sid}|${it.id}" title="${it.level?'Підняти':'Зробити підпунктом'}">${it.level?'⇤':'⇥'}</button>
         <button data-wstodo="${sid}|${it.id}" title="Перемкнути то-ду">☑</button>
         <button data-wsdel="${sid}|${it.id}" title="Видалити">✕</button>
@@ -2960,6 +3689,7 @@ function workspaceHTML(sid){
     <div class="ws-add">
       <button class="addbtn" data-wsadd="item|${sid}">+ Пункт</button>
       <button class="addbtn" data-wsadd="todo|${sid}">+ Задача (то-ду)</button>
+      <button class="addbtn ws-work-root" data-wsworkroot="${sid}">▣ WORK простір${workScheduleCount(sid,'workspace','')?' · '+workScheduleCount(sid,'workspace',''):''}</button>
     </div>
     <div class="ws-note-wrap">
       <div class="ws-note-lbl">Нотатки</div>
@@ -2985,7 +3715,9 @@ function bindWorkspace(){
   document.querySelectorAll('[data-wschk]').forEach(e=>e.onclick=()=>{const it=getItem(e.dataset.wschk);if(it){it.done=!it.done;save();rSph();}});
   document.querySelectorAll('[data-wsind]').forEach(e=>e.onclick=()=>{const it=getItem(e.dataset.wsind);if(it){it.level=it.level?0:1;save();rSph();}});
   document.querySelectorAll('[data-wstodo]').forEach(e=>e.onclick=()=>{const it=getItem(e.dataset.wstodo);if(it){it.todo=!it.todo;if(!it.todo)it.done=false;save();rSph();}});
-  document.querySelectorAll('[data-wsdel]').forEach(e=>e.onclick=()=>{const[s,id]=e.dataset.wsdel.split('|');const w=wsData(s);w.items=w.items.filter(x=>x.id!==id);save();rSph();});
+  document.querySelectorAll('[data-wswork]').forEach(e=>e.onclick=()=>{const[s,id]=e.dataset.wswork.split('|');openWorkPlanner(s,'workspace',id);});
+  document.querySelectorAll('[data-wsworkroot]').forEach(e=>e.onclick=()=>openWorkPlanner(e.dataset.wsworkroot,'workspace',''));
+  document.querySelectorAll('[data-wsdel]').forEach(e=>e.onclick=()=>{const[s,id]=e.dataset.wsdel.split('|');const w=wsData(s);w.items=w.items.filter(x=>x.id!==id);DB.workBlocks=(DB.workBlocks||[]).filter(b=>!(b.s===s&&b.source==='workspace'&&(b.itemId||'')===id));save();rSph();rToday();});
   document.querySelectorAll('[data-wsadd]').forEach(e=>e.onclick=()=>{const[kind,s]=e.dataset.wsadd.split('|');addWsItem(s,null,kind==='todo');});
   document.querySelectorAll('[data-wsnote]').forEach(e=>e.oninput=()=>{wsData(e.dataset.wsnote).note=e.value;save();});
   if(wsFocusId){const el=document.querySelector('[data-wst$="|'+wsFocusId+'"]');if(el){el.focus();}wsFocusId=null;}
@@ -3036,6 +3768,7 @@ function sphControlHTML(s){
     <div class="sphere-control-main">
       <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
       <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:6px 0">
+      <button class="dbtn work-open-btn" data-work-sphere="${s.id}" title="Запланувати BLOCK цієї сфери у «Сьогодні»">▣ WORK</button>
       <button class="dbtn danger" id="sphDel">${pendDel==="sph"+curSph?"Точно видалити?":"Видалити сферу"}</button>
     </div>
     <div class="sc-appear ${appearOpen?'open':''}">
@@ -3062,6 +3795,8 @@ function bindSphControl(){
   if(eye)eye.onclick=async()=>{try{const ed=new window.EyeDropper();const r=await ed.open();if(r&&r.sRGBHex){cur().c=r.sRGBHex;save();rSph();rSnav();rGoals();}}catch(x){}};
   const ap=document.getElementById('sphAppear');
   if(ap)ap.onclick=()=>{appearOpen=!appearOpen;rSph();};
+  const workBtn=document.querySelector('[data-work-sphere]');
+  if(workBtn)workBtn.onclick=()=>openWorkPlanner(workBtn.dataset.workSphere,'sphere','');
   const del=document.getElementById('sphDel');
   if(del)del.onclick=()=>{
     if(spheres().length<=1){alert('Має лишитися хоча б одна сфера');return;}
@@ -3069,6 +3804,7 @@ function bindSphControl(){
       DB.spheres=DB.spheres.filter(x=>x.id!==curSph);
       delete DB.sph[curSph];
       DB.tasks=DB.tasks.filter(t=>t.s!==curSph);
+      DB.workBlocks=(DB.workBlocks||[]).filter(b=>b.s!==curSph);
       curSph=spheres()[0].id;save();rSnav();rSph();rGoals();rToday();},rSph);};
 }
 
@@ -3132,229 +3868,593 @@ function rSph(){
 }
 
 
-/* ═══ ФІНАНСОВИЙ ВІДДІЛ · борги та прогрес погашення ═══ */
+/* ═══ ФІНАНСОВИЙ ВІДДІЛ · Finance OS v6 ═══ */
 const FIN_CURRENCIES=['PLN','UAH','USD','EUR'];
-function finData(){
-  DB.finance=(DB.finance&&typeof DB.finance==='object'&&!Array.isArray(DB.finance))?DB.finance:{currency:'PLN',defaultCurrency:'PLN',view:'calc',archiveOpen:true,note:'',debts:[]};
-  if(!DB.finance.defaultCurrency)DB.finance.defaultCurrency=DB.finance.currency||'PLN';
-  DB.finance.debts=Array.isArray(DB.finance.debts)?DB.finance.debts:[];
-  DB.finance.debts.forEach(d=>{if(!FIN_CURRENCIES.includes(d.currency))d.currency=DB.finance.defaultCurrency||'PLN';});
-  return DB.finance;
+const FIN_TYPES={
+  income:{label:'Дохід',icon:'＋'},
+  expense:{label:'Витрата',icon:'−'},
+  transfer:{label:'Переказ / конвертація',icon:'⇄'},
+  investment_income:{label:'Дохід з інвестицій',icon:'↗'}
+};
+const FIN_DEFAULT_CATS={
+  expense:['Продукти','Житло / оренда','Комунальні','Транспорт','Здоровʼя','Спорт / зал','Підписки / сервіси','Кафе / розваги','Одяг / покупки','Освіта','Подарунки','Інше'],
+  income:['Зарплата','Фріланс / текстові роботи','Премія','Повернення коштів','Подарунок','Кешбек','Дохід з інвестицій','Інше'],
+  investment:['ETF / фонди','Акції','Криптовалюта','Облігації','Депозит','Інше']
+};
+function finNum(v){const n=parseFloat(v);return Number.isFinite(n)?n:0;}
+function finPos(v){return Math.max(0,finNum(v));}
+function finFmt(v){return (Number(v)||0).toLocaleString('uk-UA',{maximumFractionDigits:2});}
+function finCurrentMonth(){return iso(new Date()).slice(0,7);}
+function finMonthLabel(k){
+  if(!/^\d{4}-\d{2}$/.test(k||''))return k||'';
+  const [y,m]=k.split('-').map(Number);
+  return `${MNS_S[m-1]||m} ${y}`;
 }
-function finNum(v){const n=parseFloat(v);return Number.isFinite(n)&&n>0?n:0;}
-function finFmt(v){
-  const n=Number(v)||0;
-  return n.toLocaleString('uk-UA',{maximumFractionDigits:2});
+function finShiftMonth(k,delta){
+  const [y,m]=k.split('-').map(Number),d=new Date(y,m-1+delta,1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function finData(){
+  DB.finance=(DB.finance&&typeof DB.finance==='object'&&!Array.isArray(DB.finance))?DB.finance:{};
+  const f=DB.finance;
+  if(!f.defaultCurrency)f.defaultCurrency='PLN';
+  if(!f.chartCurrency)f.chartCurrency=f.defaultCurrency;
+  if(!f.selectedMonth)f.selectedMonth=finCurrentMonth();
+  if(!Array.isArray(f.archivedMonths))f.archivedMonths=[];
+  if(!f.categories||typeof f.categories!=='object')f.categories={};
+  ['expense','income','investment'].forEach(k=>{if(!Array.isArray(f.categories[k]))f.categories[k]=[...FIN_DEFAULT_CATS[k]];});
+  if(f.categoryManagerOpen==null)f.categoryManagerOpen=false;
+  if(!['dashboard','transactions','investments','savings','debts','tasks'].includes(f.view))f.view='dashboard';
+  if(!f.debtMode)f.debtMode='active';
+  if(!Array.isArray(f.accounts))f.accounts=[];
+  if(!Array.isArray(f.transactions))f.transactions=[];
+  if(!Array.isArray(f.investments))f.investments=[];
+  if(!Array.isArray(f.savings))f.savings=[];
+  if(!Array.isArray(f.debts))f.debts=[];
+  if(!f.calc||typeof f.calc!=='object')f.calc={date:iso(new Date()),fromAccount:'',toAccount:'',amount:'',received:'',note:''};
+  return f;
+}
+function finCatTypeForTxn(type){return type==='expense'?'expense':'income';}
+function finCats(type){const f=finData();return f.categories[type]||[];}
+function finCatOptions(type,selected=''){
+  const arr=finCats(type);
+  if(selected&&!arr.includes(selected))arr.unshift(selected);
+  return arr.map(c=>`<option value="${esc(c)}" ${selected===c?'selected':''}>${esc(c)}</option>`).join('');
+}
+function finAddCategory(type,name){
+  const f=finData(),v=String(name||'').trim();if(!v)return false;
+  f.categories[type]=f.categories[type]||[];
+  if(!f.categories[type].includes(v))f.categories[type].push(v);
+  save();return true;
+}
+function finRemoveCategory(type,name){
+  const f=finData();f.categories[type]=(f.categories[type]||[]).filter(x=>x!==name);save();
+}
+function finAcc(id){return finData().accounts.find(a=>a.id===id);}
+function finAccName(id){const a=finAcc(id);return a?a.name:'—';}
+function finAccountBalance(a){
+  let b=finNum(a.opening);
+  finData().transactions.forEach(t=>{
+    if((t.type==='income'||t.type==='investment_income')&&t.toAccount===a.id&&t.currency===a.currency)b+=finPos(t.amount);
+    if(t.type==='expense'&&t.fromAccount===a.id&&t.currency===a.currency)b-=finPos(t.amount);
+    if(t.type==='transfer'){
+      if(t.fromAccount===a.id&&t.currency===a.currency)b-=finPos(t.amount);
+      if(t.toAccount===a.id&&t.receivedCurrency===a.currency)b+=finPos(t.received);
+    }
+  });
+  return b;
+}
+function finTxnMonth(cur,month){
+  let income=0,expense=0;
+  finData().transactions.forEach(t=>{
+    if(!String(t.date||'').startsWith(month)||t.currency!==cur)return;
+    if(t.type==='income'||t.type==='investment_income')income+=finPos(t.amount);
+    if(t.type==='expense')expense+=finPos(t.amount);
+  });
+  return{income,expense,net:income-expense};
+}
+function finSavingsGroups(){
+  const groups={};
+  finData().savings.forEach(x=>{
+    const c=x.currency||'PLN';groups[c]=groups[c]||{saved:0,target:0};
+    groups[c].saved+=finPos(x.saved);groups[c].target+=finPos(x.target);
+  });
+  return groups;
+}
+function finInvestmentGroups(){
+  const groups={};
+  finData().investments.forEach(x=>{
+    const c=x.currency||'PLN';groups[c]=groups[c]||{amount:0,income:0};
+    groups[c].amount+=finPos(x.amount);
+  });
+  finData().transactions.forEach(t=>{
+    if(t.type!=='investment_income')return;
+    const c=t.currency||'PLN';groups[c]=groups[c]||{amount:0,income:0};groups[c].income+=finPos(t.amount);
+  });
+  return groups;
+}
+function finGroupDisplay(groups,key){
+  const rows=FIN_CURRENCIES.filter(c=>groups[c]&&finPos(groups[c][key])>0).map(c=>`<span>${finFmt(groups[c][key])} ${c}</span>`);
+  return rows.length?rows.join('<br>'):'0';
+}
+function finInvestmentIncome(id){
+  let n=0;finData().transactions.forEach(t=>{if(t.type==='investment_income'&&t.investmentId===id)n+=finPos(t.amount);});return n;
+}
+function finInvestmentIncomeByCurrency(id){
+  const out={};
+  finData().transactions.forEach(t=>{if(t.type==='investment_income'&&t.investmentId===id){out[t.currency]=(out[t.currency]||0)+finPos(t.amount);}});
+  return out;
 }
 function finDebtPct(d){
-  const t=finNum(d.total),p=d.archived?t:Math.min(finNum(d.paid),t||finNum(d.paid));
-  return t>0?Math.max(0,Math.min(100,p/t*100)):0;
+  const t=finPos(d.total),p=d.archived?t:Math.min(finPos(d.paid),t||finPos(d.paid));
+  return t?Math.max(0,Math.min(100,p/t*100)):0;
 }
-function finTotals(){
-  const f=finData(),groups={},parts=[];
-  let closed=0;
+function finDebtTotals(){
+  const f=finData(),groups={},parts=[];let closed=0,urgent=0;
   f.debts.forEach(d=>{
-    const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
-    const t=finNum(d.total);
-    let p=finNum(d.paid);
-    if(d.archived&&t>0)p=t;
-    p=Math.min(p,t||p);
+    const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN',t=finPos(d.total);
+    let p=d.archived?t:Math.min(finPos(d.paid),t||finPos(d.paid));
     groups[cur]=groups[cur]||{total:0,paid:0,remaining:0};
-    groups[cur].total+=t;
-    groups[cur].paid+=p;
-    groups[cur].remaining+=Math.max(0,t-p);
-    if(t>0)parts.push(finDebtPct(d));
-    if(d.archived)closed++;
+    groups[cur].total+=t;groups[cur].paid+=p;groups[cur].remaining+=Math.max(0,t-p);
+    if(t)parts.push(finDebtPct(d));if(d.archived)closed++;else if(d.urgent)urgent++;
   });
-  const pct=parts.length?parts.reduce((a,b)=>a+b,0)/parts.length:0;
-  return {groups,pct,closed,counted:parts.length};
+  return{groups,pct:parts.length?parts.reduce((a,b)=>a+b,0)/parts.length:0,closed,urgent,counted:parts.length};
 }
-function finGroupHTML(groups,key){
-  const rows=FIN_CURRENCIES
-    .filter(c=>groups[c]&&groups[c][key]>0)
-    .map(c=>`<span>${finFmt(groups[c][key])} ${c}</span>`);
-  return rows.length?`<div class="fin-sumlines">${rows.join('')}</div>`:`<span>0</span>`;
+function finGroupLines(groups,key){
+  const rows=FIN_CURRENCIES.filter(c=>groups[c]&&groups[c][key]).map(c=>`<span>${finFmt(groups[c][key])} ${c}</span>`);
+  return rows.length?rows.join(' · '):'0';
 }
 function finMaybeClose(d){
-  const t=finNum(d.total),p=finNum(d.paid);
-  if(t>0&&p>=t){
-    d.total=t;d.paid=t;d.archived=true;
-    if(!d.closedAt)d.closedAt=iso(new Date());
-    return true;
-  }
-  return false;
+  const t=finPos(d.total),p=finPos(d.paid);
+  if(t&&p>=t){d.paid=t;d.archived=true;if(!d.closedAt)d.closedAt=iso(new Date());return true;}return false;
 }
-function finProgressHTML(t){
-  const pct=Math.round(t.pct*10)/10;
-  const dash=326.73;
-  const off=dash-(dash*(pct/100));
-  return `<div class="card fin-head">
-    <div class="fin-overview">
-      <div class="fin-ring ${pct>=100&&t.counted>0?'done':''}" id="finRing">
-        <svg viewBox="0 0 120 120" aria-label="Прогрес погашення">
-          <circle class="track" cx="60" cy="60" r="52"></circle>
-          <circle class="prog" id="finRingProg" cx="60" cy="60" r="52" style="stroke-dashoffset:${off}"></circle>
-        </svg>
-        <div class="fin-ring-core"><div class="fin-ring-pct" id="finPct">${pct.toFixed(pct%1?1:0)}%</div><div class="fin-ring-lbl">погашено</div></div>
-        <div class="fin-sparks"><i></i><i></i><i></i><i></i></div>
+function finMonthKeys(){
+  const f=finData(),set=new Set([f.selectedMonth,finCurrentMonth(),...(f.archivedMonths||[])]);
+  f.transactions.forEach(t=>{if(/^\d{4}-\d{2}/.test(t.date||''))set.add(t.date.slice(0,7));});
+  f.investments.forEach(t=>{if(/^\d{4}-\d{2}/.test(t.date||''))set.add(t.date.slice(0,7));});
+  return [...set].filter(Boolean).sort().reverse();
+}
+function finMonthBarHTML(){
+  const f=finData(),m=f.selectedMonth||finCurrentMonth(),arch=f.archivedMonths.includes(m),isCurrent=m===finCurrentMonth();
+  return `<div class="fin-monthbar">
+    <button data-finmonthshift="-1">‹</button>
+    <select id="finMonthSelect">${finMonthKeys().map(k=>`<option value="${k}" ${k===m?'selected':''}>${finMonthLabel(k)}${f.archivedMonths.includes(k)?' · архів':''}</option>`).join('')}</select>
+    <button data-finmonthshift="1">›</button>
+    <span class="fin-month-badge ${arch?'arch':''}">${arch?'АРХІВ':'АКТИВНИЙ'}</span>
+    <button class="fin-month-archive ${isCurrent&&!arch?'disabled':''}" id="finMonthArchive">${arch?'↺ Повернути з архіву':isCurrent?'Поточний місяць':'Архівувати місяць'}</button>
+  </div>`;
+}
+function bindFinMonthBar(){
+  const f=finData(),sel=document.getElementById('finMonthSelect');
+  if(sel)sel.onchange=()=>{f.selectedMonth=sel.value;save();rSph();};
+  document.querySelectorAll('[data-finmonthshift]').forEach(e=>e.onclick=()=>{f.selectedMonth=finShiftMonth(f.selectedMonth,Number(e.dataset.finmonthshift)||0);save();rSph();});
+  const b=document.getElementById('finMonthArchive');
+  if(b)b.onclick=()=>{
+    const m=f.selectedMonth;
+    if(m===finCurrentMonth()&&!f.archivedMonths.includes(m))return;
+    if(f.archivedMonths.includes(m))f.archivedMonths=f.archivedMonths.filter(x=>x!==m);
+    else f.archivedMonths.push(m);
+    f.archivedMonths=[...new Set(f.archivedMonths)].sort();save();rSph();
+  };
+}
+function finNavHTML(f){
+  const active=f.debts.filter(d=>!d.archived).length;
+  return `<div class="fin-app fin-simple-app">
+    <nav class="fin-topnav">
+      <div class="fin-topnav-main">
+        <button class="${f.view==='dashboard'?'on':''}" data-finview="dashboard">Огляд</button>
+        <button class="${f.view==='transactions'?'on':''}" data-finview="transactions">Операції</button>
+        <button class="${f.view==='investments'?'on':''}" data-finview="investments">Інвестиції</button>
+        <button class="${f.view==='savings'?'on':''}" data-finview="savings">Накопичення</button>
       </div>
-      <div>
-        <div class="fin-stats">
-          <div class="fin-stat"><div class="v" id="finTotal">${finGroupHTML(t.groups,'total')}</div><div class="l">Загальна сума боргів</div></div>
-          <div class="fin-stat paid"><div class="v" id="finPaid">${finGroupHTML(t.groups,'paid')}</div><div class="l">Вже погашено</div></div>
-          <div class="fin-stat rem"><div class="v" id="finRemain">${finGroupHTML(t.groups,'remaining')}</div><div class="l">Залишилось</div></div>
-        </div>
-        <div class="fin-barbox">
-          <div class="fin-bar"><div class="fin-bar-fill" id="finBar" style="width:${pct}%"></div></div>
-          <div class="fin-marks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-        </div>
-        <div class="fin-tools">
-          <span class="hint" style="margin:0">${t.closed} закритих · архів теж залишається у загальному прогресі.</span>
-        </div>
-        <div class="fin-progress-rule">Якщо борги в різних валютах, суми не змішуються. Загальний відсоток — середній прогрес усіх боргів із вказаною сумою.</div>
+      <div class="fin-topnav-extra">
+        <button class="${f.view==='debts'?'on':''}" data-finview="debts">Борги${active?` · ${active}`:''}</button>
+        <button class="${f.view==='tasks'?'on':''}" data-finview="tasks">Завдання</button>
       </div>
+    </nav>
+    <div class="fin-page" id="finPage"></div>
+  </div>`;
+}
+function finLineChartHTML(cur,month){
+  const [y,m]=month.split('-').map(Number),days=new Date(y,m,0).getDate();
+  const vals=[];
+  for(let d=1;d<=days;d++){
+    const k=`${month}-${String(d).padStart(2,'0')}`;let inc=0,exp=0;
+    finData().transactions.forEach(t=>{
+      if(t.date!==k||t.currency!==cur)return;
+      if(t.type==='income'||t.type==='investment_income')inc+=finPos(t.amount);
+      if(t.type==='expense')exp+=finPos(t.amount);
+    });
+    vals.push({d,inc,exp});
+  }
+  const max=Math.max(1,...vals.flatMap(v=>[v.inc,v.exp]));
+  const W=720,H=220,L=48,R=18,T=15,B=35,PW=W-L-R,PH=H-T-B;
+  const pt=(i,v)=>`${(L+(vals.length===1?0:i/(vals.length-1)*PW)).toFixed(1)},${(T+(1-v/max)*PH).toFixed(1)}`;
+  const incPts=vals.map((v,i)=>pt(i,v.inc)).join(' ');
+  const expPts=vals.map((v,i)=>pt(i,v.exp)).join(' ');
+  const guides=[0,.25,.5,.75,1].map(q=>{
+    const yy=(T+(1-q)*PH).toFixed(1),val=finFmt(max*q);
+    return `<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" class="guide"/><text x="${L-7}" y="${Number(yy)+3}" text-anchor="end">${val}</text>`;
+  }).join('');
+  const labels=vals.map((v,i)=>{
+    if(v.d!==1&&v.d!==days&&v.d%5!==0)return'';
+    const x=(L+(vals.length===1?0:i/(vals.length-1)*PW)).toFixed(1);
+    return `<text x="${x}" y="${H-10}" text-anchor="middle">${v.d}</text>`;
+  }).join('');
+  return `<div class="fin-line-scroll"><svg class="fin-line-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <g class="grid">${guides}</g>
+    <polyline class="income-line" points="${incPts}"></polyline>
+    <polyline class="expense-line" points="${expPts}"></polyline>
+    <g class="axis-labels">${labels}</g>
+  </svg></div>
+  <div class="fin-chart-leg"><span><i class="inc"></i>Дохід</span><span><i class="exp"></i>Витрати</span><span class="fin-muted">${finMonthLabel(month)} · ${cur}</span></div>`;
+}
+function finAccountsHTML(){
+  const f=finData();
+  return `<div class="fin-accounts">
+    ${f.accounts.map(a=>`<div class="fin-account">
+      <div class="fin-account-top"><input data-faname="${a.id}" value="${esc(a.name)}" placeholder="Назва рахунку"><select data-facur="${a.id}">${FIN_CURRENCIES.map(c=>`<option ${a.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="fin-account-bal">${finFmt(finAccountBalance(a))} <small>${a.currency}</small></div>
+      <label>Стартовий баланс <input type="number" step="any" data-faopen="${a.id}" value="${a.opening||0}"></label>
+      <button class="fin-icon-btn danger" data-fadel="${a.id}" title="Видалити рахунок">×</button>
+    </div>`).join('')}
+    <button class="fin-add-account" id="finAddAccount">＋ Рахунок</button>
+  </div>`;
+}
+function finQuickTransferHTML(){
+  const f=finData(),c=f.calc||{},fa=finAcc(c.fromAccount)||f.accounts[0],ta=finAcc(c.toAccount)||f.accounts[1]||f.accounts[0];
+  const amount=finPos(c.amount),received=finPos(c.received),rate=amount&&received?received/amount:0;
+  return `<div class="fin-quick-transfer">
+    <div class="fin-section-head"><div><span class="fin-kicker">ТОЧНА КОНВЕРТАЦІЯ</span><h3>Переказ між рахунками</h3></div><div class="fin-rate" id="finRatePreview">${rate?`1 ${fa?fa.currency:''} = ${finFmt(rate)} ${ta?ta.currency:''}`:'вкажи відправлено й отримано'}</div></div>
+    <div class="fin-transfer-grid">
+      <label>Дата<input type="date" id="finTrDate" value="${c.date||iso(new Date())}"></label>
+      <label>З рахунку<select id="finTrFrom">${f.accounts.map(a=>`<option value="${a.id}" ${fa&&fa.id===a.id?'selected':''}>${esc(a.name)} · ${a.currency}</option>`).join('')}</select></label>
+      <label>На рахунок<select id="finTrTo">${f.accounts.map(a=>`<option value="${a.id}" ${ta&&ta.id===a.id?'selected':''}>${esc(a.name)} · ${a.currency}</option>`).join('')}</select></label>
+      <label>Відправлено<input type="number" step="any" id="finTrAmount" value="${c.amount||''}" placeholder="0"></label>
+      <label>Прийшло<input type="number" step="any" id="finTrReceived" value="${c.received||''}" placeholder="0"></label>
+      <label class="wide">Примітка<input id="finTrNote" value="${esc(c.note||'')}" placeholder="Напр. PKO → Monobank"></label>
+    </div>
+    <button class="addbtn" id="finSaveTransfer">＋ Записати переказ</button>
+    <div class="hint">Курс вручну не вводиться: система рахує його з фактично відправленої та фактично отриманої суми.</div>
+  </div>`;
+}
+function finDashboardHTML(){
+  const f=finData(),cur=f.chartCurrency||'PLN',month=f.selectedMonth||finCurrentMonth(),
+        m=finTxnMonth(cur,month),inv=finInvestmentGroups(),sav=finSavingsGroups();
+
+  const accSummary=FIN_CURRENCIES.map(c=>{
+    const total=f.accounts.filter(a=>a.currency===c).reduce((n,a)=>n+finAccountBalance(a),0);
+    return total?`${finFmt(total)} ${c}`:'';
+  }).filter(Boolean).join(' · ')||'0';
+
+  return `<div class="fin-dashboard fin-dashboard-simple">
+    <div class="fin-dashboard-head simple">
+      <div><h2>Фінанси</h2><p>Короткий огляд місяця. Деталі відкриваються через кнопки зверху.</p></div>
+      <label class="fin-currency-filter">Валюта графіка<select id="finChartCurrency">${FIN_CURRENCIES.map(c=>`<option ${cur===c?'selected':''}>${c}</option>`).join('')}</select></label>
+    </div>
+
+    ${finMonthBarHTML()}
+
+    <div class="fin-summary-grid simple">
+      <button class="fin-summary income" data-finview-jump="transactions"><span>Дохід</span><b>${finFmt(m.income)} ${cur}</b></button>
+      <button class="fin-summary expense" data-finview-jump="transactions"><span>Витрати</span><b>${finFmt(m.expense)} ${cur}</b></button>
+      <button class="fin-summary net ${m.net<0?'negative':''}" data-finview-jump="transactions"><span>Результат</span><b>${m.net>=0?'+':''}${finFmt(m.net)} ${cur}</b></button>
+    </div>
+
+    <div class="card fin-card fin-graph-main">
+      <div class="fin-section-head"><div><h3>Дохід / витрати</h3><span class="fin-sub">${finMonthLabel(month)}</span></div></div>
+      ${finLineChartHTML(cur,month)}
+    </div>
+
+    <div class="fin-quick-grid">
+      <button class="fin-quick-tile" data-finview-jump="transactions"><span>Рахунки</span><b>${accSummary}</b><small>операції та конвертація</small></button>
+      <button class="fin-quick-tile save" data-finview-jump="savings"><span>Відкладено</span><b>${finGroupDisplay(sav,'saved')}</b><small>усі цілі</small></button>
+      <button class="fin-quick-tile invest" data-finview-jump="investments"><span>Інвестиції</span><b>${finGroupDisplay(inv,'amount')}</b><small>дохід: ${finGroupDisplay(inv,'income')}</small></button>
+    </div>
+
+    <div class="fin-dashboard-actions">
+      <button class="addbtn" data-finview-jump="transactions">＋ Додати операцію</button>
+      <button class="dbtn" data-finview-jump="transactions">⇄ Переказ / конвертер</button>
     </div>
   </div>`;
+}
+function finCategoryManagerHTML(){
+  const f=finData();
+  if(!f.categoryManagerOpen)return'';
+  const section=(type,title)=>`<div class="fin-cat-section"><h4>${title}</h4><div class="fin-cat-list">${finCats(type).map(c=>`<span>${esc(c)}<button data-fcatdel="${type}|${encodeURIComponent(c)}">×</button></span>`).join('')}</div><div class="fin-cat-add"><input data-fcatnew="${type}" placeholder="Нова категорія"><button data-fcatadd="${type}">＋</button></div></div>`;
+  return `<div class="fin-category-manager"><div class="fin-section-head"><div><span class="fin-kicker">СПИСОК</span><h3>Категорії</h3></div><button class="fin-mini-link" id="finCloseCats">Сховати</button></div><div class="fin-cat-grid">${section('expense','Витрати')}${section('income','Доходи')}${section('investment','Інвестиції')}</div></div>`;
+}
+function finTxnFormHTML(){
+  const f=finData();
+  return `<div class="card fin-card">
+    <div class="fin-section-head"><div><span class="fin-kicker">НОВА ОПЕРАЦІЯ</span><h3>Дохід / витрата / переказ</h3></div><button class="fin-mini-link" id="finCatsToggle">Категорії ⚙</button></div>
+    <div class="fin-txn-form">
+      <label>Дата<input type="date" id="ftDate" value="${iso(new Date())}"></label>
+      <label>Тип<select id="ftType"><option value="expense">Витрата</option><option value="income">Дохід</option><option value="investment_income">Дохід з інвестицій</option><option value="transfer">Переказ / конвертація</option></select></label>
+      <label>Категорія<select id="ftCategory">${finCatOptions('expense','')}</select></label>
+      <label class="ft-invest-only hidden">Інвестиція<select id="ftInvestment"><option value="">— вибери інвестицію —</option>${f.investments.map(x=>`<option value="${x.id}">${esc(x.name)} · ${x.currency}</option>`).join('')}</select></label>
+      <label>З рахунку<select id="ftFrom"><option value="">—</option>${f.accounts.map(a=>`<option value="${a.id}">${esc(a.name)} · ${a.currency}</option>`).join('')}</select></label>
+      <label>На рахунок<select id="ftTo"><option value="">—</option>${f.accounts.map(a=>`<option value="${a.id}">${esc(a.name)} · ${a.currency}</option>`).join('')}</select></label>
+      <label>Сума<input type="number" step="any" id="ftAmount" placeholder="0"></label>
+      <label>Валюта<select id="ftCurrency">${FIN_CURRENCIES.map(c=>`<option ${c===f.defaultCurrency?'selected':''}>${c}</option>`).join('')}</select></label>
+      <label class="ft-transfer-only">Отримано (для переказу)<input type="number" step="any" id="ftReceived" placeholder="0"></label>
+      <label class="ft-transfer-only">Валюта отримання<select id="ftReceivedCurrency">${FIN_CURRENCIES.map(c=>`<option ${c===f.defaultCurrency?'selected':''}>${c}</option>`).join('')}</select></label>
+      <label class="wide">Примітка<input id="ftNote" placeholder="Необов'язково"></label>
+    </div>
+    <button class="addbtn" id="ftAdd">＋ Додати операцію</button>
+    ${finCategoryManagerHTML()}
+  </div>`;
+}
+function finTransactionRow(t){
+  const rate=t.type==='transfer'&&finPos(t.amount)&&finPos(t.received)?finPos(t.received)/finPos(t.amount):0;
+  const inv=t.investmentId?finData().investments.find(x=>x.id===t.investmentId):null;
+  return `<div class="fin-txn-row ${t.type}">
+    <div class="fin-txn-icon">${FIN_TYPES[t.type]?.icon||'•'}</div>
+    <div class="fin-txn-main"><b>${esc(t.category||FIN_TYPES[t.type]?.label||'Операція')}</b><span>${t.date} · ${t.type==='transfer'?`${esc(finAccName(t.fromAccount))} → ${esc(finAccName(t.toAccount))}`:(t.type==='expense'?esc(finAccName(t.fromAccount)):esc(finAccName(t.toAccount)))}</span>${inv?`<small>Інвестиція: ${esc(inv.name)}</small>`:''}${t.note?`<small>${esc(t.note)}</small>`:''}</div>
+    <div class="fin-txn-money ${t.type==='expense'?'neg':''}">${t.type==='expense'?'−':t.type==='income'||t.type==='investment_income'?'+':''}${finFmt(t.amount)} ${t.currency}${t.type==='transfer'?`<small>→ ${finFmt(t.received)} ${t.receivedCurrency}${rate?` · курс ${finFmt(rate)}`:''}</small>`:''}</div>
+    <button class="fin-icon-btn danger" data-ftdel="${t.id}">×</button>
+  </div>`;
+}
+function finTransactionsHTML(){
+  const f=finData(),month=f.selectedMonth||finCurrentMonth();
+  const list=[...f.transactions].filter(t=>String(t.date||'').startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date));
+
+  return `<div class="fin-dashboard-head simple">
+      <div><h2>Операції</h2><p>Усі детальні функції залишились, але сховані у компактні блоки.</p></div>
+    </div>
+
+    ${finMonthBarHTML()}
+
+    <details class="fin-fold" open>
+      <summary>＋ Додати операцію</summary>
+      <div class="fin-fold-body">${finTxnFormHTML()}</div>
+    </details>
+
+    <details class="fin-fold">
+      <summary>⇄ Переказ / конвертація валют</summary>
+      <div class="fin-fold-body"><div class="card fin-card">${finQuickTransferHTML()}</div></div>
+    </details>
+
+    <div class="card fin-card">
+      <div class="fin-section-head"><div><h3>Операції · ${finMonthLabel(month)}</h3></div><span class="fin-muted">${list.length}</span></div>
+      <div class="fin-txn-list">${list.length?list.map(finTransactionRow).join(''):'<div class="empty">У цьому місяці операцій ще немає.</div>'}</div>
+    </div>
+
+    <details class="fin-fold">
+      <summary>▣ Рахунки та стартові баланси</summary>
+      <div class="fin-fold-body"><div class="card fin-card">${finAccountsHTML()}</div></div>
+    </details>`;
+}
+function finInvestmentsHTML(){
+  const f=finData(),month=f.selectedMonth||finCurrentMonth();
+  const list=f.investments.filter(x=>String(x.date||'').startsWith(month));
+
+  return `<div class="fin-dashboard-head simple"><div><h2>Інвестиції</h2><p>Дата, категорія, сума та автоматичний чистий дохід.</p></div></div>
+    ${finMonthBarHTML()}
+
+    <details class="fin-fold" open>
+      <summary>＋ Додати інвестицію</summary>
+      <div class="fin-fold-body">
+        <div class="card fin-card">
+          <div class="fin-section-head"><div><h3>Нова інвестиція</h3></div><button class="fin-mini-link" id="finCatsToggle">Категорії ⚙</button></div>
+          <div class="fin-txn-form invest-form">
+            <label>Дата<input type="date" id="fiDate" value="${iso(new Date())}"></label>
+            <label>Назва<input id="fiName" placeholder="Напр. S&P 500 ETF"></label>
+            <label>Категорія<select id="fiCategory">${finCatOptions('investment','')}</select></label>
+            <label>Сума<input type="number" step="any" id="fiAmount" placeholder="0"></label>
+            <label>Валюта<select id="fiCurrency">${FIN_CURRENCIES.map(c=>`<option>${c}</option>`).join('')}</select></label>
+            <label>Примітка<input id="fiNote" placeholder="Необов'язково"></label>
+          </div>
+          <button class="addbtn" id="fiAdd">＋ Додати</button>
+          ${finCategoryManagerHTML()}
+        </div>
+      </div>
+    </details>
+
+    <div class="fin-invest-grid">${list.length?list.map(x=>{
+      const incomes=finInvestmentIncomeByCurrency(x.id),
+            incomeText=FIN_CURRENCIES.filter(c=>incomes[c]).map(c=>`+${finFmt(incomes[c])} ${c}`).join(' · ')||'0';
+      return `<div class="card fin-invest-card">
+        <div class="fin-invest-head"><input data-finame="${x.id}" value="${esc(x.name)}" placeholder="Назва"><span>Чистий дохід: ${incomeText}</span></div>
+        <div class="fin-invest-values"><label>Категорія<select data-ficat="${x.id}">${finCatOptions('investment',x.category)}</select></label><label>Сума<input type="number" step="any" data-fiamount="${x.id}" value="${x.amount||0}"></label></div>
+        <div class="fin-invest-foot"><input type="date" data-fidate="${x.id}" value="${x.date}"><select data-ficur="${x.id}">${FIN_CURRENCIES.map(c=>`<option ${x.currency===c?'selected':''}>${c}</option>`).join('')}</select><button class="fin-icon-btn danger" data-fidel="${x.id}">×</button></div>
+        <input class="fin-note" data-finote="${x.id}" value="${esc(x.note||'')}" placeholder="Примітка">
+      </div>`;
+    }).join(''):'<div class="card"><div class="empty">У цьому місяці інвестицій ще немає.</div></div>'}</div>`;
+}
+function finSavingsHTML(){
+  const f=finData(),groups=finSavingsGroups();
+
+  return `<div class="fin-dashboard-head simple"><div><h2>Накопичення</h2><p>Скільки вже відкладено і прогрес до кожної цілі.</p></div></div>
+
+    <div class="fin-save-overview">${FIN_CURRENCIES.map(c=>groups[c]&&groups[c].saved?`<div><span>${c}</span><b>${finFmt(groups[c].saved)}</b><small>ціль ${finFmt(groups[c].target)}</small></div>`:'').join('')}</div>
+
+    <details class="fin-fold" open>
+      <summary>＋ Додати ціль</summary>
+      <div class="fin-fold-body">
+        <div class="card fin-card">
+          <div class="fin-txn-form">
+            <label>Назва цілі<input id="fsName" placeholder="Подушка, переїзд, техніка…"></label>
+            <label>Ціль<input type="number" step="any" id="fsTarget" placeholder="0"></label>
+            <label>Відкладено<input type="number" step="any" id="fsSaved" placeholder="0"></label>
+            <label>Валюта<select id="fsCurrency">${FIN_CURRENCIES.map(c=>`<option>${c}</option>`).join('')}</select></label>
+            <label>До дати<input type="date" id="fsDue"></label>
+            <label>Примітка<input id="fsNote" placeholder="Необов'язково"></label>
+          </div>
+          <button class="addbtn" id="fsAdd">＋ Додати</button>
+        </div>
+      </div>
+    </details>
+
+    <div class="fin-save-grid">${f.savings.length?f.savings.map(x=>{const p=x.target?Math.min(100,x.saved/x.target*100):0;return `<div class="card fin-save-card">
+      <div class="fin-save-head"><input data-fsname="${x.id}" value="${esc(x.name)}" placeholder="Назва цілі"><b>${Math.round(p)}%</b></div>
+      <div class="fin-save-progress"><i style="width:${p}%"></i></div>
+      <div class="fin-save-values"><label>Ціль<input type="number" step="any" data-fstarget="${x.id}" value="${x.target||0}"></label><label>Відкладено<input type="number" step="any" data-fssaved="${x.id}" value="${x.saved||0}"></label></div>
+      <div class="fin-save-foot"><select data-fscur="${x.id}">${FIN_CURRENCIES.map(c=>`<option ${x.currency===c?'selected':''}>${c}</option>`).join('')}</select><input type="date" data-fsdue="${x.id}" value="${x.due||''}"><button class="fin-icon-btn danger" data-fsdel="${x.id}">×</button></div>
+      <input class="fin-note" data-fsnote="${x.id}" value="${esc(x.note||'')}" placeholder="Примітка">
+    </div>`;}).join(''):'<div class="card"><div class="empty">Поки немає цілей накопичення.</div></div>'}</div>`;
 }
 function finDebtHTML(d){
-  const t=finNum(d.total),p=Math.min(finNum(d.paid),t||finNum(d.paid)),rem=Math.max(0,t-p),pct=finDebtPct(d);
-  const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
-  return `<div class="fin-debt" data-finrow="${d.id}">
+  const t=finPos(d.total),p=Math.min(finPos(d.paid),t||finPos(d.paid)),rem=Math.max(0,t-p),pct=finDebtPct(d);
+  return `<div class="fin-debt ${d.urgent?'urgent':''}" data-finrow="${d.id}">
+    <div class="fin-debt-head">
+      <span class="fin-debt-grip" data-fdrag="${d.id}" title="Перетягни, щоб змінити порядок"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <button class="fin-urgent ${d.urgent?'on':''}" data-furgent="${d.id}">! Терміновий</button>
+      <span class="fin-debt-pct">${Math.round(pct)}%</span>
+    </div>
     <div class="fin-debt-grid">
-      <div class="fin-field name"><label>Назва боргу / кредиту</label><input data-fname="${d.id}" value="${esc(d.name)}" placeholder="Напр. Credit 7"></div>
-      <div class="fin-field currency"><label>Валюта</label>
-        <select data-fcur="${d.id}">${FIN_CURRENCIES.map(c=>`<option value="${c}" ${cur===c?'selected':''}>${c}</option>`).join('')}</select>
-      </div>
+      <div class="fin-field name"><label>Назва боргу / кредиту</label><input data-fname="${d.id}" value="${esc(d.name)}" placeholder="Назва"></div>
+      <div class="fin-field currency"><label>Валюта</label><select data-fcur="${d.id}">${FIN_CURRENCIES.map(c=>`<option ${d.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
       <div class="fin-field total"><label>Сума боргу</label><input type="number" min="0" step="any" data-ftotal="${d.id}" value="${t||''}" placeholder="0"></div>
       <div class="fin-field paid"><label>Вже оплачено</label><input type="number" min="0" step="any" data-fpaid="${d.id}" value="${p||''}" placeholder="0"></div>
-      <div class="fin-field remain"><label>Залишок</label><div class="fin-rem" data-frem="${d.id}">${finFmt(rem)} ${cur}</div></div>
-      <div class="fin-debt-actions">
-        <button class="fin-close" data-fclose="${d.id}" title="Позначити борг повністю погашеним">✓ Закрити</button>
-        <span ${delMark('fin'+d.id)} data-fdel="${d.id}" title="Видалити борг">${delIcon('fin'+d.id)}</span>
-      </div>
+      <div class="fin-field remain"><label>Залишок</label><div class="fin-rem" data-frem="${d.id}">${finFmt(rem)} ${d.currency}</div></div>
+      <div class="fin-debt-actions"><button class="fin-close" data-fclose="${d.id}">✓ Закрити</button><span ${delMark('fin'+d.id)} data-fdel="${d.id}">${delIcon('fin'+d.id)}</span></div>
     </div>
-    <div class="fin-mini">
-      <div class="fin-mini-bar"><div class="fin-mini-fill" data-fmini="${d.id}" style="width:${pct}%"></div></div>
-      <div class="fin-mini-pct" data-fminip="${d.id}">${Math.round(pct)}%</div>
-    </div>
-    <input class="fin-note" data-fnote="${d.id}" value="${esc(d.note||'')}" placeholder="Примітка — необов'язково">
+    <div class="fin-mini"><div class="fin-mini-bar"><div class="fin-mini-fill" data-fmini="${d.id}" style="width:${pct}%"></div></div><div class="fin-mini-pct" data-fminip="${d.id}">${Math.round(pct)}%</div></div>
+    <input class="fin-note" data-fnote="${d.id}" value="${esc(d.note||'')}" placeholder="Примітка">
   </div>`;
 }
-function finArchiveHTML(list){
-  return list.length?list.slice().sort((a,b)=>(b.closedAt||'').localeCompare(a.closedAt||'')).map(d=>{
-    const t=finNum(d.total),cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
-    const date=d.closedAt?pd(d.closedAt):null;
-    const dl=date?`${date.getDate()} ${MNS[date.getMonth()]} ${date.getFullYear()}`:'дата не вказана';
-    return `<div class="fin-archive-row">
-      <div class="fin-archive-name"><b>${esc(d.name||'Без назви')}</b><span>Закрито: ${dl}${d.note?' · '+esc(d.note):''}</span></div>
-      <div class="fin-archive-amt">${finFmt(t)} ${cur}</div>
-      <div class="fin-100">100%</div>
-      <button class="fin-restore" data-frestore="${d.id}" title="Повернути до активних">↺</button>
-    </div>`;
-  }).join(''):`<div class="fin-empty">Архів поки порожній. Повністю погашені борги автоматично з'являться тут.</div>`;
+function finDebtArchiveHTML(list){
+  return list.length?list.slice().sort((a,b)=>(b.closedAt||'').localeCompare(a.closedAt||'')).map(d=>`<div class="fin-archive-row"><div class="fin-archive-name"><b>${esc(d.name||'Без назви')}</b><span>Закрито: ${d.closedAt||'—'}${d.note?' · '+esc(d.note):''}</span></div><div class="fin-archive-amt">${finFmt(d.total)} ${d.currency}</div><div class="fin-100">100%</div><button class="fin-restore" data-frestore="${d.id}">↺</button></div>`).join(''):'<div class="fin-empty">Архів поки порожній.</div>';
 }
-function updateFinanceLive(){
-  const f=finData(),t=finTotals(),pct=Math.round(t.pct*10)/10,dash=326.73;
-  const q=id=>document.getElementById(id);
-  if(q('finTotal'))q('finTotal').innerHTML=finGroupHTML(t.groups,'total');
-  if(q('finPaid'))q('finPaid').innerHTML=finGroupHTML(t.groups,'paid');
-  if(q('finRemain'))q('finRemain').innerHTML=finGroupHTML(t.groups,'remaining');
-  if(q('finPct'))q('finPct').textContent=`${pct.toFixed(pct%1?1:0)}%`;
-  if(q('finBar'))q('finBar').style.width=pct+'%';
-  if(q('finRingProg'))q('finRingProg').style.strokeDashoffset=String(dash-(dash*pct/100));
-  if(q('finRing'))q('finRing').classList.toggle('done',pct>=100&&t.counted>0);
-  f.debts.filter(d=>!d.archived).forEach(d=>{
-    const cur=FIN_CURRENCIES.includes(d.currency)?d.currency:'PLN';
-    const tt=finNum(d.total),pp=Math.min(finNum(d.paid),tt||finNum(d.paid)),rr=Math.max(0,tt-pp),dp=finDebtPct(d);
-    const re=document.querySelector(`[data-frem="${d.id}"]`);
-    const mb=document.querySelector(`[data-fmini="${d.id}"]`);
-    const mp=document.querySelector(`[data-fminip="${d.id}"]`);
-    if(re)re.textContent=`${finFmt(rr)} ${cur}`;
-    if(mb)mb.style.width=dp+'%';
-    if(mp)mp.textContent=Math.round(dp)+'%';
-  });
+function finDebtProgressHTML(){
+  const t=finDebtTotals(),pct=Math.round(t.pct*10)/10,dash=326.73,off=dash-dash*pct/100;
+  return `<div class="card fin-head"><div class="fin-overview"><div class="fin-ring ${pct>=100&&t.counted?'done':''}"><svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="52"></circle><circle class="prog" cx="60" cy="60" r="52" style="stroke-dashoffset:${off}"></circle></svg><div class="fin-ring-core"><div class="fin-ring-pct">${pct.toFixed(pct%1?1:0)}%</div><div class="fin-ring-lbl">погашено</div></div></div><div><div class="fin-stats"><div class="fin-stat"><div class="v">${finGroupLines(t.groups,'total')}</div><div class="l">Загальна сума</div></div><div class="fin-stat paid"><div class="v">${finGroupLines(t.groups,'paid')}</div><div class="l">Погашено</div></div><div class="fin-stat rem"><div class="v">${finGroupLines(t.groups,'remaining')}</div><div class="l">Залишилось</div></div></div><div class="hint">${t.urgent?'Термінових: '+t.urgent+' · ':''}закритих: ${t.closed}. Цей модуль не впливає на фінансову панель.</div></div></div></div>`;
+}
+function finDebtsHTML(){
+  const f=finData(),active=f.debts.filter(d=>!d.archived),archive=f.debts.filter(d=>d.archived);
+  return `<div class="fin-dashboard-head"><div><span class="fin-kicker">ОКРЕМИЙ МОДУЛЬ</span><h2>Борги</h2><p>Борги відокремлені від доходів, витрат, накопичень та інвестицій.</p></div></div>${finDebtProgressHTML()}<div class="fin-debt-tabs"><button class="${f.debtMode==='active'?'on':''}" data-fdebtmode="active">Активні · ${active.length}</button><button class="${f.debtMode==='archive'?'on':''}" data-fdebtmode="archive">Архів · ${archive.length}</button></div>${f.debtMode==='archive'?`<div class="card fin-card">${finDebtArchiveHTML(archive)}</div>`:`<div class="card fin-card"><div id="finDebtList">${active.length?active.map(finDebtHTML).join(''):'<div class="fin-empty">Додай перший борг.</div>'}</div><button class="addbtn" id="finAddDebt">＋ Додати борг</button><div class="hint">Перетягування — тільки за 6 крапок. Термінові борги підсвічуються легко червоним.</div></div>`}`;
 }
 function rFinance(){
-  const s=SCf(FIN_ID),f=finData(),t=finTotals();
-  const active=f.debts.filter(d=>!d.archived);
-  const archive=f.debts.filter(d=>d.archived);
-  let h=sphereHero(s)+sphControlHTML(s);
-
-  h+=`<div class="fin-tabs">
-    <button class="fin-tab ${f.view==='calc'?'on':''}" data-fview="calc">▤ Розрахунок</button>
-    <button class="fin-tab ${f.view==='archive'?'on':''}" data-fview="archive">✓ Архів · ${archive.length}</button>
-  </div>`;
-
-  h+=finProgressHTML(t);
-
-  if(f.view==='archive'){
-    h+=`<div class="card">
-      <h3 style="color:var(--green-bright)">✓ Історія закритих боргів <span class="sub">${archive.length} закрито</span></h3>
-      ${finArchiveHTML(archive)}
-      <div class="hint">Архів нічого не віднімає від загальної шкали: закритий борг назавжди залишається як 100% погашений у загальній статистиці.</div>
-    </div>`;
-  }else{
-    h+=`<div class="card">
-      <h3>▤ Розрахунок <span class="sub">${active.length} активних</span></h3>
-      <div id="finDebtList">${active.length?active.map(finDebtHTML).join(''):`<div class="fin-empty">Додай перший борг. Після цього загальний прогрес почне рахуватися автоматично.</div>`}</div>
-      <button class="addbtn" id="finAdd">+ Додати борг / кредит</button>
-      <div class="hint">Для кожного боргу вибирай власну валюту. Коли «Оплачено» дорівнює повній сумі, позиція автоматично переходить в архів і продовжує враховуватись як 100%.</div>
-    </div>
-    <div class="card">
-      <h3>✎ Фінансова нотатка</h3>
-      <textarea class="fin-note-box" id="finNote" placeholder="Домовленості, дати, важливі примітки…">${esc(f.note||'')}</textarea>
-    </div>`;
-  }
-
-  document.getElementById('sphDetail').innerHTML=h;
+  const s=SCf(FIN_ID),f=finData();
+  document.getElementById('sphDetail').innerHTML=sphereHero(s)+sphControlHTML(s)+finNavHTML(f);
   bindSphControl();
-
-  document.querySelectorAll('[data-fview]').forEach(e=>e.onclick=()=>{f.view=e.dataset.fview;save();rSph();});
-  const getD=id=>f.debts.find(x=>x.id===id);
-
-  document.querySelectorAll('[data-fname]').forEach(e=>e.oninput=()=>{const d=getD(e.dataset.fname);if(d){d.name=e.value;save();}});
-  document.querySelectorAll('[data-fnote]').forEach(e=>e.oninput=()=>{const d=getD(e.dataset.fnote);if(d){d.note=e.value;save();}});
-  document.querySelectorAll('[data-fcur]').forEach(e=>e.onchange=()=>{
-    const d=getD(e.dataset.fcur);if(!d)return;
-    d.currency=FIN_CURRENCIES.includes(e.value)?e.value:'PLN';
-    f.defaultCurrency=d.currency;
-    save();updateFinanceLive();
-  });
-  document.querySelectorAll('[data-ftotal]').forEach(e=>{
-    e.oninput=()=>{const d=getD(e.dataset.ftotal);if(d){d.total=finNum(e.value);save();updateFinanceLive();}};
-    e.onchange=()=>{const d=getD(e.dataset.ftotal);if(d&&finMaybeClose(d)){save();rSph();}};
-  });
-  document.querySelectorAll('[data-fpaid]').forEach(e=>{
-    e.oninput=()=>{const d=getD(e.dataset.fpaid);if(d){d.paid=finNum(e.value);save();updateFinanceLive();}};
-    e.onchange=()=>{const d=getD(e.dataset.fpaid);if(d&&finMaybeClose(d)){save();rSph();}};
-  });
-  document.querySelectorAll('[data-fclose]').forEach(e=>e.onclick=()=>{
-    const d=getD(e.dataset.fclose);if(!d)return;
-    const t=finNum(d.total);
-    if(!t){alert('Спочатку вкажи повну суму боргу.');return;}
-    d.paid=t;d.archived=true;d.closedAt=iso(new Date());save();rSph();
-  });
-  document.querySelectorAll('[data-frestore]').forEach(e=>e.onclick=()=>{
-    const d=getD(e.dataset.frestore);if(!d)return;
-    d.archived=false;d.closedAt='';
-    if(finNum(d.total)>0&&finNum(d.paid)>=finNum(d.total))d.paid=Math.max(0,finNum(d.total)-0.01);
-    save();rSph();
-  });
-  document.querySelectorAll('[data-fdel]').forEach(e=>e.onclick=()=>askDel('fin'+e.dataset.fdel,()=>{
-    f.debts=f.debts.filter(x=>x.id!==e.dataset.fdel);save();rSph();
-  },rSph));
-
-  const add=document.getElementById('finAdd');
-  if(add)add.onclick=()=>{
-    f.debts.push({
-      id:'fd'+Date.now(),name:'',currency:f.defaultCurrency||'PLN',
-      total:0,paid:0,note:'',archived:false,closedAt:''
-    });
-    save();rSph();
-    setTimeout(()=>{const a=[...document.querySelectorAll('[data-fname]')].pop();if(a)a.focus();},50);
+  const page=document.getElementById('finPage');
+  if(f.view==='dashboard')page.innerHTML=finDashboardHTML();
+  if(f.view==='transactions')page.innerHTML=finTransactionsHTML();
+  if(f.view==='investments')page.innerHTML=finInvestmentsHTML();
+  if(f.view==='savings')page.innerHTML=finSavingsHTML();
+  if(f.view==='debts')page.innerHTML=finDebtsHTML();
+  if(f.view==='tasks')page.innerHTML=tasksCardHTML(FIN_ID);
+  document.querySelectorAll('[data-finview]').forEach(e=>e.onclick=()=>{f.view=e.dataset.finview;save();rSph();});
+  document.querySelectorAll('[data-finview-jump]').forEach(e=>e.onclick=()=>{f.view=e.dataset.finviewJump;save();rSph();});
+  if(f.view==='dashboard')bindFinanceDashboard();
+  if(f.view==='transactions')bindFinanceTransactions();
+  if(f.view==='investments')bindFinanceInvestments();
+  if(f.view==='savings')bindFinanceSavings();
+  if(f.view==='debts')bindFinanceDebts();
+  if(f.view==='tasks')bindTasksCard(FIN_ID);
+}
+function bindFinanceAccounts(){
+  const f=finData();
+  document.querySelectorAll('[data-faname]').forEach(e=>e.oninput=()=>{const a=finAcc(e.dataset.faname);if(a){a.name=e.value;save();}});
+  document.querySelectorAll('[data-facur]').forEach(e=>e.onchange=()=>{const a=finAcc(e.dataset.facur);if(a){a.currency=e.value;save();rSph();}});
+  document.querySelectorAll('[data-faopen]').forEach(e=>e.onchange=()=>{const a=finAcc(e.dataset.faopen);if(a){a.opening=finNum(e.value);save();rSph();}});
+  document.querySelectorAll('[data-fadel]').forEach(e=>e.onclick=()=>{const id=e.dataset.fadel;if(f.accounts.length<=1){alert('Залиш хоча б один рахунок.');return;}f.accounts=f.accounts.filter(a=>a.id!==id);save();rSph();});
+  const add=document.getElementById('finAddAccount');if(add)add.onclick=()=>{f.accounts.push({id:'fa'+Date.now(),name:'Новий рахунок',currency:f.defaultCurrency||'PLN',opening:0});save();rSph();};
+}
+function bindFinanceCategoryManager(){
+  const f=finData(),toggle=document.getElementById('finCatsToggle');
+  if(toggle)toggle.onclick=()=>{f.categoryManagerOpen=!f.categoryManagerOpen;save();rSph();};
+  const close=document.getElementById('finCloseCats');if(close)close.onclick=()=>{f.categoryManagerOpen=false;save();rSph();};
+  document.querySelectorAll('[data-fcatadd]').forEach(e=>e.onclick=()=>{const type=e.dataset.fcatadd,input=document.querySelector(`[data-fcatnew="${type}"]`);if(input&&finAddCategory(type,input.value)){rSph();}});
+  document.querySelectorAll('[data-fcatdel]').forEach(e=>e.onclick=()=>{const [type,encoded]=e.dataset.fcatdel.split('|');finRemoveCategory(type,decodeURIComponent(encoded));rSph();});
+}
+function bindFinanceQuickTransfer(){
+  const f=finData(),calc=f.calc||{};
+  const syncCalc=()=>{
+    calc.date=document.getElementById('finTrDate')?.value||iso(new Date());
+    calc.fromAccount=document.getElementById('finTrFrom')?.value||'';
+    calc.toAccount=document.getElementById('finTrTo')?.value||'';
+    calc.amount=document.getElementById('finTrAmount')?.value||'';
+    calc.received=document.getElementById('finTrReceived')?.value||'';
+    calc.note=document.getElementById('finTrNote')?.value||'';
+    const fa=finAcc(calc.fromAccount),ta=finAcc(calc.toAccount),a=finPos(calc.amount),r=finPos(calc.received),pr=document.getElementById('finRatePreview');
+    if(pr)pr.textContent=a&&r?`1 ${fa?fa.currency:''} = ${finFmt(r/a)} ${ta?ta.currency:''}`:'вкажи відправлено й отримано';
+    save();
   };
-  const note=document.getElementById('finNote');
-  if(note)note.oninput=()=>{f.note=note.value;save();};
+  ['finTrDate','finTrFrom','finTrTo','finTrAmount','finTrReceived','finTrNote'].forEach(id=>{const e=document.getElementById(id);if(e)e.oninput=syncCalc;});
+  const saveTr=document.getElementById('finSaveTransfer');
+  if(saveTr)saveTr.onclick=()=>{
+    syncCalc();
+    const fa=finAcc(calc.fromAccount),ta=finAcc(calc.toAccount),a=finPos(calc.amount),r=finPos(calc.received);
+    if(!fa||!ta||!a||!r){alert('Вкажи обидва рахунки, відправлену й отриману суму.');return;}
+    f.transactions.push({id:'ft'+Date.now(),date:calc.date||iso(new Date()),type:'transfer',category:'Переказ / конвертація',investmentId:'',fromAccount:fa.id,toAccount:ta.id,amount:a,currency:fa.currency,received:r,receivedCurrency:ta.currency,note:calc.note||''});
+    calc.amount='';calc.received='';calc.note='';save();rSph();
+  };
+}
+function bindFinanceDashboard(){
+  const f=finData();bindFinMonthBar();
+  const cc=document.getElementById('finChartCurrency');if(cc)cc.onchange=()=>{f.chartCurrency=cc.value;save();rSph();};
+}
+function bindFinanceTransactions(){
+  const f=finData();bindFinMonthBar();bindFinanceAccounts();bindFinanceCategoryManager();bindFinanceQuickTransfer();
+  document.querySelectorAll('[data-ftdel]').forEach(e=>e.onclick=()=>{f.transactions=f.transactions.filter(t=>t.id!==e.dataset.ftdel);save();rSph();});
+  const type=document.getElementById('ftType'),cat=document.getElementById('ftCategory');
+  const syncType=()=>{
+    const v=type.value,ct=finCatTypeForTxn(v);
+    cat.innerHTML=finCatOptions(ct,v==='investment_income'?'Дохід з інвестицій':'');
+    document.querySelectorAll('.ft-invest-only').forEach(x=>x.classList.toggle('hidden',v!=='investment_income'));
+    document.querySelectorAll('.ft-transfer-only').forEach(x=>x.classList.toggle('hidden',v!=='transfer'));
+  };
+  if(type){type.onchange=syncType;syncType();}
+  const add=document.getElementById('ftAdd');if(add)add.onclick=()=>{
+    const t=type.value,amount=finPos(document.getElementById('ftAmount').value);if(!amount){alert('Вкажи суму.');return;}
+    const invId=t==='investment_income'?(document.getElementById('ftInvestment').value||''):'';
+    if(t==='investment_income'&&!invId){alert('Вибери інвестицію, до якої належить цей дохід.');return;}
+    f.transactions.push({id:'ft'+Date.now(),date:document.getElementById('ftDate').value||iso(new Date()),type:t,category:cat.value||FIN_TYPES[t].label,investmentId:invId,fromAccount:document.getElementById('ftFrom').value,toAccount:document.getElementById('ftTo').value,amount,currency:document.getElementById('ftCurrency').value,received:finPos(document.getElementById('ftReceived').value),receivedCurrency:document.getElementById('ftReceivedCurrency').value,note:document.getElementById('ftNote').value||''});save();rSph();
+  };
+}
+function bindFinanceInvestments(){
+  const f=finData(),get=id=>f.investments.find(x=>x.id===id);bindFinMonthBar();bindFinanceCategoryManager();
+  const add=document.getElementById('fiAdd');if(add)add.onclick=()=>{const name=document.getElementById('fiName').value.trim();if(!name){alert('Вкажи назву.');return;}f.investments.push({id:'fi'+Date.now(),date:document.getElementById('fiDate').value||iso(new Date()),name,category:document.getElementById('fiCategory').value||'Інше',amount:finPos(document.getElementById('fiAmount').value),currency:document.getElementById('fiCurrency').value,note:document.getElementById('fiNote').value||''});save();rSph();};
+  document.querySelectorAll('[data-finame]').forEach(e=>e.oninput=()=>{const x=get(e.dataset.finame);if(x){x.name=e.value;save();}});
+  document.querySelectorAll('[data-ficat]').forEach(e=>e.onchange=()=>{const x=get(e.dataset.ficat);if(x){x.category=e.value;save();}});
+  document.querySelectorAll('[data-fiamount]').forEach(e=>e.onchange=()=>{const x=get(e.dataset.fiamount);if(x){x.amount=finPos(e.value);save();rSph();}});
+  document.querySelectorAll('[data-fidate]').forEach(e=>e.onchange=()=>{const x=get(e.dataset.fidate);if(x){x.date=e.value;save();rSph();}});
+  document.querySelectorAll('[data-ficur]').forEach(e=>e.onchange=()=>{const x=get(e.dataset.ficur);if(x){x.currency=e.value;save();rSph();}});
+  document.querySelectorAll('[data-finote]').forEach(e=>e.oninput=()=>{const x=get(e.dataset.finote);if(x){x.note=e.value;save();}});
+  document.querySelectorAll('[data-fidel]').forEach(e=>e.onclick=()=>{const id=e.dataset.fidel;f.investments=f.investments.filter(x=>x.id!==id);f.transactions=f.transactions.map(t=>t.investmentId===id?{...t,investmentId:''}:t);save();rSph();});
+}
+function bindFinanceSavings(){
+  const f=finData(),get=id=>f.savings.find(x=>x.id===id);
+  const add=document.getElementById('fsAdd');if(add)add.onclick=()=>{const name=document.getElementById('fsName').value.trim();if(!name){alert('Вкажи назву цілі.');return;}f.savings.push({id:'fs'+Date.now(),name,target:finPos(document.getElementById('fsTarget').value),saved:finPos(document.getElementById('fsSaved').value),currency:document.getElementById('fsCurrency').value,due:document.getElementById('fsDue').value||'',note:document.getElementById('fsNote').value||''});save();rSph();};
+  document.querySelectorAll('[data-fsname]').forEach(e=>e.oninput=()=>{get(e.dataset.fsname).name=e.value;save();});
+  document.querySelectorAll('[data-fstarget]').forEach(e=>e.onchange=()=>{get(e.dataset.fstarget).target=finPos(e.value);save();rSph();});
+  document.querySelectorAll('[data-fssaved]').forEach(e=>e.onchange=()=>{get(e.dataset.fssaved).saved=finPos(e.value);save();rSph();});
+  document.querySelectorAll('[data-fscur]').forEach(e=>e.onchange=()=>{get(e.dataset.fscur).currency=e.value;save();rSph();});
+  document.querySelectorAll('[data-fsdue]').forEach(e=>e.onchange=()=>{get(e.dataset.fsdue).due=e.value;save();});
+  document.querySelectorAll('[data-fsnote]').forEach(e=>e.oninput=()=>{get(e.dataset.fsnote).note=e.value;save();});
+  document.querySelectorAll('[data-fsdel]').forEach(e=>e.onclick=()=>{f.savings=f.savings.filter(x=>x.id!==e.dataset.fsdel);save();rSph();});
+}
+function bindFinanceDebts(){
+  const f=finData(),get=id=>f.debts.find(x=>x.id===id);
+  document.querySelectorAll('[data-fdebtmode]').forEach(e=>e.onclick=()=>{f.debtMode=e.dataset.fdebtmode;save();rSph();});
+  document.querySelectorAll('[data-fname]').forEach(e=>e.oninput=()=>{const d=get(e.dataset.fname);if(d){d.name=e.value;save();}});
+  document.querySelectorAll('[data-fnote]').forEach(e=>e.oninput=()=>{const d=get(e.dataset.fnote);if(d){d.note=e.value;save();}});
+  document.querySelectorAll('[data-fcur]').forEach(e=>e.onchange=()=>{const d=get(e.dataset.fcur);if(d){d.currency=e.value;save();rSph();}});
+  document.querySelectorAll('[data-ftotal]').forEach(e=>{e.oninput=()=>{const d=get(e.dataset.ftotal);if(d){d.total=finPos(e.value);save();}};e.onchange=()=>{const d=get(e.dataset.ftotal);if(d&&finMaybeClose(d)){save();rSph();}else rSph();};});
+  document.querySelectorAll('[data-fpaid]').forEach(e=>{e.oninput=()=>{const d=get(e.dataset.fpaid);if(d){d.paid=finPos(e.value);save();}};e.onchange=()=>{const d=get(e.dataset.fpaid);if(d&&finMaybeClose(d)){save();rSph();}else rSph();};});
+  document.querySelectorAll('[data-furgent]').forEach(e=>e.onclick=()=>{const d=get(e.dataset.furgent);if(d){d.urgent=!d.urgent;save();rSph();}});
+  document.querySelectorAll('[data-fclose]').forEach(e=>e.onclick=()=>{const d=get(e.dataset.fclose);if(!d)return;const t=finPos(d.total);if(!t){alert('Спочатку вкажи суму боргу.');return;}d.paid=t;d.archived=true;d.closedAt=iso(new Date());save();rSph();});
+  document.querySelectorAll('[data-frestore]').forEach(e=>e.onclick=()=>{const d=get(e.dataset.frestore);if(!d)return;d.archived=false;d.closedAt='';if(d.total&&d.paid>=d.total)d.paid=Math.max(0,d.total-0.01);save();rSph();});
+  document.querySelectorAll('[data-fdel]').forEach(e=>e.onclick=()=>askDel('fin'+e.dataset.fdel,()=>{f.debts=f.debts.filter(x=>x.id!==e.dataset.fdel);save();rSph();},rSph));
+  const add=document.getElementById('finAddDebt');if(add)add.onclick=()=>{f.debts.push({id:'fd'+Date.now(),name:'',currency:f.defaultCurrency||'PLN',total:0,paid:0,note:'',urgent:false,archived:false,closedAt:''});save();rSph();};
+  initDebtDrag();
+}
+let debtDragCleanup=null;
+function initDebtDrag(){
+  const list=document.getElementById('finDebtList');if(!list)return;
+  if(debtDragCleanup){try{debtDragCleanup();}catch(e){}debtDragCleanup=null;}
+  let el=null,mode='',pid=null,moved=false,sy=0;
+  const cards=()=>[...list.querySelectorAll('[data-finrow]')];
+  function begin(h,y,m,p){el=h.closest('[data-finrow]');if(!el)return;mode=m;pid=p;moved=false;sy=y;el.classList.add('debt-dragging');document.body.classList.add('debt-drag-active');}
+  function move(y){if(!el)return;if(!moved&&Math.abs(y-sy)<6)return;moved=true;const other=cards().filter(x=>x!==el);const before=other.find(x=>{const r=x.getBoundingClientRect();return y<r.top+r.height/2;});before?list.insertBefore(el,before):list.appendChild(el);}
+  function end(){if(!el)return;el.classList.remove('debt-dragging');document.body.classList.remove('debt-drag-active');if(moved){const ids=cards().map(x=>x.dataset.finrow),f=finData(),active=ids.map(id=>f.debts.find(d=>d.id===id)).filter(Boolean),arch=f.debts.filter(d=>d.archived);f.debts=[...active,...arch];save();}el=null;mode='';pid=null;moved=false;}
+  list.querySelectorAll('[data-fdrag]').forEach(h=>{h.addEventListener('touchstart',e=>{if(!e.touches[0])return;e.preventDefault();e.stopPropagation();begin(h,e.touches[0].clientY,'touch');},{passive:false});h.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')return;e.preventDefault();e.stopPropagation();begin(h,e.clientY,'pointer',e.pointerId);});});
+  const tm=e=>{if(el&&mode==='touch'&&e.touches[0]){e.preventDefault();move(e.touches[0].clientY);}},te=e=>{if(el&&mode==='touch'){e.preventDefault();end();}},pm=e=>{if(el&&mode==='pointer'&&(pid==null||e.pointerId===pid)){e.preventDefault();move(e.clientY);}},pe=e=>{if(el&&mode==='pointer'&&(pid==null||e.pointerId===pid))end();};
+  document.addEventListener('touchmove',tm,{passive:false});document.addEventListener('touchend',te,{passive:false});document.addEventListener('touchcancel',te,{passive:false});document.addEventListener('pointermove',pm,{passive:false});document.addEventListener('pointerup',pe);document.addEventListener('pointercancel',pe);
+  debtDragCleanup=()=>{document.removeEventListener('touchmove',tm);document.removeEventListener('touchend',te);document.removeEventListener('touchcancel',te);document.removeEventListener('pointermove',pm);document.removeEventListener('pointerup',pe);document.removeEventListener('pointercancel',pe);};
 }
 
 
@@ -3975,6 +5075,8 @@ function rWS(){
 }
 document.getElementById('addWs').onclick=()=>{DB.ws.push({id:'w'+Date.now(),t:'',p:2,d:false,subs:[],col:'work'});save();rWS();};
 document.getElementById('addBank').onclick=()=>{DB.ws.push({id:'w'+Date.now(),t:'',p:2,d:false,subs:[],col:'bank'});save();rWS();};
+const wsGlobalWork=document.getElementById('wsGlobalWork');
+if(wsGlobalWork)wsGlobalWork.onclick=()=>openWorkPlanner('__globalws','globalws','');
 
 function rInc(){
   document.getElementById('incGoalLbl').textContent=DB.incGoal;
