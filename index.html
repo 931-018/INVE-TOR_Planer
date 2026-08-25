@@ -5,7 +5,6 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 .fin-capital-note{margin-bottom:12px}
 .fin-capital-edit{min-height:48px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:18px;color:var(--text);outline:none}
 .fin-capital-edit:empty:before{content:attr(data-placeholder);color:var(--muted)}
-
 </style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -2010,9 +2009,64 @@ body.debt-drag-active{overscroll-behavior:none}
   .vision-hotspot:hover::after,.vision-hotspot:active::after{opacity:0}
 }
 
+/* ═══ DEADLINES · compact range calendar ═══ */
+.deadline-trigger{height:27px;min-width:28px;padding:0 7px;border:1px solid rgba(139,147,160,.22);border-radius:7px;background:rgba(10,14,20,.34);color:var(--txt-faint);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;transition:.18s;flex:none}
+.deadline-trigger:hover{border-color:rgba(212,162,78,.42);color:var(--gold-soft);background:rgba(212,162,78,.06)}
+.deadline-trigger.on{border-color:rgba(111,184,126,.34);color:var(--green-bright);background:rgba(111,184,126,.065)}
+.deadline-trigger.overdue{border-color:rgba(200,83,58,.34);color:#db8171;background:rgba(200,83,58,.07)}
+.deadline-picker{position:fixed;z-index:16020;width:min(342px,calc(100vw - 24px));padding:14px;border:1px solid rgba(212,162,78,.20);border-radius:16px;background:linear-gradient(160deg,rgba(20,26,34,.98),rgba(10,14,20,.985));box-shadow:0 24px 70px rgba(0,0,0,.58),0 0 0 1px rgba(255,255,255,.02);backdrop-filter:blur(18px);display:none;color:var(--txt)}
+.deadline-picker.on{display:block;animation:deadlineIn .16s ease-out}
+@keyframes deadlineIn{from{opacity:0;transform:translateY(5px) scale(.985)}to{opacity:1;transform:none}}
+.dl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.dl-title{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-soft)}
+.dl-close{width:30px;height:30px;border:0;border-radius:8px;background:rgba(255,255,255,.045);color:var(--txt-faint);cursor:pointer;font-size:16px}
+.dl-range{min-height:32px;display:flex;align-items:center;padding:7px 9px;margin-bottom:9px;border-radius:9px;background:rgba(111,184,126,.055);border:1px solid rgba(111,184,126,.12);font-size:12px;color:var(--green-bright)}
+.dl-month{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.dl-month button{width:31px;height:31px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--txt-dim);cursor:pointer}
+.dl-month b{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.7px;color:var(--txt)}
+.dl-week,.dl-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dl-week span{text-align:center;font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:.6px;color:var(--txt-faint);text-transform:uppercase;padding:4px 0}
+.dl-day{aspect-ratio:1/1;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--txt-dim);cursor:pointer;font-family:'Oswald',sans-serif;font-size:11px;position:relative;z-index:1}
+.dl-day:hover{border-color:rgba(212,162,78,.28);color:var(--gold-soft)}
+.dl-day.muted{opacity:.22;pointer-events:none}
+.dl-day.today:after{content:'';position:absolute;left:50%;bottom:4px;width:3px;height:3px;margin-left:-1.5px;border-radius:50%;background:var(--gold)}
+.dl-day.inrange{background:rgba(111,184,126,.10);color:#d9eadc;border-radius:5px}
+.dl-day.start,.dl-day.end{background:var(--green-deep);border-color:var(--green-bright);color:#fff;box-shadow:0 0 14px rgba(111,184,126,.18)}
+.dl-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.dl-actions button{min-height:36px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--txt-dim);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}
+.dl-actions button.primary{border-color:rgba(111,184,126,.35);color:var(--green-bright);background:rgba(111,184,126,.08)}
+.dl-actions button.danger{color:#b7867f}
+
+/* ═══ INVESTOR FOCUS TIMER ═══ */
+.today-timer-btn{width:32px;height:32px;border:1px solid rgba(111,184,126,.18);border-radius:8px;background:rgba(111,184,126,.045);color:rgba(137,211,147,.72);cursor:pointer;display:grid;place-items:center;flex:none;font-size:14px;transition:.18s}
+.today-timer-btn:hover{border-color:rgba(111,184,126,.42);color:#9be4a4;background:rgba(111,184,126,.09);box-shadow:0 0 14px rgba(111,184,126,.10)}
+.focus-timer-layer{position:fixed;inset:0;z-index:17000;display:none;overflow:hidden;background:#07100b;color:#f4f6f4}
+.focus-timer-layer.on{display:flex;align-items:center;justify-content:center}
+.focus-timer-bg{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(13px) brightness(.29) saturate(.78);transform:scale(1.04);opacity:.92}
+.focus-timer-shade{position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(26,90,48,.18),transparent 40%),linear-gradient(180deg,rgba(2,9,5,.28),rgba(2,8,5,.70))}
+.focus-timer-dollar{position:absolute;font-family:'Oswald',sans-serif;color:rgba(111,184,126,.055);font-size:clamp(110px,25vw,360px);font-weight:700;line-height:1;user-select:none;pointer-events:none}.focus-timer-dollar.d1{left:-2vw;top:-6vh;transform:rotate(-11deg)}.focus-timer-dollar.d2{right:-1vw;bottom:-10vh;transform:rotate(14deg)}
+.focus-timer-card{position:relative;z-index:2;width:min(760px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;padding:clamp(22px,5vw,48px);border:1px solid rgba(111,184,126,.18);border-radius:28px;background:linear-gradient(145deg,rgba(9,21,14,.77),rgba(7,13,10,.52));box-shadow:0 35px 100px rgba(0,0,0,.46),inset 0 0 60px rgba(65,145,80,.035);backdrop-filter:blur(10px);text-align:center}
+.ft-kicker{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(135,215,146,.72)}
+.ft-brand{font-family:'Oswald',sans-serif;font-size:clamp(20px,4vw,31px);font-weight:700;letter-spacing:5px;margin:4px 0 15px;color:#f0d39c}.ft-brand .d{color:#72d881}
+.ft-task{font-size:clamp(17px,3.2vw,25px);line-height:1.35;color:#f2f4f2;max-width:620px;margin:0 auto 18px;word-break:break-word}
+.ft-setup{display:none}.focus-timer-layer.setup .ft-setup{display:block}.focus-timer-layer.setup .ft-running{display:none}
+.ft-duration{display:flex;align-items:flex-end;justify-content:center;gap:13px;margin:20px 0 16px}.ft-unit{display:grid;gap:6px}.ft-unit label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1.7px;color:rgba(230,238,231,.48);text-transform:uppercase}.ft-unit input{width:92px;height:61px;border:1px solid rgba(111,184,126,.18);border-radius:15px;background:rgba(5,12,8,.55);color:#93e49d;text-align:center;font-family:'Oswald',sans-serif;font-size:28px;outline:none}.ft-unit input:focus{border-color:rgba(111,184,126,.55);box-shadow:0 0 0 3px rgba(111,184,126,.06)}
+.ft-colon{font-family:'Oswald',sans-serif;font-size:34px;color:rgba(111,184,126,.35);padding-bottom:12px}
+.ft-presets{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}.ft-presets button{border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.035);color:rgba(240,244,240,.62);padding:7px 11px;font-family:'Oswald',sans-serif;font-size:10px;cursor:pointer}.ft-presets button:hover{border-color:rgba(111,184,126,.35);color:#9ee6a7}
+.ft-start{min-width:210px;min-height:48px;border:1px solid rgba(111,184,126,.48);border-radius:14px;background:linear-gradient(135deg,rgba(64,156,82,.25),rgba(28,90,45,.16));color:#a8efb0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2.4px;text-transform:uppercase;cursor:pointer;box-shadow:0 0 26px rgba(63,155,80,.10)}
+.ft-running{display:block}.focus-timer-layer.setup .ft-running{display:none}
+.ft-ring{--p:0deg;width:min(360px,69vw);aspect-ratio:1;margin:8px auto 20px;border-radius:50%;padding:8px;background:conic-gradient(#73df82 var(--p),rgba(255,255,255,.055) 0);box-shadow:0 0 45px rgba(75,170,92,.09)}
+.ft-ring-inner{width:100%;height:100%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(24,62,34,.72),rgba(6,13,9,.97) 64%);border:1px solid rgba(111,184,126,.12)}
+.ft-time{font-family:'Oswald',sans-serif;font-size:clamp(62px,14vw,118px);font-weight:650;letter-spacing:1px;color:#8ee99a;font-variant-numeric:tabular-nums;text-shadow:0 0 24px rgba(111,184,126,.13);line-height:1}
+.ft-status{margin-top:10px;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(225,235,226,.43)}
+.ft-actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.ft-actions button{min-width:105px;min-height:42px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.035);color:rgba(245,247,245,.72);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;cursor:pointer}.ft-actions button:hover{border-color:rgba(111,184,126,.32);color:#a5e9ad}.ft-actions .done{border-color:rgba(111,184,126,.32);color:#9ee6a7;background:rgba(111,184,126,.08)}.ft-actions .stop{color:#c98c82}.ft-actions .mini{color:#d9c494}
+.focus-timer-mini{position:fixed;z-index:16990;right:max(14px,env(safe-area-inset-right));bottom:max(18px,calc(env(safe-area-inset-bottom) + 18px));width:112px;min-height:90px;border:1px solid rgba(111,184,126,.30);border-radius:19px;background:linear-gradient(150deg,rgba(11,26,16,.96),rgba(5,11,8,.97));box-shadow:0 18px 45px rgba(0,0,0,.44),0 0 20px rgba(111,184,126,.08);display:none;cursor:pointer;padding:10px;text-align:center;color:#93e69e;backdrop-filter:blur(12px)}
+.focus-timer-mini.on{display:block;animation:timerMiniIn .18s ease-out}@keyframes timerMiniIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+.ftm-dollar{font-family:'Oswald',sans-serif;font-size:18px;color:#69d579;line-height:1}.ftm-time{font-family:'Oswald',sans-serif;font-size:24px;font-weight:650;font-variant-numeric:tabular-nums;margin:2px 0;color:#a0edaa}.ftm-name{font-size:9px;color:rgba(237,242,238,.54);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:620px){.deadline-picker{left:12px!important;right:12px!important;bottom:max(12px,env(safe-area-inset-bottom))!important;top:auto!important;width:auto}.focus-timer-card{width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border-radius:22px;padding:22px 14px}.ft-duration{gap:9px}.ft-unit input{width:80px;height:56px;font-size:25px}.ft-actions{display:grid;grid-template-columns:1fr 1fr}.ft-actions button{min-width:0}.ft-time{font-size:clamp(58px,20vw,88px)}.today-timer-btn{width:30px;height:30px}.stage-actions{gap:4px}.deadline-trigger{padding:0 6px}}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style></head>
+</head>
 <body>
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
 <div class="bgfx" aria-hidden="true">
@@ -2298,8 +2352,45 @@ body.debt-drag-active{overscroll-behavior:none}
     Перед кожною перебудовою планера зберігай і JSON, і HTML з даними. JSON використовуй для перенесення в нову версію, HTML — як аварійну копію.</div>
 </div></div></div>
 
+
+<!-- Deadline range picker -->
+<div class="deadline-picker" id="deadlinePicker" role="dialog" aria-label="Дедлайн">
+  <div class="dl-head"><div class="dl-title">Дедлайн</div><button class="dl-close" id="dlClose" type="button">×</button></div>
+  <div class="dl-range" id="dlRange">Оберіть день або діапазон</div>
+  <div class="dl-month"><button id="dlPrev" type="button">‹</button><b id="dlMonthTitle"></b><button id="dlNext" type="button">›</button></div>
+  <div class="dl-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Нд</span></div>
+  <div class="dl-grid" id="dlGrid"></div>
+  <div class="dl-actions"><button class="danger" id="dlClear" type="button">Очистити</button><button class="primary" id="dlDone" type="button">Готово</button></div>
+</div>
+
+<!-- Investor Focus Timer -->
+<div class="focus-timer-layer" id="focusTimerLayer" role="dialog" aria-label="Investor Focus Timer">
+  <img class="focus-timer-bg" id="focusTimerBg" alt="">
+  <div class="focus-timer-shade"></div><div class="focus-timer-dollar d1">$</div><div class="focus-timer-dollar d2">$</div>
+  <div class="focus-timer-card">
+    <div class="ft-kicker">Deep Focus Session</div>
+    <div class="ft-brand">INVE<span class="d">$</span>TOR TIMER</div>
+    <div class="ft-task" id="ftTaskName">Завдання</div>
+    <div class="ft-setup">
+      <div class="ft-duration">
+        <div class="ft-unit"><label>Години</label><input id="ftHours" type="number" min="0" max="24" value="0" inputmode="numeric"></div>
+        <div class="ft-colon">:</div>
+        <div class="ft-unit"><label>Хвилини</label><input id="ftMinutes" type="number" min="0" max="59" value="45" inputmode="numeric"></div>
+      </div>
+      <div class="ft-presets"><button data-ftpreset="25">25 хв</button><button data-ftpreset="45">45 хв</button><button data-ftpreset="60">1 год</button><button data-ftpreset="90">1:30</button><button data-ftpreset="120">2 год</button></div>
+      <button class="ft-start" id="ftStart" type="button">$ Почати фокус</button>
+      <div style="margin-top:13px"><button class="dl-close" id="ftSetupClose" type="button" title="Закрити">×</button></div>
+    </div>
+    <div class="ft-running">
+      <div class="ft-ring" id="ftRing"><div class="ft-ring-inner"><div class="ft-time" id="ftTime">00:00</div><div class="ft-status" id="ftStatus">Focus in progress</div></div></div>
+      <div class="ft-actions"><button id="ftPause" type="button">Пауза</button><button class="stop" id="ftStop" type="button">Стоп</button><button class="done" id="ftDone" type="button">✓ Виконано</button><button class="mini" id="ftMinimize" type="button">▣ Згорнути</button></div>
+    </div>
+  </div>
+</div>
+<button class="focus-timer-mini" id="focusTimerMini" type="button"><div class="ftm-dollar">$</div><div class="ftm-time" id="ftMiniTime">00:00</div><div class="ftm-name" id="ftMiniName">Focus</div></button>
+
 <script>
-const APP_BUILD='2026-08-19-finance-v7-simple-ui-workspace-work';
+const APP_BUILD='2026-08-25-deadlines-focus-timer-v1';
 const START='2026-08-01',END='2026-12-31',BIG_END='2029-07-31',DISC_START='2026-08-01';
 const WDS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
 const WS7=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
@@ -3385,6 +3476,7 @@ function rToday(){
     return `<div class="chk ${on?'on':''}" style="--sc:${s.c};${showBook?'flex-wrap:wrap':''}">
       <div class="box" data-tk="${t.id}">${on?'✓':''}</div>
       <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span></div></div>
+      <button class="today-timer-btn" data-focus-timer="task:${t.id}" title="Запустити таймер">◴</button>
       <button class="today-skip" data-tskip="${t.id}" title="Прибрати лише на ${d.getDate()} ${MNS[d.getMonth()]}">×</button>
       ${showBook?`<div class="pgc">
         <span class="pgc-nm">${esc(activeBook.t||'Книга')}</span>
@@ -3417,6 +3509,7 @@ function rToday(){
             <span class="ws-tag">Workspace</span>
             <span class="ws-name">${esc(x.t)||'Без назви'}</span>
           </div>
+          <button class="today-timer-btn" data-focus-timer="ws:${x.id}" title="Запустити таймер">◴</button>
           ${hasSubs?`<span class="ws-exp" data-wexp="${x.id}">${open?'▲':'▾ '+x.subs.filter(z=>z.d).length+'/'+x.subs.length}</span>`:''}
         </div>
         ${hasSubs?`<div class="wsbar"><div style="width:${pct}%"></div></div>
@@ -3435,6 +3528,7 @@ function rToday(){
       return `<div class="chk ${on?'on':''}" style="--sc:#c98a4e">
         <div class="box" data-otk="${o.id}">${on?'✓':''}</div>
         <div class="lbl" data-otk="${o.id}"><span class="ws-tag" style="border-color:#c98a4e;color:#e8c789">TEXT Work</span> ${nm}${o.price!==''&&o.price!=null?` <span style="color:var(--gold-soft)">· ${esc(String(o.price))} ${esc(o.cur||'грн')}</span>`:''}</div>
+        <button class="today-timer-btn" data-focus-timer="order:${o.id}" title="Запустити таймер">◴</button>
       </div>`;}).join('');
   }
 
@@ -3443,6 +3537,7 @@ function rToday(){
 
   document.getElementById('todayList').innerHTML+=todayProgressHTML();
   bindTodayProgress();
+  document.querySelectorAll('[data-focus-timer]').forEach(e=>e.onclick=ev=>{ev.preventDefault();ev.stopPropagation();openFocusTimerSetup(e.dataset.focusTimer);});
 
   document.querySelectorAll('[data-otk]').forEach(e=>e.onclick=()=>{dn[e.dataset.otk]=!dn[e.dataset.otk];save();rToday();});
 
@@ -3487,6 +3582,118 @@ function rToday(){
 }
 
 
+/* ═══ DEADLINE RANGE PICKER ═══ */
+let deadlineCtx=null,deadlineStart='',deadlineEnd='',deadlineMonth=null,deadlinePickEnd=false;
+function dlTarget(){
+  if(!deadlineCtx)return null;
+  if(deadlineCtx.kind==='task')return (DB.tasks||[]).find(x=>x.id===deadlineCtx.ref.id)||null;
+  if(deadlineCtx.kind==='stage')return (((DB.sph||{})[deadlineCtx.ref.sid]||{}).stages||[]).find(x=>x.id===deadlineCtx.ref.id)||null;
+  return null;
+}
+function deadlineLabel(x){
+  const a=x&&x.deadlineStart||'',b=x&&x.deadlineEnd||a;
+  if(!a)return '⌁';
+  const f=s=>{const d=pd(s);return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0');};
+  return a===b?'⌁ '+f(a):'⌁ '+f(a)+'–'+f(b);
+}
+function deadlineClass(x){
+  const a=x&&x.deadlineStart||'',b=x&&x.deadlineEnd||a;if(!a)return '';
+  const today=iso(new Date());return (b<today)?'on overdue':'on';
+}
+function dlFmtLong(s){if(!s)return '';const d=pd(s);return `${d.getDate()} ${MNS[d.getMonth()]} ${d.getFullYear()}`;}
+function openDeadlinePicker(kind,ref,anchorEl){
+  deadlineCtx={kind,ref};const t=dlTarget();if(!t)return;
+  deadlineStart=t.deadlineStart||'';deadlineEnd=t.deadlineEnd||deadlineStart;deadlinePickEnd=false;
+  const base=deadlineStart?pd(deadlineStart):new Date();deadlineMonth=new Date(base.getFullYear(),base.getMonth(),1);
+  const p=document.getElementById('deadlinePicker');p.classList.add('on');positionDeadlinePicker(anchorEl);renderDeadlinePicker();
+}
+function positionDeadlinePicker(anchorEl){
+  const p=document.getElementById('deadlinePicker');if(!p||!anchorEl||window.innerWidth<=620)return;
+  const r=anchorEl.getBoundingClientRect(),w=342,h=430;
+  let left=Math.min(window.innerWidth-w-12,Math.max(12,r.right-w));
+  let top=Math.min(window.innerHeight-h-12,Math.max(12,r.bottom+8));
+  if(top<12)top=12;p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';
+}
+function closeDeadlinePicker(){document.getElementById('deadlinePicker')?.classList.remove('on');deadlineCtx=null;}
+function renderDeadlinePicker(){
+  if(!deadlineMonth)return;const y=deadlineMonth.getFullYear(),m=deadlineMonth.getMonth();
+  document.getElementById('dlMonthTitle').textContent=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'][m]+' '+y;
+  document.getElementById('dlRange').textContent=!deadlineStart?'Оберіть день або діапазон':(deadlineStart===deadlineEnd?dlFmtLong(deadlineStart):dlFmtLong(deadlineStart)+'  →  '+dlFmtLong(deadlineEnd));
+  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),lead=(first.getDay()+6)%7,today=iso(new Date());let h='';
+  for(let i=0;i<42;i++){
+    const n=i-lead+1;if(n<1||n>days){h+='<button class="dl-day muted" type="button"></button>';continue;}
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`;
+    const cls=['dl-day'];if(ds===today)cls.push('today');if(deadlineStart&&ds>=deadlineStart&&ds<=deadlineEnd)cls.push('inrange');if(ds===deadlineStart)cls.push('start');if(ds===deadlineEnd)cls.push('end');
+    h+=`<button class="${cls.join(' ')}" data-dlday="${ds}" type="button">${n}</button>`;
+  }
+  document.getElementById('dlGrid').innerHTML=h;
+  document.querySelectorAll('[data-dlday]').forEach(b=>b.onclick=()=>{
+    const ds=b.dataset.dlday;
+    if(!deadlinePickEnd){deadlineStart=ds;deadlineEnd=ds;deadlinePickEnd=true;}
+    else{if(ds<deadlineStart){deadlineEnd=deadlineStart;deadlineStart=ds;}else deadlineEnd=ds;deadlinePickEnd=false;}
+    renderDeadlinePicker();
+  });
+}
+function commitDeadline(){const t=dlTarget();if(!t)return;t.deadlineStart=deadlineStart||'';t.deadlineEnd=deadlineStart?(deadlineEnd||deadlineStart):'';save();closeDeadlinePicker();rSph();rToday();}
+
+/* ═══ INVESTOR FOCUS TIMER ═══ */
+let focusTimerTick=null,focusSetupKey='',focusSetupName='';
+function timerDurations(){DB.timerDurations=DB.timerDurations&&typeof DB.timerDurations==='object'?DB.timerDurations:{};return DB.timerDurations;}
+function focusTimerState(){return DB.focusTimer&&typeof DB.focusTimer==='object'?DB.focusTimer:null;}
+function timerInfo(key){
+  const [kind,...rest]=String(key||'').split(':'),id=rest.join(':');
+  if(kind==='task'){
+    const t=(DB.tasks||[]).find(x=>x.id===id);if(t)return{key,name:t.t||'Завдання',kind,id};
+    if(id.startsWith('work:')){const bid=id.slice(5),b=(DB.workBlocks||[]).find(x=>x.id===bid);if(b)return{key,name:workBlockLabel(b),kind,id};}
+    return{key,name:'Завдання',kind,id};
+  }
+  if(kind==='ws'){const x=(DB.ws||[]).find(z=>z.id===id);return{key,name:(x&&x.t)||'Workspace',kind,id};}
+  if(kind==='order'){const o=(DB.orders||[]).find(z=>z.id===id);return{key,name:o?((o.client||'Замовлення')+(o.type?' · '+o.type:'')):'TEXT Work',kind,id};}
+  return{key,name:'Завдання',kind,id};
+}
+function ensureFocusTimerBg(){const src=document.querySelector('.vision-map-img')?.src||'';const bg=document.getElementById('focusTimerBg');if(bg&&src&&bg.src!==src)bg.src=src;}
+function openFocusTimerSetup(key){
+  const info=timerInfo(key);focusSetupKey=key;focusSetupName=info.name;ensureFocusTimerBg();
+  const layer=document.getElementById('focusTimerLayer');layer.classList.add('on','setup');document.getElementById('focusTimerMini').classList.remove('on');document.getElementById('ftTaskName').textContent=info.name;
+  const mins=Math.max(1,+timerDurations()[key]||45);document.getElementById('ftHours').value=Math.floor(mins/60);document.getElementById('ftMinutes').value=mins%60;
+}
+function closeFocusTimerSetup(){const st=focusTimerState();if(st&&st.key){syncFocusTimerUI();return;}document.getElementById('focusTimerLayer').classList.remove('on','setup');focusSetupKey='';}
+function timerRemaining(st=focusTimerState()){
+  if(!st)return 0;let r=Math.max(0,+st.remainingSec||0);if(st.running&&st.startedAt)r=Math.max(0,r-Math.floor((Date.now()-st.startedAt)/1000));return r;
+}
+function formatTimer(sec){sec=Math.max(0,Math.round(sec));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return h?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+function startFocusTimer(){
+  const h=Math.max(0,Math.min(24,+document.getElementById('ftHours').value||0)),m=Math.max(0,Math.min(59,+document.getElementById('ftMinutes').value||0)),mins=h*60+m;if(!mins){alert('Вкажи тривалість таймера.');return;}
+  timerDurations()[focusSetupKey]=mins;DB.focusTimer={key:focusSetupKey,name:focusSetupName,durationSec:mins*60,remainingSec:mins*60,running:true,startedAt:Date.now(),day:cur,minimized:false};save();syncFocusTimerUI();startFocusTicker();
+}
+function startFocusTicker(){if(focusTimerTick)clearInterval(focusTimerTick);focusTimerTick=setInterval(updateFocusTimerUI,250);updateFocusTimerUI();}
+function updateFocusTimerUI(){
+  const st=focusTimerState();if(!st){if(focusTimerTick){clearInterval(focusTimerTick);focusTimerTick=null;}return;}
+  let rem=timerRemaining(st);if(rem<=0&&st.running){st.remainingSec=0;st.running=false;st.startedAt=0;save();if(navigator.vibrate)try{navigator.vibrate([180,80,180]);}catch(e){}}
+  rem=timerRemaining(st);const str=formatTimer(rem),pct=st.durationSec?Math.max(0,Math.min(1,1-rem/st.durationSec)):0;
+  const tm=document.getElementById('ftTime'),mm=document.getElementById('ftMiniTime'),ring=document.getElementById('ftRing'),status=document.getElementById('ftStatus'),pause=document.getElementById('ftPause');
+  if(tm)tm.textContent=str;if(mm)mm.textContent=str;if(ring)ring.style.setProperty('--p',(pct*360)+'deg');if(status)status.textContent=rem<=0?'Час вийшов':(st.running?'Focus in progress':'Пауза');if(pause)pause.textContent=st.running?'Пауза':'Продовжити';
+}
+function syncFocusTimerUI(){
+  const st=focusTimerState(),layer=document.getElementById('focusTimerLayer'),mini=document.getElementById('focusTimerMini');ensureFocusTimerBg();
+  if(!st||!st.key){layer.classList.remove('on','setup');mini.classList.remove('on');return;}
+  layer.classList.remove('setup');document.getElementById('ftTaskName').textContent=st.name||timerInfo(st.key).name;document.getElementById('ftMiniName').textContent=st.name||'Focus';
+  if(st.minimized){layer.classList.remove('on');mini.classList.add('on');}else{mini.classList.remove('on');layer.classList.add('on');}
+  startFocusTicker();
+}
+function pauseResumeFocusTimer(){const st=focusTimerState();if(!st)return;if(st.running){st.remainingSec=timerRemaining(st);st.running=false;st.startedAt=0;}else if(timerRemaining(st)>0){st.running=true;st.startedAt=Date.now();}save();updateFocusTimerUI();}
+function minimizeFocusTimer(){const st=focusTimerState();if(!st)return;st.minimized=true;save();syncFocusTimerUI();}
+function restoreFocusTimer(){const st=focusTimerState();if(!st)return;st.minimized=false;save();syncFocusTimerUI();}
+function stopFocusTimer(){if(!focusTimerState())return;if(!confirm('Зупинити таймер? Виконання завдання не буде позначено.'))return;DB.focusTimer=null;save();syncFocusTimerUI();}
+function markTimerItemDone(st){
+  if(!st)return;const [kind,...rest]=String(st.key).split(':'),id=rest.join(':'),day=st.day||cur;
+  if(kind==='task'){doneOf(day)[id]=true;}
+  else if(kind==='order'){doneOf(day)[id]=true;}
+  else if(kind==='ws'){const x=(DB.ws||[]).find(z=>z.id===id);if(x){if(x.subs&&x.subs.length)x.subs.forEach(s=>s.d=true);x.d=true;}}
+}
+function finishFocusTimer(){const st=focusTimerState();if(!st)return;markTimerItemDone(st);DB.focusTimer=null;save();syncFocusTimerUI();rToday();try{rWS();}catch(e){}rDash();}
+
+
 function goalProgressHTML(sid){
   const s=SCf(sid),yr=pctYear(sid),big=pctBig(sid),yc=stageCount(sid,true),bc=stageCount(sid,false);
   return `<div class="strategy-progress" style="--sc:${s.c}">
@@ -3515,7 +3722,10 @@ function strategyStagesHTML(sid){
       <span class="n">${String(i+1).padStart(2,'0')}</span>
       <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
       <input class="tin" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу">
-      <div class="stage-actions"><button class="stage-mini-btn" data-sstagedel="${sid}|${idx}" title="Видалити">×</button></div>
+      <div class="stage-actions">
+        <button class="deadline-trigger ${deadlineClass(x)}" data-deadline-stage="${sid}|${x.id}" title="Дедлайн етапу">${deadlineLabel(x)}</button>
+        <button class="stage-mini-btn" data-sstagedel="${sid}|${idx}" title="Видалити">×</button>
+      </div>
     </div>`;
   }).join('');
   return `<div class="strategy-stages">
@@ -3666,6 +3876,10 @@ function bindStrategyStages(sid){
     const [s,i]=e.dataset.sstagedel.split('|');
     if(!confirm('Видалити цей етап? Прогрес цілі буде перераховано.'))return;
     DB.sph[s].stages.splice(+i,1);save();rSph();rToday();
+  });
+  document.querySelectorAll('[data-deadline-stage]').forEach(e=>e.onclick=ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const [s,id]=e.dataset.deadlineStage.split('|');openDeadlinePicker('stage',{sid:s,id},e);
   });
   initStageDrag(sid);
 }
@@ -4231,6 +4445,7 @@ function tasksCardHTML(sid){
       <div class="tp-r1">
         <span class="tgl ${t.off?'':'on'}" data-toff="${t.id}" title="${t.off?'Увімкнути':'Вимкнути'} завдання"><i></i></span>
         <input class="t" data-tt="${t.id}" value="${esc(t.t)}" placeholder="Що робити…">
+        <button class="deadline-trigger ${deadlineClass(t)}" data-deadline-task="${t.id}" title="Дедлайн завдання">${deadlineLabel(t)}</button>
         <span class="del" data-tx="${t.id}">✕</span></div>
       <div class="tp-r2">
         <div class="wds">${WS7.map((w,i)=>`<div class="wd ${days.includes(i)?'on':''}" data-td="${t.id}|${i}">${w}</div>`).join('')}</div>
@@ -4252,6 +4467,7 @@ function bindTasksCard(sid){
   document.querySelectorAll('[data-tx]').forEach(e=>e.onclick=()=>{DB.tasks=DB.tasks.filter(x=>x.id!==e.dataset.tx);save();rSph();rToday();});
   document.querySelectorAll('[data-toff]').forEach(e=>e.onclick=()=>{
     const t=DB.tasks.find(x=>x.id===e.dataset.toff);t.off=!t.off;save();rSph();rToday();});
+  document.querySelectorAll('[data-deadline-task]').forEach(e=>e.onclick=ev=>{ev.preventDefault();ev.stopPropagation();openDeadlinePicker('task',{id:e.dataset.deadlineTask},e);});
   document.querySelectorAll('[data-fold]').forEach(e=>e.onclick=()=>{foldT=!foldT;rSph();});
   const at=document.getElementById('addTask');
   if(at)at.onclick=()=>{DB.tasks.push({id:'t'+Date.now(),s:sid,t:'',days:[0,1,2,3,4,5,6],date:'',off:false});save();rSph();};
@@ -5772,13 +5988,31 @@ document.getElementById('syncDisconnect').onclick=()=>disconnectCloud();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)cloudPoll();});
 window.addEventListener('online',()=>{if(syncUid){cloudPoll();if(syncDirty)queueCloudWrite(200);}});
 
+// Deadline picker controls
+document.getElementById('dlClose').onclick=closeDeadlinePicker;
+document.getElementById('dlPrev').onclick=()=>{deadlineMonth.setMonth(deadlineMonth.getMonth()-1);renderDeadlinePicker();};
+document.getElementById('dlNext').onclick=()=>{deadlineMonth.setMonth(deadlineMonth.getMonth()+1);renderDeadlinePicker();};
+document.getElementById('dlDone').onclick=commitDeadline;
+document.getElementById('dlClear').onclick=()=>{deadlineStart='';deadlineEnd='';commitDeadline();};
+document.addEventListener('pointerdown',e=>{const p=document.getElementById('deadlinePicker');if(p.classList.contains('on')&&!p.contains(e.target)&&!e.target.closest('[data-deadline-stage],[data-deadline-task]'))closeDeadlinePicker();});
+
+// Investor Focus Timer controls
+document.querySelectorAll('[data-ftpreset]').forEach(b=>b.onclick=()=>{const n=+b.dataset.ftpreset||45;document.getElementById('ftHours').value=Math.floor(n/60);document.getElementById('ftMinutes').value=n%60;});
+document.getElementById('ftStart').onclick=startFocusTimer;
+document.getElementById('ftSetupClose').onclick=closeFocusTimerSetup;
+document.getElementById('ftPause').onclick=pauseResumeFocusTimer;
+document.getElementById('ftStop').onclick=stopFocusTimer;
+document.getElementById('ftDone').onclick=finishFocusTimer;
+document.getElementById('ftMinimize').onclick=minimizeFocusTimer;
+document.getElementById('focusTimerMini').onclick=restoreFocusTimer;
+
 document.getElementById('wipe').onclick=()=>{const b=document.getElementById('wipe');
   if(b.dataset.armed){DB=blank();openNote=null;save();render();b.dataset.armed='';b.textContent='Очистити все';return;}
   b.dataset.armed='1';b.textContent='Натисни ще раз — усе зникне';
   setTimeout(()=>{b.dataset.armed='';b.textContent='Очистити все';},4000);};
 
-(async()=>{await load();await initCloudSync();snapshot();render();syncRenderUI();setInterval(rCd,30000);})();
+(async()=>{await load();await initCloudSync();snapshot();render();syncRenderUI();syncFocusTimerUI();setInterval(rCd,30000);})();
 </script>
 
 
-<a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a><div class="glasp-extension-toaster glasp-extension-toaster--youtube-summary" data-glasp-print="hide" style="display: block; width: 320px; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; top: 40px; right: 24px; z-index: 9999;"></div></body><div class="glasp-extension" data-glasp-print="hide" id="glasp-web-summary-button" style="display: block; width: unset; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; bottom: 16px; right: 16px; z-index: 9999;"><div class="glasp-extension" style="font-family: inherit;"></div></div></html>
+</body></html>
