@@ -244,6 +244,24 @@ button,input,textarea,select{font-family:inherit;font-size:inherit;touch-action:
 .stage-actions{display:flex;gap:6px;flex-shrink:0}
 .stage-mini-btn{border:1px solid var(--line);background:var(--panel);color:var(--txt-faint);border-radius:6px;padding:4px 7px;cursor:pointer;font-size:10px}
 .stage-mini-btn:hover{border-color:var(--gold);color:var(--gold-soft)}
+.stage-list{min-height:3px;position:relative}
+.stage-grip{flex:0 0 auto;width:20px;height:28px;display:grid;grid-template-columns:repeat(2,4px);grid-template-rows:repeat(3,4px);gap:3px;align-content:center;justify-content:center;cursor:grab;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;border-radius:6px;padding:3px;position:relative;z-index:4}
+.stage-grip *{pointer-events:none!important}
+.stage-grip i{width:4px;height:4px;border-radius:50%;background:var(--txt-faint);display:block;transition:background .15s}
+.stage-grip:hover i{background:var(--gold-soft)}
+.stage-grip:active{cursor:grabbing;background:rgba(212,162,78,.10)}
+.stg.strategy-stage.stage-dragging{opacity:.74!important;border-color:var(--gold)!important;border-left-color:var(--gold)!important;box-shadow:0 10px 28px rgba(0,0,0,.44)!important;z-index:12;cursor:grabbing!important}
+.stage-drop-placeholder{height:58px;margin-bottom:8px;border:1px dashed rgba(212,162,78,.72);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;background:rgba(212,162,78,.04)}
+body.stage-drag-active{overscroll-behavior:none}
+body.stage-drag-active .strategy-stages{touch-action:none!important}
+@media(max-width:600px){
+  .stage-grip{width:32px!important;height:36px!important;min-width:32px!important;padding:5px!important;order:0}
+  .stg.strategy-stage .n{order:0}
+  .stg.strategy-stage .box{order:1}
+  .stg.strategy-stage .stage-actions{order:2;margin-left:auto}
+  .stg.strategy-stage .tin{order:3;flex:1 1 100%}
+  .stage-drop-placeholder{height:96px}
+}
 .stage-adds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
 .today-progress{margin:18px 0 2px}
 .today-progress-title{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--txt-faint);margin:0 0 10px 2px}
@@ -3484,12 +3502,16 @@ function goalProgressHTML(sid){
     </div>
   </div>`;
 }
+function stageGripHTML(){
+  return `<span class="stage-grip" data-stagedrag title="Перетягни, щоб змінити порядок" aria-label="Змінити порядок етапу"><i></i><i></i><i></i><i></i><i></i><i></i></span>`;
+}
 function strategyStagesHTML(sid){
   const o=(DB.sph||{})[sid]||{stages:[]},st=o.stages||[],year=st.filter(x=>x.y),long=st.filter(x=>!x.y);
   const rows=(arr,offset=0)=>arr.map((x,i)=>{
     const idx=st.indexOf(x);
     const next=!x.d && !arr.slice(0,i).some(z=>!z.d);
-    return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}">
+    return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}" data-stage-row="${x.id}">
+      ${stageGripHTML()}
       <span class="n">${String(i+1).padStart(2,'0')}</span>
       <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
       <input class="tin" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу">
@@ -3500,15 +3522,133 @@ function strategyStagesHTML(sid){
     <div class="card">
       <div class="stage-head"><b>Етапи виконання</b><span>прогрес рахується тільки з етапів</span></div>
       <div class="stage-divider">До 31 грудня 2026</div>
-      ${rows(year)}
+      <div class="stage-list" data-stage-list="${sid}|1">${rows(year)}</div>
       <div class="stage-divider">До головної цілі</div>
-      ${rows(long)}
+      <div class="stage-list" data-stage-list="${sid}|0">${rows(long)}</div>
       <div class="stage-adds">
         <button class="addbtn" data-sstageadd="${sid}|1">+ Етап до кінця року</button>
         <button class="addbtn" data-sstageadd="${sid}|0">+ Довгостроковий етап</button>
       </div>
     </div>
   </div>`;
+}
+let stageDragCleanup=null;
+let stageDragMoved=false;
+function initStageDrag(sid){
+  const root=document.querySelector('.strategy-stages');
+  if(!root)return;
+  if(stageDragCleanup){try{stageDragCleanup();}catch(e){} stageDragCleanup=null;}
+
+  let el=null,list=null,moved=false,sx=0,sy=0,pointerId=null,mode='';
+  let placeholder=null,offX=0,offY=0,oldStyle='';
+  const rows=()=>list?[...list.querySelectorAll('[data-stage-row]')]:[];
+
+  function begin(handle,x,y,m,pid=null){
+    const row=handle.closest('[data-stage-row]');
+    const holder=row&&row.closest('[data-stage-list]');
+    if(!row||!holder)return;
+    el=row;list=holder;moved=false;sx=x;sy=y;pointerId=pid;mode=m;stageDragMoved=false;
+    document.body.classList.add('stage-drag-active');
+
+    if(m==='pointer'&&window.innerWidth>600){
+      const r=row.getBoundingClientRect();
+      offX=x-r.left;offY=y-r.top;
+      placeholder=document.createElement('div');
+      placeholder.className='stage-drop-placeholder';
+      placeholder.style.width=r.width+'px';
+      placeholder.style.height=r.height+'px';
+      row.parentNode.insertBefore(placeholder,row.nextSibling);
+      oldStyle=row.getAttribute('style')||'';
+      row.classList.add('stage-dragging');
+      row.style.position='fixed';row.style.left=r.left+'px';row.style.top=r.top+'px';
+      row.style.width=r.width+'px';row.style.height=r.height+'px';row.style.margin='0';
+      row.style.zIndex='9999';row.style.pointerEvents='none';row.style.transform='none';row.style.transition='none';
+    }
+  }
+
+  function moveMobile(y){
+    const others=rows().filter(r=>r!==el);
+    if(!others.length)return;
+    let inserted=false;
+    for(const o of others){
+      const r=o.getBoundingClientRect();
+      if(y<r.top+r.height/2){list.insertBefore(el,o);inserted=true;break;}
+    }
+    if(!inserted)list.appendChild(el);
+  }
+
+  function moveDesktop(x,y){
+    if(!el||!placeholder)return;
+    el.style.left=(x-offX)+'px';el.style.top=(y-offY)+'px';
+    const others=[...list.querySelectorAll('[data-stage-row]')].filter(r=>r!==el);
+    if(!others.length)return;
+    let target=null;
+    for(const o of others){const r=o.getBoundingClientRect();if(y<r.top+r.height/2){target=o;break;}}
+    if(target)list.insertBefore(placeholder,target);else list.appendChild(placeholder);
+  }
+
+  function moveAt(x,y){
+    if(!el)return;
+    if(!moved&&Math.hypot(x-sx,y-sy)<5)return;
+    moved=true;stageDragMoved=true;el.classList.add('stage-dragging');
+    if(mode==='pointer'&&window.innerWidth>600)moveDesktop(x,y);else moveMobile(y);
+  }
+
+  function persistOrder(){
+    const o=(DB.sph||{})[sid];if(!o||!Array.isArray(o.stages))return;
+    const byId=new Map(o.stages.map(s=>[String(s.id),s]));
+    const ordered=[];
+    root.querySelectorAll('[data-stage-list]').forEach(holder=>{
+      const parts=holder.dataset.stageList.split('|');
+      if(parts[0]!==sid)return;
+      const yearFlag=+parts[1];
+      holder.querySelectorAll('[data-stage-row]').forEach(row=>{
+        const s=byId.get(String(row.dataset.stageRow));
+        if(s){s.y=yearFlag;ordered.push(s);byId.delete(String(s.id));}
+      });
+    });
+    byId.forEach(s=>ordered.push(s));
+    o.stages=ordered;
+  }
+
+  function finish(){
+    if(!el)return;
+    const didMove=moved;
+    if(mode==='pointer'&&window.innerWidth>600&&placeholder){
+      if(didMove)list.insertBefore(el,placeholder);
+      placeholder.remove();placeholder=null;
+      el.setAttribute('style',oldStyle);
+      el.classList.remove('stage-dragging');
+    }else el.classList.remove('stage-dragging');
+    document.body.classList.remove('stage-drag-active');
+    el=null;list=null;moved=false;pointerId=null;mode='';
+    if(didMove){persistOrder();save();rSph();rToday();setTimeout(()=>{stageDragMoved=false;},120);}
+  }
+
+  root.querySelectorAll('[data-stagedrag]').forEach(h=>{
+    h.addEventListener('touchstart',e=>{
+      if(!e.touches||!e.touches[0])return;e.preventDefault();e.stopPropagation();
+      const t=e.touches[0];begin(h,t.clientX,t.clientY,'touch');
+    },{passive:false});
+    h.addEventListener('pointerdown',e=>{
+      if(e.pointerType==='touch')return;e.preventDefault();e.stopPropagation();begin(h,e.clientX,e.clientY,'pointer',e.pointerId);
+    });
+  });
+
+  const onTouchMove=e=>{if(!el||mode!=='touch'||!e.touches||!e.touches[0])return;e.preventDefault();const t=e.touches[0];moveAt(t.clientX,t.clientY);};
+  const onTouchEnd=e=>{if(!el||mode!=='touch')return;e.preventDefault();finish();};
+  const onPointerMove=e=>{if(!el||mode!=='pointer'||(pointerId!=null&&e.pointerId!==pointerId))return;e.preventDefault();moveAt(e.clientX,e.clientY);};
+  const onPointerUp=e=>{if(!el||mode!=='pointer'||(pointerId!=null&&e.pointerId!==pointerId))return;finish();};
+  document.addEventListener('touchmove',onTouchMove,{passive:false});
+  document.addEventListener('touchend',onTouchEnd,{passive:false});
+  document.addEventListener('touchcancel',onTouchEnd,{passive:false});
+  document.addEventListener('pointermove',onPointerMove,{passive:false});
+  document.addEventListener('pointerup',onPointerUp);
+  document.addEventListener('pointercancel',onPointerUp);
+  stageDragCleanup=()=>{
+    document.removeEventListener('touchmove',onTouchMove);document.removeEventListener('touchend',onTouchEnd);document.removeEventListener('touchcancel',onTouchEnd);
+    document.removeEventListener('pointermove',onPointerMove);document.removeEventListener('pointerup',onPointerUp);document.removeEventListener('pointercancel',onPointerUp);
+  };
 }
 function bindStrategyStages(sid){
   document.querySelectorAll('[data-sstage]').forEach(e=>e.onclick=()=>{
@@ -3527,6 +3667,7 @@ function bindStrategyStages(sid){
     if(!confirm('Видалити цей етап? Прогрес цілі буде перераховано.'))return;
     DB.sph[s].stages.splice(+i,1);save();rSph();rToday();
   });
+  initStageDrag(sid);
 }
 function selfDevelopmentFocusHTML(){
   return `<div class="self-focus-grid">
