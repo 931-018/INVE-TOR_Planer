@@ -626,6 +626,39 @@ body.stage-drag-active .strategy-stages{touch-action:none!important}
 .fabs{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:9px;z-index:60}
 .fab{width:52px;height:52px;border-radius:50%;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(42,74,54,.65),transparent),var(--panel);color:var(--gold-soft);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.5)}
 .fab:hover{border-color:var(--green-bright)}
+.mobile-fab-handle{display:none}
+
+/* На телефоні швидкі кнопки не перекривають контент: вони ховаються у нижню панель. */
+@media(max-width:700px){
+  .fabs{
+    left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));
+    flex-direction:row;justify-content:space-around;align-items:center;gap:7px;
+    padding:9px 10px;border:1px solid rgba(212,162,78,.42);border-radius:18px;
+    background:rgba(15,20,27,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    box-shadow:0 14px 36px rgba(0,0,0,.58);
+    transform:translateY(calc(100% + 34px));opacity:0;pointer-events:none;
+    transition:transform .26s ease,opacity .2s ease;
+    z-index:85;
+  }
+  body.mobile-fabs-open .fabs{transform:translateY(0);opacity:1;pointer-events:auto}
+  .fab{
+    width:52px;height:48px;border-radius:13px;box-shadow:none;
+    background:linear-gradient(145deg,rgba(42,74,54,.5),rgba(17,21,28,.96));
+    flex:1 1 0;max-width:78px;font-size:19px;
+  }
+  .mobile-fab-handle{
+    display:flex;position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);z-index:84;width:78px;height:27px;border:1px solid rgba(212,162,78,.38);
+    border-radius:999px;background:rgba(17,21,28,.94);color:var(--gold-soft);
+    align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.38);
+    transition:opacity .18s ease,transform .22s ease,bottom .22s ease;touch-action:manipulation;
+  }
+  .mobile-fab-handle:before{content:'';width:28px;height:3px;border-radius:4px;background:var(--gold-soft);opacity:.78}
+  body.mobile-fabs-open .mobile-fab-handle{bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%) rotate(180deg)}
+  body[data-page="rossmann"] .fabs,body[data-page="rossmann"] .mobile-fab-handle,
+  body[data-page="sph"] .fabs,body[data-page="sph"] .mobile-fab-handle{display:none!important}
+  body.mobile-fabs-open .wrap{padding-bottom:110px}
+}
 .ov{position:fixed;inset:0;background:rgba(6,8,11,.95);backdrop-filter:blur(5px);z-index:100;display:none;overflow-y:auto;padding:30px 14px}
 .ov.on{display:block}
 .ov-in{max-width:820px;margin:0 auto;background:linear-gradient(135deg,rgba(42,74,54,.2),transparent 60%),var(--panel);border:1px solid var(--gold);border-radius:12px;padding:0 0 30px;position:relative;overflow:hidden}
@@ -710,8 +743,6 @@ body.stage-drag-active .strategy-stages{touch-action:none!important}
   .date-nav{width:100%}
   .date-nav button{flex:0 0 auto;padding:10px 13px}
   .date-pick{flex:1;min-width:130px}
-  .fab{width:46px;height:46px;font-size:17px}
-  .fabs{right:12px;bottom:12px;gap:8px}
   .ov{padding:16px 8px}
   .ov-in{border-radius:9px}
   .ov-pad{padding:0 14px}
@@ -2262,11 +2293,12 @@ body.debt-drag-active{overscroll-behavior:none}
 
 </div>
 
-<div class="fabs">
-  <button class="fab" id="fbNotes" title="Нотатки">✎</button>
-  <button class="fab" id="fbVision" title="Бачення">◈</button>
-  <button class="fab" id="fbRules" title="Правила">⚖</button>
-  <button class="fab" id="fbData" title="Дані">⇅</button>
+<button class="mobile-fab-handle" id="mobileFabHandle" type="button" aria-label="Показати швидкі кнопки" aria-expanded="false"></button>
+<div class="fabs" id="quickFabs">
+  <button class="fab" id="fbNotes" title="Нотатки" aria-label="Нотатки">✎</button>
+  <button class="fab" id="fbVision" title="Бачення" aria-label="Бачення">◈</button>
+  <button class="fab" id="fbRules" title="Правила" aria-label="Правила">⚖</button>
+  <button class="fab" id="fbData" title="Дані" aria-label="Дані">⇅</button>
 </div>
 
 <div class="ov" id="ovNotes"><div class="ov-in"><span class="ov-cl" data-cl="ovNotes">×</span><div class="ov-pad">
@@ -5869,7 +5901,7 @@ function rInc(){
   document.querySelectorAll('[data-iw]').forEach(e=>e.onchange=()=>{const k=e.dataset.iw;DB.income[k]=DB.income[k]||{};DB.income[k].wk=e.value;save();rInc();});
 }
 
-function go(p){if(p==='goals')p='sph';if(p!=='rossmann'&&window.rossmannCloseOverlays)window.rossmannCloseOverlays();document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.pg===p));
+function go(p){if(p==='goals')p='sph';if(p!=='rossmann'&&window.rossmannCloseOverlays)window.rossmannCloseOverlays();document.body.dataset.page=p;closeMobileFabs();document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.pg===p));
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('pg-'+p).classList.add('active');
   if(p==='today')rToday();else if(p==='goals')rGoals();else if(p==='habits')rHabits();else if(p==='ws')rWS();else if(p==='rossmann'){if(window.refreshRossmann)window.refreshRossmann();}else if(p==='sph'){rSph();applySphereNavCollapsed();}}
@@ -5966,10 +5998,38 @@ document.getElementById('dToday').onclick=()=>{cur=iso(new Date());rToday();};
 document.getElementById('dPick').onchange=e=>{cur=e.target.value;rToday();};
 document.getElementById('dNote').oninput=e=>{meta(cur).note=e.target.value;save();};
 
-document.getElementById('fbNotes').onclick=()=>{openNote=null;rNotes();document.getElementById('ovNotes').classList.add('on');};
-document.getElementById('fbVision').onclick=()=>openVisionOverlay();
-document.getElementById('fbRules').onclick=()=>openVisionOverlay('rules');
-document.getElementById('fbData').onclick=()=>{syncRenderUI();document.getElementById('ovData').classList.add('on');};
+function mobileFabsBlocked(){return document.body.dataset.page==='rossmann'||document.body.dataset.page==='sph';}
+function setMobileFabs(open){
+  if(mobileFabsBlocked())open=false;
+  document.body.classList.toggle('mobile-fabs-open',!!open);
+  const h=document.getElementById('mobileFabHandle');
+  if(h){h.setAttribute('aria-expanded',open?'true':'false');h.setAttribute('aria-label',open?'Сховати швидкі кнопки':'Показати швидкі кнопки');}
+}
+function closeMobileFabs(){setMobileFabs(false)}
+const mobileFabHandle=document.getElementById('mobileFabHandle');
+if(mobileFabHandle)mobileFabHandle.onclick=()=>setMobileFabs(!document.body.classList.contains('mobile-fabs-open'));
+
+// Свайп вгору з нижнього краю відкриває панель; свайп вниз — ховає.
+let fabTouchStartY=null,fabTouchStartX=null;
+document.addEventListener('touchstart',e=>{
+  if(e.touches.length!==1||mobileFabsBlocked())return;
+  const t=e.touches[0],open=document.body.classList.contains('mobile-fabs-open');
+  if(open||t.clientY>window.innerHeight-110){fabTouchStartY=t.clientY;fabTouchStartX=t.clientX;}
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(fabTouchStartY==null||!e.changedTouches.length)return;
+  const t=e.changedTouches[0],dy=t.clientY-fabTouchStartY,dx=Math.abs(t.clientX-fabTouchStartX);
+  if(dx<90){if(dy<-42)setMobileFabs(true);else if(dy>42)setMobileFabs(false);}
+  fabTouchStartY=fabTouchStartX=null;
+},{passive:true});
+
+// На старті сторінка «Сьогодні».
+document.body.dataset.page=document.querySelector('.tab.active')?.dataset.pg||'today';
+
+document.getElementById('fbNotes').onclick=()=>{closeMobileFabs();openNote=null;rNotes();document.getElementById('ovNotes').classList.add('on');};
+document.getElementById('fbVision').onclick=()=>{closeMobileFabs();openVisionOverlay();};
+document.getElementById('fbRules').onclick=()=>{closeMobileFabs();openVisionOverlay('rules');};
+document.getElementById('fbData').onclick=()=>{closeMobileFabs();syncRenderUI();document.getElementById('ovData').classList.add('on');};
 document.querySelectorAll('[data-cl]').forEach(x=>x.onclick=()=>document.getElementById(x.dataset.cl).classList.remove('on'));
 document.getElementById('visionIdentityBox').oninput=e=>{DB.visionIdentity=e.target.innerHTML;save();};
 document.getElementById('visionBody').oninput=e=>{DB.vision=e.target.innerHTML;save();};
@@ -6132,7 +6192,47 @@ function initRossmannModule(){
   const hfmt=n=>{const x=Math.round((Number(n)||0)*10)/10;return Number.isInteger(x)?String(x):x.toFixed(1).replace('.',',')};
   const money=n=>Math.round((Number(n)||0)*100)/100;
   const rate=()=>Math.max(0,Number($('#rateInput').value)||0);
-  function ensureData(){if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,entries:[]};if(!Array.isArray(DB.rossmann.entries))DB.rossmann.entries=[];if(!Number.isFinite(Number(DB.rossmann.rate)))DB.rossmann.rate=27.5;state.entries=DB.rossmann.entries}
+  const NOTION_AUG_2026_ENTRIES=[
+    {id:'rs_notion_20260801',date:'2026-08-01',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260802',date:'2026-08-02',type:'shift',start:'22:00',end:'06:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260803',date:'2026-08-03',type:'shift',start:'22:00',end:'03:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260804',date:'2026-08-04',type:'shift',start:'22:00',end:'06:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260805',date:'2026-08-05',type:'shift',start:'20:00',end:'06:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260806',date:'2026-08-06',type:'shift',start:'22:00',end:'06:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260807',date:'2026-08-07',type:'shift',start:'21:30',end:'06:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260808',date:'2026-08-08',type:'off',diff:'',source:'notion'},
+    {id:'rs_notion_20260809',date:'2026-08-09',type:'shift',start:'22:00',end:'03:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260810',date:'2026-08-10',type:'shift',start:'16:00',end:'22:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260811',date:'2026-08-11',type:'shift',start:'14:00',end:'00:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260812',date:'2026-08-12',type:'shift',start:'14:00',end:'22:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260813',date:'2026-08-13',type:'shift',start:'14:00',end:'00:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260814',date:'2026-08-14',type:'shift',start:'14:00',end:'00:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260815',date:'2026-08-15',type:'off',diff:'',source:'notion'},
+    {id:'rs_notion_20260816',date:'2026-08-16',type:'off',diff:'',source:'notion'},
+    {id:'rs_notion_20260817',date:'2026-08-17',type:'shift',start:'06:00',end:'11:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260818',date:'2026-08-18',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260819',date:'2026-08-19',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260820',date:'2026-08-20',type:'shift',start:'06:00',end:'11:30',diff:'',source:'notion'},
+    {id:'rs_notion_20260821',date:'2026-08-21',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
+    {id:'rs_notion_20260822',date:'2026-08-22',type:'off',diff:'',source:'notion'},
+    {id:'rs_notion_20260823',date:'2026-08-23',type:'shift',start:'22:00',end:'03:30',diff:'',source:'notion'},
+    {id:'rs_notion_20260824',date:'2026-08-24',type:'shift',start:'22:00',end:'02:30',diff:'',source:'notion'},
+    {id:'rs_notion_20260825',date:'2026-08-25',type:'shift',start:'22:00',end:'02:30',diff:'',source:'notion'}
+  ];
+  function ensureData(){
+    if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,entries:[]};
+    if(!Array.isArray(DB.rossmann.entries))DB.rossmann.entries=[];
+    if(!Number.isFinite(Number(DB.rossmann.rate)))DB.rossmann.rate=27.5;
+    if(!DB.rossmann.notionAug2026ImportedV1){
+      const importedDates=new Set(NOTION_AUG_2026_ENTRIES.map(e=>e.date));
+      DB.rossmann.entries=DB.rossmann.entries.filter(e=>!importedDates.has(e&&e.date));
+      DB.rossmann.entries.push(...NOTION_AUG_2026_ENTRIES.map(e=>({...e})));
+      DB.rossmann.entries.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+      DB.rossmann.notionAug2026ImportedV1=true;
+      save();
+    }
+    state.entries=DB.rossmann.entries;
+  }
   function persist(){
     if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,entries:[]};
     DB.rossmann.entries=state.entries;
@@ -6227,4 +6327,4 @@ function initRossmannModule(){
 
 
 
-<a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a><div class="glasp-extension-toaster glasp-extension-toaster--youtube-summary" data-glasp-print="hide" style="display: block; width: 320px; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; top: 40px; right: 24px; z-index: 9999;"></div><div class="glasp-extension" data-glasp-print="hide" id="glasp-web-summary-button" style="display: block; width: unset; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; bottom: 16px; right: 16px; z-index: 9999;"><div class="glasp-extension" style="font-family: inherit;"></div></div><a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a><div class="glasp-extension-toaster glasp-extension-toaster--youtube-summary" data-glasp-print="hide" style="display: block; width: 320px; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; top: 40px; right: 24px; z-index: 9999;"></div></body></html>
+</body></html>
