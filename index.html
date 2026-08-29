@@ -6041,6 +6041,7 @@ function initRossmannModule(){
       .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}
       .brand{display:flex;align-items:center;gap:10px}.mark{width:38px;height:38px;border:1px solid rgba(212,162,78,.38);border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(212,162,78,.13),rgba(104,188,123,.06));font:700 14px 'Oswald',sans-serif;color:var(--r-gold2)}.brand b{font:600 19px 'Oswald',sans-serif;letter-spacing:.5px;color:var(--r-gold2)}
       .btn{min-height:42px;border:1px solid var(--r-line);border-radius:10px;background:var(--r-panel2);color:var(--r-muted);padding:0 14px;font:600 11px 'Oswald',sans-serif;letter-spacing:.8px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:7px}.btn:hover{border-color:var(--r-gold);color:var(--r-gold2)}
+      .topActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.journalBtn{color:var(--r-gold2);border-color:rgba(212,162,78,.28)}.journalBtn .emoji{font-size:17px;line-height:1}.journalBtn:hover{background:rgba(212,162,78,.07)}
 
       .miniStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 11px}.stat{border:1px solid var(--r-line);border-radius:13px;background:linear-gradient(135deg,rgba(212,162,78,.035),transparent 55%),var(--r-panel);padding:12px 14px;min-width:0}.stat small{display:block;font:500 8px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:var(--r-faint);margin-bottom:5px}.stat strong{font:700 24px 'Oswald',sans-serif;color:var(--r-gold2);line-height:1;white-space:nowrap}.stat em{font-style:normal;font-size:10px;color:var(--r-muted);margin-left:3px}.rateWrap{display:flex;align-items:baseline;gap:5px}.rateWrap input{width:76px;background:transparent;border:0;border-bottom:1px dashed var(--r-line);color:var(--r-gold2);font:700 23px 'Oswald',sans-serif;outline:none;padding:0}.rateWrap input:focus{border-color:var(--r-gold)}
 
@@ -6060,14 +6061,15 @@ function initRossmannModule(){
 
       .overlay{position:fixed;inset:0;background:rgba(3,6,9,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:14px;z-index:90}.overlay.open{display:flex}.modal{width:min(1120px,100%);max-height:92vh;overflow:auto;border:1px solid var(--r-line);border-radius:18px;background:var(--r-bg);box-shadow:0 28px 80px rgba(0,0,0,.55)}.modalHead{position:sticky;top:0;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 17px;border-bottom:1px solid var(--r-line);background:rgba(11,15,20,.97)}.modalHead b{font:600 17px 'Oswald',sans-serif;color:var(--r-gold2)}.close{width:40px;height:40px;border:1px solid var(--r-line);border-radius:10px;background:var(--r-panel2);color:var(--r-muted);font-size:20px}.modalBody{padding:16px}.rangeBar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}.rangeBtn{min-height:36px;padding:0 12px;border:1px solid var(--r-line);border-radius:9px;background:var(--r-panel2);color:var(--r-muted);font:600 9px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px}.rangeBtn.on{border-color:var(--r-gold);color:var(--r-gold2)}.customRange{display:none;gap:8px;flex-wrap:wrap;margin-bottom:12px}.customRange.on{display:flex}.customRange input{height:40px;border:1px solid var(--r-line);border-radius:9px;background:var(--r-panel2);color:var(--r-text);padding:0 10px;color-scheme:dark}
       .statsGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:12px}.sk{border:1px solid var(--r-line);border-radius:12px;background:var(--r-panel);padding:11px}.sk small{display:block;font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--r-faint);margin-bottom:5px}.sk strong{font:700 20px 'Oswald',sans-serif;color:var(--r-gold2)}.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chartCard{border:1px solid var(--r-line);border-radius:14px;background:var(--r-panel);padding:12px;min-width:0}.chartCard h4{font:600 12px 'Oswald',sans-serif;color:var(--r-gold2);margin:0 0 8px}.chartCard svg{display:block;width:100%;height:auto}.gridLine{stroke:#263240;stroke-width:1}.axis{fill:#667485;font:9px 'Oswald',sans-serif}.lineH{fill:none;stroke:#d4a24e;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}.lineI{fill:none;stroke:#68bc7b;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}.ptH{fill:#d4a24e}.ptI{fill:#68bc7b}.journal{margin-top:10px;border:1px solid var(--r-line);border-radius:13px;overflow:hidden}.jr{display:grid;grid-template-columns:100px 1fr 100px;gap:8px;padding:10px 12px;border-top:1px solid rgba(41,53,67,.72);font:500 11px 'Oswald',sans-serif}.jr:first-child{border-top:0;background:var(--r-panel2);font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--r-faint)}.jr strong{color:var(--r-gold2);text-align:right}
+      .bookModal{width:min(760px,100%);background:#111923}.bookHead{background:#18222d}.bookBody{padding:14px 16px 18px;background:linear-gradient(180deg,#141e28,#10171f)}.bookToolbar{display:grid;grid-template-columns:44px minmax(0,1fr) 118px 44px;gap:8px;align-items:center;margin-bottom:12px}.bookNav{width:44px;height:44px;border:1px solid #344252;border-radius:11px;background:#1b2632;color:#dbe3eb;font:700 20px 'Oswald',sans-serif}.bookNav:hover{border-color:var(--r-gold);color:var(--r-gold2)}.bookToolbar select{height:44px;background:#1b2632;border-color:#344252;font-size:14px}.bookCaption{font:700 21px 'Oswald',sans-serif;color:#f2d99d;margin:3px 0 12px}.ledger{border:1px solid #344252;border-radius:13px;overflow:hidden;background:#151f29}.ledgerRow{display:grid;grid-template-columns:120px minmax(0,1fr) 115px;align-items:center;gap:10px;min-height:48px;padding:10px 14px;border-top:1px solid #2d3947;color:#e7ecf1;font:600 14px 'Oswald',sans-serif}.ledgerRow:first-child{border-top:0}.ledgerHead{min-height:40px;background:#202c38;color:#91a0af;font-size:9px;letter-spacing:1.25px;text-transform:uppercase}.ledgerDate{color:#f0d28c}.ledgerTime{font-size:15px;color:#f4f6f8}.ledgerHours{text-align:right;color:#f0d28c;font-size:15px}.ledgerEmpty{display:block;text-align:center;padding:26px 14px;color:#8593a2;font:500 13px 'Oswald',sans-serif}
       .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(12px);opacity:0;pointer-events:none;border:1px solid var(--r-line);border-radius:999px;background:rgba(17,23,31,.98);color:var(--r-gold2);padding:9px 14px;font:600 10px 'Oswald',sans-serif;letter-spacing:.7px;transition:.2s;z-index:120}.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
       @media(max-width:900px){.workspace{grid-template-columns:1fr}.calendarPane{border-right:0;border-bottom:1px solid var(--r-line)}.editor{padding:15px}.statsGrid{grid-template-columns:repeat(3,1fr)}.charts{grid-template-columns:1fr}.day{min-height:92px}.toolbar{grid-template-columns:44px 1fr 112px 44px auto}.nav{width:44px}.miniStats{grid-template-columns:repeat(2,1fr)}}
-      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.btn{min-height:40px}.miniStats{gap:7px}.stat{padding:10px 11px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.toast{bottom:72px;max-width:88vw;text-align:center}}
+      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.topActions{width:100%;display:grid;grid-template-columns:1fr 1fr}.btn{min-height:42px}.miniStats{gap:7px}.stat{padding:10px 11px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.bookBody{padding:10px}.bookToolbar{grid-template-columns:42px minmax(0,1fr) 88px 42px;gap:6px}.bookNav{width:42px;height:42px}.bookToolbar select{height:42px;padding:0 8px;font-size:13px}.bookCaption{font-size:18px;margin-bottom:10px}.ledgerRow{grid-template-columns:72px minmax(0,1fr) 76px;gap:7px;min-height:46px;padding:9px 9px;font-size:12px}.ledgerTime,.ledgerHours{font-size:13px}.ledgerHead{font-size:7.5px}.toast{bottom:72px;max-width:88vw;text-align:center}}
       @media(max-width:380px){.miniStats{grid-template-columns:1fr 1fr}.timeGrid{grid-template-columns:1fr}.day{min-height:56px}.entry{font-size:7px}.stat strong{font-size:18px}}
     </style>
     <div class="rs">
-      <div class="top"><div class="brand"><div class="mark">R</div><b>Rossmann · Зміни</b></div><button class="btn" id="openStats">Статистика</button></div>
+      <div class="top"><div class="brand"><div class="mark">R</div><b>Rossmann · Зміни</b></div><div class="topActions"><button class="btn journalBtn" id="openJournal" title="Записник змін"><span class="emoji">📓</span><span>Записник</span></button><button class="btn" id="openStats">Статистика</button></div></div>
       <div class="miniStats">
         <div class="stat"><small>Години · місяць</small><strong id="mHours">0</strong><em>год</em></div>
         <div class="stat"><small>Дохід · місяць</small><strong id="mIncome">0</strong><em>zł</em></div>
@@ -6103,6 +6105,11 @@ function initRossmannModule(){
         </div>
       </div>
     </div>
+    <div class="overlay" id="journalOverlay"><div class="modal bookModal"><div class="modalHead bookHead"><b>📓 Записник змін</b><button class="close" id="closeJournal">×</button></div><div class="bookBody">
+      <div class="bookToolbar"><button class="bookNav" id="journalPrev">‹</button><select id="journalMonthSelect" aria-label="Місяць записника"></select><select id="journalYearSelect" aria-label="Рік записника"></select><button class="bookNav" id="journalNext">›</button></div>
+      <div class="bookCaption" id="journalCaption"></div>
+      <div class="ledger" id="journalBook"></div>
+    </div></div></div>
     <div class="overlay" id="statsOverlay"><div class="modal"><div class="modalHead"><b>Статистика · Rossmann</b><button class="close" id="closeStats">×</button></div><div class="modalBody">
       <div class="rangeBar"><button class="rangeBtn" data-range="month">Місяць</button><button class="rangeBtn" data-range="2m">2 місяці</button><button class="rangeBtn on" data-range="6m">6 місяців</button><button class="rangeBtn" data-range="year">Рік</button><button class="rangeBtn" data-range="custom">Період</button></div>
       <div class="customRange" id="customRange"><input id="rangeFrom" type="date"><input id="rangeTo" type="date"></div>
@@ -6116,7 +6123,7 @@ function initRossmannModule(){
   const $=s=>root.querySelector(s), $$=s=>[...root.querySelectorAll(s)];
   const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
   const monthsShort=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
-  const state={year:0,month:0,selected:'',diff:'',statsRange:'6m',entries:[]};
+  const state={year:0,month:0,selected:'',diff:'',statsRange:'6m',entries:[],journalYear:0,journalMonth:0};
   const pad=n=>String(n).padStart(2,'0');
   const localIso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   const todayIso=()=>localIso(new Date());
@@ -6138,8 +6145,9 @@ function initRossmannModule(){
   function calc(es){const shifts=es.filter(e=>e.type==='shift'),offs=es.filter(e=>e.type==='off'),hours=shifts.reduce((a,e)=>a+hoursOf(e),0);return{shifts,offs,hours,income:hours*rate(),avg:shifts.length?hours/shifts.length:0,max:shifts.length?Math.max(...shifts.map(hoursOf)):0}}
   function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
   function fillSelectors(){
-    $('#monthSelect').innerHTML=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
-    const now=new Date().getFullYear();let h='';for(let y=now-5;y<=now+5;y++)h+=`<option value="${y}">${y}</option>`;$('#yearSelect').innerHTML=h;
+    const monthOptions=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+    $('#monthSelect').innerHTML=monthOptions;$('#journalMonthSelect').innerHTML=monthOptions;
+    const now=new Date().getFullYear();let h='';for(let y=now-5;y<=now+5;y++)h+=`<option value="${y}">${y}</option>`;$('#yearSelect').innerHTML=h;$('#journalYearSelect').innerHTML=h;
   }
   function setSelected(date){state.selected=date;const e=state.entries.find(x=>x.date===date);if(e&&e.type==='shift'){ $('#startTime').value=e.start||'06:00';$('#endTime').value=e.end||'14:00';state.diff=e.diff||'' }else{state.diff='';if(e&&e.type==='off'){ $('#startTime').value='06:00';$('#endTime').value='14:00' }}renderEditor();renderCalendar()}
   function selectedEntry(){return state.entries.find(e=>e.date===state.selected)}
@@ -6162,6 +6170,21 @@ function initRossmannModule(){
   function saveOff(){if(!state.selected)return;state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'off',date:state.selected});persist();state.diff='';renderAll();toast('Вихідний збережено')}
   function deleteEntry(){const e=selectedEntry();if(!e)return;state.entries=state.entries.filter(x=>x.date!==state.selected);persist();state.diff='';renderAll();toast('Запис видалено')}
   function renderAll(){renderCalendar();renderEditor()}
+
+  function renderJournalBook(){
+    $('#journalMonthSelect').value=String(state.journalMonth);$('#journalYearSelect').value=String(state.journalYear);
+    $('#journalCaption').textContent=`${months[state.journalMonth]} ${state.journalYear}`;
+    const es=monthEntries(state.journalYear,state.journalMonth),box=$('#journalBook');
+    box.innerHTML='<div class="ledgerRow ledgerHead"><span>Дата</span><span>З якої — по яку</span><span style="text-align:right">Години</span></div>';
+    if(!es.length){box.insertAdjacentHTML('beforeend','<div class="ledgerEmpty">Записів за цей місяць немає</div>');return}
+    es.forEach(e=>{
+      const d=parseDate(e.date).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit'});
+      if(e.type==='off')box.insertAdjacentHTML('beforeend',`<div class="ledgerRow"><span class="ledgerDate">${d}</span><span class="ledgerTime">Вихідний</span><span class="ledgerHours">—</span></div>`);
+      else box.insertAdjacentHTML('beforeend',`<div class="ledgerRow"><span class="ledgerDate">${d}</span><span class="ledgerTime">${e.start} — ${e.end}</span><span class="ledgerHours">${hfmt(hoursOf(e))} год</span></div>`);
+    });
+  }
+  function moveJournalMonth(delta){const d=new Date(state.journalYear,state.journalMonth+delta,1);state.journalYear=d.getFullYear();state.journalMonth=d.getMonth();if(![...$('#journalYearSelect').options].some(o=>Number(o.value)===state.journalYear)){const o=document.createElement('option');o.value=String(state.journalYear);o.textContent=String(state.journalYear);$('#journalYearSelect').appendChild(o)}renderJournalBook()}
+  function openJournal(){state.journalYear=state.year;state.journalMonth=state.month;renderJournalBook();$('#journalOverlay').classList.add('open')}
 
   function statsDates(){
     if(state.statsRange==='month'){const last=new Date(state.year,state.month+1,0).getDate();return[`${state.year}-${pad(state.month+1)}-01`,`${state.year}-${pad(state.month+1)}-${pad(last)}`]}
@@ -6187,12 +6210,15 @@ function initRossmannModule(){
   $('#startTime').addEventListener('input',renderEditor);$('#endTime').addEventListener('input',renderEditor);
   $('#saveShift').addEventListener('click',saveShift);$('#saveOff').addEventListener('click',saveOff);$('#deleteEntry').addEventListener('click',deleteEntry);
   $('#rateInput').addEventListener('input',()=>{DB.rossmann.rate=rate();save();renderMini();if($('#statsOverlay').classList.contains('open'))renderStats()});
+  $('#openJournal').addEventListener('click',openJournal);$('#closeJournal').addEventListener('click',()=>$('#journalOverlay').classList.remove('open'));$('#journalOverlay').addEventListener('click',e=>{if(e.target===$('#journalOverlay'))$('#journalOverlay').classList.remove('open')});
+  $('#journalPrev').addEventListener('click',()=>moveJournalMonth(-1));$('#journalNext').addEventListener('click',()=>moveJournalMonth(1));
+  $('#journalMonthSelect').addEventListener('change',e=>{state.journalMonth=Number(e.target.value);renderJournalBook()});$('#journalYearSelect').addEventListener('change',e=>{state.journalYear=Number(e.target.value);renderJournalBook()});
   $('#openStats').addEventListener('click',()=>{$('#statsOverlay').classList.add('open');renderStats()});$('#closeStats').addEventListener('click',()=>$('#statsOverlay').classList.remove('open'));$('#statsOverlay').addEventListener('click',e=>{if(e.target===$('#statsOverlay'))$('#statsOverlay').classList.remove('open')});
   $('#rangeFrom').addEventListener('change',renderStats);$('#rangeTo').addEventListener('change',renderStats);
 
-  fillSelectors();ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();renderAll();
-  window.refreshRossmann=function(){ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.diff='';renderAll()};
-  window.rossmannCloseOverlays=function(){$('#statsOverlay').classList.remove('open')};
+  fillSelectors();ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();renderAll();
+  window.refreshRossmann=function(){ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';renderAll()};
+  window.rossmannCloseOverlays=function(){$('#statsOverlay').classList.remove('open');$('#journalOverlay').classList.remove('open')};
 }
 
 
