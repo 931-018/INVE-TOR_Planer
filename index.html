@@ -2103,7 +2103,28 @@ body.debt-drag-active{overscroll-behavior:none}
 @media(max-width:620px){.deadline-picker{left:12px!important;right:12px!important;bottom:max(12px,env(safe-area-inset-bottom))!important;top:auto!important;width:auto}.focus-timer-card{width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border-radius:22px;padding:22px 14px}.ft-duration{gap:9px}.ft-unit input{width:80px;height:56px;font-size:25px}.ft-actions{display:grid;grid-template-columns:1fr 1fr}.ft-actions button{min-width:0}.ft-time{font-size:clamp(58px,20vw,88px)}.today-timer-btn{width:30px;height:30px}.stage-actions{gap:4px}.deadline-trigger{padding:0 6px}}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style><style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style></head>
+<style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style><style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style>
+<style id="life-planner-pro-styles">
+/* ═══ PERSONAL PLANNER · ROSSMANN-STYLE CALENDAR ═══ */
+.planner-tab-mark{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:6px;background:linear-gradient(145deg,rgba(232,199,137,.18),rgba(111,184,126,.12));border:1px solid rgba(232,199,137,.28);color:var(--gold-soft);font-weight:700;margin-right:3px}
+.lp-shell{--lp-bg:#0b0f14;--lp-panel:#11171f;--lp-panel2:#171f2a;--lp-panel3:#0e141b;--lp-line:#293543;--lp-gold:#d4a24e;--lp-gold2:#f0d28c;--lp-green:#68bc7b;--lp-text:#ece9e1;--lp-muted:#9ba5b2;--lp-faint:#647181;--lp-blue:#79a8c7;--lp-red:#dc675b;max-width:1220px;margin:0 auto 28px;color:var(--lp-text);font-family:'Spectral',serif}
+.lp-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}.lp-brand{display:flex;align-items:center;gap:10px}.lp-mark{width:38px;height:38px;border:1px solid rgba(212,162,78,.38);border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(212,162,78,.13),rgba(104,188,123,.06));font:700 15px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-brand b{font:600 19px 'Oswald',sans-serif;letter-spacing:.5px;color:var(--lp-gold2)}.lp-top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lp-btn{min-height:42px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:var(--lp-muted);padding:0 14px;font:600 11px 'Oswald',sans-serif;letter-spacing:.8px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer}.lp-btn:hover{border-color:var(--lp-gold);color:var(--lp-gold2)}.lp-btn.primary{border-color:rgba(104,188,123,.48);color:#eff7f0;background:linear-gradient(135deg,rgba(104,188,123,.19),rgba(212,162,78,.06))}
+.lp-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 11px}.lp-stat{border:1px solid var(--lp-line);border-radius:13px;background:linear-gradient(135deg,rgba(212,162,78,.035),transparent 55%),var(--lp-panel);padding:12px 14px;min-width:0}.lp-stat small{display:block;font:500 8px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:var(--lp-faint);margin-bottom:5px}.lp-stat strong{font:700 24px 'Oswald',sans-serif;color:var(--lp-gold2);line-height:1;white-space:nowrap}.lp-stat em{font-style:normal;font-size:10px;color:var(--lp-muted);margin-left:3px}
+.lp-shellbox{border:1px solid var(--lp-line);border-radius:18px;background:var(--lp-panel);overflow:hidden}.lp-toolbar{display:grid;grid-template-columns:46px minmax(0,1fr) 150px 46px auto;gap:9px;align-items:center;padding:11px;border-bottom:1px solid var(--lp-line);background:rgba(14,20,27,.72)}.lp-navbtn{width:46px;height:46px;border:1px solid var(--lp-line);border-radius:11px;background:var(--lp-panel2);color:var(--lp-muted);font:700 20px 'Oswald',sans-serif;cursor:pointer}.lp-navbtn:hover{border-color:var(--lp-gold);color:var(--lp-gold2)}.lp-toolbar select{height:46px;border:1px solid var(--lp-line);border-radius:11px;background:var(--lp-panel2);color:var(--lp-text);padding:0 13px;outline:none;font:600 14px 'Oswald',sans-serif;color-scheme:dark}.lp-toolbar select:focus{border-color:var(--lp-gold)}.lp-today-btn{height:46px;border:1px solid var(--lp-line);border-radius:11px;background:var(--lp-panel2);color:var(--lp-muted);padding:0 14px;font:600 10px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;cursor:pointer}.lp-today-btn:hover{border-color:var(--lp-gold);color:var(--lp-gold2)}
+.lp-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.78fr);min-width:0}.lp-calendar-pane{min-width:0;border-right:1px solid var(--lp-line)}.lp-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--lp-line);background:rgba(23,31,42,.72)}.lp-weekdays span{padding:10px 4px;text-align:center;font:500 8px 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;color:#728194}.lp-calendar{display:grid;grid-template-columns:repeat(7,1fr);background:var(--lp-line);gap:1px}.lp-day{position:relative;min-height:108px;background:#10161e;padding:10px 8px;cursor:pointer;overflow:hidden;transition:background .15s;color:var(--lp-text)}.lp-day:hover{background:#131c26}.lp-day.other{background:#0d1218}.lp-day.other .lp-day-num{opacity:.34}.lp-day.today .lp-day-num{color:var(--lp-gold2)}.lp-day.today:before{content:'';position:absolute;inset:4px;border:1px solid rgba(212,162,78,.38);border-radius:8px;pointer-events:none}.lp-day.selected{background:linear-gradient(135deg,rgba(212,162,78,.09),rgba(255,255,255,.015)),#111821}.lp-day.selected:after{content:'';position:absolute;inset:0;border:2px solid var(--lp-gold);pointer-events:none}.lp-day-num{display:inline-flex;position:relative;z-index:2;font:600 13px 'Oswald',sans-serif;color:#dce2ea;border:0;background:transparent;padding:0;cursor:pointer}.lp-day-num:hover{color:var(--lp-gold2);text-decoration:underline;text-underline-offset:3px}.lp-event-mini{display:block;margin-top:7px;border-left:3px solid var(--ec,var(--lp-blue));padding:4px 4px 4px 6px;border-radius:0 6px 6px 0;background:rgba(7,10,14,.48);font:500 9px 'Oswald',sans-serif;line-height:1.22;color:#eef1f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;z-index:2;cursor:pointer}.lp-event-mini:hover{background:rgba(212,162,78,.08)}.lp-more{font:500 8px 'Oswald',sans-serif;color:var(--lp-muted);margin-top:3px}.lp-task-count{position:absolute;right:5px;bottom:5px;z-index:2;border:1px solid #354253;border-radius:999px;background:#1b2632;color:#b7c1cc;padding:2px 6px;font:600 8px 'Oswald',sans-serif;cursor:pointer;white-space:nowrap}.lp-task-count:hover{border-color:var(--lp-gold);color:var(--lp-gold2)}
+.lp-editor{padding:18px 17px;background:linear-gradient(145deg,rgba(212,162,78,.025),transparent 42%),var(--lp-panel3);min-width:0}.lp-eyebrow{font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.5px;color:var(--lp-faint);margin-bottom:5px}.lp-selected-title{font:700 22px 'Oswald',sans-serif;color:var(--lp-gold2);line-height:1.2;margin-bottom:12px;text-transform:capitalize}.lp-day-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}.lp-meta-card{border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);padding:9px 10px;min-width:0}.lp-meta-card small{display:block;font:500 7px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--lp-faint)}.lp-meta-card strong{display:block;margin-top:3px;font:700 18px 'Oswald',sans-serif;color:#edf1f5}.lp-meta-card.tasks{cursor:pointer}.lp-meta-card.tasks:hover{border-color:var(--lp-gold)}
+.lp-selected-events{display:grid;gap:6px;margin-bottom:14px}.lp-selected-event{display:grid;grid-template-columns:4px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel2);cursor:pointer}.lp-selected-event:hover{border-color:#3e5062}.lp-selected-event i{height:100%;border-radius:3px;background:var(--ec,var(--lp-blue))}.lp-selected-event b{font:600 12px 'Oswald',sans-serif;color:#eef1f4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lp-selected-event span{font:500 8px 'Oswald',sans-serif;color:var(--lp-muted);white-space:nowrap}.lp-empty-events{padding:8px 2px 11px;color:var(--lp-faint);font-size:12px}
+.lp-form{border-top:1px solid var(--lp-line);padding-top:14px}.lp-form-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.lp-form-title b{font:600 11px 'Oswald',sans-serif;color:var(--lp-gold2);letter-spacing:.6px;text-transform:uppercase}.lp-new-btn{border:0;background:transparent;color:var(--lp-muted);font:600 9px 'Oswald',sans-serif;cursor:pointer}.lp-new-btn:hover{color:var(--lp-gold2)}.lp-field{display:block;margin-bottom:9px;min-width:0}.lp-field label,.lp-field>span{display:block;font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.2px;color:var(--lp-faint);margin:0 0 5px}.lp-input,.lp-select,.lp-textarea{width:100%;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:#fff;padding:0 11px;outline:none;font:600 14px 'Oswald',sans-serif;color-scheme:dark}.lp-input,.lp-select{height:45px}.lp-textarea{min-height:68px;padding:10px 11px;resize:vertical;font-family:'Spectral',serif;font-size:14px;font-weight:400;line-height:1.45}.lp-input:focus,.lp-select:focus,.lp-textarea:focus{border-color:var(--lp-gold)}.lp-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lp-all-day{display:flex;align-items:center;gap:8px;min-height:42px;margin:1px 0 9px;padding:0 10px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);cursor:pointer}.lp-all-day input{accent-color:var(--lp-green)}.lp-all-day span{font:600 9px 'Oswald',sans-serif;color:var(--lp-muted);text-transform:uppercase;letter-spacing:.7px}.lp-save{width:100%;min-height:52px;border:1px solid rgba(104,188,123,.55);border-radius:12px;background:linear-gradient(135deg,rgba(104,188,123,.22),rgba(212,162,78,.06));color:#f0f8f1;font:700 11px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.9px;cursor:pointer}.lp-editor-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.lp-editor-actions button{min-height:44px;border-radius:10px;background:var(--lp-panel2);font:600 9px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.7px;cursor:pointer}.lp-cancel-edit{border:1px solid var(--lp-line);color:var(--lp-muted)}.lp-delete{border:1px solid rgba(220,103,91,.35);color:#e69b93}.lp-delete:disabled{opacity:.3;cursor:default}
+.lp-type-event{--ec:#79a8c7}.lp-type-birthday{--ec:#e2a6bf}.lp-type-reminder{--ec:#e6bf72}.lp-type-deadline{--ec:#df7968}.lp-type-personal{--ec:#77c68a}
+.lp-overlay{position:fixed;inset:0;background:rgba(3,6,9,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:14px;z-index:3300}.lp-overlay.open{display:flex}.lp-modal{width:min(980px,100%);max-height:92vh;overflow:auto;border:1px solid var(--lp-line);border-radius:18px;background:var(--lp-bg);box-shadow:0 28px 80px rgba(0,0,0,.55)}.lp-modal-head{position:sticky;top:0;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 17px;border-bottom:1px solid var(--lp-line);background:rgba(11,15,20,.97)}.lp-modal-head b{font:600 17px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-close{width:40px;height:40px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:var(--lp-muted);font-size:20px;cursor:pointer}.lp-modal-body{padding:15px}.lp-range-buttons{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}.lp-range-buttons button{min-height:36px;padding:0 12px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel2);color:var(--lp-muted);font:600 9px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.6px;cursor:pointer}.lp-range-buttons button.on{border-color:var(--lp-gold);color:var(--lp-gold2)}.lp-custom-range{display:none;gap:8px;flex-wrap:wrap;margin-bottom:12px}.lp-custom-range.on{display:flex}.lp-custom-range input{height:40px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel2);color:var(--lp-text);padding:0 10px;color-scheme:dark}.lp-up-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.lp-up-summary div{border:1px solid var(--lp-line);border-radius:11px;background:var(--lp-panel);padding:11px 12px}.lp-up-summary small{display:block;font:500 8px 'Oswald',sans-serif;color:var(--lp-faint);text-transform:uppercase;letter-spacing:1px}.lp-up-summary strong{display:block;margin-top:3px;font:700 21px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-up-list{border:1px solid var(--lp-line);border-radius:13px;overflow:hidden}.lp-up-day{display:grid;grid-template-columns:82px minmax(0,1fr);gap:10px;padding:10px 12px;border-top:1px solid var(--lp-line)}.lp-up-day:first-child{border-top:0}.lp-up-date{font:700 13px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-up-date small{display:block;font-size:8px;color:var(--lp-faint);text-transform:uppercase}.lp-up-items{display:grid;gap:5px}.lp-up-event,.lp-up-task-count{display:flex;align-items:center;gap:8px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel2);padding:8px 9px;cursor:pointer;min-width:0}.lp-up-event i{width:7px;height:7px;border-radius:50%;background:var(--ec,var(--lp-blue));flex:0 0 auto}.lp-up-event b,.lp-up-task-count b{font:600 12px 'Oswald',sans-serif;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lp-up-event span,.lp-up-task-count span{font:500 8px 'Oswald',sans-serif;color:var(--lp-muted);white-space:nowrap}.lp-up-task-count{cursor:pointer}.lp-up-task-count:hover{border-color:var(--lp-gold)}.lp-up-empty{padding:24px 14px;text-align:center;color:var(--lp-faint)}
+.today-planner-alerts{display:grid;gap:8px;margin:0 0 12px}.today-planner-alerts:empty{display:none}.today-event-alert{display:grid;grid-template-columns:5px minmax(0,1fr) auto;gap:11px;align-items:center;padding:11px 13px;border:1px solid #344353;border-radius:10px;background:linear-gradient(135deg,rgba(121,168,199,.08),rgba(230,191,114,.04)),var(--panel2);cursor:pointer}.today-event-alert .stripe{align-self:stretch;border-radius:4px;background:var(--ec,#79a8c7)}.today-event-alert b{display:block;font-size:15px;color:#eceae4}.today-event-alert small{display:block;color:var(--txt-faint);font-size:11px;margin-top:2px}.today-event-alert .when{font-family:'Oswald',sans-serif;font-size:10px;color:var(--gold-soft);white-space:nowrap}.today-event-head{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:3px 2px 1px}
+@media(max-width:900px){.lp-workspace{grid-template-columns:1fr}.lp-calendar-pane{border-right:0;border-bottom:1px solid var(--lp-line)}.lp-editor{padding:15px}.lp-stats{grid-template-columns:repeat(2,1fr)}.lp-toolbar{grid-template-columns:44px 1fr 112px 44px auto}.lp-navbtn{width:44px}.lp-day{min-height:92px}}
+@media(max-width:620px){#pg-planner{margin-left:-8px;margin-right:-8px}.lp-shell{padding-bottom:18px}.lp-top{padding:0 8px;align-items:center}.lp-brand b{font-size:17px}.lp-top-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.lp-btn{min-height:42px}.lp-stats{gap:7px;padding:0 8px}.lp-stat{padding:10px 11px}.lp-stat strong{font-size:20px}.lp-shellbox{border-radius:14px}.lp-toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.lp-today-btn{grid-column:1/-1;height:38px}.lp-navbtn{width:42px;height:42px}.lp-toolbar select{height:42px;padding:0 8px;font-size:13px}.lp-weekdays span{padding:8px 1px;font-size:7px}.lp-day{min-height:63px;padding:5px 4px}.lp-day-num{font-size:11px}.lp-event-mini{margin-top:4px;padding:3px 3px 3px 5px;font-size:7.5px}.lp-task-count{font-size:7px;right:3px;bottom:3px;padding:1px 4px}.lp-more{display:none}.lp-editor{padding:14px 12px}.lp-selected-title{font-size:20px;margin-bottom:11px}.lp-form-grid{grid-template-columns:1fr 1fr}.lp-input,.lp-select{height:48px;font-size:16px}.lp-textarea{font-size:16px}.lp-up-summary{grid-template-columns:repeat(3,1fr)}.lp-up-day{grid-template-columns:64px minmax(0,1fr);padding:9px 8px;gap:7px}.lp-modal{border-radius:16px;max-height:90vh}.lp-modal-body{padding:11px}.lp-overlay{align-items:flex-end;padding:0}.lp-modal{width:100%;border-radius:20px 20px 0 0;border-bottom:0}.today-event-alert{grid-template-columns:4px minmax(0,1fr);padding:10px}.today-event-alert .when{grid-column:2}.planner-tab-mark{width:17px;height:17px}}
+@media(max-width:380px){.lp-stat strong{font-size:18px}.lp-day{min-height:58px}.lp-event-mini{font-size:7px}.lp-task-count{font-size:6.5px}.lp-form-grid{grid-template-columns:1fr}}
+</style>
+
+</head>
 <body>
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
 <div class="bgfx" aria-hidden="true">
@@ -2137,6 +2158,7 @@ body.debt-drag-active{overscroll-behavior:none}
 
   <div class="tabs">
     <button class="tab active" data-pg="today">Сьогодні</button>
+    <button class="tab planner-tab" data-pg="planner"><span class="planner-tab-mark">$</span> Планер</button>
     <button class="tab" data-pg="sph">Сфери</button>
     <button class="tab" data-pg="habits">Звички</button>
     <button class="tab" data-pg="rossmann">Rossmann</button>
@@ -2172,10 +2194,86 @@ body.debt-drag-active{overscroll-behavior:none}
           <button class="vision-hotspot vision-watches" data-vision-action="vision" aria-label="Відкрити моє бачення" title="Моє бачення"></button>
         </div>
       </div>
-<div class="dbar"><div id="dayBar" style="width: 0%;"></div></div>
+<div id="todayPlannerAlerts" class="today-planner-alerts"></div>
+      <div class="dbar"><div id="dayBar" style="width: 0%;"></div></div>
       <div id="todayList"></div>
       <textarea class="dnote" id="dNote" placeholder="Один висновок дня…"></textarea>
       <div class="hint ui-text-editable" data-ui-text-key="pg-today|div:0/div:6">Завдання приходять сюди зі сфер.</div>
+    </div>
+  </div>
+
+
+  <!-- ПЛАНЕР · КАЛЕНДАР ПОДІЙ -->
+  <div class="page" id="pg-planner">
+    <div class="lp-shell" id="lifePlannerHost">
+      <div class="lp-top">
+        <div class="lp-brand"><div class="lp-mark">$</div><b>Планер · Події</b></div>
+        <div class="lp-top-actions">
+          <button type="button" class="lp-btn" id="lpOpenUpcoming">Найближчі</button>
+          <button type="button" class="lp-btn primary" id="lpNewEvent">＋ Подія</button>
+        </div>
+      </div>
+
+      <div class="lp-stats" id="lpStats"></div>
+
+      <div class="lp-shellbox">
+        <div class="lp-toolbar">
+          <button type="button" class="lp-navbtn" id="lpPrev" aria-label="Попередній місяць">‹</button>
+          <select id="lpMonth" aria-label="Місяць"></select>
+          <select id="lpYear" aria-label="Рік"></select>
+          <button type="button" class="lp-navbtn" id="lpNext" aria-label="Наступний місяць">›</button>
+          <button type="button" class="lp-today-btn" id="lpToday">Сьогодні</button>
+        </div>
+        <div class="lp-workspace">
+          <section class="lp-calendar-pane" aria-label="Календар">
+            <div class="lp-weekdays" id="lpWeekdays"></div>
+            <div class="lp-calendar" id="lpCalendar"></div>
+          </section>
+          <aside class="lp-editor">
+            <div class="lp-eyebrow">Обраний день</div>
+            <div class="lp-selected-title" id="lpSelectedTitle"></div>
+            <div class="lp-day-meta">
+              <div class="lp-meta-card"><small>Події</small><strong id="lpSelectedEventCount">0</strong></div>
+              <div class="lp-meta-card tasks" id="lpGoTasks" title="Відкрити завдання цього дня"><small>Завдання</small><strong id="lpSelectedTaskCount">0</strong></div>
+            </div>
+            <div class="lp-selected-events" id="lpSelectedEvents"></div>
+
+            <form class="lp-form" id="lpEventForm">
+              <input type="hidden" id="lpEventId">
+              <div class="lp-form-title"><b id="lpFormTitle">Нова подія</b><button type="button" class="lp-new-btn" id="lpResetEvent">＋ Нова</button></div>
+              <label class="lp-field"><span>Назва</span><input class="lp-input" id="lpTitle" maxlength="100" placeholder="Що заплановано?" required></label>
+              <div class="lp-form-grid">
+                <label class="lp-field"><span>Тип</span><select class="lp-select" id="lpType"><option value="event">Подія</option><option value="birthday">🎂 День народження</option><option value="reminder">🔔 Нагадування</option><option value="deadline">◆ Дедлайн</option><option value="personal">✦ Особисте</option></select></label>
+                <label class="lp-field"><span>Нагадати</span><select class="lp-select" id="lpReminder"><option value="0">У день події</option><option value="1">За 1 день</option><option value="3">За 3 дні</option><option value="7">За 7 днів</option><option value="14">За 14 днів</option><option value="30">За 30 днів</option></select></label>
+              </div>
+              <label class="lp-all-day"><input type="checkbox" id="lpAllDay" checked><span>Весь день</span></label>
+              <div class="lp-form-grid" id="lpTimeGrid">
+                <label class="lp-field"><span>З якої</span><input class="lp-input" type="time" id="lpStart" value="12:00"></label>
+                <label class="lp-field"><span>По яку</span><input class="lp-input" type="time" id="lpEnd" value="13:00"></label>
+              </div>
+              <div class="lp-form-grid">
+                <label class="lp-field"><span>Повтор</span><select class="lp-select" id="lpRepeat"><option value="none">Не повторювати</option><option value="yearly">Щороку</option><option value="monthly">Щомісяця</option><option value="weekly">Щотижня</option></select></label>
+                <label class="lp-field"><span>До дати</span><input class="lp-input" type="date" id="lpEndDate"></label>
+              </div>
+              <label class="lp-field"><span>Нотатка</span><textarea class="lp-textarea" id="lpNote" maxlength="600" placeholder="Деталі або що не забути…"></textarea></label>
+              <button type="submit" class="lp-save" id="lpSaveEvent">Зберегти подію</button>
+              <div class="lp-editor-actions"><button type="button" class="lp-cancel-edit" id="lpResetEvent2">Очистити</button><button type="button" class="lp-delete" id="lpDelete" disabled>Видалити</button></div>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div class="lp-overlay" id="lpUpcomingOverlay" aria-hidden="true">
+      <div class="lp-modal">
+        <div class="lp-modal-head"><b>Найближчі події</b><button type="button" class="lp-close" id="lpCloseUpcoming">×</button></div>
+        <div class="lp-modal-body">
+          <div class="lp-range-buttons" id="lpRangeButtons"><button type="button" class="on" data-range="7">7 днів</button><button type="button" data-range="30">30 днів</button><button type="button" data-range="90">3 місяці</button><button type="button" data-range="custom">Інтервал</button></div>
+          <div class="lp-custom-range" id="lpCustomRange"><input type="date" id="lpRangeFrom"><input type="date" id="lpRangeTo"><button type="button" class="lp-btn" id="lpApplyRange">Показати</button></div>
+          <div class="lp-up-summary" id="lpUpcomingSummary"></div>
+          <div class="lp-up-list" id="lpUpcomingList"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2699,7 +2797,7 @@ function blank(){return{
   ws:JSON.parse(JSON.stringify(D_WS)),
   yt:JSON.parse(JSON.stringify(D_YT)),
   reflections:[],
-  rossmann:{rate:27.5,entries:[]},
+  rossmann:{rate:27.5,rates:{},countStatsFrom:'',entries:[]},
   healthPages:JSON.parse(JSON.stringify(D_HEALTH_PAGES)),healthActive:'strategy',
   healthSimple:JSON.parse(JSON.stringify(D_HEALTH_SIMPLE)),
   ytNotes:'',ideas:[],done:{},daySkip:{},meta:{},weekFocus:{},income:{},snap:{},
@@ -3454,7 +3552,7 @@ document.addEventListener('keydown',e=>{
   else if(k==='y'){e.preventDefault();redoPlanner();}
 });
 
-function render(){rCd();rToday();rSnav();rSph();rGoals();rWS();rHabits();setTimeout(()=>prepareUiTextEditing(document),0);}
+function render(){rCd();rToday();rSnav();rSph();rGoals();rWS();rHabits();if(window.refreshLifePlanner)window.refreshLifePlanner();setTimeout(()=>prepareUiTextEditing(document),0);}
 
 function rCd(){const now=new Date(),e=new Date(2026,11,31,23,59,59);
   let s=Math.max(0,Math.floor((e-now)/1000));
@@ -5904,7 +6002,7 @@ function rInc(){
 function go(p){if(p==='goals')p='sph';if(p!=='rossmann'&&window.rossmannCloseOverlays)window.rossmannCloseOverlays();document.body.dataset.page=p;closeMobileFabs();document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.pg===p));
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.getElementById('pg-'+p).classList.add('active');
-  if(p==='today')rToday();else if(p==='goals')rGoals();else if(p==='habits')rHabits();else if(p==='ws')rWS();else if(p==='rossmann'){if(window.refreshRossmann)window.refreshRossmann();}else if(p==='sph'){rSph();applySphereNavCollapsed();}}
+  if(p==='today')rToday();else if(p==='goals')rGoals();else if(p==='habits')rHabits();else if(p==='ws')rWS();else if(p==='rossmann'){if(window.refreshRossmann)window.refreshRossmann();}else if(p==='planner'){if(window.refreshLifePlanner)window.refreshLifePlanner();}else if(p==='sph'){rSph();applySphereNavCollapsed();}}
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.pg));
 function sphereNavCollapsed(){
   DB.ui=DB.ui||{};
@@ -6104,6 +6202,7 @@ function initRossmannModule(){
       .topActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.journalBtn{color:var(--r-gold2);border-color:rgba(212,162,78,.28)}.journalBtn .emoji{font-size:17px;line-height:1}.journalBtn:hover{background:rgba(212,162,78,.07)}
 
       .miniStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 11px}.stat{border:1px solid var(--r-line);border-radius:13px;background:linear-gradient(135deg,rgba(212,162,78,.035),transparent 55%),var(--r-panel);padding:12px 14px;min-width:0}.stat small{display:block;font:500 8px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:var(--r-faint);margin-bottom:5px}.stat strong{font:700 24px 'Oswald',sans-serif;color:var(--r-gold2);line-height:1;white-space:nowrap}.stat em{font-style:normal;font-size:10px;color:var(--r-muted);margin-left:3px}.rateWrap{display:flex;align-items:baseline;gap:5px}.rateWrap input{width:76px;background:transparent;border:0;border-bottom:1px dashed var(--r-line);color:var(--r-gold2);font:700 23px 'Oswald',sans-serif;outline:none;padding:0}.rateWrap input:focus{border-color:var(--r-gold)}
+      .countScope{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:58px;margin:0 0 11px;padding:9px 12px 9px 14px;border:1px solid var(--r-line);border-radius:13px;background:linear-gradient(110deg,rgba(104,188,123,.07),rgba(212,162,78,.035) 48%,transparent),var(--r-panel)}.countScopeInfo{display:flex;align-items:center;gap:10px;min-width:0}.countScopeDot{width:9px;height:9px;border-radius:50%;background:var(--r-green);box-shadow:0 0 0 4px rgba(104,188,123,.09);flex:0 0 auto}.countScopeText{min-width:0}.countScopeText small{display:block;font:500 8px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:var(--r-faint);line-height:1.2}.countScopeText b{display:block;margin-top:3px;font:600 13px 'Oswald',sans-serif;color:#dfe8e2;white-space:nowrap}.countScopeControls{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.countScopeControls>span{font:500 9px 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--r-faint)}.countScope select{height:38px;border-radius:9px;padding:0 10px;font-size:12px;background:var(--r-panel2)}.countScopeMonth{min-width:128px}.countScopeYear{width:86px}.allHoursTag{height:30px;display:inline-flex;align-items:center;padding:0 10px;border:1px solid rgba(212,162,78,.18);border-radius:999px;color:var(--r-gold2);background:rgba(212,162,78,.045);font:500 8px 'Oswald',sans-serif;letter-spacing:.85px;text-transform:uppercase;white-space:nowrap}.statsScopeNote{display:flex;align-items:center;gap:8px;min-height:38px;margin:-2px 0 12px;padding:8px 11px;border:1px solid rgba(104,188,123,.18);border-radius:10px;background:rgba(104,188,123,.045);color:var(--r-muted);font:500 9px 'Oswald',sans-serif;letter-spacing:.45px}.statsScopeNote b{color:#dfe8e2;font-weight:600}.statsScopeNote i{width:7px;height:7px;border-radius:50%;background:var(--r-green);flex:0 0 auto}
 
       .shell{border:1px solid var(--r-line);border-radius:18px;background:var(--r-panel);overflow:hidden}.toolbar{display:grid;grid-template-columns:46px minmax(0,1fr) 150px 46px auto;gap:9px;align-items:center;padding:11px;border-bottom:1px solid var(--r-line);background:rgba(14,20,27,.72)}
       .nav{width:46px;height:46px;border:1px solid var(--r-line);border-radius:11px;background:var(--r-panel2);color:var(--r-muted);font:700 20px 'Oswald',sans-serif}.nav:hover{border-color:var(--r-gold);color:var(--r-gold2)}
@@ -6124,8 +6223,8 @@ function initRossmannModule(){
       .bookModal{width:min(760px,100%);background:#111923}.bookHead{background:#18222d}.bookBody{padding:14px 16px 18px;background:linear-gradient(180deg,#141e28,#10171f)}.bookToolbar{display:grid;grid-template-columns:44px minmax(0,1fr) 118px 44px;gap:8px;align-items:center;margin-bottom:12px}.bookNav{width:44px;height:44px;border:1px solid #344252;border-radius:11px;background:#1b2632;color:#dbe3eb;font:700 20px 'Oswald',sans-serif}.bookNav:hover{border-color:var(--r-gold);color:var(--r-gold2)}.bookToolbar select{height:44px;background:#1b2632;border-color:#344252;font-size:14px}.bookCaption{font:700 21px 'Oswald',sans-serif;color:#f2d99d;margin:3px 0 12px}.ledger{border:1px solid #344252;border-radius:13px;overflow:hidden;background:#151f29}.ledgerRow{display:grid;grid-template-columns:120px minmax(0,1fr) 115px;align-items:center;gap:10px;min-height:48px;padding:10px 14px;border-top:1px solid #2d3947;color:#e7ecf1;font:600 14px 'Oswald',sans-serif}.ledgerRow:first-child{border-top:0}.ledgerHead{min-height:40px;background:#202c38;color:#91a0af;font-size:9px;letter-spacing:1.25px;text-transform:uppercase}.ledgerDate{color:#f0d28c}.ledgerTime{font-size:15px;color:#f4f6f8}.ledgerHours{text-align:right;color:#f0d28c;font-size:15px}.ledgerEmpty{display:block;text-align:center;padding:26px 14px;color:#8593a2;font:500 13px 'Oswald',sans-serif}
       .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(12px);opacity:0;pointer-events:none;border:1px solid var(--r-line);border-radius:999px;background:rgba(17,23,31,.98);color:var(--r-gold2);padding:9px 14px;font:600 10px 'Oswald',sans-serif;letter-spacing:.7px;transition:.2s;z-index:120}.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
-      @media(max-width:900px){.workspace{grid-template-columns:1fr}.calendarPane{border-right:0;border-bottom:1px solid var(--r-line)}.editor{padding:15px}.statsGrid{grid-template-columns:repeat(3,1fr)}.charts{grid-template-columns:1fr}.day{min-height:92px}.toolbar{grid-template-columns:44px 1fr 112px 44px auto}.nav{width:44px}.miniStats{grid-template-columns:repeat(2,1fr)}}
-      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.topActions{width:100%;display:grid;grid-template-columns:1fr 1fr}.btn{min-height:42px}.miniStats{gap:7px}.stat{padding:10px 11px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.bookBody{padding:10px}.bookToolbar{grid-template-columns:42px minmax(0,1fr) 88px 42px;gap:6px}.bookNav{width:42px;height:42px}.bookToolbar select{height:42px;padding:0 8px;font-size:13px}.bookCaption{font-size:18px;margin-bottom:10px}.ledgerRow{grid-template-columns:72px minmax(0,1fr) 76px;gap:7px;min-height:46px;padding:9px 9px;font-size:12px}.ledgerTime,.ledgerHours{font-size:13px}.ledgerHead{font-size:7.5px}.toast{bottom:72px;max-width:88vw;text-align:center}}
+      @media(max-width:900px){.workspace{grid-template-columns:1fr}.calendarPane{border-right:0;border-bottom:1px solid var(--r-line)}.editor{padding:15px}.statsGrid{grid-template-columns:repeat(3,1fr)}.charts{grid-template-columns:1fr}.day{min-height:92px}.toolbar{grid-template-columns:44px 1fr 112px 44px auto}.nav{width:44px}.miniStats{grid-template-columns:repeat(2,1fr)}.countScope{align-items:flex-start;flex-wrap:wrap}.countScopeControls{margin-left:auto}}}
+      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.topActions{width:100%;display:grid;grid-template-columns:1fr 1fr}.btn{min-height:42px}.miniStats{gap:7px}.stat{padding:10px 11px}.countScope{padding:10px 11px;gap:9px}.countScopeInfo{width:100%}.countScopeText b{font-size:12px}.countScopeControls{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) 88px;gap:6px;align-items:center}.countScopeMonth{min-width:0;width:100%}.countScopeYear{width:100%}.countScope select{height:42px;font-size:13px}.allHoursTag{grid-column:2/4;justify-self:start;height:28px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.bookBody{padding:10px}.bookToolbar{grid-template-columns:42px minmax(0,1fr) 88px 42px;gap:6px}.bookNav{width:42px;height:42px}.bookToolbar select{height:42px;padding:0 8px;font-size:13px}.bookCaption{font-size:18px;margin-bottom:10px}.ledgerRow{grid-template-columns:72px minmax(0,1fr) 76px;gap:7px;min-height:46px;padding:9px 9px;font-size:12px}.ledgerTime,.ledgerHours{font-size:13px}.ledgerHead{font-size:7.5px}.toast{bottom:72px;max-width:88vw;text-align:center}}
       @media(max-width:380px){.miniStats{grid-template-columns:1fr 1fr}.timeGrid{grid-template-columns:1fr}.day{min-height:56px}.entry{font-size:7px}.stat strong{font-size:18px}}
     </style>
     <div class="rs">
@@ -6134,7 +6233,11 @@ function initRossmannModule(){
         <div class="stat"><small>Години · місяць</small><strong id="mHours">0</strong><em>год</em></div>
         <div class="stat"><small>Дохід · місяць</small><strong id="mIncome">0</strong><em>zł</em></div>
         <div class="stat"><small>Змін · місяць</small><strong id="mShifts">0</strong></div>
-        <div class="stat"><small>Ставка</small><div class="rateWrap"><input id="rateInput" type="number" min="0" step="0.5"><em>zł/год</em></div></div>
+        <div class="stat"><small id="rateLabel">Ставка</small><div class="rateWrap"><input id="rateInput" type="number" min="0" step="0.5"><em>zł/год</em></div></div>
+      </div>
+      <div class="countScope">
+        <div class="countScopeInfo"><span class="countScopeDot"></span><div class="countScopeText"><small>Повна статистика</small><b>Зміни + вихідні</b></div></div>
+        <div class="countScopeControls"><span>від</span><select class="countScopeMonth" id="countStartMonth" aria-label="Місяць початку повної статистики"></select><select class="countScopeYear" id="countStartYear" aria-label="Рік початку повної статистики"></select><span class="allHoursTag">Години · весь період</span></div>
       </div>
       <div class="shell">
         <div class="toolbar">
@@ -6173,6 +6276,7 @@ function initRossmannModule(){
     <div class="overlay" id="statsOverlay"><div class="modal"><div class="modalHead"><b>Статистика · Rossmann</b><button class="close" id="closeStats">×</button></div><div class="modalBody">
       <div class="rangeBar"><button class="rangeBtn" data-range="month">Місяць</button><button class="rangeBtn" data-range="2m">2 місяці</button><button class="rangeBtn on" data-range="6m">6 місяців</button><button class="rangeBtn" data-range="year">Рік</button><button class="rangeBtn" data-range="custom">Період</button></div>
       <div class="customRange" id="customRange"><input id="rangeFrom" type="date"><input id="rangeTo" type="date"></div>
+      <div class="statsScopeNote" id="statsScopeNote"></div>
       <div class="statsGrid"><div class="sk"><small>Години</small><strong id="sHours">0</strong></div><div class="sk"><small>Дохід</small><strong id="sIncome">0</strong></div><div class="sk"><small>Зміни</small><strong id="sShifts">0</strong></div><div class="sk"><small>Вихідні</small><strong id="sOff">0</strong></div><div class="sk"><small>Середня</small><strong id="sAvg">0</strong></div><div class="sk"><small>Найдовша</small><strong id="sMax">0</strong></div></div>
       <div class="charts"><div class="chartCard"><h4>Години по місяцях</h4><svg id="hoursChart" viewBox="0 0 620 220"></svg></div><div class="chartCard"><h4>Дохід по місяцях</h4><svg id="incomeChart" viewBox="0 0 620 220"></svg></div></div>
       <div class="journal" id="journal"></div>
@@ -6191,7 +6295,53 @@ function initRossmannModule(){
   const uid=()=>`rs_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
   const hfmt=n=>{const x=Math.round((Number(n)||0)*10)/10;return Number.isInteger(x)?String(x):x.toFixed(1).replace('.',',')};
   const money=n=>Math.round((Number(n)||0)*100)/100;
-  const rate=()=>Math.max(0,Number($('#rateInput').value)||0);
+  const monthKey=(y,m)=>`${y}-${pad(m+1)}`;
+  const defaultRate=()=>Math.max(0,Number(DB.rossmann&&DB.rossmann.rate)||27.5);
+  const rateFor=(y,m)=>{
+    const k=monthKey(y,m),v=DB.rossmann&&DB.rossmann.rates?Number(DB.rossmann.rates[k]):NaN;
+    return Number.isFinite(v)&&v>=0?v:defaultRate();
+  };
+  const currentRate=()=>rateFor(state.year,state.month);
+  const entryRate=e=>{
+    if(!e||!e.date)return defaultRate();
+    const [y,m]=e.date.split('-').map(Number);
+    return rateFor(y,m-1);
+  };
+  function syncRateInput(){
+    const v=currentRate();
+    if(document.activeElement!==$('#rateInput'))$('#rateInput').value=String(v);
+    const lbl=$('#rateLabel');if(lbl)lbl.textContent=`Ставка · ${months[state.month]}`;
+  }
+  function saveCurrentRate(){
+    const v=Math.max(0,Number($('#rateInput').value)||0),k=monthKey(state.year,state.month);
+    if(!DB.rossmann.rates||typeof DB.rossmann.rates!=='object')DB.rossmann.rates={};
+    DB.rossmann.rates[k]=v;
+    save();
+  }
+  function firstRecordedMonth(){
+    const keys=(DB.rossmann&&Array.isArray(DB.rossmann.entries)?DB.rossmann.entries:[]).filter(e=>e&&e.date).map(e=>e.date.slice(0,7)).sort();
+    return keys[0]||monthKey(new Date().getFullYear(),new Date().getMonth());
+  }
+  function countStatsFrom(){
+    const v=DB.rossmann&&typeof DB.rossmann.countStatsFrom==='string'?DB.rossmann.countStatsFrom:'';
+    return /^\d{4}-\d{2}$/.test(v)?v:firstRecordedMonth();
+  }
+  function countEligible(e){return !!(e&&e.date&&e.date.slice(0,7)>=countStatsFrom())}
+  function countCalc(es){const clean=(es||[]).filter(countEligible);return{shifts:clean.filter(e=>e.type==='shift'),offs:clean.filter(e=>e.type==='off')}}
+  function ensureCountYearOption(y){
+    const sel=$('#countStartYear');if(!sel||[...sel.options].some(o=>Number(o.value)===Number(y)))return;
+    const o=document.createElement('option');o.value=String(y);o.textContent=String(y);sel.appendChild(o);
+    [...sel.options].sort((a,b)=>Number(a.value)-Number(b.value)).forEach(o=>sel.appendChild(o));
+  }
+  function syncCountStart(){
+    const k=countStatsFrom(),[y,m]=k.split('-').map(Number);ensureCountYearOption(y);
+    if($('#countStartMonth'))$('#countStartMonth').value=String(Math.max(0,m-1));
+    if($('#countStartYear'))$('#countStartYear').value=String(y);
+  }
+  function saveCountStart(){
+    const y=Number($('#countStartYear').value),m=Number($('#countStartMonth').value);if(!Number.isFinite(y)||!Number.isFinite(m))return;
+    DB.rossmann.countStatsFrom=monthKey(y,m);save();syncCountStart();renderMini();if($('#statsOverlay').classList.contains('open'))renderStats();toast(`Повна статистика від ${months[m]} ${y}`);
+  }
   const NOTION_AUG_2026_ENTRIES=[
     {id:'rs_notion_20260801',date:'2026-08-01',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
     {id:'rs_notion_20260802',date:'2026-08-02',type:'shift',start:'22:00',end:'06:00',diff:'',source:'notion'},
@@ -6220,9 +6370,11 @@ function initRossmannModule(){
     {id:'rs_notion_20260825',date:'2026-08-25',type:'shift',start:'22:00',end:'02:30',diff:'',source:'notion'}
   ];
   function ensureData(){
-    if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,entries:[]};
+    if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,rates:{},entries:[]};
     if(!Array.isArray(DB.rossmann.entries))DB.rossmann.entries=[];
     if(!Number.isFinite(Number(DB.rossmann.rate)))DB.rossmann.rate=27.5;
+    if(!DB.rossmann.rates||typeof DB.rossmann.rates!=='object'||Array.isArray(DB.rossmann.rates))DB.rossmann.rates={};
+    if(typeof DB.rossmann.countStatsFrom!=='string')DB.rossmann.countStatsFrom='';
     if(!DB.rossmann.notionAug2026ImportedV1){
       const importedDates=new Set(NOTION_AUG_2026_ENTRIES.map(e=>e.date));
       DB.rossmann.entries=DB.rossmann.entries.filter(e=>!importedDates.has(e&&e.date));
@@ -6232,28 +6384,30 @@ function initRossmannModule(){
       save();
     }
     state.entries=DB.rossmann.entries;
+    if(!/^\d{4}-\d{2}$/.test(DB.rossmann.countStatsFrom||'')){DB.rossmann.countStatsFrom=firstRecordedMonth();save()}
   }
   function persist(){
-    if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,entries:[]};
+    if(!DB.rossmann||typeof DB.rossmann!=='object')DB.rossmann={rate:27.5,rates:{},entries:[]};
+    if(!DB.rossmann.rates||typeof DB.rossmann.rates!=='object')DB.rossmann.rates={};
+    if(typeof DB.rossmann.countStatsFrom!=='string')DB.rossmann.countStatsFrom=firstRecordedMonth();
     DB.rossmann.entries=state.entries;
-    DB.rossmann.rate=rate();
     save();
   }
   function mins(t){if(!/^\d{2}:\d{2}$/.test(t||''))return 0;const[h,m]=t.split(':').map(Number);return h*60+m}
   function hoursOf(e){if(!e||e.type!=='shift')return 0;let a=mins(e.start),b=mins(e.end);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
   function monthEntries(y,m){const p=`${y}-${pad(m+1)}-`;return state.entries.filter(e=>e.date&&e.date.startsWith(p)).sort((a,b)=>a.date.localeCompare(b.date))}
-  function calc(es){const shifts=es.filter(e=>e.type==='shift'),offs=es.filter(e=>e.type==='off'),hours=shifts.reduce((a,e)=>a+hoursOf(e),0);return{shifts,offs,hours,income:hours*rate(),avg:shifts.length?hours/shifts.length:0,max:shifts.length?Math.max(...shifts.map(hoursOf)):0}}
+  function calc(es){const shifts=es.filter(e=>e.type==='shift'),offs=es.filter(e=>e.type==='off'),hours=shifts.reduce((a,e)=>a+hoursOf(e),0),income=shifts.reduce((a,e)=>a+hoursOf(e)*entryRate(e),0);return{shifts,offs,hours,income,avg:shifts.length?hours/shifts.length:0,max:shifts.length?Math.max(...shifts.map(hoursOf)):0}}
   function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
   function fillSelectors(){
     const monthOptions=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
-    $('#monthSelect').innerHTML=monthOptions;$('#journalMonthSelect').innerHTML=monthOptions;
-    const now=new Date().getFullYear();let h='';for(let y=now-5;y<=now+5;y++)h+=`<option value="${y}">${y}</option>`;$('#yearSelect').innerHTML=h;$('#journalYearSelect').innerHTML=h;
+    $('#monthSelect').innerHTML=monthOptions;$('#journalMonthSelect').innerHTML=monthOptions;$('#countStartMonth').innerHTML=monthOptions;
+    const now=new Date().getFullYear();let h='';for(let y=now-5;y<=now+5;y++)h+=`<option value="${y}">${y}</option>`;$('#yearSelect').innerHTML=h;$('#journalYearSelect').innerHTML=h;$('#countStartYear').innerHTML=h;
   }
   function setSelected(date){state.selected=date;const e=state.entries.find(x=>x.date===date);if(e&&e.type==='shift'){ $('#startTime').value=e.start||'06:00';$('#endTime').value=e.end||'14:00';state.diff=e.diff||'' }else{state.diff='';if(e&&e.type==='off'){ $('#startTime').value='06:00';$('#endTime').value='14:00' }}renderEditor();renderCalendar()}
   function selectedEntry(){return state.entries.find(e=>e.date===state.selected)}
   function renderEditor(){const d=parseDate(state.selected);$('#selectedTitle').textContent=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const hrs=durationNow();$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));const e=selectedEntry();$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
   function durationNow(){let a=mins($('#startTime').value),b=mins($('#endTime').value);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
-  function renderMini(){const s=calc(monthEntries(state.year,state.month));$('#mHours').textContent=hfmt(s.hours);$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});$('#mShifts').textContent=s.shifts.length}
+  function renderMini(){syncRateInput();syncCountStart();const es=monthEntries(state.year,state.month),s=calc(es),cs=countCalc(es),eligible=monthKey(state.year,state.month)>=countStatsFrom();$('#mHours').textContent=hfmt(s.hours);$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});$('#mShifts').textContent=eligible?cs.shifts.length:'—';$('#mShifts').title=eligible?'Повна статистика місяця':`Не враховується у кількості змін до ${countStatsFrom()}` }
   function renderCalendar(){
     $('#monthSelect').value=String(state.month);$('#yearSelect').value=String(state.year);
     const first=new Date(state.year,state.month,1),offset=(first.getDay()+6)%7,start=new Date(state.year,state.month,1-offset),box=$('#days');box.innerHTML='';
@@ -6296,7 +6450,7 @@ function initRossmannModule(){
   function rangeEntries(a,b){return state.entries.filter(e=>e.date>=a&&e.date<=b).sort((x,y)=>x.date.localeCompare(y.date))}
   function monthSeries(a,b){const s=parseDate(a),end=parseDate(b),arr=[];let d=new Date(s.getFullYear(),s.getMonth(),1),last=new Date(end.getFullYear(),end.getMonth(),1);while(d<=last){const y=d.getFullYear(),m=d.getMonth(),ms=`${y}-${pad(m+1)}-01`,me=`${y}-${pad(m+1)}-${pad(new Date(y,m+1,0).getDate())}`,aa=ms<a?a:ms,bb=me>b?b:me,st=calc(rangeEntries(aa,bb));arr.push({label:`${monthsShort[m]} ${String(y).slice(2)}`,hours:st.hours,income:st.income});d=new Date(y,m+1,1)}return arr}
   function drawLine(svg,data,key,kind){const W=620,H=220,p={l:40,r:15,t:16,b:30};svg.innerHTML='';const vals=data.map(x=>Number(x[key])||0),max=Math.max(1,...vals)*1.12;for(let i=0;i<5;i++){const y=p.t+(H-p.t-p.b)*i/4;svg.insertAdjacentHTML('beforeend',`<line class="gridLine" x1="${p.l}" y1="${y}" x2="${W-p.r}" y2="${y}"/><text class="axis" x="${p.l-7}" y="${y+3}" text-anchor="end">${hfmt(max*(1-i/4))}</text>`)}const pts=data.map((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1),yy=p.t+(H-p.t-p.b)*(1-(Number(x[key])||0)/max);return[xx,yy]});if(pts.length>1)svg.insertAdjacentHTML('beforeend',`<polyline class="${kind==='income'?'lineI':'lineH'}" points="${pts.map(q=>q.join(',')).join(' ')}"/>`);pts.forEach((q,i)=>svg.insertAdjacentHTML('beforeend',`<circle class="${kind==='income'?'ptI':'ptH'}" cx="${q[0]}" cy="${q[1]}" r="4"><title>${data[i].label}: ${hfmt(data[i][key])}</title></circle>`));data.forEach((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1);svg.insertAdjacentHTML('beforeend',`<text class="axis" x="${xx}" y="${H-8}" text-anchor="middle">${x.label}</text>`)});if(!data.length)svg.insertAdjacentHTML('beforeend',`<text class="axis" x="310" y="110" text-anchor="middle">Немає даних</text>`)}
-  function renderStats(){const[a,b]=statsDates(),es=rangeEntries(a,b),s=calc(es);$('#sHours').textContent=`${hfmt(s.hours)} год`;$('#sIncome').textContent=`${money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2})} zł`;$('#sShifts').textContent=s.shifts.length;$('#sOff').textContent=s.offs.length;$('#sAvg').textContent=`${hfmt(s.avg)} год`;$('#sMax').textContent=`${hfmt(s.max)} год`;const series=monthSeries(a,b);drawLine($('#hoursChart'),series,'hours','hours');drawLine($('#incomeChart'),series,'income','income');const j=$('#journal');j.innerHTML='<div class="jr"><span>Дата</span><span>Час</span><strong>Разом</strong></div>';if(!es.length)j.insertAdjacentHTML('beforeend','<div class="jr"><span>—</span><span>Немає записів</span><strong>—</strong></div>');else es.forEach(e=>{const date=parseDate(e.date).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'2-digit'});j.insertAdjacentHTML('beforeend',e.type==='off'?`<div class="jr"><span>${date}</span><span>Вихідний</span><strong>—</strong></div>`:`<div class="jr"><span>${date}</span><span>${e.start} — ${e.end}</span><strong>${hfmt(hoursOf(e))} год</strong></div>`)} )}
+  function renderStats(){const[a,b]=statsDates(),es=rangeEntries(a,b),s=calc(es),cs=countCalc(es),from=countStatsFrom(),hasCountCoverage=b.slice(0,7)>=from;$('#sHours').textContent=`${hfmt(s.hours)} год`;$('#sIncome').textContent=`${money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2})} zł`;$('#sShifts').textContent=hasCountCoverage?cs.shifts.length:'—';$('#sOff').textContent=hasCountCoverage?cs.offs.length:'—';$('#sAvg').textContent=`${hfmt(s.avg)} год`;$('#sMax').textContent=`${hfmt(s.max)} год`;const[fy,fm]=from.split('-').map(Number),scope=$('#statsScopeNote');if(scope)scope.innerHTML=`<i></i><span><b>Зміни + вихідні:</b> повна статистика від ${months[fm-1]} ${fy} · <b>Години та дохід:</b> увесь вибраний період</span>`;const series=monthSeries(a,b);drawLine($('#hoursChart'),series,'hours','hours');drawLine($('#incomeChart'),series,'income','income');const j=$('#journal');j.innerHTML='<div class="jr"><span>Дата</span><span>Час</span><strong>Разом</strong></div>';if(!es.length)j.insertAdjacentHTML('beforeend','<div class="jr"><span>—</span><span>Немає записів</span><strong>—</strong></div>');else es.forEach(e=>{const date=parseDate(e.date).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'2-digit'});j.insertAdjacentHTML('beforeend',e.type==='off'?`<div class="jr"><span>${date}</span><span>Вихідний</span><strong>—</strong></div>`:`<div class="jr"><span>${date}</span><span>${e.start} — ${e.end}</span><strong>${hfmt(hoursOf(e))} год</strong></div>`)} )}
 
   root.addEventListener('click',e=>{
     const day=e.target.closest('.day');if(day){const date=day.dataset.date,d=parseDate(date);if(d.getMonth()!==state.month||d.getFullYear()!==state.year){state.month=d.getMonth();state.year=d.getFullYear()}setSelected(date);return}
@@ -6309,20 +6463,124 @@ function initRossmannModule(){
   $('#yearSelect').addEventListener('change',e=>{state.year=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;renderAll()});
   $('#startTime').addEventListener('input',renderEditor);$('#endTime').addEventListener('input',renderEditor);
   $('#saveShift').addEventListener('click',saveShift);$('#saveOff').addEventListener('click',saveOff);$('#deleteEntry').addEventListener('click',deleteEntry);
-  $('#rateInput').addEventListener('input',()=>{DB.rossmann.rate=rate();save();renderMini();if($('#statsOverlay').classList.contains('open'))renderStats()});
+  $('#rateInput').addEventListener('input',()=>{saveCurrentRate();const s=calc(monthEntries(state.year,state.month));$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});if($('#statsOverlay').classList.contains('open'))renderStats()});
+  $('#countStartMonth').addEventListener('change',saveCountStart);$('#countStartYear').addEventListener('change',saveCountStart);
   $('#openJournal').addEventListener('click',openJournal);$('#closeJournal').addEventListener('click',()=>$('#journalOverlay').classList.remove('open'));$('#journalOverlay').addEventListener('click',e=>{if(e.target===$('#journalOverlay'))$('#journalOverlay').classList.remove('open')});
   $('#journalPrev').addEventListener('click',()=>moveJournalMonth(-1));$('#journalNext').addEventListener('click',()=>moveJournalMonth(1));
   $('#journalMonthSelect').addEventListener('change',e=>{state.journalMonth=Number(e.target.value);renderJournalBook()});$('#journalYearSelect').addEventListener('change',e=>{state.journalYear=Number(e.target.value);renderJournalBook()});
   $('#openStats').addEventListener('click',()=>{$('#statsOverlay').classList.add('open');renderStats()});$('#closeStats').addEventListener('click',()=>$('#statsOverlay').classList.remove('open'));$('#statsOverlay').addEventListener('click',e=>{if(e.target===$('#statsOverlay'))$('#statsOverlay').classList.remove('open')});
   $('#rangeFrom').addEventListener('change',renderStats);$('#rangeTo').addEventListener('change',renderStats);
 
-  fillSelectors();ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();renderAll();
-  window.refreshRossmann=function(){ensureData();$('#rateInput').value=String(Number(DB.rossmann.rate)||27.5);const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';renderAll()};
+  fillSelectors();ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();syncRateInput();syncCountStart();renderAll();
+  window.refreshRossmann=function(){ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';syncRateInput();syncCountStart();renderAll()};
   window.rossmannCloseOverlays=function(){$('#statsOverlay').classList.remove('open');$('#journalOverlay').classList.remove('open')};
 }
 
 
-(async()=>{await load();await initCloudSync();snapshot();render();initRossmannModule();syncRenderUI();syncFocusTimerUI();setInterval(rCd,30000);})();
+
+/* ═══════════════════════════════════════════════════════════════
+   PERSONAL PLANNER · Rossmann-style calendar + events + reminders
+   Inspired by professional unified task/calendar patterns.
+   ═══════════════════════════════════════════════════════════════ */
+function initLifePlannerModule(){
+  if(window.__lifePlannerInit)return;window.__lifePlannerInit=true;
+  const host=document.getElementById('lifePlannerHost');if(!host)return;
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+  const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  const week=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+  const typeMeta={event:{label:'Подія',icon:'●',cls:'event'},birthday:{label:'День народження',icon:'🎂',cls:'birthday'},reminder:{label:'Нагадування',icon:'🔔',cls:'reminder'},deadline:{label:'Дедлайн',icon:'◆',cls:'deadline'},personal:{label:'Особисте',icon:'✦',cls:'personal'}};
+  const now=new Date();
+  const state={year:now.getFullYear(),month:now.getMonth(),selected:iso(now),editing:'',range:'7',rangeFrom:iso(now),rangeTo:iso(addDays(now,6))};
+  function addDays(d,n){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x}
+  function ensure(){DB.planner=DB.planner||{};DB.planner.events=Array.isArray(DB.planner.events)?DB.planner.events:[];return DB.planner}
+  function events(){return ensure().events}
+  function uid(){return 'pe'+Date.now()+Math.random().toString(36).slice(2,7)}
+  function dIso(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+  function niceDate(k,full=false){const d=pd(k);return d.toLocaleDateString('uk-UA',full?{weekday:'long',day:'numeric',month:'long',year:'numeric'}:{day:'numeric',month:'long'})}
+  function shortDate(k){const d=pd(k);return d.toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit'})}
+  function daysDiff(a,b){return Math.round((pd(b)-pd(a))/864e5)}
+  function eventClass(e){return 'lp-type-'+((typeMeta[e.type]||typeMeta.event).cls)}
+  function timeText(e){if(e.allDay!==false)return 'Весь день';return `${e.start||'00:00'} — ${e.end||''}`.replace(/ — $/,'')}
+  function occurs(e,k){
+    if(!e||!e.date)return false;const base=e.date,rep=e.repeat||'none';
+    if(rep==='none')return k>=base&&k<=(e.endDate||base);
+    const b=pd(base),d=pd(k);if(d<b)return false;
+    if(rep==='yearly')return d.getMonth()===b.getMonth()&&d.getDate()===b.getDate();
+    if(rep==='monthly')return d.getDate()===b.getDate();
+    if(rep==='weekly')return daysDiff(base,k)>=0&&daysDiff(base,k)%7===0;
+    return k===base;
+  }
+  function occurrencesOn(k){return events().filter(e=>occurs(e,k)).sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))}
+  function taskList(k){try{return tasksFor(k)||[]}catch(e){return []}}
+  function rangeDates(a,b,max=550){const out=[];let d=pd(a),end=pd(b),i=0;while(d<=end&&i++<max){out.push(iso(d));d.setDate(d.getDate()+1)}return out}
+  function occurrencesRange(a,b){const out=[];rangeDates(a,b).forEach(k=>occurrencesOn(k).forEach(e=>out.push({date:k,event:e})));return out}
+  function nextEventFrom(k,e,maxDays=370){for(let i=0;i<=maxDays;i++){const x=iso(addDays(pd(k),i));if(occurs(e,x))return x}return null}
+  function remindersFor(k){const out=[];events().forEach(e=>{const next=nextEventFrom(k,e,370);if(!next)return;const until=daysDiff(k,next),lead=Math.max(0,Number(e.reminder)||0);if(until===0||((lead>0)&&until>0&&until<=lead))out.push({event:e,date:next,until})});return out.sort((a,b)=>a.until-b.until||String(a.event.start||'').localeCompare(String(b.event.start||'')))}
+  function populateControls(){
+    $('#lpMonth').innerHTML=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
+    let ys='';for(let y=2025;y<=2036;y++)ys+=`<option value="${y}">${y}</option>`;$('#lpYear').innerHTML=ys;
+    $('#lpWeekdays').innerHTML=week.map(x=>`<span>${x}</span>`).join('');
+    $('#lpRangeFrom').value=state.rangeFrom;$('#lpRangeTo').value=state.rangeTo;
+  }
+  function renderStats(){
+    const today=iso(new Date()),monthStart=dIso(state.year,state.month,1),monthEnd=dIso(state.year,state.month,new Date(state.year,state.month+1,0).getDate());
+    const monthOcc=occurrencesRange(monthStart,monthEnd),next7=occurrencesRange(today,iso(addDays(new Date(),6))),birthdays=monthOcc.filter(x=>x.event.type==='birthday').length,taskTotal=rangeDates(monthStart,monthEnd).reduce((s,k)=>s+taskList(k).length,0);
+    $('#lpStats').innerHTML=`<div class="lp-stat"><small>Події · місяць</small><strong>${monthOcc.length}</strong></div><div class="lp-stat"><small>Найближчі 7 днів</small><strong>${next7.length}</strong></div><div class="lp-stat"><small>Дні народження</small><strong>${birthdays}</strong></div><div class="lp-stat"><small>Завдання · місяць</small><strong>${taskTotal}<em>шт</em></strong></div>`;
+  }
+  function goTasks(k){cur=k;go('today')}
+  function renderCalendar(){
+    $('#lpMonth').value=String(state.month);$('#lpYear').value=String(state.year);renderStats();
+    const first=new Date(state.year,state.month,1),offset=(first.getDay()+6)%7,start=new Date(state.year,state.month,1-offset),today=iso(new Date()),box=$('#lpCalendar');box.innerHTML='';
+    for(let i=0;i<42;i++){
+      const d=addDays(start,i),k=iso(d),ev=occurrencesOn(k),tasks=taskList(k),cell=document.createElement('div');
+      cell.className='lp-day'+(d.getMonth()!==state.month?' other':'')+(k===today?' today':'')+(k===state.selected?' selected':'');cell.dataset.lpday=k;
+      const minis=ev.slice(0,2).map(e=>`<span class="lp-event-mini ${eventClass(e)}" data-lpevent="${e.id}" title="${esc(e.title)}">${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</span>`).join('');
+      cell.innerHTML=`<button type="button" class="lp-day-num" data-gotoday="${k}" title="Відкрити день у Сьогодні">${d.getDate()}</button>${minis}${ev.length>2?`<div class="lp-more">+${ev.length-2} події</div>`:''}${tasks.length?`<button type="button" class="lp-task-count" data-gotoday="${k}">${tasks.length} завд.</button>`:''}`;
+      cell.addEventListener('click',e=>{const goEl=e.target.closest('[data-gotoday]');if(goEl){e.stopPropagation();goTasks(goEl.dataset.gotoday);return}const evEl=e.target.closest('[data-lpevent]');if(evEl){e.stopPropagation();selectDate(k);loadEditor(evEl.dataset.lpevent);return}selectDate(k)});box.appendChild(cell);
+    }
+    renderEditor();
+  }
+  function selectDate(k){state.selected=k;const d=pd(k);state.year=d.getFullYear();state.month=d.getMonth();state.editing='';renderCalendar()}
+  function resetEditor(){state.editing='';$('#lpEventId').value='';$('#lpFormTitle').textContent='Нова подія';$('#lpTitle').value='';$('#lpType').value='event';$('#lpReminder').value='0';$('#lpAllDay').checked=true;$('#lpStart').value='12:00';$('#lpEnd').value='13:00';$('#lpRepeat').value='none';$('#lpEndDate').value='';$('#lpNote').value='';$('#lpDelete').disabled=true;syncTimeDisabled()}
+  function loadEditor(id){const e=events().find(x=>x.id===id);if(!e){resetEditor();return}state.editing=e.id;$('#lpEventId').value=e.id;$('#lpFormTitle').textContent='Редагувати подію';$('#lpTitle').value=e.title||'';$('#lpType').value=e.type||'event';$('#lpReminder').value=String(Number(e.reminder)||0);$('#lpAllDay').checked=e.allDay!==false;$('#lpStart').value=e.start||'12:00';$('#lpEnd').value=e.end||'13:00';$('#lpRepeat').value=e.repeat||'none';$('#lpEndDate').value=e.endDate||'';$('#lpNote').value=e.note||'';$('#lpDelete').disabled=false;syncTimeDisabled();renderEditorHeader()}
+  function renderEditorHeader(){
+    const k=state.selected,ev=occurrencesOn(k),tasks=taskList(k);$('#lpSelectedTitle').textContent=niceDate(k,true);$('#lpSelectedEventCount').textContent=String(ev.length);$('#lpSelectedTaskCount').textContent=String(tasks.length);$('#lpGoTasks').onclick=()=>goTasks(k);
+    const box=$('#lpSelectedEvents');box.innerHTML=ev.length?ev.map(e=>`<div class="lp-selected-event ${eventClass(e)}" data-lpevent="${e.id}"><i></i><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><span>${esc(timeText(e))}</span></div>`).join(''):'<div class="lp-empty-events">На цей день подій немає.</div>';
+    box.querySelectorAll('[data-lpevent]').forEach(x=>x.onclick=()=>loadEditor(x.dataset.lpevent));
+  }
+  function renderEditor(){renderEditorHeader();if(state.editing){loadEditor(state.editing)}else resetEditor()}
+  function syncTimeDisabled(){const off=$('#lpAllDay').checked;$('#lpStart').disabled=off;$('#lpEnd').disabled=off;$('#lpTimeGrid').style.opacity=off?'.45':'1'}
+  async function saveEvent(ev){
+    ev.preventDefault();ensure();const id=$('#lpEventId').value,title=$('#lpTitle').value.trim(),existing=id?events().find(x=>x.id===id):null,date=existing&&existing.date?existing.date:state.selected;if(!title||!date)return;
+    let endDate=$('#lpEndDate').value||'';if(endDate&&endDate<date)endDate=date;const type=$('#lpType').value;
+    const obj={id:id||uid(),title,date,endDate,type,allDay:$('#lpAllDay').checked,start:$('#lpStart').value,end:$('#lpEnd').value,reminder:Number($('#lpReminder').value)||0,repeat:$('#lpRepeat').value,note:$('#lpNote').value.trim(),updatedAt:Date.now()};if(type==='birthday'&&obj.repeat==='none')obj.repeat='yearly';
+    const i=events().findIndex(x=>x.id===obj.id);if(i>=0)events()[i]=obj;else events().push(obj);state.editing=obj.id;await save();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast(id?'Подію оновлено':'Подію додано');
+  }
+  async function deleteEvent(){const id=$('#lpEventId').value;if(!id)return;DB.planner.events=events().filter(x=>x.id!==id);state.editing='';await save();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast('Подію видалено')}
+  function renderUpcoming(){
+    let a,b;const today=iso(new Date());if(state.range==='custom'){a=$('#lpRangeFrom').value||today;b=$('#lpRangeTo').value||a;if(b<a)[a,b]=[b,a]}else{const n=Number(state.range)||7;a=today;b=iso(addDays(new Date(),n-1))}
+    const dates=rangeDates(a,b),occ=occurrencesRange(a,b),taskCount=dates.reduce((s,k)=>s+taskList(k).length,0);$('#lpUpcomingSummary').innerHTML=`<div><small>Період</small><strong>${daysDiff(a,b)+1} дн.</strong></div><div><small>Події</small><strong>${occ.length}</strong></div><div><small>Завдання</small><strong>${taskCount}</strong></div>`;
+    const groups=dates.map(k=>({k,ev:occurrencesOn(k),tasks:taskList(k).length})).filter(x=>x.ev.length||x.tasks),box=$('#lpUpcomingList');
+    if(!groups.length){box.innerHTML='<div class="lp-up-empty">У цьому періоді нічого не заплановано.</div>';return}
+    box.innerHTML=groups.map(g=>`<div class="lp-up-day"><div class="lp-up-date">${shortDate(g.k)}<small>${pd(g.k).toLocaleDateString('uk-UA',{weekday:'short'})}</small></div><div class="lp-up-items">${g.ev.map(e=>`<div class="lp-up-event ${eventClass(e)}" data-lpevent="${e.id}" data-lpdate="${g.k}"><i></i><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><span>${esc(timeText(e))}</span></div>`).join('')}${g.tasks?`<div class="lp-up-task-count" data-gotoday="${g.k}"><b>${g.tasks} завдання</b><span>Відкрити день →</span></div>`:''}</div></div>`).join('');
+    box.querySelectorAll('[data-lpevent]').forEach(x=>x.onclick=()=>{closeUpcoming();state.selected=x.dataset.lpdate;const d=pd(state.selected);state.year=d.getFullYear();state.month=d.getMonth();state.editing=x.dataset.lpevent;renderCalendar()});box.querySelectorAll('[data-gotoday]').forEach(x=>x.onclick=()=>{closeUpcoming();goTasks(x.dataset.gotoday)});
+  }
+  function openUpcoming(){$('#lpUpcomingOverlay').classList.add('open');$('#lpUpcomingOverlay').setAttribute('aria-hidden','false');renderUpcoming()}
+  function closeUpcoming(){$('#lpUpcomingOverlay').classList.remove('open');$('#lpUpcomingOverlay').setAttribute('aria-hidden','true')}
+  function setMonth(delta){state.month+=delta;if(state.month<0){state.month=11;state.year--}if(state.month>11){state.month=0;state.year++}state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()}
+  function goToday(){const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=iso(n);state.editing='';renderCalendar()}
+  function renderTodayAlerts(k){const host=document.getElementById('todayPlannerAlerts');if(!host)return;ensure();const rem=remindersFor(k);if(!rem.length){host.innerHTML='';return}host.innerHTML=`<div class="today-event-head">◈ Події та нагадування</div>`+rem.map(r=>{const e=r.event,when=r.until===0?(e.allDay!==false?'Сьогодні':(e.start||'Сьогодні')):`через ${r.until} дн.`;return `<div class="today-event-alert ${eventClass(e)}" data-todayevent="${e.id}" data-todaydate="${r.date}"><span class="stripe"></span><div><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><small>${r.until===0?esc(niceDate(r.date,false)):esc(niceDate(r.date,false)+' · нагадування')}</small></div><span class="when">${when}</span></div>`}).join('');host.querySelectorAll('[data-todayevent]').forEach(x=>x.onclick=()=>{go('planner');state.selected=x.dataset.todaydate;const d=pd(state.selected);state.year=d.getFullYear();state.month=d.getMonth();state.editing=x.dataset.todayevent;renderCalendar()})}
+  window.renderTodayPlannerAlerts=renderTodayAlerts;
+  if(!window.__lifePlannerTodayWrap){window.__lifePlannerTodayWrap=true;const baseToday=rToday;rToday=function(){baseToday();renderTodayAlerts(cur)}}
+  window.refreshLifePlanner=function(){ensure();const n=new Date();if(!state.selected)state.selected=iso(n);renderCalendar()};
+  populateControls();ensure();
+  $('#lpPrev').onclick=()=>setMonth(-1);$('#lpNext').onclick=()=>setMonth(1);$('#lpToday').onclick=goToday;$('#lpMonth').onchange=()=>{state.month=Number($('#lpMonth').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};$('#lpYear').onchange=()=>{state.year=Number($('#lpYear').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};
+  $('#lpNewEvent').onclick=()=>{state.editing='';resetEditor();$('#lpTitle').focus()};$('#lpResetEvent').onclick=resetEditor;$('#lpResetEvent2').onclick=resetEditor;$('#lpAllDay').onchange=syncTimeDisabled;$('#lpType').onchange=()=>{if($('#lpType').value==='birthday'){if($('#lpRepeat').value==='none')$('#lpRepeat').value='yearly';if($('#lpReminder').value==='0')$('#lpReminder').value='7'}};$('#lpEventForm').onsubmit=saveEvent;$('#lpDelete').onclick=deleteEvent;
+  $('#lpOpenUpcoming').onclick=openUpcoming;$('#lpCloseUpcoming').onclick=closeUpcoming;$('#lpUpcomingOverlay').addEventListener('click',e=>{if(e.target===$('#lpUpcomingOverlay'))closeUpcoming()});$$('#lpRangeButtons [data-range]').forEach(b=>b.onclick=()=>{state.range=b.dataset.range;$$('#lpRangeButtons [data-range]').forEach(x=>x.classList.toggle('on',x===b));$('#lpCustomRange').classList.toggle('on',state.range==='custom');if(state.range!=='custom')renderUpcoming()});$('#lpApplyRange').onclick=renderUpcoming;
+  renderCalendar();
+}
+
+(async()=>{await load();await initCloudSync();snapshot();initLifePlannerModule();render();initRossmannModule();syncRenderUI();syncFocusTimerUI();setInterval(rCd,30000);})();
 </script>
 
 
