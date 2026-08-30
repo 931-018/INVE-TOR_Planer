@@ -2122,6 +2122,162 @@ body.debt-drag-active{overscroll-behavior:none}
 @media(max-width:900px){.lp-workspace{grid-template-columns:1fr}.lp-calendar-pane{border-right:0;border-bottom:1px solid var(--lp-line)}.lp-editor{padding:15px}.lp-stats{grid-template-columns:repeat(2,1fr)}.lp-toolbar{grid-template-columns:44px 1fr 112px 44px auto}.lp-navbtn{width:44px}.lp-day{min-height:92px}}
 @media(max-width:620px){#pg-planner{margin-left:-8px;margin-right:-8px}.lp-shell{padding-bottom:18px}.lp-top{padding:0 8px;align-items:center}.lp-brand b{font-size:17px}.lp-top-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.lp-btn{min-height:42px}.lp-stats{gap:7px;padding:0 8px}.lp-stat{padding:10px 11px}.lp-stat strong{font-size:20px}.lp-shellbox{border-radius:14px}.lp-toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.lp-today-btn{grid-column:1/-1;height:38px}.lp-navbtn{width:42px;height:42px}.lp-toolbar select{height:42px;padding:0 8px;font-size:13px}.lp-weekdays span{padding:8px 1px;font-size:7px}.lp-day{min-height:63px;padding:5px 4px}.lp-day-num{font-size:11px}.lp-event-mini{margin-top:4px;padding:3px 3px 3px 5px;font-size:7.5px}.lp-task-count{font-size:7px;right:3px;bottom:3px;padding:1px 4px}.lp-more{display:none}.lp-editor{padding:14px 12px}.lp-selected-title{font-size:20px;margin-bottom:11px}.lp-form-grid{grid-template-columns:1fr 1fr}.lp-input,.lp-select{height:48px;font-size:16px}.lp-textarea{font-size:16px}.lp-up-summary{grid-template-columns:repeat(3,1fr)}.lp-up-day{grid-template-columns:64px minmax(0,1fr);padding:9px 8px;gap:7px}.lp-modal{border-radius:16px;max-height:90vh}.lp-modal-body{padding:11px}.lp-overlay{align-items:flex-end;padding:0}.lp-modal{width:100%;border-radius:20px 20px 0 0;border-bottom:0}.today-event-alert{grid-template-columns:4px minmax(0,1fr);padding:10px}.today-event-alert .when{grid-column:2}.planner-tab-mark{width:17px;height:17px}}
 @media(max-width:380px){.lp-stat strong{font-size:18px}.lp-day{min-height:58px}.lp-event-mini{font-size:7px}.lp-task-count{font-size:6.5px}.lp-form-grid{grid-template-columns:1fr}}
+
+/* TODAY · compact 5-day calendar strip */
+.today-planner-alerts{display:block;margin:0 0 14px}
+.today-daystrip{border:1px solid #2d3947;border-radius:13px;background:linear-gradient(135deg,rgba(212,162,78,.035),rgba(111,184,126,.018)),#111820;overflow:hidden}
+.tds-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 9px;border-bottom:1px solid #273440;background:#151d27}
+.tds-title{font:600 9px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:#d8b96f}
+.tds-controls{display:flex;align-items:center;gap:5px}.tds-nav,.tds-today{height:32px;border:1px solid #334252;border-radius:8px;background:#1a2430;color:#aeb8c4;font-family:'Oswald',sans-serif;cursor:pointer}.tds-nav{width:34px;font-size:17px}.tds-today{padding:0 10px;font-size:9px;letter-spacing:.8px;text-transform:uppercase}.tds-nav:hover,.tds-today:hover{border-color:#d4a24e;color:#f0d28c}
+.tds-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:#273440}
+.tds-day{position:relative;min-width:0;min-height:104px;border:0;background:#111820;color:#e9e7df;padding:9px 6px 7px;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;overflow:hidden}.tds-day:hover{background:#16202a}.tds-day.selected{background:linear-gradient(160deg,rgba(212,162,78,.14),rgba(111,184,126,.045)),#131b24;box-shadow:inset 0 0 0 1px rgba(212,162,78,.64)}.tds-day.today strong{color:#f0d28c}.tds-day.today:after{content:'';position:absolute;top:6px;right:6px;width:5px;height:5px;border-radius:50%;background:#6fb87e;box-shadow:0 0 7px rgba(111,184,126,.5)}
+.tds-week{font:600 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.8px;color:#7f8b99}.tds-day strong{font:700 22px 'Oswald',sans-serif;line-height:1.05;margin-top:2px}.tds-month{font:500 7px 'Oswald',sans-serif;color:#687584;text-transform:uppercase;margin-top:1px}.tds-badges{display:flex;justify-content:center;align-items:center;gap:3px;min-height:21px;margin-top:6px;max-width:100%}.tds-badges i{font-style:normal;display:inline-flex;align-items:center;gap:1px;min-height:19px;padding:0 4px;border-radius:999px;border:1px solid #344454;background:#18222d;font:600 8px 'Oswald',sans-serif;white-space:nowrap}.tds-badges i.event{color:#e7c88a;border-color:rgba(212,162,78,.32)}.tds-badges i.rem{color:#dcb9c7;border-color:rgba(220,150,178,.28)}.tds-badges i.empty{border:0;background:transparent;color:#4f5b68}.tds-event-name{display:block;width:100%;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 7.5px 'Oswald',sans-serif;color:#aab4bf}
+@media(max-width:620px){.today-planner-alerts{margin:0 -2px 13px}.today-daystrip{border-radius:11px}.tds-head{padding:7px}.tds-title{font-size:8px}.tds-nav,.tds-today{height:34px}.tds-nav{width:36px}.tds-today{font-size:8.5px;padding:0 9px}.tds-day{min-height:88px;padding:8px 2px 5px}.tds-week{font-size:7px}.tds-day strong{font-size:20px}.tds-month{font-size:6.5px}.tds-badges{gap:2px;margin-top:5px;min-height:18px}.tds-badges i{font-size:7px;min-height:17px;padding:0 3px}.tds-event-name{display:none}}
+@media(max-width:370px){.tds-head{gap:4px}.tds-title{font-size:7.5px}.tds-controls{gap:3px}.tds-nav{width:32px}.tds-today{padding:0 7px}.tds-day{min-height:84px}.tds-day strong{font-size:19px}.tds-badges i{padding:0 2px}}
+
+
+/* ═══ PLANNER · PRIVATE PEOPLE & RELATIONSHIP DATA ═══ */
+.lp-type-relationship{--ec:#d99aaa}
+.lp-inline-field{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:7px;align-items:center}.lp-inline-field .lp-select{width:100%;min-width:0}.lp-inline-add{height:44px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:var(--lp-gold2);font:700 18px 'Oswald',sans-serif;cursor:pointer}.lp-inline-add:hover{border-color:var(--lp-gold)}
+.lp-birthday-field.is-hidden{display:none}
+.lp-data-modal{width:min(1120px,100%)}.lp-data-body{padding:14px}.lp-data-tabs{display:flex;gap:7px;padding:4px 0 12px;flex-wrap:wrap}.lp-data-tab{min-height:40px;padding:0 15px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:var(--lp-muted);font:600 10px 'Oswald',sans-serif;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}.lp-data-tab.on{border-color:rgba(212,162,78,.65);color:var(--lp-gold2);background:linear-gradient(135deg,rgba(212,162,78,.13),rgba(104,188,123,.05))}
+.lp-data-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}.lp-data-kpi{border:1px solid var(--lp-line);border-radius:12px;background:var(--lp-panel);padding:10px 12px;min-width:0}.lp-data-kpi small{display:block;font:500 8px 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--lp-faint)}.lp-data-kpi strong{display:block;margin-top:4px;font:700 20px 'Oswald',sans-serif;color:var(--lp-gold2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lp-data-kpi em{font-style:normal;font-size:10px;color:var(--lp-muted);margin-left:3px}
+.lp-data-panel[hidden]{display:none!important}.lp-data-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:12px;align-items:start}.lp-data-col,.lp-data-editor{border:1px solid var(--lp-line);border-radius:14px;background:var(--lp-panel);overflow:hidden}.lp-data-col-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-bottom:1px solid var(--lp-line);background:rgba(14,20,27,.72)}.lp-data-col-head b{font:600 13px 'Oswald',sans-serif;color:var(--lp-gold2);letter-spacing:.5px}.lp-mini-action{min-height:34px;padding:0 10px;border:1px solid rgba(104,188,123,.35);border-radius:9px;background:rgba(104,188,123,.08);color:#cfead4;font:600 9px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.7px;cursor:pointer}
+.lp-person-list,.lp-relation-list{padding:9px;display:grid;gap:8px;max-height:570px;overflow:auto}.lp-person-card,.lp-relation-card{width:100%;text-align:left;border:1px solid var(--lp-line);border-radius:12px;background:var(--lp-panel2);color:var(--lp-text);padding:11px 12px;cursor:pointer;transition:.16s}.lp-person-card:hover,.lp-relation-card:hover,.lp-person-card.on,.lp-relation-card.on{border-color:rgba(212,162,78,.55);background:linear-gradient(135deg,rgba(212,162,78,.08),transparent),var(--lp-panel2)}.lp-person-top,.lp-relation-top{display:flex;align-items:center;gap:10px}.lp-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:12px;border:1px solid rgba(212,162,78,.28);display:grid;place-items:center;background:linear-gradient(145deg,rgba(212,162,78,.12),rgba(104,188,123,.06));font:700 13px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-person-main,.lp-relation-main{min-width:0;flex:1}.lp-person-main b,.lp-relation-main b{display:block;font:600 14px 'Oswald',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lp-person-main small,.lp-relation-main small{display:block;margin-top:2px;font:500 9px 'Oswald',sans-serif;color:var(--lp-muted);letter-spacing:.4px}.lp-vip{color:var(--lp-gold2);font-size:13px}.lp-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.lp-chip{display:inline-flex;align-items:center;min-height:24px;padding:0 7px;border:1px solid var(--lp-line);border-radius:999px;background:rgba(8,12,17,.35);color:var(--lp-muted);font:500 8.5px 'Oswald',sans-serif;letter-spacing:.35px}.lp-chip.hot{border-color:rgba(212,162,78,.32);color:var(--lp-gold2)}.lp-chip.green{border-color:rgba(104,188,123,.3);color:#9bd7a7}
+.lp-data-editor{padding:13px}.lp-data-editor-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}.lp-data-editor-title b{font:600 16px 'Oswald',sans-serif;color:var(--lp-gold2)}.lp-data-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lp-data-checks{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}.lp-data-check{display:flex;align-items:center;gap:8px;min-height:38px;padding:0 10px;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);font:500 10px 'Oswald',sans-serif;color:var(--lp-muted)}.lp-data-check input{accent-color:var(--lp-green);width:17px;height:17px}.lp-data-textarea{width:100%;min-height:76px;resize:vertical;border:1px solid var(--lp-line);border-radius:10px;background:var(--lp-panel2);color:var(--lp-text);padding:10px 11px;outline:none;font-size:14px;line-height:1.45}.lp-data-textarea:focus{border-color:var(--lp-gold)}.lp-data-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}.lp-data-save{min-height:44px;border:1px solid rgba(104,188,123,.5);border-radius:10px;background:linear-gradient(135deg,rgba(104,188,123,.18),rgba(212,162,78,.05));color:#eef7ef;font:700 10px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.8px;cursor:pointer}.lp-data-delete{min-width:86px;border:1px solid rgba(220,103,91,.35);border-radius:10px;background:rgba(220,103,91,.05);color:#dd948c;font:600 9px 'Oswald',sans-serif;text-transform:uppercase;cursor:pointer}.lp-data-delete:disabled{opacity:.28;cursor:default}
+.lp-linked{margin-top:11px;border-top:1px solid var(--lp-line);padding-top:10px}.lp-linked-head{font:600 9px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--lp-faint);margin-bottom:7px}.lp-linked-list{display:grid;gap:6px}.lp-linked-item{display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 9px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel2);cursor:pointer}.lp-linked-item i{width:7px;height:7px;border-radius:50%;background:var(--ec,var(--lp-gold))}.lp-linked-item b{font:500 11px 'Oswald',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lp-linked-item span{font:500 8.5px 'Oswald',sans-serif;color:var(--lp-muted);white-space:nowrap}.lp-data-empty{padding:18px 10px;text-align:center;color:var(--lp-faint);font-size:13px}
+.lp-rel-hero{border:1px solid rgba(212,162,78,.24);border-radius:12px;background:linear-gradient(135deg,rgba(212,162,78,.08),rgba(217,154,170,.04)),var(--lp-panel2);padding:12px;margin:3px 0 10px}.lp-rel-hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.lp-rel-hero small{font:500 8px 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--lp-faint)}.lp-rel-days{font:700 28px 'Oswald',sans-serif;color:var(--lp-gold2);line-height:1}.lp-rel-human{font:500 10px 'Oswald',sans-serif;color:var(--lp-muted);margin-top:5px}.lp-next-milestone{margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;gap:10px;align-items:center}.lp-next-milestone b{font:600 11px 'Oswald',sans-serif;color:#f0d8df}.lp-next-milestone span{font:600 9px 'Oswald',sans-serif;color:var(--lp-gold2);white-space:nowrap}.lp-milestone-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}.lp-milestone{padding:8px;border:1px solid var(--lp-line);border-radius:9px;background:var(--lp-panel3)}.lp-milestone b{display:block;font:600 10px 'Oswald',sans-serif;color:var(--lp-text)}.lp-milestone span{display:block;margin-top:2px;font:500 8px 'Oswald',sans-serif;color:var(--lp-muted)}
+@media(max-width:820px){.lp-data-grid{grid-template-columns:1fr}.lp-person-list,.lp-relation-list{max-height:none}.lp-data-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.lp-top-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}.lp-top-actions .lp-btn{padding:0 7px;font-size:9px}.lp-data-body{padding:10px 9px calc(16px + env(safe-area-inset-bottom))}.lp-data-modal{max-height:94dvh}.lp-data-tabs{position:sticky;top:55px;z-index:3;background:var(--lp-bg);padding-top:4px}.lp-data-tab{flex:1;min-width:0}.lp-data-summary{gap:6px}.lp-data-kpi{padding:9px 10px}.lp-data-kpi strong{font-size:18px}.lp-data-col,.lp-data-editor{border-radius:12px}.lp-data-form-grid{grid-template-columns:1fr}.lp-data-actions{grid-template-columns:1fr}.lp-data-delete{min-height:42px}.lp-person-card,.lp-relation-card{padding:10px}.lp-milestone-list{grid-template-columns:1fr 1fr}.lp-inline-field{grid-template-columns:minmax(0,1fr) 48px}.lp-inline-add{height:48px}.lp-data-textarea{font-size:16px}.lp-rel-days{font-size:26px}}
+</style>
+
+
+<style id="lp-simple-person-data-style">
+/* Simplified personal database */
+.lp-simple-data-modal{width:min(900px,100%)}
+.lp-simple-data-body{padding:14px}
+.lp-simple-tabs{margin-bottom:10px;padding-bottom:0}
+.lp-simple-grid{grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr)}
+.lp-simple-editor{padding:14px}
+.lp-simple-note{min-height:68px!important}
+.lp-simple-custom-count{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:8px}
+.lp-data-summary{display:none!important}
+.lp-person-list,.lp-relation-list{max-height:520px}
+.lp-person-card,.lp-relation-card{padding:13px 14px}
+.lp-person-main b,.lp-relation-main b{font-size:15px}
+.lp-person-main small,.lp-relation-main small{font-size:10px;line-height:1.35}
+.lp-card-meta{margin-top:8px}
+.lp-chip{font-size:9px;min-height:25px}
+.lp-simple-rel-preview{margin-top:10px}
+.lp-simple-rel-preview .lp-milestone-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lp-simple-rel-preview .lp-milestone.custom{grid-column:1/-1;border-color:rgba(104,188,123,.28)}
+@media(max-width:820px){
+  .lp-simple-grid{grid-template-columns:1fr}
+  .lp-person-list,.lp-relation-list{max-height:none}
+}
+@media(max-width:620px){
+  .lp-simple-data-modal{width:100%;border-radius:18px 18px 0 0;align-self:flex-end;max-height:92dvh}
+  .lp-simple-data-body{padding:10px 9px calc(16px + env(safe-area-inset-bottom))}
+  .lp-simple-tabs{position:sticky;top:55px;z-index:3;background:var(--lp-bg);padding:4px 0 9px}
+  .lp-simple-custom-count{grid-template-columns:1fr 128px}
+  .lp-person-card,.lp-relation-card{padding:12px}
+  .lp-person-main b,.lp-relation-main b{font-size:16px}
+  .lp-person-main small,.lp-relation-main small{font-size:11px}
+  .lp-simple-rel-preview .lp-milestone-list{grid-template-columns:1fr}
+  .lp-simple-rel-preview .lp-milestone.custom{grid-column:auto}
+  .lp-data-editor .lp-input,.lp-data-editor .lp-select,.lp-data-editor textarea{font-size:16px}
+}
+</style>
+
+<style id="lp-data-clarity-mobile-v2">
+/* Data / people / relationships — clearer, larger and more opaque */
+.lp-data-overlay{background:rgba(2,5,8,.94)!important;backdrop-filter:blur(4px)!important}
+.lp-simple-data-modal{background:#0d131a!important;border-color:#344252!important;box-shadow:0 26px 70px rgba(0,0,0,.72)!important}
+.lp-data-modal .lp-modal-head{background:#101720!important;border-bottom-color:#344252!important;padding:17px 19px!important}
+.lp-data-modal .lp-modal-head b{font-size:20px!important;letter-spacing:.5px!important}
+.lp-simple-data-body{background:#0d131a!important;padding:16px!important}
+.lp-simple-tabs{gap:9px!important;margin-bottom:13px!important}
+.lp-simple-tabs .lp-data-tab{min-height:46px!important;padding:0 18px!important;background:#18222e!important;border-color:#344252!important;color:#c5cdd6!important;font-size:12px!important;letter-spacing:.7px!important}
+.lp-simple-tabs .lp-data-tab.on{background:linear-gradient(135deg,#2a3026,#1c2b25)!important;border-color:#d4a24e!important;color:#f2d58f!important}
+.lp-simple-data-body .lp-data-col,.lp-simple-data-body .lp-data-editor{background:#121a23!important;border-color:#344252!important}
+.lp-simple-data-body .lp-data-col-head{padding:14px 15px!important;background:#17212c!important;border-bottom-color:#344252!important}
+.lp-simple-data-body .lp-data-col-head b{font-size:16px!important;color:#f0d28c!important}
+.lp-simple-data-body .lp-mini-action{min-height:40px!important;padding:0 12px!important;background:#1a2b23!important;border-color:#47745a!important;color:#d9f0df!important;font-size:11px!important}
+.lp-simple-data-body .lp-data-editor{padding:17px!important}
+.lp-simple-data-body .lp-data-editor-title{margin-bottom:15px!important}
+.lp-simple-data-body .lp-data-editor-title b{font-size:19px!important}
+.lp-simple-data-body .lp-field{margin-bottom:12px!important}
+.lp-simple-data-body .lp-field>span{font-size:10px!important;letter-spacing:1.1px!important;color:#aab5c2!important;margin-bottom:7px!important}
+.lp-simple-data-body .lp-input,.lp-simple-data-body .lp-select,.lp-simple-data-body .lp-data-textarea{background:#1a2430!important;border-color:#3a4a5b!important;color:#f4f1ea!important;font-size:16px!important}
+.lp-simple-data-body .lp-input,.lp-simple-data-body .lp-select{height:50px!important}
+.lp-simple-data-body .lp-data-textarea{min-height:82px!important;padding:12px 13px!important;line-height:1.55!important}
+.lp-person-list,.lp-relation-list{padding:11px!important;gap:10px!important;background:#0f161e!important}
+.lp-person-card,.lp-relation-card{padding:15px 16px!important;background:#17212c!important;border-color:#344252!important;border-radius:13px!important}
+.lp-person-card.on,.lp-relation-card.on{background:linear-gradient(135deg,#29291f,#17261f)!important;border-color:#c69a4f!important}
+.lp-avatar{width:44px!important;height:44px!important;flex-basis:44px!important;font-size:15px!important;background:#202b36!important}
+.lp-person-main b,.lp-relation-main b{font-size:17px!important;color:#f3f1eb!important}
+.lp-person-main small,.lp-relation-main small{font-size:12px!important;line-height:1.45!important;color:#aab5c2!important;margin-top:4px!important}
+.lp-card-meta{gap:7px!important;margin-top:10px!important}
+.lp-chip{min-height:29px!important;padding:0 9px!important;background:#111922!important;border-color:#3a4857!important;color:#b7c0ca!important;font-size:10.5px!important;letter-spacing:.25px!important}
+.lp-chip.hot{color:#f2d58f!important;border-color:#6e5834!important;background:#1c1b16!important}
+.lp-chip.green{color:#a8dfb4!important;border-color:#3e664a!important;background:#142019!important}
+.lp-simple-rel-preview{background:linear-gradient(135deg,#1d241f,#18212b)!important;border-color:#5a5038!important;padding:15px!important}
+.lp-simple-rel-preview .lp-rel-hero small{font-size:10px!important;color:#a8b3bf!important}
+.lp-simple-rel-preview .lp-rel-days{font-size:34px!important;line-height:1.05!important;color:#f2d58f!important}
+.lp-simple-rel-preview .lp-rel-human{font-size:12px!important;line-height:1.45!important;color:#c1c9d1!important;margin-top:7px!important}
+.lp-simple-rel-preview .lp-milestone-list{gap:8px!important;margin-top:11px!important}
+.lp-simple-rel-preview .lp-milestone{padding:11px!important;background:#121a23!important;border-color:#364554!important}
+.lp-simple-rel-preview .lp-milestone b{font-size:12px!important;color:#f3f1eb!important}
+.lp-simple-rel-preview .lp-milestone span{font-size:10px!important;line-height:1.45!important;color:#adb7c2!important;margin-top:4px!important}
+.lp-simple-data-body .lp-data-save,.lp-simple-data-body .lp-data-delete{min-height:48px!important;font-size:11px!important}
+.lp-simple-data-body .lp-data-save{background:linear-gradient(135deg,#294635,#1b2f25)!important;border-color:#548363!important}
+.lp-simple-data-body .lp-data-delete{background:#251a1a!important;border-color:#6a3936!important}
+.lp-data-empty{font-size:14px!important;line-height:1.55!important;color:#aab5c2!important;padding:18px!important}
+@media(max-width:820px){
+  .lp-simple-data-modal{width:100%!important;max-width:none!important}
+  .lp-simple-data-body{padding:14px!important}
+  .lp-simple-grid{grid-template-columns:1fr!important;gap:12px!important}
+  .lp-person-list,.lp-relation-list{max-height:none!important}
+}
+@media(max-width:620px){
+  .lp-data-overlay{padding:0!important;align-items:flex-end!important}
+  .lp-simple-data-modal{width:100%!important;max-height:calc(100dvh - 8px)!important;border-radius:22px 22px 0 0!important;border-bottom:0!important}
+  .lp-data-modal .lp-modal-head{padding:16px 16px 14px!important}
+  .lp-data-modal .lp-modal-head b{font-size:21px!important}
+  .lp-close{width:46px!important;height:46px!important;font-size:22px!important}
+  .lp-simple-data-body{padding:12px 11px calc(22px + env(safe-area-inset-bottom))!important}
+  .lp-simple-tabs{position:sticky!important;top:77px!important;z-index:5!important;background:#0d131a!important;padding:5px 0 11px!important;margin-bottom:7px!important}
+  .lp-simple-tabs .lp-data-tab{flex:1!important;min-width:0!important;min-height:48px!important;font-size:13px!important}
+  .lp-simple-data-body .lp-data-col,.lp-simple-data-body .lp-data-editor{border-radius:15px!important}
+  .lp-simple-data-body .lp-data-col-head{padding:14px!important}
+  .lp-simple-data-body .lp-data-col-head b{font-size:17px!important}
+  .lp-simple-data-body .lp-mini-action{min-height:44px!important;font-size:11px!important}
+  .lp-person-card,.lp-relation-card{padding:15px!important}
+  .lp-avatar{width:46px!important;height:46px!important;flex-basis:46px!important}
+  .lp-person-main b,.lp-relation-main b{font-size:18px!important}
+  .lp-person-main small,.lp-relation-main small{font-size:13px!important}
+  .lp-chip{font-size:11px!important;min-height:31px!important;padding:0 10px!important}
+  .lp-simple-data-body .lp-data-editor{padding:15px!important}
+  .lp-simple-data-body .lp-data-editor-title b{font-size:20px!important}
+  .lp-simple-data-body .lp-field>span{font-size:11px!important}
+  .lp-simple-data-body .lp-input,.lp-simple-data-body .lp-select{height:52px!important;font-size:17px!important}
+  .lp-simple-data-body .lp-data-textarea{font-size:17px!important;min-height:90px!important}
+  .lp-simple-custom-count{grid-template-columns:minmax(0,1fr) 132px!important;gap:9px!important}
+  .lp-simple-rel-preview{padding:14px!important}
+  .lp-simple-rel-preview .lp-rel-hero-top{align-items:flex-start!important;flex-direction:column!important}
+  .lp-simple-rel-preview .lp-rel-days{font-size:36px!important}
+  .lp-simple-rel-preview .lp-rel-human{font-size:13px!important}
+  .lp-simple-rel-preview .lp-milestone-list{grid-template-columns:1fr!important}
+  .lp-simple-rel-preview .lp-milestone b{font-size:13px!important}
+  .lp-simple-rel-preview .lp-milestone span{font-size:11px!important}
+  .lp-data-actions{grid-template-columns:1fr 110px!important;gap:9px!important}
+  .lp-simple-data-body .lp-data-save,.lp-simple-data-body .lp-data-delete{min-height:52px!important;font-size:12px!important}
+}
+@media(max-width:390px){
+  .lp-simple-custom-count{grid-template-columns:1fr!important}
+  .lp-data-actions{grid-template-columns:1fr!important}
+  .lp-simple-data-body .lp-data-delete{min-height:48px!important}
+}
 </style>
 
 </head>
@@ -2209,6 +2365,7 @@ body.debt-drag-active{overscroll-behavior:none}
       <div class="lp-top">
         <div class="lp-brand"><div class="lp-mark">$</div><b>Планер · Події</b></div>
         <div class="lp-top-actions">
+          <button type="button" class="lp-btn" id="lpOpenData">◈ Дані</button>
           <button type="button" class="lp-btn" id="lpOpenUpcoming">Найближчі</button>
           <button type="button" class="lp-btn primary" id="lpNewEvent">＋ Подія</button>
         </div>
@@ -2246,6 +2403,10 @@ body.debt-drag-active{overscroll-behavior:none}
                 <label class="lp-field"><span>Тип</span><select class="lp-select" id="lpType"><option value="event">Подія</option><option value="birthday">🎂 День народження</option><option value="reminder">🔔 Нагадування</option><option value="deadline">◆ Дедлайн</option><option value="personal">✦ Особисте</option></select></label>
                 <label class="lp-field"><span>Нагадати</span><select class="lp-select" id="lpReminder"><option value="0">У день події</option><option value="1">За 1 день</option><option value="3">За 3 дні</option><option value="7">За 7 днів</option><option value="14">За 14 днів</option><option value="30">За 30 днів</option></select></label>
               </div>
+              <div class="lp-form-grid">
+                <label class="lp-field"><span>Людина</span><div class="lp-inline-field"><select class="lp-select" id="lpPerson"><option value="">Без привʼязки</option></select><button type="button" class="lp-inline-add" id="lpQuickPerson" aria-label="Додати людину">＋</button></div></label>
+                <label class="lp-field lp-birthday-field is-hidden" id="lpBirthdayField"><span>Дата народження</span><input class="lp-input" type="date" id="lpBirthDate"></label>
+              </div>
               <label class="lp-all-day"><input type="checkbox" id="lpAllDay" checked><span>Весь день</span></label>
               <div class="lp-form-grid" id="lpTimeGrid">
                 <label class="lp-field"><span>З якої</span><input class="lp-input" type="time" id="lpStart" value="12:00"></label>
@@ -2272,6 +2433,58 @@ body.debt-drag-active{overscroll-behavior:none}
           <div class="lp-custom-range" id="lpCustomRange"><input type="date" id="lpRangeFrom"><input type="date" id="lpRangeTo"><button type="button" class="lp-btn" id="lpApplyRange">Показати</button></div>
           <div class="lp-up-summary" id="lpUpcomingSummary"></div>
           <div class="lp-up-list" id="lpUpcomingList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lp-overlay lp-data-overlay" id="lpDataOverlay" aria-hidden="true">
+      <div class="lp-modal lp-data-modal lp-simple-data-modal">
+        <div class="lp-modal-head"><b>◈ Дані</b><button type="button" class="lp-close" id="lpCloseData">×</button></div>
+        <div class="lp-data-body lp-simple-data-body">
+          <div class="lp-data-tabs lp-simple-tabs">
+            <button type="button" class="lp-data-tab on" data-lpdatatab="people">Люди</button>
+            <button type="button" class="lp-data-tab" data-lpdatatab="relationships">Стосунки</button>
+          </div>
+          <div id="lpDataSummary" hidden></div>
+
+          <section class="lp-data-panel" id="lpPeoplePanel">
+            <div class="lp-data-grid lp-simple-grid">
+              <div class="lp-data-col">
+                <div class="lp-data-col-head"><b>База людей</b><button type="button" class="lp-mini-action" id="lpNewPerson">＋ Додати</button></div>
+                <div class="lp-person-list" id="lpPeopleList"></div>
+              </div>
+              <form class="lp-data-editor lp-simple-editor" id="lpPersonForm">
+                <input type="hidden" id="lpPersonId">
+                <div class="lp-data-editor-title"><b id="lpPersonFormTitle">Нова людина</b></div>
+                <label class="lp-field"><span>ПІБ</span><input class="lp-input" id="lpPersonName" maxlength="100" placeholder="Прізвище Імʼя" required></label>
+                <label class="lp-field"><span>Дата народження</span><input class="lp-input" type="date" id="lpPersonBirthDate"></label>
+                <label class="lp-field"><span>Примітка</span><textarea class="lp-data-textarea lp-simple-note" id="lpPersonNote" maxlength="500" placeholder="Коротка примітка…"></textarea></label>
+                <div class="lp-data-actions"><button type="submit" class="lp-data-save">Зберегти</button><button type="button" class="lp-data-delete" id="lpDeletePerson" disabled>Видалити</button></div>
+              </form>
+            </div>
+          </section>
+
+          <section class="lp-data-panel" id="lpRelationsPanel" hidden>
+            <div class="lp-data-grid lp-simple-grid">
+              <div class="lp-data-col">
+                <div class="lp-data-col-head"><b>Стосунки</b><button type="button" class="lp-mini-action" id="lpNewRelation">＋ Додати</button></div>
+                <div class="lp-relation-list" id="lpRelationList"></div>
+              </div>
+              <form class="lp-data-editor lp-simple-editor" id="lpRelationForm">
+                <input type="hidden" id="lpRelationId">
+                <div class="lp-data-editor-title"><b id="lpRelationFormTitle">Новий відлік</b><span class="lp-vip">♥</span></div>
+                <label class="lp-field"><span>Людина</span><select class="lp-select" id="lpRelationPerson" required></select></label>
+                <label class="lp-field"><span>Разом від</span><input class="lp-input" type="date" id="lpRelationStart" required></label>
+                <div class="lp-simple-custom-count">
+                  <label class="lp-field"><span>Свій відлік</span><input class="lp-input" type="number" min="1" max="9999" inputmode="numeric" id="lpRelationCustomValue" placeholder="Напр. 100"></label>
+                  <label class="lp-field"><span>Одиниця</span><select class="lp-select" id="lpRelationCustomUnit"><option value="days">днів</option><option value="months">місяців</option><option value="years">років</option></select></label>
+                </div>
+                <label class="lp-field"><span>Примітка</span><textarea class="lp-data-textarea lp-simple-note" id="lpRelationNote" maxlength="500" placeholder="Коротка примітка…"></textarea></label>
+                <div class="lp-rel-hero lp-simple-rel-preview" id="lpRelationPreview"></div>
+                <div class="lp-data-actions"><button type="submit" class="lp-data-save">Зберегти</button><button type="button" class="lp-data-delete" id="lpDeleteRelation" disabled>Видалити</button></div>
+              </form>
+            </div>
+          </section>
         </div>
       </div>
     </div>
@@ -6520,13 +6733,37 @@ function initLifePlannerModule(){
   const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
   const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
   const week=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
-  const typeMeta={event:{label:'Подія',icon:'●',cls:'event'},birthday:{label:'День народження',icon:'🎂',cls:'birthday'},reminder:{label:'Нагадування',icon:'🔔',cls:'reminder'},deadline:{label:'Дедлайн',icon:'◆',cls:'deadline'},personal:{label:'Особисте',icon:'✦',cls:'personal'}};
+  const typeMeta={event:{label:'Подія',icon:'●',cls:'event'},birthday:{label:'День народження',icon:'🎂',cls:'birthday'},reminder:{label:'Нагадування',icon:'🔔',cls:'reminder'},deadline:{label:'Дедлайн',icon:'◆',cls:'deadline'},personal:{label:'Особисте',icon:'✦',cls:'personal'},relationship:{label:'Річниця',icon:'♥',cls:'relationship'}};
   const now=new Date();
-  const state={year:now.getFullYear(),month:now.getMonth(),selected:iso(now),editing:'',range:'7',rangeFrom:iso(now),rangeTo:iso(addDays(now,6)),draft:null,draftDirty:false,draftSync:false};
+  const state={year:now.getFullYear(),month:now.getMonth(),selected:iso(now),editing:'',range:'7',rangeFrom:iso(now),rangeTo:iso(addDays(now,6)),draft:null,draftDirty:false,draftSync:false,dataTab:'people',personId:'',relationId:''};
   function addDays(d,n){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x}
-  function ensure(){DB.planner=DB.planner||{};DB.planner.events=Array.isArray(DB.planner.events)?DB.planner.events:[];return DB.planner}
+  function ensure(){DB.planner=DB.planner||{};DB.planner.events=Array.isArray(DB.planner.events)?DB.planner.events:[];DB.planner.people=Array.isArray(DB.planner.people)?DB.planner.people:[];DB.planner.relationships=Array.isArray(DB.planner.relationships)?DB.planner.relationships:[];return DB.planner}
   function events(){return ensure().events}
-  function uid(){return 'pe'+Date.now()+Math.random().toString(36).slice(2,7)}
+  function people(){return ensure().people}
+  function relations(){return ensure().relationships}
+  function uid(prefix='pe'){return prefix+Date.now()+Math.random().toString(36).slice(2,7)}
+  function normName(s){return String(s||'').trim().toLocaleLowerCase('uk-UA')}
+  function cleanBirthdayName(s){return String(s||'').replace(/^\s*🎂\s*/,'').replace(/^\s*день\s+народження\s+/i,'').replace(/\s*·\s*день\s+народження\s*$/i,'').trim()||String(s||'').trim()}
+  function initials(name){const a=String(name||'?').trim().split(/\s+/).filter(Boolean);return (a.slice(0,2).map(x=>x[0]||'').join('')||'?').toUpperCase()}
+  function personById(id){return people().find(p=>p.id===id)||null}
+  function relationById(id){return relations().find(r=>r.id===id)||null}
+  function ageNow(birth){if(!birth)return null;const b=pd(birth),n=new Date();let y=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))y--;return y>=0?y:null}
+  function nextBirthday(p,from=iso(new Date())){if(!p||!p.birthDate)return null;const b=pd(p.birthDate),d=pd(from);let x=new Date(d.getFullYear(),b.getMonth(),b.getDate());if(x<d)x=new Date(d.getFullYear()+1,b.getMonth(),b.getDate());return iso(x)}
+  function addMonthsSafe(date,n){const d=new Date(date.getFullYear(),date.getMonth(),1),day=date.getDate();d.setMonth(d.getMonth()+n);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d}
+  function addYearsSafe(date,n){const d=new Date(date.getFullYear()+n,date.getMonth(),1),day=date.getDate();d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d}
+  function relationshipMilestones(r){
+    if(!r||!r.startDate)return[];
+    const d=relationStandardDates(r),raw=[
+      d.half&&{date:d.half,label:'Пів року',key:'half'},
+      d.year&&{date:d.year,label:'1 рік',key:'year'},
+      d.custom&&{date:d.custom,label:relationTargetLabel(r),key:'custom'}
+    ].filter(Boolean);
+    const seen=new Set(),out=[];
+    raw.forEach(m=>{if(!m.date||seen.has(m.date))return;seen.add(m.date);out.push(m)});
+    return out;
+  }
+  function relationshipVirtualEventsOn(k){const out=[];relations().forEach(r=>{const p=personById(r.personId);relationshipMilestones(r).forEach(m=>{if(m.date===k)out.push({id:`rel:${r.id}:${m.key}`,title:`${p?p.name:'Стосунки'} · ${m.label}`,date:k,type:'relationship',allDay:true,start:'',end:'',repeat:'none',reminder:Number(r.reminder)||0,note:r.note||'',virtual:true,relationId:r.id,personId:r.personId,milestone:m.label})})});return out}
+  function migrateBirthdays(){let changed=false;events().forEach(e=>{if(e.type!=='birthday')return;if(!e.personId){const name=cleanBirthdayName(e.title);if(!name)return;let p=people().find(x=>normName(x.name)===normName(name));if(!p){p={id:uid('pp'),name,category:'other',birthDate:e.birthDate||'',vip:false,note:'',giftIdeas:'',createdAt:Date.now(),updatedAt:Date.now()};people().push(p);changed=true}e.personId=p.id;changed=true}const p=personById(e.personId);if(p&&e.birthDate&&!p.birthDate){p.birthDate=e.birthDate;p.updatedAt=Date.now();changed=true}});return changed}
   function dIso(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
   function niceDate(k,full=false){const d=pd(k);return d.toLocaleDateString('uk-UA',full?{weekday:'long',day:'numeric',month:'long',year:'numeric'}:{day:'numeric',month:'long'})}
   function shortDate(k){const d=pd(k);return d.toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit'})}
@@ -6542,18 +6779,19 @@ function initLifePlannerModule(){
     if(rep==='weekly')return daysDiff(base,k)>=0&&daysDiff(base,k)%7===0;
     return k===base;
   }
-  function occurrencesOn(k){return events().filter(e=>occurs(e,k)).sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))}
+  function occurrencesOn(k){return events().filter(e=>occurs(e,k)).concat(relationshipVirtualEventsOn(k)).sort((a,b)=>String(a.start||'').localeCompare(String(b.start||'')))}
   function taskList(k){try{return tasksFor(k)||[]}catch(e){return []}}
   function rangeDates(a,b,max=550){const out=[];let d=pd(a),end=pd(b),i=0;while(d<=end&&i++<max){out.push(iso(d));d.setDate(d.getDate()+1)}return out}
   function occurrencesRange(a,b){const out=[];rangeDates(a,b).forEach(k=>occurrencesOn(k).forEach(e=>out.push({date:k,event:e})));return out}
   function nextEventFrom(k,e,maxDays=370){for(let i=0;i<=maxDays;i++){const x=iso(addDays(pd(k),i));if(occurs(e,x))return x}return null}
-  function remindersFor(k){const out=[];events().forEach(e=>{const next=nextEventFrom(k,e,370);if(!next)return;const until=daysDiff(k,next),lead=Math.max(0,Number(e.reminder)||0);if(until===0||((lead>0)&&until>0&&until<=lead))out.push({event:e,date:next,until})});return out.sort((a,b)=>a.until-b.until||String(a.event.start||'').localeCompare(String(b.event.start||'')))}
+  function remindersFor(k){const out=[];events().forEach(e=>{const next=nextEventFrom(k,e,370);if(!next)return;const until=daysDiff(k,next),lead=Math.max(0,Number(e.reminder)||0);if(until===0||((lead>0)&&until>0&&until<=lead))out.push({event:e,date:next,until})});const limit=iso(addDays(pd(k),370));relations().forEach(r=>relationshipMilestones(r).forEach(m=>{if(m.date<k||m.date>limit)return;const until=daysDiff(k,m.date),lead=Math.max(0,Number(r.reminder)||0);if(until===0||((lead>0)&&until>0&&until<=lead)){const p=personById(r.personId);out.push({event:{id:`rel:${r.id}:${m.key}`,title:`${p?p.name:'Стосунки'} · ${m.label}`,date:m.date,type:'relationship',allDay:true,reminder:lead,virtual:true,relationId:r.id,personId:r.personId},date:m.date,until})}}));return out.sort((a,b)=>a.until-b.until||String(a.event.start||'').localeCompare(String(b.event.start||'')))}
   function populateControls(){
     $('#lpMonth').innerHTML=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
     let ys='';for(let y=2025;y<=2036;y++)ys+=`<option value="${y}">${y}</option>`;$('#lpYear').innerHTML=ys;
     $('#lpWeekdays').innerHTML=week.map(x=>`<span>${x}</span>`).join('');
-    $('#lpRangeFrom').value=state.rangeFrom;$('#lpRangeTo').value=state.rangeTo;
+    $('#lpRangeFrom').value=state.rangeFrom;$('#lpRangeTo').value=state.rangeTo;populatePersonOptions();
   }
+  function populatePersonOptions(){const opts=people().slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'uk')).map(p=>`<option value="${p.id}">${esc(p.name||'Без імені')}</option>`).join('');const ep=$('#lpPerson'),rp=$('#lpRelationPerson');if(ep){const keep=ep.value;ep.innerHTML='<option value="">Без привʼязки</option>'+opts;if(people().some(p=>p.id===keep))ep.value=keep}if(rp){const keep=rp.value;rp.innerHTML='<option value="">Оберіть людину</option>'+opts;if(people().some(p=>p.id===keep))rp.value=keep}}
   function renderStats(){
     const today=iso(new Date()),monthStart=dIso(state.year,state.month,1),monthEnd=dIso(state.year,state.month,new Date(state.year,state.month+1,0).getDate());
     const monthOcc=occurrencesRange(monthStart,monthEnd),next7=occurrencesRange(today,iso(addDays(new Date(),6))),birthdays=monthOcc.filter(x=>x.event.type==='birthday').length,taskTotal=rangeDates(monthStart,monthEnd).reduce((s,k)=>s+taskList(k).length,0);
@@ -6573,12 +6811,12 @@ function initLifePlannerModule(){
     renderEditor();
   }
   function selectDate(k){state.selected=k;const d=pd(k);state.year=d.getFullYear();state.month=d.getMonth();state.editing='';renderCalendar()}
-  function readEditorDraft(){return{title:$('#lpTitle').value,type:$('#lpType').value,reminder:$('#lpReminder').value,allDay:$('#lpAllDay').checked,start:$('#lpStart').value,end:$('#lpEnd').value,repeat:$('#lpRepeat').value,endDate:$('#lpEndDate').value,note:$('#lpNote').value}}
-  function writeEditorDraft(d){if(!d)return;state.draftSync=true;$('#lpEventId').value='';$('#lpFormTitle').textContent='Нова подія';$('#lpTitle').value=d.title||'';$('#lpType').value=d.type||'event';$('#lpReminder').value=String(d.reminder??'0');$('#lpAllDay').checked=d.allDay!==false;$('#lpStart').value=d.start||'12:00';$('#lpEnd').value=d.end||'13:00';$('#lpRepeat').value=d.repeat||'none';$('#lpEndDate').value=d.endDate||'';$('#lpNote').value=d.note||'';$('#lpDelete').disabled=true;syncTimeDisabled();state.draftSync=false}
-  function captureEditorDraft(){if(state.draftSync||state.editing)return;state.draft=readEditorDraft();state.draftDirty=!!(state.draft.title.trim()||state.draft.note.trim()||state.draft.type!=='event'||state.draft.reminder!=='0'||state.draft.allDay===false||state.draft.start!=='12:00'||state.draft.end!=='13:00'||state.draft.repeat!=='none'||state.draft.endDate);}
+  function readEditorDraft(){return{title:$('#lpTitle').value,type:$('#lpType').value,reminder:$('#lpReminder').value,personId:$('#lpPerson').value,birthDate:$('#lpBirthDate').value,allDay:$('#lpAllDay').checked,start:$('#lpStart').value,end:$('#lpEnd').value,repeat:$('#lpRepeat').value,endDate:$('#lpEndDate').value,note:$('#lpNote').value}}
+  function writeEditorDraft(d){if(!d)return;state.draftSync=true;populatePersonOptions();$('#lpEventId').value='';$('#lpFormTitle').textContent='Нова подія';$('#lpTitle').value=d.title||'';$('#lpType').value=d.type||'event';$('#lpReminder').value=String(d.reminder??'0');$('#lpPerson').value=d.personId||'';$('#lpBirthDate').value=d.birthDate||'';$('#lpAllDay').checked=d.allDay!==false;$('#lpStart').value=d.start||'12:00';$('#lpEnd').value=d.end||'13:00';$('#lpRepeat').value=d.repeat||'none';$('#lpEndDate').value=d.endDate||'';$('#lpNote').value=d.note||'';$('#lpDelete').disabled=true;syncTimeDisabled();syncBirthdayFields();state.draftSync=false}
+  function captureEditorDraft(){if(state.draftSync||state.editing)return;state.draft=readEditorDraft();state.draftDirty=!!(state.draft.title.trim()||state.draft.note.trim()||state.draft.personId||state.draft.birthDate||state.draft.type!=='event'||state.draft.reminder!=='0'||state.draft.allDay===false||state.draft.start!=='12:00'||state.draft.end!=='13:00'||state.draft.repeat!=='none'||state.draft.endDate);}
   function clearEditorDraft(){state.draft=null;state.draftDirty=false}
-  function resetEditor(clearDraft=true){if(clearDraft)clearEditorDraft();state.draftSync=true;state.editing='';$('#lpEventId').value='';$('#lpFormTitle').textContent='Нова подія';$('#lpTitle').value='';$('#lpType').value='event';$('#lpReminder').value='0';$('#lpAllDay').checked=true;$('#lpStart').value='12:00';$('#lpEnd').value='13:00';$('#lpRepeat').value='none';$('#lpEndDate').value='';$('#lpNote').value='';$('#lpDelete').disabled=true;syncTimeDisabled();state.draftSync=false}
-  function loadEditor(id){const e=events().find(x=>x.id===id);if(!e){resetEditor();return}state.editing=e.id;$('#lpEventId').value=e.id;$('#lpFormTitle').textContent='Редагувати подію';$('#lpTitle').value=e.title||'';$('#lpType').value=e.type||'event';$('#lpReminder').value=String(Number(e.reminder)||0);$('#lpAllDay').checked=e.allDay!==false;$('#lpStart').value=e.start||'12:00';$('#lpEnd').value=e.end||'13:00';$('#lpRepeat').value=e.repeat||'none';$('#lpEndDate').value=e.endDate||'';$('#lpNote').value=e.note||'';$('#lpDelete').disabled=false;syncTimeDisabled();renderEditorHeader()}
+  function resetEditor(clearDraft=true){if(clearDraft)clearEditorDraft();state.draftSync=true;state.editing='';populatePersonOptions();$('#lpEventId').value='';$('#lpFormTitle').textContent='Нова подія';$('#lpTitle').value='';$('#lpType').value='event';$('#lpReminder').value='0';$('#lpPerson').value='';$('#lpBirthDate').value='';$('#lpAllDay').checked=true;$('#lpStart').value='12:00';$('#lpEnd').value='13:00';$('#lpRepeat').value='none';$('#lpEndDate').value='';$('#lpNote').value='';$('#lpDelete').disabled=true;syncTimeDisabled();syncBirthdayFields();state.draftSync=false}
+  function loadEditor(id){if(String(id||'').startsWith('rel:')){const rid=String(id).split(':')[1];openData('relationships',rid);return}const e=events().find(x=>x.id===id);if(!e){resetEditor();return}state.editing=e.id;populatePersonOptions();$('#lpEventId').value=e.id;$('#lpFormTitle').textContent='Редагувати подію';$('#lpTitle').value=e.title||'';$('#lpType').value=e.type||'event';$('#lpReminder').value=String(Number(e.reminder)||0);$('#lpPerson').value=e.personId||'';$('#lpBirthDate').value=e.birthDate||'';$('#lpAllDay').checked=e.allDay!==false;$('#lpStart').value=e.start||'12:00';$('#lpEnd').value=e.end||'13:00';$('#lpRepeat').value=e.repeat||'none';$('#lpEndDate').value=e.endDate||'';$('#lpNote').value=e.note||'';$('#lpDelete').disabled=false;syncTimeDisabled();syncBirthdayFields();renderEditorHeader()}
   function renderEditorHeader(){
     const k=state.selected,ev=occurrencesOn(k),tasks=taskList(k);$('#lpSelectedTitle').textContent=niceDate(k,true);$('#lpSelectedEventCount').textContent=String(ev.length);$('#lpSelectedTaskCount').textContent=String(tasks.length);$('#lpGoTasks').onclick=()=>goTasks(k);
     const box=$('#lpSelectedEvents');box.innerHTML=ev.length?ev.map(e=>`<div class="lp-selected-event ${eventClass(e)}" data-lpevent="${e.id}"><i></i><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><span>${esc(timeText(e))}</span></div>`).join(''):'<div class="lp-empty-events">На цей день подій немає.</div>';
@@ -6586,34 +6824,90 @@ function initLifePlannerModule(){
   }
   function renderEditor(){renderEditorHeader();if(state.editing){loadEditor(state.editing)}else if(state.draftDirty&&state.draft){writeEditorDraft(state.draft)}else resetEditor(false)}
   function syncTimeDisabled(){const off=$('#lpAllDay').checked;$('#lpStart').disabled=off;$('#lpEnd').disabled=off;$('#lpTimeGrid').style.opacity=off?'.45':'1'}
+  function syncBirthdayFields(){const is=$('#lpType').value==='birthday';$('#lpBirthdayField').classList.toggle('is-hidden',!is);if(is&&$('#lpPerson').value){const p=personById($('#lpPerson').value);if(p&&p.birthDate&&!$('#lpBirthDate').value)$('#lpBirthDate').value=p.birthDate}}
   async function saveEvent(ev){
-    ev.preventDefault();ensure();const id=$('#lpEventId').value,title=$('#lpTitle').value.trim(),existing=id?events().find(x=>x.id===id):null,date=existing&&existing.date?existing.date:state.selected;if(!title||!date)return;
-    let endDate=$('#lpEndDate').value||'';if(endDate&&endDate<date)endDate=date;const type=$('#lpType').value;
-    const obj={id:id||uid(),title,date,endDate,type,allDay:$('#lpAllDay').checked,start:$('#lpStart').value,end:$('#lpEnd').value,reminder:Number($('#lpReminder').value)||0,repeat:$('#lpRepeat').value,note:$('#lpNote').value.trim(),updatedAt:Date.now()};if(type==='birthday'&&obj.repeat==='none')obj.repeat='yearly';
-    const i=events().findIndex(x=>x.id===obj.id);if(i>=0)events()[i]=obj;else events().push(obj);clearEditorDraft();state.editing=obj.id;await save();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast(id?'Подію оновлено':'Подію додано');
+    ev.preventDefault();ensure();const id=$('#lpEventId').value,title=$('#lpTitle').value.trim(),existing=id?events().find(x=>x.id===id):null;if(!title)return;let date=existing&&existing.date?existing.date:state.selected,personId=$('#lpPerson').value||'',birthDate=$('#lpBirthDate').value||'',type=$('#lpType').value;
+    if(type==='birthday'){
+      if(!personId){const name=cleanBirthdayName(title);if(name){let p=people().find(x=>normName(x.name)===normName(name));if(!p){p={id:uid('pp'),name,category:'other',birthDate:birthDate||'',vip:false,note:'',giftIdeas:'',createdAt:Date.now(),updatedAt:Date.now()};people().push(p)}personId=p.id}}
+      const p=personById(personId);if(p){if(birthDate){p.birthDate=birthDate;p.updatedAt=Date.now()}else if(p.birthDate)birthDate=p.birthDate}
+      if(birthDate)date=birthDate;
+    }
+    if(!date)return;let endDate=$('#lpEndDate').value||'';if(endDate&&endDate<date&&type!=='birthday')endDate=date;let repeat=$('#lpRepeat').value;if(type==='birthday')repeat='yearly';
+    const obj={id:id||uid(),title,date,endDate,type,allDay:$('#lpAllDay').checked,start:$('#lpStart').value,end:$('#lpEnd').value,reminder:Number($('#lpReminder').value)||0,repeat,note:$('#lpNote').value.trim(),personId,birthDate,updatedAt:Date.now()};const i=events().findIndex(x=>x.id===obj.id);if(i>=0)events()[i]=obj;else events().push(obj);clearEditorDraft();state.editing=obj.id;populatePersonOptions();await save();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);if($('#lpDataOverlay').classList.contains('open'))renderData();historyToast(id?'Подію оновлено':'Подію додано');
   }
   async function deleteEvent(){const id=$('#lpEventId').value;if(!id)return;DB.planner.events=events().filter(x=>x.id!==id);clearEditorDraft();state.editing='';await save();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast('Подію видалено')}
+  function categoryLabel(v){return({partner:'Партнер',family:'Сімʼя',friend:'Друг / подруга',work:'Робота',other:'Інше'})[v]||'Інше'}
+  function relationTypeLabel(v){return({couple:'Стосунки',marriage:'Шлюб',friendship:'Важлива дружба',other:'Інше'})[v]||'Стосунки'}
+  function personNextEvent(p){const today=iso(new Date()),items=[];events().filter(e=>e.personId===p.id).forEach(e=>{const d=nextEventFrom(today,e,740);if(d)items.push({date:d,event:e})});return items.sort((a,b)=>a.date.localeCompare(b.date))[0]||null}
+  function birthdayText(p){if(!p||!p.birthDate)return'Дата не вказана';const next=nextBirthday(p),days=daysDiff(iso(new Date()),next);return days===0?'Сьогодні':`Через ${days} дн.`}
+  function renderDataSummary(){const el=$('#lpDataSummary');if(el)el.innerHTML=''}
+  function renderPeopleList(){const list=people().slice().sort((a,b)=>((nextBirthday(a)||'9999').localeCompare(nextBirthday(b)||'9999'))||String(a.name||'').localeCompare(String(b.name||''),'uk')),box=$('#lpPeopleList');if(!list.length){box.innerHTML='<div class="lp-data-empty">База порожня. Додай людину — день народження автоматично зʼявиться в календарі.</div>';return}box.innerHTML=list.map(p=>{const next=nextBirthday(p),days=next?daysDiff(iso(new Date()),next):null,age=ageNow(p.birthDate),birth=p.birthDate?pd(p.birthDate).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'}):'Не вказано';return `<button type="button" class="lp-person-card ${state.personId===p.id?'on':''}" data-personid="${p.id}"><div class="lp-person-top"><span class="lp-avatar">${esc(initials(p.name||''))}</span><span class="lp-person-main"><b>${esc(p.name||'Без імені')}</b><small>Дата народження · ${esc(birth)}${age!==null?` · ${age} р.`:''}</small></span></div><div class="lp-card-meta"><span class="lp-chip hot">🎂 ${days===null?'Дата не вказана':days===0?'Сьогодні':`Через ${days} дн.`}</span></div></button>`}).join('');box.querySelectorAll('[data-personid]').forEach(x=>x.onclick=()=>loadPerson(x.dataset.personid))}
+  function resetPersonForm(prefill=''){state.personId='';$('#lpPersonId').value='';$('#lpPersonFormTitle').textContent='Нова людина';$('#lpPersonName').value=prefill;$('#lpPersonBirthDate').value='';$('#lpPersonNote').value='';$('#lpDeletePerson').disabled=true;renderPeopleList()}
+  function loadPerson(id){const p=personById(id);if(!p){resetPersonForm();return}state.personId=p.id;$('#lpPersonId').value=p.id;$('#lpPersonFormTitle').textContent=p.name||'Людина';$('#lpPersonName').value=p.name||'';$('#lpPersonBirthDate').value=p.birthDate||'';$('#lpPersonNote').value=p.note||'';$('#lpDeletePerson').disabled=false;renderPeopleList()}
+  async function savePersonCard(ev){ev.preventDefault();ensure();const id=$('#lpPersonId').value,name=$('#lpPersonName').value.trim(),birthDate=$('#lpPersonBirthDate').value||'',note=$('#lpPersonNote').value.trim();if(!name)return;const old=id?personById(id):null,obj={id:id||uid('pp'),name,birthDate,note,createdAt:old?.createdAt||Date.now(),updatedAt:Date.now()};const i=people().findIndex(x=>x.id===obj.id);if(i>=0)people()[i]=obj;else people().push(obj);const linkedBirthdays=events().filter(e=>e.type==='birthday'&&e.personId===obj.id);if(birthDate){let be=linkedBirthdays[0];if(be){be.title=`День народження ${obj.name}`;be.date=birthDate;be.birthDate=birthDate;be.repeat='yearly';be.allDay=true;be.personId=obj.id;be.updatedAt=Date.now()}else{be={id:uid(),title:`День народження ${obj.name}`,date:birthDate,endDate:'',type:'birthday',allDay:true,start:'12:00',end:'13:00',reminder:7,repeat:'yearly',note:'',personId:obj.id,birthDate,updatedAt:Date.now()};events().push(be)}if(linkedBirthdays.length>1){const keep=be.id;DB.planner.events=events().filter(e=>!(e.type==='birthday'&&e.personId===obj.id&&e.id!==keep))}}else if(linkedBirthdays.length){DB.planner.events=events().filter(e=>!(e.type==='birthday'&&e.personId===obj.id))}state.personId=obj.id;populatePersonOptions();await save();renderData();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast(id?'Людину оновлено':'Людину додано')}
+  async function deletePersonCard(){const id=$('#lpPersonId').value;if(!id||!confirm('Видалити цю людину з бази?'))return;DB.planner.people=people().filter(p=>p.id!==id);DB.planner.events=events().filter(e=>!(e.type==='birthday'&&e.personId===id));events().forEach(e=>{if(e.personId===id)e.personId=''});DB.planner.relationships=relations().filter(r=>r.personId!==id);state.personId='';populatePersonOptions();await save();renderData();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast('Людину видалено')}
+  function relationDuration(r){if(!r||!r.startDate)return{days:0,human:'—',special:''};const s=pd(r.startDate),n=new Date(),days=Math.max(0,Math.floor((new Date(n.getFullYear(),n.getMonth(),n.getDate())-s)/864e5));let y=n.getFullYear()-s.getFullYear(),m=n.getMonth()-s.getMonth(),d=n.getDate()-s.getDate();if(d<0){m--;const pm=new Date(n.getFullYear(),n.getMonth(),0).getDate();d+=pm}if(m<0){y--;m+=12}let special='';if(y===0&&m===6&&d===0)special='Пів року';else if(y===1&&m===0&&d===0)special='1 рік';else if(y===2&&m===0&&d===0)special='2 роки';const parts=[];if(y>0)parts.push(`${y} р.`);if(m>0)parts.push(`${m} міс.`);if(d>0||(!y&&!m))parts.push(`${Math.max(0,d)} дн.`);return{days,human:special||parts.join(' '),special}}
+  function relationTargetDate(r,value,unit){if(!r||!r.startDate||!Number(value))return null;const s=pd(r.startDate),n=Math.max(1,Number(value)||0);if(unit==='months')return iso(addMonthsSafe(s,n));if(unit==='years')return iso(addYearsSafe(s,n));return iso(addDays(s,n))}
+  function relationTargetLabel(r){const n=Math.max(0,Number(r?.targetValue)||0),u=r?.targetUnit||'days';if(!n)return'';if(u==='months'&&n===6)return'Пів року';if((u==='months'&&n===12)||(u==='years'&&n===1))return'1 рік';if(u==='years'&&n===2)return'2 роки';return `${n} ${u==='months'?'міс.':u==='years'?'р.':'дн.'}`}
+  function relationCountdown(date){if(!date)return'—';const n=daysDiff(iso(new Date()),date);return n===0?'сьогодні':n>0?`через ${n} дн.`:`було ${Math.abs(n)} дн. тому`}
+  function relationStandardDates(r){if(!r||!r.startDate)return{half:null,year:null,custom:null};return{half:iso(addMonthsSafe(pd(r.startDate),6)),year:iso(addYearsSafe(pd(r.startDate),1)),custom:relationTargetDate(r,r.targetValue,r.targetUnit)}}
+  function nextRelationMilestone(r){const d=relationStandardDates(r),today=iso(new Date()),arr=[d.half&&{date:d.half,label:'Пів року'},d.year&&{date:d.year,label:'1 рік'},d.custom&&{date:d.custom,label:relationTargetLabel(r)}].filter(Boolean).filter(x=>x.date>=today).sort((a,b)=>a.date.localeCompare(b.date));return arr[0]||null}
+  function renderRelationList(){const list=relations().slice().sort((a,b)=>String(a.startDate||'').localeCompare(String(b.startDate||''))),box=$('#lpRelationList');if(!list.length){box.innerHTML='<div class="lp-data-empty">Додай людину й дату початку. Планер покаже, скільки ви разом і скільки до пів року, року або твого відліку.</div>';return}box.innerHTML=list.map(r=>{const p=personById(r.personId),du=relationDuration(r),d=relationStandardDates(r),together=du.special?`${du.special} разом`:`${du.days} дн. разом`;return `<button type="button" class="lp-relation-card ${state.relationId===r.id?'on':''}" data-relationid="${r.id}"><div class="lp-relation-top"><span class="lp-avatar">♥</span><span class="lp-relation-main"><b>${esc(p?p.name:'Без людини')}</b><small>Разом від ${esc(r.startDate?pd(r.startDate).toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric'}):'—')}</small></span></div><div class="lp-card-meta"><span class="lp-chip hot">${esc(together)}</span><span class="lp-chip">Пів року · ${esc(relationCountdown(d.half))}</span><span class="lp-chip">1 рік · ${esc(relationCountdown(d.year))}</span>${d.custom?`<span class="lp-chip green">${esc(relationTargetLabel(r))} · ${esc(relationCountdown(d.custom))}</span>`:''}</div></button>`}).join('');box.querySelectorAll('[data-relationid]').forEach(x=>x.onclick=()=>loadRelation(x.dataset.relationid))}
+  function renderRelationPreview(r){const box=$('#lpRelationPreview');if(!r||!r.startDate){box.innerHTML='<div class="lp-data-empty">Вибери людину та дату початку.</div>';return}const du=relationDuration(r),d=relationStandardDates(r),customLabel=relationTargetLabel(r),main=du.special||`${du.days} днів`,sub=du.special?`${du.days} днів разом`:du.human;box.innerHTML=`<div class="lp-rel-hero-top"><div><small>Разом</small><div class="lp-rel-days">${esc(main)}</div><div class="lp-rel-human">${esc(sub)}</div></div><div class="lp-chip hot">від ${esc(shortDate(r.startDate))}</div></div><div class="lp-milestone-list"><div class="lp-milestone"><b>Пів року</b><span>${esc(shortDate(d.half))} · ${esc(relationCountdown(d.half))}</span></div><div class="lp-milestone"><b>1 рік</b><span>${esc(shortDate(d.year))} · ${esc(relationCountdown(d.year))}</span></div>${d.custom?`<div class="lp-milestone custom"><b>${esc(customLabel)}</b><span>${esc(shortDate(d.custom))} · ${esc(relationCountdown(d.custom))}</span></div>`:''}</div>`}
+  function resetRelationForm(){state.relationId='';populatePersonOptions();$('#lpRelationId').value='';$('#lpRelationFormTitle').textContent='Новий відлік';$('#lpRelationPerson').value=people()[0]?.id||'';$('#lpRelationStart').value='';$('#lpRelationCustomValue').value='';$('#lpRelationCustomUnit').value='days';$('#lpRelationNote').value='';$('#lpDeleteRelation').disabled=true;renderRelationPreview(null);renderRelationList()}
+  function loadRelation(id){const r=relationById(id);if(!r){resetRelationForm();return}state.relationId=r.id;populatePersonOptions();$('#lpRelationId').value=r.id;$('#lpRelationFormTitle').textContent=personById(r.personId)?.name||'Стосунки';$('#lpRelationPerson').value=r.personId||'';$('#lpRelationStart').value=r.startDate||'';$('#lpRelationCustomValue').value=r.targetValue||'';$('#lpRelationCustomUnit').value=r.targetUnit||'days';$('#lpRelationNote').value=r.note||'';$('#lpDeleteRelation').disabled=false;renderRelationPreview(r);renderRelationList()}
+  function relationDraftFromForm(){return{id:$('#lpRelationId').value||'preview',personId:$('#lpRelationPerson').value||'',type:'couple',startDate:$('#lpRelationStart').value||'',targetValue:Math.max(0,Number($('#lpRelationCustomValue').value)||0),targetUnit:$('#lpRelationCustomUnit').value||'days',note:$('#lpRelationNote').value.trim(),active:true}}
+  async function saveRelationCard(ev){ev.preventDefault();ensure();const d=relationDraftFromForm();if(!d.personId||!d.startDate)return;const id=$('#lpRelationId').value,old=id?relationById(id):null,obj={...d,id:id||uid('rr'),createdAt:old?.createdAt||Date.now(),updatedAt:Date.now()};const i=relations().findIndex(x=>x.id===obj.id);if(i>=0)relations()[i]=obj;else relations().push(obj);state.relationId=obj.id;await save();renderData();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast(id?'Відлік оновлено':'Відлік додано')}
+  async function deleteRelationCard(){const id=$('#lpRelationId').value;if(!id||!confirm('Видалити цей відлік?'))return;DB.planner.relationships=relations().filter(r=>r.id!==id);state.relationId='';await save();renderData();renderCalendar();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);historyToast('Відлік видалено')}
+  function renderData(){renderDataSummary();populatePersonOptions();$$('[data-lpdatatab]').forEach(b=>b.classList.toggle('on',b.dataset.lpdatatab===state.dataTab));$('#lpPeoplePanel').hidden=state.dataTab!=='people';$('#lpRelationsPanel').hidden=state.dataTab!=='relationships';if(state.dataTab==='people'){renderPeopleList();if(state.personId&&personById(state.personId))loadPerson(state.personId);else resetPersonForm()}else{renderRelationList();if(state.relationId&&relationById(state.relationId))loadRelation(state.relationId);else resetRelationForm()}}
+  function openData(tab='people',id=''){state.dataTab=tab;if(tab==='people'&&id)state.personId=id;if(tab==='relationships'&&id)state.relationId=id;$('#lpDataOverlay').classList.add('open');$('#lpDataOverlay').setAttribute('aria-hidden','false');renderData()}
+  function closeData(){$('#lpDataOverlay').classList.remove('open');$('#lpDataOverlay').setAttribute('aria-hidden','true')}
   function renderUpcoming(){
     let a,b;const today=iso(new Date());if(state.range==='custom'){a=$('#lpRangeFrom').value||today;b=$('#lpRangeTo').value||a;if(b<a)[a,b]=[b,a]}else{const n=Number(state.range)||7;a=today;b=iso(addDays(new Date(),n-1))}
     const dates=rangeDates(a,b),occ=occurrencesRange(a,b),taskCount=dates.reduce((s,k)=>s+taskList(k).length,0);$('#lpUpcomingSummary').innerHTML=`<div><small>Період</small><strong>${daysDiff(a,b)+1} дн.</strong></div><div><small>Події</small><strong>${occ.length}</strong></div><div><small>Завдання</small><strong>${taskCount}</strong></div>`;
     const groups=dates.map(k=>({k,ev:occurrencesOn(k),tasks:taskList(k).length})).filter(x=>x.ev.length||x.tasks),box=$('#lpUpcomingList');
     if(!groups.length){box.innerHTML='<div class="lp-up-empty">У цьому періоді нічого не заплановано.</div>';return}
     box.innerHTML=groups.map(g=>`<div class="lp-up-day"><div class="lp-up-date">${shortDate(g.k)}<small>${pd(g.k).toLocaleDateString('uk-UA',{weekday:'short'})}</small></div><div class="lp-up-items">${g.ev.map(e=>`<div class="lp-up-event ${eventClass(e)}" data-lpevent="${e.id}" data-lpdate="${g.k}"><i></i><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><span>${esc(timeText(e))}</span></div>`).join('')}${g.tasks?`<div class="lp-up-task-count" data-gotoday="${g.k}"><b>${g.tasks} завдання</b><span>Відкрити день →</span></div>`:''}</div></div>`).join('');
-    box.querySelectorAll('[data-lpevent]').forEach(x=>x.onclick=()=>{closeUpcoming();state.selected=x.dataset.lpdate;const d=pd(state.selected);state.year=d.getFullYear();state.month=d.getMonth();state.editing=x.dataset.lpevent;renderCalendar()});box.querySelectorAll('[data-gotoday]').forEach(x=>x.onclick=()=>{closeUpcoming();goTasks(x.dataset.gotoday)});
+    box.querySelectorAll('[data-lpevent]').forEach(x=>x.onclick=()=>{closeUpcoming();state.selected=x.dataset.lpdate;const d=pd(state.selected);state.year=d.getFullYear();state.month=d.getMonth();if(String(x.dataset.lpevent).startsWith('rel:')){state.editing='';renderCalendar();loadEditor(x.dataset.lpevent)}else{state.editing=x.dataset.lpevent;renderCalendar()}});box.querySelectorAll('[data-gotoday]').forEach(x=>x.onclick=()=>{closeUpcoming();goTasks(x.dataset.gotoday)});
   }
   function openUpcoming(){$('#lpUpcomingOverlay').classList.add('open');$('#lpUpcomingOverlay').setAttribute('aria-hidden','false');renderUpcoming()}
   function closeUpcoming(){$('#lpUpcomingOverlay').classList.remove('open');$('#lpUpcomingOverlay').setAttribute('aria-hidden','true')}
   function setMonth(delta){state.month+=delta;if(state.month<0){state.month=11;state.year--}if(state.month>11){state.month=0;state.year++}state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()}
   function goToday(){const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=iso(n);state.editing='';renderCalendar()}
-  function renderTodayAlerts(k){const host=document.getElementById('todayPlannerAlerts');if(!host)return;ensure();const rem=remindersFor(k);if(!rem.length){host.innerHTML='';return}host.innerHTML=`<div class="today-event-head">◈ Події та нагадування</div>`+rem.map(r=>{const e=r.event,when=r.until===0?(e.allDay!==false?'Сьогодні':(e.start||'Сьогодні')):`через ${r.until} дн.`;return `<div class="today-event-alert ${eventClass(e)}" data-todayevent="${e.id}" data-todaydate="${r.date}"><span class="stripe"></span><div><b>${esc((typeMeta[e.type]||typeMeta.event).icon+' '+e.title)}</b><small>${r.until===0?esc(niceDate(r.date,false)):esc(niceDate(r.date,false)+' · нагадування')}</small></div><span class="when">${when}</span></div>`}).join('');host.querySelectorAll('[data-todayevent]').forEach(x=>x.onclick=()=>{go('planner');state.selected=x.dataset.todaydate;const d=pd(state.selected);state.year=d.getFullYear();state.month=d.getMonth();state.editing=x.dataset.todayevent;renderCalendar()})}
+  let todayStripStart='';
+  function todayStripInfo(k){
+    const ev=occurrencesOn(k),rem=remindersFor(k).filter(x=>x.until>0);
+    const icons=[];ev.forEach(e=>{const ic=(typeMeta[e.type]||typeMeta.event).icon;if(ic&&!icons.includes(ic))icons.push(ic)});
+    return{events:ev,reminders:rem,icons:icons.slice(0,3)};
+  }
+  function renderTodayAlerts(k){
+    const host=document.getElementById('todayPlannerAlerts');if(!host)return;ensure();
+    const realToday=iso(new Date());
+    if(!todayStripStart)todayStripStart=k||realToday;
+    const start=pd(todayStripStart),end=iso(addDays(start,4));
+    if(k<todayStripStart||k>end)todayStripStart=k;
+    const days=Array.from({length:5},(_,i)=>iso(addDays(pd(todayStripStart),i)));
+    host.innerHTML=`<div class="today-daystrip" id="todayDayStrip">
+      <div class="tds-head"><div class="tds-title">Календар · 5 днів</div><div class="tds-controls"><button type="button" class="tds-nav" data-tds-prev aria-label="Попередні 5 днів">‹</button><button type="button" class="tds-today" data-tds-today>Сьогодні</button><button type="button" class="tds-nav" data-tds-next aria-label="Наступні 5 днів">›</button></div></div>
+      <div class="tds-grid">${days.map(day=>{const d=pd(day),inf=todayStripInfo(day),isSel=day===k,isToday=day===realToday;const first=inf.events[0];const tip=[...inf.events.map(e=>(typeMeta[e.type]||typeMeta.event).icon+' '+e.title),...inf.reminders.map(r=>'🔔 '+r.event.title)].join(' · ');return `<button type="button" class="tds-day ${isSel?'selected':''} ${isToday?'today':''}" data-tds-day="${day}" title="${esc(tip)}"><span class="tds-week">${esc(d.toLocaleDateString('uk-UA',{weekday:'short'}).replace('.',''))}</span><strong>${d.getDate()}</strong><span class="tds-month">${esc(MNS_S[d.getMonth()])}</span><span class="tds-badges">${inf.events.length?`<i class="event">${inf.icons.join('')||'◆'}${inf.events.length>1?` <b>${inf.events.length}</b>`:''}</i>`:''}${inf.reminders.length?`<i class="rem">🔔${inf.reminders.length>1?` <b>${inf.reminders.length}</b>`:''}</i>`:''}${!inf.events.length&&!inf.reminders.length?'<i class="empty">·</i>':''}</span>${first?`<span class="tds-event-name">${esc(first.title)}</span>`:''}</button>`}).join('')}</div>
+    </div>`;
+    host.querySelector('[data-tds-prev]').onclick=()=>{todayStripStart=iso(addDays(pd(todayStripStart),-5));renderTodayAlerts(k)};
+    host.querySelector('[data-tds-next]').onclick=()=>{todayStripStart=iso(addDays(pd(todayStripStart),5));renderTodayAlerts(k)};
+    host.querySelector('[data-tds-today]').onclick=()=>{todayStripStart=realToday;cur=realToday;rToday()};
+    host.querySelectorAll('[data-tds-day]').forEach(b=>b.onclick=()=>{cur=b.dataset.tdsDay;rToday()});
+    const strip=host.querySelector('#todayDayStrip');let sx=0,sy=0;
+    strip.addEventListener('touchstart',e=>{const t=e.touches&&e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY},{passive:true});
+    strip.addEventListener('touchend',e=>{const t=e.changedTouches&&e.changedTouches[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.35){todayStripStart=iso(addDays(pd(todayStripStart),dx<0?5:-5));renderTodayAlerts(k)}},{passive:true});
+  }
   window.renderTodayPlannerAlerts=renderTodayAlerts;
   if(!window.__lifePlannerTodayWrap){window.__lifePlannerTodayWrap=true;const baseToday=rToday;rToday=function(){baseToday();renderTodayAlerts(cur)}}
   window.refreshLifePlanner=function(){ensure();const n=new Date();if(!state.selected)state.selected=iso(n);renderCalendar()};
-  populateControls();ensure();
+  populateControls();ensure();if(migrateBirthdays())save();
   $('#lpPrev').onclick=()=>setMonth(-1);$('#lpNext').onclick=()=>setMonth(1);$('#lpToday').onclick=goToday;$('#lpMonth').onchange=()=>{state.month=Number($('#lpMonth').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};$('#lpYear').onchange=()=>{state.year=Number($('#lpYear').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};
-  $('#lpNewEvent').onclick=()=>{state.editing='';resetEditor(true);$('#lpTitle').focus()};$('#lpResetEvent').onclick=()=>resetEditor(true);$('#lpResetEvent2').onclick=()=>resetEditor(true);$('#lpAllDay').onchange=()=>{syncTimeDisabled();captureEditorDraft()};$('#lpType').onchange=()=>{if($('#lpType').value==='birthday'){if($('#lpRepeat').value==='none')$('#lpRepeat').value='yearly';if($('#lpReminder').value==='0')$('#lpReminder').value='7'}captureEditorDraft()};$('#lpEventForm').onsubmit=saveEvent;$('#lpDelete').onclick=deleteEvent;
+  $('#lpNewEvent').onclick=()=>{state.editing='';resetEditor(true);$('#lpTitle').focus()};$('#lpResetEvent').onclick=()=>resetEditor(true);$('#lpResetEvent2').onclick=()=>resetEditor(true);$('#lpAllDay').onchange=()=>{syncTimeDisabled();captureEditorDraft()};$('#lpType').onchange=()=>{if($('#lpType').value==='birthday'){if($('#lpRepeat').value==='none')$('#lpRepeat').value='yearly';if($('#lpReminder').value==='0')$('#lpReminder').value='7'}syncBirthdayFields();captureEditorDraft()};$('#lpPerson').onchange=()=>{const p=personById($('#lpPerson').value);if($('#lpType').value==='birthday'&&p){if(p.birthDate)$('#lpBirthDate').value=p.birthDate;if(!$('#lpTitle').value.trim())$('#lpTitle').value=`День народження ${p.name}`}captureEditorDraft()};$('#lpBirthDate').onchange=captureEditorDraft;$('#lpQuickPerson').onclick=()=>{const pre=$('#lpType').value==='birthday'?cleanBirthdayName($('#lpTitle').value):'';openData('people');resetPersonForm(pre);setTimeout(()=>$('#lpPersonName').focus(),60)};$('#lpEventForm').onsubmit=saveEvent;$('#lpDelete').onclick=deleteEvent;
   $('#lpOpenUpcoming').onclick=openUpcoming;$('#lpCloseUpcoming').onclick=closeUpcoming;$('#lpUpcomingOverlay').addEventListener('click',e=>{if(e.target===$('#lpUpcomingOverlay'))closeUpcoming()});$$('#lpRangeButtons [data-range]').forEach(b=>b.onclick=()=>{state.range=b.dataset.range;$$('#lpRangeButtons [data-range]').forEach(x=>x.classList.toggle('on',x===b));$('#lpCustomRange').classList.toggle('on',state.range==='custom');if(state.range!=='custom')renderUpcoming()});$('#lpApplyRange').onclick=renderUpcoming;
   $('#lpEventForm').addEventListener('input',captureEditorDraft);$('#lpEventForm').addEventListener('change',captureEditorDraft);
+  $('#lpOpenData').onclick=()=>openData('people');$('#lpCloseData').onclick=closeData;$('#lpDataOverlay').addEventListener('click',e=>{if(e.target===$('#lpDataOverlay'))closeData()});$$('[data-lpdatatab]').forEach(b=>b.onclick=()=>{state.dataTab=b.dataset.lpdatatab;renderData()});$('#lpNewPerson').onclick=()=>{resetPersonForm();$('#lpPersonName').focus()};$('#lpPersonForm').onsubmit=savePersonCard;$('#lpDeletePerson').onclick=deletePersonCard;$('#lpNewRelation').onclick=()=>resetRelationForm();$('#lpRelationForm').onsubmit=saveRelationCard;$('#lpDeleteRelation').onclick=deleteRelationCard;$('#lpRelationForm').addEventListener('input',()=>renderRelationPreview(relationDraftFromForm()));$('#lpRelationForm').addEventListener('change',()=>renderRelationPreview(relationDraftFromForm()));
   renderCalendar();
 }
 
