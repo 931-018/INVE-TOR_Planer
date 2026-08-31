@@ -7,6 +7,8 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
 </style><style>body {transition: opacity ease-in 0.2s; } 
 body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
 
 .fin-capital-note{margin-bottom:12px}
 .fin-capital-edit{min-height:48px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:18px;color:var(--text);outline:none}
@@ -2759,8 +2761,695 @@ body.debt-drag-active{overscroll-behavior:none}
 }
 </style>
 
+<style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style>
+<style id="old-base-refresh-20260831">
+:root{--ui-font:"Calibri","Segoe UI",Arial,sans-serif}
+html,body{font-family:var(--ui-font)!important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body,input,textarea,select,button,.gb-txt,.stg .t,.stg .tin,.chk .hin,.tp-r1 input.t,.relationship-notes,.card,.hint{font-family:var(--ui-font)!important}
+
+/* smoother endless background floating */
+.fx{animation:fxdriftSmooth var(--t,32s) linear var(--d,0s) infinite!important;will-change:transform,opacity}
+@keyframes fxdriftSmooth{
+  0%{opacity:0;transform:translate3d(0,68vh,0) rotate(-4deg) scale(.92)}
+  8%{opacity:var(--o,.2)}
+  50%{opacity:calc(var(--o,.2) * 1.05);transform:translate3d(var(--dx,26px),4vh,0) rotate(1deg) scale(1.02)}
+  92%{opacity:var(--o,.2)}
+  100%{opacity:0;transform:translate3d(calc(var(--dx,26px) * .45),-68vh,0) rotate(4deg) scale(.96)}
+}
+
+/* sphere banner floating icons */
+.shero-float{animation:sheroFloatUp 8.6s linear var(--fd,0s) infinite!important;opacity:var(--fo,.3)!important}
+@keyframes sheroFloatUp{
+  0%{opacity:0;transform:translate(-50%,-50%) translate3d(0,26px,0) scale(calc(var(--fz,1)*.92)) rotate(calc(var(--fr,-6deg) - 3deg))}
+  10%{opacity:calc(var(--fo,.3) * .85)}
+  52%{opacity:var(--fo,.3);transform:translate(-50%,-50%) translate3d(var(--mx,10px),-4px,0) scale(var(--fz,1)) rotate(var(--fr,-6deg))}
+  100%{opacity:0;transform:translate(-50%,-50%) translate3d(calc(var(--mx,10px) * .5),-36px,0) scale(calc(var(--fz,1)*1.05)) rotate(calc(var(--fr,-6deg) + 3deg))}
+}
+
+/* centered goals with better frame */
+.gblock.goal-foldable,
+.gblock.main,
+.gblock.year{
+  grid-template-columns:1fr!important;
+  justify-items:center!important;
+  text-align:center!important;
+  padding:28px 28px!important;
+  border-radius:18px!important;
+  border:1px solid rgba(212,162,78,.34)!important;
+  background:
+    radial-gradient(circle at 50% 118%, rgba(212,162,78,.08), transparent 36%),
+    radial-gradient(circle at 12% 50%, rgba(255,255,255,.03), transparent 22%),
+    radial-gradient(circle at 88% 50%, rgba(90,125,147,.08), transparent 24%),
+    linear-gradient(135deg,rgba(212,162,78,.08),transparent 30%),
+    var(--panel2)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+.gblock.goal-foldable:before,
+.gblock.main:before,
+.gblock.year:before{
+  opacity:.95!important;
+  filter:blur(14px)!important;
+}
+.gblock.goal-foldable .gb-l,
+.gblock.main .gb-l,
+.gblock.year .gb-l{
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+  text-align:center!important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.gb-headrow{justify-content:center!important;gap:12px!important;margin-bottom:14px!important}
+.gb-headrow .gb-lbl{margin:0!important}
+.gb-lbl{font-size:12px!important;letter-spacing:4px!important;color:#8d96a2!important;text-align:center!important}
+.gb-txt{
+  width:100%;
+  max-width:1250px;
+  margin:0 auto!important;
+  text-align:center!important;
+  text-wrap:balance;
+  font-size:clamp(22px,2.25vw,31px)!important;
+  line-height:1.52!important;
+  color:#f0ddaf!important;
+}
+.gblock.year .gb-txt{font-size:clamp(20px,2.0vw,28px)!important;color:#edf1f5!important}
+.goal-fold-btn{flex:0 0 34px!important;width:34px!important;height:34px!important;border-radius:999px!important}
+.gblock.goal-foldable .gb-r,
+.gblock.main .gb-r,
+.gblock.year .gb-r{
+  justify-self:center!important;
+  margin-top:18px!important;
+  text-align:center!important;
+}
+.goal-decor{min-height:auto!important}
+.goal-orbit{width:132px!important;height:132px!important}
+.goal-badge{top:4px!important;padding:7px 12px!important;border-radius:999px!important;letter-spacing:2.1px!important}
+.goal-core{width:68px!important;height:68px!important;font-size:30px!important}
+.goal-note{max-width:260px!important;margin:12px auto 0!important}
+
+/* refreshed chart cards */
+.premium-progress{gap:16px!important;margin:2px 0 18px!important}
+.premium-progress .sp-card{
+  min-height:214px!important;
+  padding:18px 18px 12px!important;
+  border-radius:18px!important;
+  border:1px solid rgba(212,162,78,.16)!important;
+  background:
+    radial-gradient(circle at 82% 10%, rgba(212,162,78,.07), transparent 26%),
+    linear-gradient(135deg,rgba(255,255,255,.02),transparent 46%),
+    var(--panel2)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+.premium-progress .sp-top{align-items:flex-start!important;margin-bottom:8px!important}
+.premium-progress .sp-lbl{font-size:13px!important;letter-spacing:2.6px!important;color:#aeb6c1!important}
+.premium-progress .sp-meta-line{margin-top:8px!important;font-size:10px!important;letter-spacing:1.6px!important;color:#697482!important;text-transform:uppercase!important}
+.premium-progress .sp-pct{font-size:44px!important;line-height:1!important;color:#f3dfab!important;text-shadow:0 0 18px rgba(212,162,78,.12)}
+.premium-progress .premium-spark{margin:8px -2px 0!important}
+.premium-progress .premium-spark svg{width:100%;height:136px!important;display:block;overflow:visible}
+.premium-progress .spark-grid,.premium-progress .spark-vgrid{fill:none;stroke:rgba(255,255,255,.055);stroke-width:1;vector-effect:non-scaling-stroke}
+.premium-progress .spark-vgrid{stroke:rgba(255,255,255,.035)}
+.premium-progress .spark-area{opacity:.92;filter:drop-shadow(0 0 10px rgba(240,191,43,.11))}
+.premium-progress .spark-line-under{stroke:#dba938;stroke-width:6.2;opacity:.14;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.premium-progress .spark-main-line{stroke:#f1bf24;stroke-width:2.7;fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 5px rgba(240,191,43,.34));stroke-dasharray:1600;stroke-dashoffset:1600;animation:sparkDraw .95s ease-out forwards}
+.premium-progress .spark-pt{fill:#f1bf24;filter:drop-shadow(0 0 4px rgba(240,191,43,.52))}
+.premium-progress .spark-axis-label{font-family:'Oswald',sans-serif!important;font-size:10px!important;font-weight:700!important;letter-spacing:1px!important;fill:#9aa4b0}
+.premium-progress .spark-time-label{font-family:'Oswald',sans-serif!important;font-size:8.6px!important;font-weight:700!important;letter-spacing:1.4px!important;fill:#6b7784}
+@keyframes sparkDraw{to{stroke-dashoffset:0}}
+
+/* symmetry for section cards */
+.card,.tp,.stg,.chk,.sphere-control{border-radius:14px!important}
+.card h3,.today-progress-title,.divider,.stage-head b,.sp-lbl,.sp-meta-line{font-family:'Oswald',sans-serif!important}
+
+@media(max-width:900px){
+  .gblock.goal-foldable,.gblock.main,.gblock.year{padding:24px 18px!important}
+  .gb-txt{font-size:clamp(20px,2.5vw,27px)!important}
+  .premium-progress .sp-card{min-height:202px!important}
+  .premium-progress .sp-pct{font-size:38px!important}
+}
+@media(max-width:640px){
+  .gblock.goal-foldable,.gblock.main,.gblock.year{padding:18px 14px!important;border-radius:16px!important}
+  .gb-headrow{gap:10px!important;margin-bottom:12px!important}
+  .gb-lbl{font-size:10px!important;letter-spacing:2.6px!important}
+  .gb-txt,.gblock.year .gb-txt{font-size:17px!important;line-height:1.45!important}
+  .goal-orbit{width:110px!important;height:110px!important}
+  .goal-core{width:58px!important;height:58px!important;font-size:25px!important}
+  .premium-progress{grid-template-columns:1fr!important;gap:12px!important}
+  .premium-progress .sp-card{min-height:188px!important;padding:15px 14px 10px!important;border-radius:16px!important}
+  .premium-progress .sp-lbl{font-size:11px!important;letter-spacing:2px!important}
+  .premium-progress .sp-meta-line{font-size:9px!important;letter-spacing:1.2px!important}
+  .premium-progress .sp-pct{font-size:33px!important}
+  .premium-progress .premium-spark svg{height:116px!important}
+  .premium-progress .spark-axis-label{font-size:8.6px!important}
+  .premium-progress .spark-time-label{font-size:7.8px!important}
+}
+</style>
+
+
+
+<style id="final-font-events-fix-20260831">
+html,body{font-family:'Spectral',serif!important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+.gb-txt,.gblock.year .gb-txt,.stg .t,.stg .tin,.chk .lbl,.chk .hin,.tp-r1 input.t,.row input.t,.tc-h input.t,.sub input,.wssub span,.notepad,.relationship-notes,.dnote,.focus-in,[contenteditable="true"],.lp-input,.lp-textarea,.lp-selected-event b,.lp-event-mini,.lp-up-event b,.lp-up-task-count b,.today-event-alert b,.tds-event-name{font-family:'Spectral',serif!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important}
+input[type="text"],input[type="search"],input:not([type]),textarea{font-family:'Spectral',serif!important}
+.hd .logo,.hd .tag,.q365 .t,.q365 .t b,.cd-u .n,.cd-u .l,.cd-cap,.tab,.sph-hdr,.sph-nm,.sph-pc,.sph-ft,.snav button,.sph-toggle,.gb-lbl,.gb-sub,.gb-pc,.goal-badge,.goal-fold-btn,.sp-lbl,.sp-pct,.sp-meta,.sp-meta-line,.stage-head b,.stage-head span,.stage-divider,.stg .n,.stg .tag,.stage-mini-btn,.today-progress-title,.tpg-name,.tpg-num,.tpg-small,.tpg-foot,.divider,.wd,.tp-r2 .q,.addbtn,.today-skip,.today-hidden-h,.today-restore,.date-big,.date-big small,.date-nav button,.date-pick,.metric label,.metric input[type=number],.metric .u,.dot,.row select,.tc-h select,.tc-h .exp,.tc-date-l,.tc-date input,.tc-date-x,.ws-exp,.ws-tag,.card h3,.mono,button,select,.shero-k,.shero-t,.shero-tag,.lp-brand b,.lp-mark,.lp-btn,.lp-navbtn,.lp-toolbar select,.lp-today-btn,.lp-weekdays span,.lp-day-num,.lp-task-count,.lp-more,.lp-eyebrow,.lp-selected-title,.lp-meta-card small,.lp-meta-card strong,.lp-form-title b,.lp-new-btn,.lp-field label,.lp-field>span,.lp-select,.lp-all-day span,.lp-save,.lp-editor-actions button,.lp-modal-head b,.lp-close,.lp-range-buttons button,.lp-custom-range input,.lp-up-summary small,.lp-up-summary strong,.lp-up-date,.lp-up-date small,.lp-up-event span,.lp-up-task-count span,.tds-title,.tds-nav,.tds-today,.tds-week,.tds-day strong,.tds-month,.tds-badges i{font-family:'Oswald',sans-serif!important}
+.gb-txt{font-size:clamp(22px,2.25vw,31px)!important;line-height:1.50!important;font-weight:600!important;color:var(--gold-soft)!important}.gblock.year .gb-txt{font-size:clamp(20px,2vw,28px)!important;color:var(--txt)!important}.stg .t,.stg .tin,.chk .lbl,.chk .hin,.tp-r1 input.t,.row input.t,.tc-h input.t{font-size:17px!important;line-height:1.45!important}
+#lpUpcomingOverlay{background:rgba(5,8,11,.76)!important;backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+#lpUpcomingOverlay .lp-modal{background:radial-gradient(circle at 15% 0%,rgba(42,74,54,.18),transparent 34%),radial-gradient(circle at 100% 100%,rgba(212,162,78,.08),transparent 30%),var(--panel)!important;border:1px solid rgba(212,162,78,.25)!important;border-radius:18px!important;box-shadow:0 28px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.025)!important}
+#lpUpcomingOverlay .lp-modal-head{padding:19px 22px!important;background:linear-gradient(135deg,rgba(42,74,54,.18),transparent 58%),var(--panel2)!important;border-bottom:1px solid var(--line)!important}#lpUpcomingOverlay .lp-modal-head b{font-family:'Oswald',sans-serif!important;font-size:23px!important;font-weight:600!important;letter-spacing:.5px!important;color:var(--gold-soft)!important}#lpUpcomingOverlay .lp-close{background:var(--panel)!important;border-color:var(--line)!important;color:var(--txt-dim)!important}#lpUpcomingOverlay .lp-close:hover{border-color:var(--gold)!important;color:var(--gold-soft)!important}#lpUpcomingOverlay .lp-modal-body{padding:17px 20px 23px!important}
+#lpUpcomingOverlay .lp-range-buttons{gap:8px!important}#lpUpcomingOverlay .lp-range-buttons button{min-height:42px!important;padding:0 15px!important;border-radius:9px!important;background:linear-gradient(135deg,rgba(42,74,54,.12),transparent),var(--panel2)!important;border:1px solid var(--line)!important;color:var(--txt-dim)!important;font-size:11px!important}#lpUpcomingOverlay .lp-range-buttons button.on{background:linear-gradient(135deg,rgba(212,162,78,.13),rgba(42,74,54,.20)),var(--panel2)!important;border-color:var(--gold)!important;color:var(--gold-soft)!important;box-shadow:0 0 0 1px rgba(212,162,78,.07)!important}
+#lpUpcomingOverlay .lp-up-summary{gap:9px!important;margin:14px 0!important}#lpUpcomingOverlay .lp-up-summary div{background:linear-gradient(135deg,rgba(42,74,54,.14),transparent 58%),var(--panel2)!important;border:1px solid var(--line)!important;border-radius:11px!important;padding:10px 12px!important}#lpUpcomingOverlay .lp-up-summary small{color:var(--txt-faint)!important;font-size:8px!important;letter-spacing:1.2px!important}#lpUpcomingOverlay .lp-up-summary strong{color:var(--gold-soft)!important;font-size:21px!important}
+#lpUpcomingOverlay .lp-up-list{border:1px solid var(--line)!important;border-radius:13px!important;overflow:hidden!important;background:rgba(10,14,18,.28)!important}#lpUpcomingOverlay .lp-up-day{padding:13px 12px!important;border-color:var(--line)!important}#lpUpcomingOverlay .lp-up-date{color:var(--gold-soft)!important;font-size:14px!important}#lpUpcomingOverlay .lp-up-date small{color:var(--txt-faint)!important}#lpUpcomingOverlay .lp-up-event,#lpUpcomingOverlay .lp-up-task-count{background:linear-gradient(135deg,rgba(42,74,54,.08),transparent),var(--panel2)!important;border:1px solid var(--line)!important;border-radius:9px!important;padding:9px 10px!important}#lpUpcomingOverlay .lp-up-event:hover,#lpUpcomingOverlay .lp-up-task-count:hover{border-color:rgba(212,162,78,.52)!important;background:linear-gradient(135deg,rgba(212,162,78,.07),rgba(42,74,54,.11)),var(--panel2)!important}#lpUpcomingOverlay .lp-up-event b,#lpUpcomingOverlay .lp-up-task-count b{font-family:'Spectral',serif!important;font-weight:600!important;font-size:14px!important;color:var(--txt)!important}#lpUpcomingOverlay .lp-up-event span,#lpUpcomingOverlay .lp-up-task-count span{color:var(--txt-faint)!important;font-size:8px!important}
+@media(max-width:700px){.gb-txt,.gblock.year .gb-txt{font-size:16px!important;line-height:1.45!important}.stg .t,.stg .tin,.chk .lbl,.chk .hin,.tp-r1 input.t,.row input.t,.tc-h input.t{font-size:15px!important}#lpUpcomingOverlay{align-items:flex-end!important;padding:0!important}#lpUpcomingOverlay .lp-modal{width:100%!important;max-height:92vh!important;border-radius:20px 20px 0 0!important;border-bottom:0!important}#lpUpcomingOverlay .lp-modal-head{padding:16px 15px 13px!important}#lpUpcomingOverlay .lp-modal-head b{font-size:20px!important}#lpUpcomingOverlay .lp-modal-body{padding:13px 12px calc(20px + env(safe-area-inset-bottom))!important}#lpUpcomingOverlay .lp-range-buttons{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important}#lpUpcomingOverlay .lp-range-buttons::-webkit-scrollbar{display:none!important}#lpUpcomingOverlay .lp-range-buttons button{flex:0 0 auto!important;min-height:42px!important;font-size:10px!important}#lpUpcomingOverlay .lp-up-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}#lpUpcomingOverlay .lp-up-summary div{padding:9px 8px!important}#lpUpcomingOverlay .lp-up-summary strong{font-size:18px!important}#lpUpcomingOverlay .lp-up-day{grid-template-columns:62px minmax(0,1fr)!important;gap:7px!important;padding:10px 8px!important}#lpUpcomingOverlay .lp-up-event b,#lpUpcomingOverlay .lp-up-task-count b{font-size:13px!important}}
+</style>
+
+<style id="hard-fix-font-edit-graph-20260831">
+/* EXACT OLD PLANNER TYPOGRAPHY — no global font replacement */
+html,body{font-family:'Spectral',serif!important;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+
+/* UI / system labels exactly like the original planner */
+.hd .logo,.hd .tag,.q365 .t,.q365 .t b,.cd-u .n,.cd-u .l,.cd-cap,
+.tab,.sph-hdr,.sph-nm,.sph-pc,.sph-ft,.snav button,.sph-toggle,
+.gb-lbl,.gb-sub,.gb-pc,.goal-badge,.goal-fold-btn,
+.sp-lbl,.sp-pct,.sp-meta,.sp-meta-line,.stage-head b,.stage-head span,.stage-divider,
+.stg .n,.stg .tag,.stage-mini-btn,.deadline-trigger,.today-progress-title,
+.tpg-name,.tpg-num,.tpg-small,.tpg-foot,.divider,.wd,.tp-r2 .q,.addbtn,
+.today-skip,.today-hidden-h,.today-restore,.date-big,.date-big small,.date-nav button,.date-pick,
+.metric label,.metric input[type=number],.metric .u,.dot,.row select,.tc-h select,.tc-h .exp,
+.tc-date-l,.tc-date input,.tc-date-x,.ws-exp,.ws-tag,.card h3,.mono,
+.shero-k,.shero-t,.shero-tag,.dbtn,.work-open-btn,.sc-lbl,.sc-mini-lbl,.sc-clear-btn,
+.lp-brand b,.lp-mark,.lp-btn,.lp-navbtn,.lp-toolbar select,.lp-today-btn,.lp-weekdays span,
+.lp-day-num,.lp-task-count,.lp-more,.lp-eyebrow,.lp-selected-title,.lp-meta-card small,.lp-meta-card strong,
+.lp-form-title b,.lp-new-btn,.lp-field label,.lp-field>span,.lp-select,.lp-all-day span,.lp-save,
+.lp-editor-actions button,.lp-modal-head b,.lp-close,.lp-range-buttons button,.lp-custom-range input,
+.lp-up-summary small,.lp-up-summary strong,.lp-up-date,.lp-up-date small,.lp-up-event span,.lp-up-task-count span,
+.tds-title,.tds-nav,.tds-today,.tds-week,.tds-day strong,.tds-month,.tds-badges i,
+button,select{
+  font-family:'Oswald',sans-serif!important;
+}
+
+/* Text the user writes = original Spectral, NORMAL weight */
+.stg .t,.stg .tin,.chk .lbl,.chk .hin,.tp-r1 input.t,.row input.t,.tc-h input.t,
+.sub input,.wssub span,.notepad,.relationship-notes,.dnote,.focus-in,.health-simple-editor,
+.fin-capital-edit,.gtx,.stx,.gc-txt-ed,.lp-input,.lp-textarea,.lp-selected-event b,.lp-event-mini,
+.lp-up-event b,.lp-up-task-count b,.today-event-alert b,.tds-event-name,
+input[type="text"],input[type="search"],input:not([type]),textarea,[contenteditable="true"]{
+  font-family:'Spectral',serif!important;
+  font-weight:400!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+
+/* Goals were semibold in the old planner */
+.gb-txt,.gblock.year .gb-txt{
+  font-family:'Spectral',serif!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
+  text-transform:none!important;
+}
+.gb-txt{font-size:clamp(19px,2.6vw,25px)!important;line-height:1.45!important;color:var(--gold-soft)!important}
+.gblock.year .gb-txt{font-size:clamp(17px,2.2vw,21px)!important;color:var(--txt)!important}
+.stg .tin,.stg .t,.chk .hin,.chk .lbl,.tp-r1 input.t,.row input.t,.tc-h input.t{font-size:17px!important;line-height:1.45!important}
+
+/* Editing must always be usable */
+.stg{user-select:auto!important;-webkit-user-select:auto!important}
+.stg .tin,
+.tp-r1 input.t,.row input.t,.tc-h input.t,.chk .hin,
+.gb-txt[contenteditable="true"],[contenteditable="true"]{
+  pointer-events:auto!important;
+  user-select:text!important;
+  -webkit-user-select:text!important;
+  cursor:text!important;
+}
+.stg .tin{position:relative!important;z-index:6!important;min-height:32px!important}
+.stg .tin:focus,.tp-r1 input.t:focus,.row input.t:focus,.tc-h input.t:focus,.chk .hin:focus,
+.gb-txt[contenteditable="true"]:focus,[contenteditable="true"]:focus{
+  outline:none!important;
+  border-bottom-color:var(--gold)!important;
+  box-shadow:none!important;
+}
+
+/* FINAL graph: empty at 0; grows only from left; no end dots; no fake full-width line */
+.premium-progress .spark-pt,
+.premium-progress .spark-start,
+.premium-progress .spark-end,
+.premium-progress .spark-end-halo,
+.premium-progress .spark-scan{display:none!important}
+.premium-progress .spark-main-line{
+  stroke:#f1bf24!important;
+  stroke-width:3!important;
+  opacity:1!important;
+  filter:drop-shadow(0 0 5px rgba(241,191,36,.30))!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:miter!important;
+}
+.premium-progress .spark-line-under{stroke:#d9a53a!important;stroke-width:6px!important;opacity:.10!important}
+.premium-progress .spark-area{opacity:.82!important}
+
+@media(max-width:700px){
+  .gb-txt,.gblock.year .gb-txt{font-size:16px!important;line-height:1.45!important}
+  .stg .tin,.stg .t,.chk .hin,.chk .lbl,.tp-r1 input.t,.row input.t,.tc-h input.t{font-size:15px!important}
+  .stg .tin{min-height:36px!important;padding:6px 0!important}
+}
+</style>
+
+
+<style id="final-polish-20260831">
+/* 1 · compact goal frames */
+.gblock.goal-foldable,
+.gblock.main,
+.gblock.year{
+  padding:16px 22px!important;
+  margin-bottom:12px!important;
+  border-radius:14px!important;
+  min-height:0!important;
+}
+.gblock.goal-foldable .gb-l,
+.gblock.main .gb-l,
+.gblock.year .gb-l{max-width:1120px!important}
+.gb-headrow{margin-bottom:8px!important;gap:9px!important}
+.gb-lbl{font-size:10px!important;letter-spacing:3.2px!important}
+.gb-txt{font-size:clamp(19px,1.85vw,26px)!important;line-height:1.42!important}
+.gblock.year .gb-txt{font-size:clamp(17px,1.7vw,23px)!important;line-height:1.42!important}
+.goal-fold-btn{width:28px!important;height:28px!important;flex-basis:28px!important;font-size:13px!important}
+.gblock.goal-foldable .gb-r,
+.gblock.main .gb-r,
+.gblock.year .gb-r{margin-top:10px!important}
+.goal-orbit{width:104px!important;height:104px!important}
+.goal-core{width:54px!important;height:54px!important;font-size:24px!important}
+.goal-badge{top:1px!important;padding:5px 9px!important;font-size:8px!important}
+.goal-dot{width:6px!important;height:6px!important;top:5px!important}
+.goal-dot2{width:5px!important;height:5px!important;bottom:14px!important;right:14px!important}
+.gblock.goal-folded{padding:10px 14px!important;margin-bottom:8px!important}
+
+/* 2 · sphere editing is hidden inside one brush control */
+.sphere-control{
+  padding:10px 12px!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+}
+.sphere-editor-bar{
+  min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.sphere-editor-summary{
+  min-width:0;display:flex;align-items:center;gap:10px;color:var(--gold-soft);
+}
+.sphere-editor-summary .sei{
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:9px;background:var(--panel2);font-size:17px;flex:0 0 34px;
+}
+.sphere-editor-summary .sen{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:1.15px;text-transform:uppercase;
+}
+.sphere-brush{
+  position:static!important;right:auto!important;top:auto!important;
+  width:40px!important;height:40px!important;flex:0 0 40px!important;margin:0!important;
+  border-radius:50%!important;
+}
+.sphere-edit-panel{
+  display:grid;grid-template-rows:0fr;opacity:0;transform:translateY(-5px);
+  transition:grid-template-rows .34s cubic-bezier(.2,.8,.2,1),opacity .22s ease,transform .32s ease;
+  pointer-events:none;
+}
+.sphere-edit-panel>div{min-height:0;overflow:hidden}
+.sphere-control.edit-open .sphere-edit-panel{grid-template-rows:1fr;opacity:1;transform:none;pointer-events:auto}
+.sphere-editor-inner{padding-top:12px;border-top:1px solid var(--line);margin-top:10px}
+.sphere-control-main{gap:10px!important}
+.sphere-control-main #sphName{min-width:180px!important}
+.sc-appear{display:block!important;margin:0!important;padding-top:8px!important;border-top:0!important}
+
+/* 3 · centered curtain control for sphere navigation */
+.sph-page-head-only-toggle{
+  justify-content:center!important;margin:4px 0 9px!important;position:relative;
+}
+.sph-page-head-only-toggle:before,
+.sph-page-head-only-toggle:after{
+  content:'';height:1px;flex:1;max-width:260px;
+  background:linear-gradient(90deg,transparent,rgba(212,162,78,.24));
+}
+.sph-page-head-only-toggle:after{background:linear-gradient(90deg,rgba(212,162,78,.24),transparent)}
+.sph-toggle{
+  position:relative;min-width:118px;justify-content:center;padding:8px 15px!important;
+  border-radius:999px!important;border-color:rgba(212,162,78,.34)!important;
+  background:linear-gradient(180deg,rgba(212,162,78,.08),rgba(17,21,28,.94))!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.025)!important;
+  font-size:10px!important;letter-spacing:1.7px!important;
+}
+.sph-toggle .arr{font-size:13px!important;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+#pg-sph #snav{
+  display:flex!important;justify-content:center!important;align-items:center!important;
+  overflow:hidden!important;max-height:310px;opacity:1;
+  transform-origin:center top;
+  transition:max-height .62s cubic-bezier(.2,.8,.2,1),opacity .34s ease,margin .58s ease,padding .58s ease;
+}
+#pg-sph #snav button{
+  transform:translate3d(0,0,0) scale(1);opacity:1;
+  transition:transform .62s cubic-bezier(.18,.82,.18,1),opacity .28s ease,border-color .2s ease,background .2s ease;
+  transition-delay:var(--curtain-delay,0ms);
+}
+#pg-sph.snav-collapsed #snav{
+  display:flex!important;max-height:0!important;opacity:0!important;margin-top:0!important;margin-bottom:0!important;
+  padding-top:0!important;padding-bottom:0!important;pointer-events:none!important;
+}
+#pg-sph.snav-collapsed #snav button{
+  transform:translate3d(var(--curtain-x,0px),var(--curtain-y,-6px),0) scale(.90)!important;opacity:0!important;
+}
+#pg-sph.snav-collapsed .sph-page-head{margin-bottom:5px!important}
+#pg-sph.snav-collapsed .sph-toggle .arr{transform:rotate(180deg)}
+
+/* 4 · keep the yellow line, add a deeper green glow under it */
+.premium-progress .spark-area{filter:drop-shadow(0 8px 11px rgba(76,151,92,.18))!important;opacity:1!important}
+.premium-progress .spark-main-line{stroke:#f1bf24!important}
+
+/* 5 · perfectly centered quick-action icons */
+.fab{
+  padding:0!important;line-height:1!important;text-align:center!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+#qaFab{font-size:0!important}
+#qaFab:before{
+  content:'+';display:block;font-family:Arial,sans-serif;font-size:32px;font-weight:300;line-height:1;
+  transform:translateY(-1px);
+}
+#fbNotes,#fbVision,#fbRules,#fbData{line-height:1!important}
+
+@media(max-width:700px){
+  .gblock.goal-foldable,.gblock.main,.gblock.year{padding:13px 12px!important;margin-bottom:9px!important;border-radius:13px!important}
+  .gb-headrow{margin-bottom:6px!important}
+  .gb-lbl{font-size:9px!important;letter-spacing:2.2px!important}
+  .gb-txt,.gblock.year .gb-txt{font-size:15px!important;line-height:1.38!important}
+  .goal-orbit{width:86px!important;height:86px!important}
+  .goal-core{width:46px!important;height:46px!important;font-size:21px!important}
+  .sphere-control{padding:8px 9px!important}
+  .sphere-editor-bar{min-height:40px}
+  .sphere-editor-summary .sei{width:32px;height:32px;flex-basis:32px}
+  .sphere-editor-summary .sen{font-size:11px!important}
+  .sphere-brush{width:36px!important;height:36px!important;flex-basis:36px!important}
+  .sphere-control-main #sphName{flex:1 1 calc(100% - 54px)!important;min-width:0!important}
+  .sphere-control-main #sphDel{flex:1 1 100%!important;width:100%}
+  .sph-page-head-only-toggle:before,.sph-page-head-only-toggle:after{max-width:90px}
+  .sph-toggle{min-width:96px;padding:7px 12px!important;font-size:9px!important}
+  #pg-sph #snav{max-height:620px!important;flex-direction:column!important;align-items:stretch!important}
+  #pg-sph #snav button{width:100%!important}
+  #pg-sph.snav-collapsed #snav{max-height:0!important}
+  .fab{align-items:center!important;justify-content:center!important}
+  #qaFab:before{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){
+  .sphere-edit-panel,#pg-sph #snav,#pg-sph #snav button,.sph-toggle .arr{transition:none!important}
+}
+</style>
+
+
+<style id="clean-final-adjustments-20260831">
+/* 1. Clean premium sphere curtain button: no arrow */
+.sph-toggle{
+  gap:0!important;
+  min-width:116px!important;
+  border-color:rgba(212,162,78,.38)!important;
+  background:linear-gradient(180deg,rgba(212,162,78,.075),rgba(17,21,28,.96))!important;
+  box-shadow:0 0 0 1px rgba(212,162,78,.035),0 0 18px rgba(212,162,78,.075),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+.sph-toggle .arr{display:none!important}
+.sph-toggle:hover,.sph-toggle:focus-visible{
+  border-color:rgba(212,162,78,.66)!important;
+  box-shadow:0 0 0 1px rgba(212,162,78,.08),0 0 24px rgba(212,162,78,.11),inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+
+/* 2. Goals: clean text only, no orbit/aura animations */
+.gblock.goal-foldable,
+.gblock.main,
+.gblock.year{
+  grid-template-columns:1fr!important;
+  justify-items:center!important;
+  text-align:center!important;
+  padding:14px 22px!important;
+  min-height:0!important;
+  border-radius:14px!important;
+  border:1px solid rgba(212,162,78,.24)!important;
+  background:
+    radial-gradient(circle at 50% 118%,rgba(212,162,78,.055),transparent 38%),
+    linear-gradient(140deg,rgba(212,162,78,.035),rgba(17,21,28,.97) 34%,rgba(17,21,28,.985))!important;
+  box-shadow:0 0 0 1px rgba(212,162,78,.035),0 0 20px rgba(212,162,78,.055),inset 0 1px 0 rgba(255,255,255,.025)!important;
+  overflow:hidden!important;
+}
+.gblock.main:before,
+.gblock.year:before,
+.gblock.goal-foldable:before{
+  animation:none!important;
+  transform:none!important;
+  opacity:.32!important;
+  filter:blur(18px)!important;
+}
+.gblock.goal-foldable .gb-l,
+.gblock.main .gb-l,
+.gblock.year .gb-l{
+  width:100%!important;
+  max-width:1160px!important;
+  margin:0 auto!important;
+}
+.gblock.goal-foldable .gb-r,
+.gblock.main .gb-r,
+.gblock.year .gb-r,
+.goal-decor,.goal-orbit,.goal-core,.goal-dot,.goal-dot2,.goal-badge,.goal-note{
+  display:none!important;
+}
+.gblock.goal-foldable .gb-headrow,
+.gblock.main .gb-headrow,
+.gblock.year .gb-headrow{
+  justify-content:center!important;
+  margin-bottom:7px!important;
+}
+.gblock.goal-folded{padding:9px 14px!important}
+
+/* 3. Sphere frames intentionally untouched — existing styling remains */
+
+/* 4. Graph cards: slightly squarer and more proportional */
+.premium-progress{gap:18px!important}
+.premium-progress .sp-card{
+  min-height:226px!important;
+  padding:17px 18px 13px!important;
+  border-radius:13px!important;
+}
+.premium-progress .sp-top{
+  align-items:flex-start!important;
+  margin-bottom:8px!important;
+}
+.premium-progress .sp-lbl{
+  font-size:12px!important;
+  letter-spacing:2.05px!important;
+  line-height:1.1!important;
+}
+.premium-progress .sp-meta-line{
+  margin-top:8px!important;
+  font-size:10px!important;
+  letter-spacing:1.3px!important;
+  line-height:1.15!important;
+}
+.premium-progress .sp-pct{
+  font-size:38px!important;
+  line-height:.95!important;
+  letter-spacing:-.4px!important;
+}
+.premium-progress .premium-spark{
+  position:relative!important;
+  height:132px!important;
+  margin:7px 0 0!important;
+}
+.premium-progress .spark-plot{
+  position:absolute;
+  left:48px;right:4px;top:4px;bottom:22px;
+}
+.premium-progress .spark-plot svg{
+  width:100%!important;height:100%!important;display:block!important;overflow:visible!important;
+}
+.premium-progress .spark-ylabels{
+  position:absolute;left:0;top:1px;bottom:22px;width:42px;
+  display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;
+  pointer-events:none;
+}
+.premium-progress .spark-ylabels span,
+.premium-progress .spark-xlabels span{
+  font-family:'Oswald',sans-serif!important;
+  font-weight:600!important;
+  color:#8d98a5!important;
+  white-space:nowrap;
+}
+.premium-progress .spark-ylabels span{font-size:10px!important;letter-spacing:.65px!important;line-height:1!important}
+.premium-progress .spark-xlabels{
+  position:absolute;left:48px;right:4px;bottom:0;
+  display:flex;align-items:center;justify-content:space-between;
+  pointer-events:none;
+}
+.premium-progress .spark-xlabels span{font-size:8.5px!important;letter-spacing:1.25px!important;line-height:1!important}
+.premium-progress .spark-grid,
+.premium-progress .spark-vgrid{
+  fill:none;stroke:rgba(255,255,255,.055);stroke-width:1;vector-effect:non-scaling-stroke;
+}
+.premium-progress .spark-vgrid{stroke:rgba(255,255,255,.033)}
+.premium-progress .spark-main-line{
+  stroke:#f1bf24!important;
+  stroke-width:2.75!important;
+  fill:none!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+  vector-effect:non-scaling-stroke!important;
+  filter:drop-shadow(0 0 5px rgba(241,191,36,.30))!important;
+  stroke-dasharray:1600;
+  stroke-dashoffset:1600;
+  animation:sparkDraw .9s ease-out forwards;
+}
+.premium-progress .spark-area{
+  opacity:1!important;
+  filter:drop-shadow(0 11px 14px rgba(69,139,85,.18))!important;
+}
+.premium-progress .spark-line-under,
+.premium-progress .spark-pt,
+.premium-progress .spark-start,
+.premium-progress .spark-end,
+.premium-progress .spark-end-halo,
+.premium-progress .spark-scan{display:none!important}
+
+@media(max-width:700px){
+  .gblock.goal-foldable,.gblock.main,.gblock.year{padding:12px 13px!important;border-radius:12px!important}
+  .premium-progress .sp-card{min-height:204px!important;padding:14px 13px 11px!important;border-radius:12px!important}
+  .premium-progress .sp-pct{font-size:32px!important}
+  .premium-progress .premium-spark{height:116px!important}
+  .premium-progress .spark-plot{left:42px;bottom:20px}
+  .premium-progress .spark-ylabels{width:36px;bottom:20px}
+  .premium-progress .spark-xlabels{left:42px;bottom:0}
+  .premium-progress .spark-ylabels span{font-size:9px!important}
+  .premium-progress .spark-xlabels span{font-size:7.8px!important}
+}
+</style>
+
+
+<style id="clean-graph-v2-polish">
+/* 1 · smoother sphere curtain movement */
+#pg-sph #snav{
+  will-change:max-height,opacity,transform;
+  transform:translate3d(0,0,0);
+  transition:
+    max-height .92s cubic-bezier(.16,1,.30,1),
+    opacity .46s ease,
+    transform .92s cubic-bezier(.16,1,.30,1),
+    margin .82s cubic-bezier(.16,1,.30,1),
+    padding .82s cubic-bezier(.16,1,.30,1)!important;
+}
+#pg-sph #snav button{
+  will-change:transform,opacity;
+  transition:
+    transform .88s cubic-bezier(.16,1,.30,1),
+    opacity .48s ease,
+    border-color .22s ease,
+    background .22s ease!important;
+  transition-delay:var(--curtain-delay,0ms)!important;
+}
+#pg-sph.snav-collapsed #snav{
+  transform:translate3d(0,-8px,0)!important;
+}
+#pg-sph.snav-collapsed #snav button{
+  transform:translate3d(var(--curtain-x,0px),var(--curtain-y,-5px),0) scale(.94)!important;
+}
+
+/* 2 · no long editor bar: only a small natural brush near the banner */
+.sphere-control.brush-only{
+  position:relative!important;
+  overflow:visible!important;
+  min-height:0!important;
+}
+.sphere-control.brush-only:not(.edit-open){
+  height:0!important;
+  min-height:0!important;
+  margin:0 0 4px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.sphere-control.brush-only .sphere-brush{
+  position:absolute!important;
+  top:-57px!important;
+  right:18px!important;
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  flex:0 0 38px!important;
+  margin:0!important;
+  border-radius:50%!important;
+  z-index:12!important;
+  background:linear-gradient(145deg,rgba(212,162,78,.10),rgba(17,21,28,.92))!important;
+  border:1px solid rgba(212,162,78,.34)!important;
+  color:var(--gold-soft)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.24),0 0 14px rgba(212,162,78,.06),inset 0 1px 0 rgba(255,255,255,.03)!important;
+}
+.sphere-control.brush-only .sphere-brush:hover,
+.sphere-control.brush-only .sphere-brush.on{
+  border-color:rgba(212,162,78,.68)!important;
+  background:linear-gradient(145deg,rgba(212,162,78,.17),rgba(17,21,28,.94))!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.28),0 0 18px rgba(212,162,78,.10),inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+.sphere-control.brush-only.edit-open{
+  margin:10px 0 12px!important;
+  padding:12px 58px 12px 12px!important;
+  border:1px solid var(--line)!important;
+  border-radius:13px!important;
+  background:linear-gradient(135deg,rgba(42,74,54,.10),transparent 55%),var(--panel)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.02)!important;
+}
+.sphere-control.brush-only.edit-open .sphere-brush{
+  top:10px!important;
+  right:10px!important;
+}
+.sphere-control.brush-only .sphere-editor-inner{
+  padding-top:0!important;
+  margin-top:0!important;
+  border-top:0!important;
+}
+
+/* 3 · sharper pseudo-staircase chart line, same approved style */
+.premium-progress .spark-main-line{
+  stroke-linejoin:miter!important;
+  stroke-linecap:round!important;
+}
+
+@media(max-width:700px){
+  #pg-sph #snav{
+    transition:max-height .78s cubic-bezier(.16,1,.30,1),opacity .38s ease,transform .78s cubic-bezier(.16,1,.30,1)!important;
+  }
+  #pg-sph #snav button{
+    transition:transform .72s cubic-bezier(.16,1,.30,1),opacity .36s ease!important;
+  }
+  .sphere-control.brush-only .sphere-brush{top:-49px!important;right:10px!important;width:35px!important;height:35px!important;min-width:35px!important}
+  .sphere-control.brush-only.edit-open{padding:10px 52px 10px 10px!important}
+  .sphere-control.brush-only.edit-open .sphere-brush{top:8px!important;right:8px!important}
+}
+</style>
+
+
+<style id="sharp-stage-chart-v3">
+.premium-progress .spark-main-line{
+  stroke:#f1bf24!important;
+  stroke-width:2.9!important;
+  stroke-linejoin:miter!important;
+  stroke-linecap:butt!important;
+  filter:drop-shadow(0 0 6px rgba(241,191,36,.24))!important;
+}
+.premium-progress .spark-stage-point{
+  fill:#11151c;
+  stroke:#f1bf24;
+  stroke-width:1.35;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 0 4px rgba(241,191,36,.30));
+}
+@media(max-width:700px){
+  .premium-progress .spark-stage-point{stroke-width:1.2}
+}
+</style>
+
 </head>
-<body data-page="today">
+<body data-page="sph">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
 <div class="bgfx" aria-hidden="true">
   <span class="fx f1"><b>$</b><i>INVESTOR</i></span>
@@ -2792,15 +3481,15 @@ body.debt-drag-active{overscroll-behavior:none}
   </div>
 
   <div class="tabs">
-    <button class="tab active" data-pg="today">Сьогодні</button>
-    <button class="tab" data-pg="sph">Сфери</button>
+    <button class="tab" data-pg="today">Сьогодні</button>
+    <button class="tab active" data-pg="sph">Сфери</button>
     <button class="tab" data-pg="habits">Звички</button>
     <button class="tab" data-pg="rossmann">Rossmann</button>
     <button class="tab" data-pg="ws">Workspace</button>
   </div>
 
   <!-- СЬОГОДНІ -->
-  <div class="page active" id="pg-today">
+  <div class="page" id="pg-today">
     <div class="card">
 
 
@@ -2841,11 +3530,11 @@ body.debt-drag-active{overscroll-behavior:none}
     <div class="today-progress-title">Прогрес сфер</div>
     <div class="today-progress-grid"><div class="tpg " style="--sc:#ff6a3d" data-tpg="s1">
         <div class="tpg-head"><span class="tpg-ic">💰</span><span class="tpg-name">YouTube • медіабізнес</span></div>
-        <div class="tpg-num">0%</div>
+        <div class="tpg-num">21%</div>
         <div class="tpg-small">Головна ціль</div>
         <div class="tpg-lines">
-          <div><div class="tpg-line"><i style="--p:0%"></i></div><div class="tpg-foot"><span>Long</span><span>0%</span></div></div>
-          <div><div class="tpg-line"><i style="--p:0%"></i></div><div class="tpg-foot"><span>2026</span><span>0%</span></div></div>
+          <div><div class="tpg-line"><i style="--p:21%"></i></div><div class="tpg-foot"><span>Long</span><span>21%</span></div></div>
+          <div><div class="tpg-line"><i style="--p:36%"></i></div><div class="tpg-foot"><span>2026</span><span>36%</span></div></div>
         </div>
       </div><div class="tpg " style="--sc:#d4a24e" data-tpg="s_fin">
         <div class="tpg-head"><span class="tpg-ic">💳</span><span class="tpg-name">Фінанси </span></div>
@@ -3095,11 +3784,11 @@ body.debt-drag-active{overscroll-behavior:none}
   </div>
 
   <!-- СФЕРИ -->
-  <div class="page snav-collapsed" id="pg-sph">
+  <div class="page active" id="pg-sph">
     <div class="sph-page-head sph-page-head-only-toggle">
-      <button class="sph-toggle" id="sphNavToggle" type="button" aria-expanded="false" title="Розгорнути сфери">
-        <span class="arr" id="sphNavToggleLbl">▸</span>
-        <span id="sphNavToggleText">Розгорнути</span>
+      <button class="sph-toggle" id="sphNavToggle" type="button" aria-expanded="true" title="Закрити сфери">
+        <span class="arr" id="sphNavToggleLbl">⌃</span>
+        <span id="sphNavToggleText">Сфери</span>
       </button>
     </div>
     <div class="snav" id="snav"></div>
@@ -3949,7 +4638,7 @@ async function redoPlanner(){
   const current=lastSavedJSON||JSON.stringify(DB),next=redoStack.pop();undoStack.push(current);
   await restoreHistoryJSON(next,'↷ Дію повернуто');
 }
-const SEED={"books":[{"a":"Девід Кемерон ","act":true,"cur":18,"id":"b1784587050549","img":"","pg":212,"t":"Щаслива кишеня, повна грошей"},{"a":"Джеймс Клір","act":false,"cur":0,"done":false,"id":"b1","img":"","pg":320,"t":"Атомні звички"},{"a":"Ентоні Роббінс","act":false,"cur":0,"done":false,"id":"lifeBook3","img":"","pg":0,"t":"Розбуди в собі велетня"},{"a":"Вадим Зеланд","act":false,"cur":0,"done":false,"id":"lifeBook4","img":"","pg":0,"t":"Трансерфінг реальності"}],"notes":[{"b":"1. Створити застосунок для рахування змін ","d":"2026-08-09","id":"n1786229601856","t":"Ідеї для реалізації"}],"habits":[{"id":"h1787600044177","since":"2026-08-24","t":""}],"habitLog":{"2026-08-31":{}},"identity":{"beliefs":"• Гроші — це наслідок цінності, яку я створюю для інших. Чим більше людей я реально вдосконалюю, тим більший дохід.\n• Я не мушу бути найрозумнішим. Я мушу не зупинятись довше за інших.\n• Кожен, ким я захоплююсь, колись стояв там, де я зараз.\n• Невдале відео — це дані, а не вирок.\n• Я вже почав. Більшість людей не почне ніколи.","clarity":"Головне зараз: опубліковані відео. Усе інше вторинне.\nЩо відволікає: нові ідеї, порівняння з іншими, нескінченне планування.\nОдне питання щодня: що з мого списку найбільше наближає до свободи?","materials":"Книги:\n• Атомні звички — Джеймс Клір\n\nКурси:\n• (курс з YouTube)\n\nАудіо / подкасти:\n•","who":"Я — людина, яка будує системи й доводить справи до результату. Я керую своїм часом, тілом і увагою. Я створюю цінність, за яку люди платять, і рухаюсь до рівня, де дохід не залежить від чужого графіка."},"spheres":[{"c":"#ff6a3d","ic":"💰","id":"s1","nm":"YouTube • медіабізнес"},{"c":"#9cbbec","ic":"✍️","id":"s_text","nm":"TEXT Work"},{"c":"#07bb4c","ic":"💪","id":"s3","nm":"Здоров’я, тіло та енергія"},{"c":"#5f78dd","ic":"🧠","id":"s4","nm":"Саморозвиток"},{"c":"#d4a24e","ic":"💳","id":"s_fin","nm":"Фінанси "},{"c":"#f0b90b","ic":"₿","id":"s_crypto","nm":"Криптовалюта"},{"c":"#d3f8fd","ic":"🤍","id":"s5","nm":"Духовність, стосунки"}],"sph":{"s1":{"big":"Побудувати системний англомовний YouTube-медіабізнес із сильним флагманським каналом, додатковими медіаактивами, $10 000+ чистого доходу на місяць і значною частиною виробництва, автоматизованою або делегованою без втрати якості.","bigYearShare":50,"stages":[{"d":false,"id":"yt_s1","ord":0,"t":"Ніша, аудиторія та позиціонування каналу чітко визначені й зафіксовані","y":1},{"d":false,"id":"yt_s2","ord":1,"t":"Створена повна система виробництва: research → script → visuals → voice → edit → thumbnail → publish → analytics","y":1},{"d":false,"id":"st1787621006384","ord":16,"t":"Перший тест оформлення каналу через систему","y":1},{"d":false,"id":"st1787622128696","ord":3,"t":"Повністю оформлений канал","y":1},{"d":false,"id":"yt_s3","ord":2,"t":"Сформований банк сильних тем і підготовлена перша серія відео","y":1},{"d":false,"id":"st1787622170696","ord":5,"t":"Публікація першого відео","y":1},{"d":false,"id":"yt_s4","ord":3,"t":"Опубліковано перші 5 якісних long-form відео та проведено перший розбір даних","y":1},{"d":false,"id":"yt_s5","ord":4,"t":"Опубліковано 10–16 відео й отримано достатньо даних для оцінки ніші, упаковки та утримання","y":1},{"d":false,"id":"yt_s6","ord":5,"t":"Визначено 1–2 робочі формати й стандартизовано те, що показує найкращий результат","y":1},{"d":false,"id":"yt_s7","ord":6,"t":"Канал підключено до YPP або виконано більшість актуальних вимог монетизації","y":1},{"d":false,"id":"yt_s8","ord":7,"t":"Отримано перший дохід і зафіксовано план масштабування на 2027 рік","y":1},{"d":false,"id":"yt_l1","ord":8,"t":"Канал стабільно приносить $500+ чистими на місяць","y":0},{"d":false,"id":"yt_l2","ord":9,"t":"Канал стабільно приносить $1 000+ чистими на місяць протягом 3 місяців","y":0},{"d":false,"id":"yt_l3","ord":10,"t":"Виробництво повністю стандартизовано, а ключові повторювані процеси автоматизовано або делеговано","y":0},{"d":false,"id":"yt_l4","ord":11,"t":"Флагманський канал виріс до $2 000–3 000+ чистими на місяць","y":0},{"d":false,"id":"yt_l5","ord":12,"t":"Запущено другий канал без погіршення результатів флагманського","y":0},{"d":false,"id":"yt_l6","ord":13,"t":"Сітка каналів приносить $4 000–5 000+ чистими на місяць","y":0},{"d":false,"id":"yt_l7","ord":14,"t":"Побудована єдина медіасистема з 1 флагманським і додатковими прибутковими активами","y":0},{"d":false,"id":"yt_l8","ord":15,"t":"Досягнуто й утримується $10 000+ чистого доходу на місяць","y":0}],"year":"До 31 грудня 2026 року запустити та перевірити один англомовний faceless long-form канал: сформувати сильну систему виробництва, опублікувати достатню кількість відео для реальних висновків, знайти робочі формати та вийти на монетизацію або максимально наблизитися до неї.","goals":[]},"s3":{"big":"Мати сильне атлетичне тіло, стабільну енергію, якісний сон, просте повноцінне харчування і тренування як природну частину життя.","bigYearShare":50,"stages":[{"d":false,"id":"h_s1","ord":0,"t":"Зафіксована проста система сну, харчування, тренувань і відновлення під робочий графік","y":1},{"d":false,"id":"h_s2","ord":1,"t":"Стабільно виконуються 2 силові тренування у більшості тижнів","y":1},{"d":false,"id":"h_s3","ord":2,"t":"Завершено перші 10 силових тренувань і визначена робоча програма","y":1},{"d":false,"id":"h_s4","ord":3,"t":"Харчування працює без постійного хаосу: є базові страви, білок і їжа на роботу","y":1},{"d":false,"id":"h_s5","ord":4,"t":"Завершено 20+ тренувань і є вимірюваний прогрес сили або фізичної форми","y":1},{"d":false,"id":"h_s6","ord":5,"t":"Система здоров’я витримує різні робочі зміни без довгих зривів","y":1},{"d":false,"id":"h_l1","ord":6,"t":"Завершено 50 силових тренувань і сформована стабільна тренувальна база","y":0},{"d":false,"id":"h_l2","ord":7,"t":"Досягнута бажана базова атлетична форма й помітно вищий рівень сили","y":0},{"d":false,"id":"h_l3","ord":8,"t":"Сон і відновлення стабільно працюють навіть у складні робочі періоди","y":0},{"d":false,"id":"h_l4","ord":9,"t":"Система тренувань і харчування утримується 6 місяців без великих перерв","y":0},{"d":false,"id":"h_l5","ord":10,"t":"Здоров’я, енергія та спорт стали стабільною частиною стилю життя","y":0},{"d":false,"id":"h_l6","ord":11,"t":"Сильне атлетичне тіло й високий рівень енергії утримуються системно, без крайнощів","y":0}],"year":"До кінця 2026 року закріпити базову систему здоров’я: регулярний сон під робочі зміни, 2–3 силові тренування у більшості тижнів, нормальне харчування та помітний прогрес сили й форми.","goals":[]},"s4":{"big":"Вільно користуватися польською у повсякденному житті, мати функціональну англійську для YouTube, роботи й подорожей та системно перетворювати знання з книг і Arena VIP на практичні зміни.","bigYearShare":50,"stages":[{"d":false,"id":"sd_s1","ord":0,"t":"Зафіксований простий ритм польської та англійської, який реально працює щотижня","y":1},{"d":false,"id":"sd_s2","ord":1,"t":"Завершено 8 тижнів стабільної практики польської без довгих перерв","y":1},{"d":false,"id":"sd_s3","ord":2,"t":"Завершено 8 тижнів стабільної практики англійської без довгих перерв","y":1},{"d":false,"id":"sd_s4","ord":3,"t":"Завершено запланований блок курсу Arena VIP і виписані практичні висновки","y":1},{"d":false,"id":"sd_s5","ord":4,"t":"Прочитано «Щаслива кишеня, повна грошей» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s6","ord":5,"t":"Прочитано «Атомні звички» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s7","ord":6,"t":"Прочитано «Розбуди в собі велетня» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s8","ord":7,"t":"Прочитано «Трансерфінг реальності» та підбито підсумок системи саморозвитку за 2026 рік","y":1},{"d":false,"id":"sd_l1","ord":8,"t":"Польська дозволяє впевнено вирішувати основні побутові та робочі питання","y":0},{"d":false,"id":"sd_l2","ord":9,"t":"Англійська дозволяє працювати з YouTube-матеріалами без постійного перекладу","y":0},{"d":false,"id":"sd_l3","ord":10,"t":"Польська використовується природно у повсякденному житті","y":0},{"d":false,"id":"sd_l4","ord":11,"t":"Англійська стала робочим інструментом для YouTube, подорожей і спілкування","y":0},{"d":false,"id":"sd_l5","ord":12,"t":"Система книги → ідеї → практична дія працює стабільно і без накопичення непотрібного навчання","y":0},{"d":false,"id":"sd_l6","ord":13,"t":"Мови, читання й розвиток підтримуються системно протягом 6+ місяців","y":0}],"year":"До кінця 2026 року стабільно розвивати лише чотири напрямки: польську, англійську, курс Arena VIP та чотири вибрані книги — без розпорошення на інше навчання.","goals":[]},"s5":{"big":"","bigYearShare":0,"notes":"","year":"","goals":[]},"s_crypto":{"big":"","bigYearShare":50,"year":"","goals":[]},"s_fin":{"big":"Мати повний контроль над грошима: позитивний cash flow, відсутність дорогих боргів, резерв на 6+ місяців життя та системно зростаючий інвестиційний капітал.","bigYearShare":50,"stages":[{"d":false,"id":"fin_s1","ord":0,"t":"Повна фінансова картина зібрана: доходи, витрати, рахунки, борги та зобов’язання","y":1},{"d":false,"id":"fin_s2","ord":1,"t":"Побудований простий місячний cash-flow і контроль обов’язкових витрат","y":1},{"d":false,"id":"fin_s3","ord":2,"t":"Зафіксована стратегія погашення боргів і порядок пріоритетів","y":1},{"d":false,"id":"fin_s4","ord":3,"t":"Припинено створення нових дорогих боргів і прострочень","y":1},{"d":false,"id":"fin_s5","ord":4,"t":"Закрито перший великий блок боргів / досягнуто помітного зниження загального боргу","y":1},{"d":false,"id":"fin_s6","ord":5,"t":"Створена перша фінансова подушка та правила її поповнення","y":1},{"d":false,"id":"fin_l1","ord":6,"t":"Закриті всі критичні та дорогі борги","y":0},{"d":false,"id":"fin_l2","ord":7,"t":"Резерв покриває щонайменше 1 місяць життя","y":0},{"d":false,"id":"fin_l3","ord":8,"t":"Резерв збільшено до 3 місяців життя","y":0},{"d":false,"id":"fin_l4","ord":9,"t":"Резерв збільшено до 6+ місяців життя","y":0},{"d":false,"id":"fin_l5","ord":10,"t":"Запущено регулярне інвестування частини доходу та накопичення капіталу","y":0},{"d":false,"id":"fin_l6","ord":11,"t":"Інвестиційний капітал і власні онлайн-активи створюють реальну фінансову незалежність","y":0}],"year":"До кінця 2026 року стабілізувати фінансову систему: бачити повну картину грошей, системно скорочувати борги, не створювати нових дорогих зобов’язань і сформувати першу фінансову подушку.","goals":[]},"s_text":{"big":"","year":"","goals":[]}},"sphNotes":{},"workspaces":{"s1":{"items":[{"id":"wi17870777730234p6","t":"Вибрати нішу — перевірити попит, конкуренцію, evergreen-потенціал і монетизацію","level":0,"todo":true,"done":false},{"id":"wi1787077788981d16","t":"Сформувати концепцію каналу — позиціонування, формат, стиль, цільова аудиторія","level":0,"todo":true,"done":false},{"id":"wi1787077792305wdx","t":"Побудувати production-процес — research → script → voice → visuals → edit → thumbnail → publish","level":0,"todo":true,"done":false},{"id":"wi1787077793130wr8","t":"Підготувати перші 3–5 відео — щоб стартувати без пауз і протестувати формат","level":0,"todo":true,"done":false},{"id":"wi1787077793898jqt","t":"Публікувати стабільно — орієнтир 1–2 якісні long-form відео на тиждень","level":0,"todo":true,"done":false},{"id":"wi17870778354560lq","t":"Аналізувати й покращувати — CTR, retention, watch time, теми, thumbnails, titles","level":0,"todo":true,"done":false},{"id":"wi1787077845313cdv","t":"Досягти YPP і монетизувати канал —  подати заявку та отримати перший дохід","level":0,"todo":true,"done":false}],"note":"","title":"Робочий простір"},"s1786229570240":{"note":"","title":"Робочий простір","items":[]},"s1787621761351":{"note":"","title":"Робочий простір","items":[]},"s3":{"note":"","title":"Робочий простір","items":[]},"s4":{"note":"","title":"Робочий простір","items":[]},"s5":{"items":[{"id":"wi1786294055316h0j","t":"Gliwice","level":0,"todo":false,"done":false},{"id":"wi1786294061346znz","t":"Escape Room - Закрита тематична кімната з загадками, кодами й завданнями","level":1,"todo":true,"done":false},{"id":"wi1786294062238wl9","t":"Kolejkowo - Великий мініатюрний світ: міста, будинки, люди, дороги, поїзди, транспорт, ефекти дня/ночі","level":1,"todo":true,"done":false},{"id":"wi178629411980061q","t":"Zabrze","level":0,"todo":false,"done":false},{"id":"wi17862942247288ms","t":"Kopalnia Guido - Справжня колишня шахта. Спуск приблизно на 320 м під землю, підземні коридори, шахтарська техніка, історія видобутку, частина маршруту з транспортом.","level":1,"todo":true,"done":false},{"id":"wi1786294276607m3p","t":"Tarnowskie Góry","level":0,"todo":false,"done":false},{"id":"wi17862942863954j8","t":"Park Wodny","level":1,"todo":true,"done":false},{"id":"wi1786294312334nvc","t":"Pławniowice","level":0,"todo":false,"done":false},{"id":"wi1786294315181liq","t":"Pałac w Pławniowicach - Красивий історичний палац, парк і територія для прогулянки","level":1,"todo":true,"done":false},{"id":"wi1786294339953ecv","t":"","level":0,"todo":false,"done":false}],"note":"","title":"Робочий простір"},"s_text":{"items":[{"id":"wi1786230200667z6c","t":"Створити бот для прийому заявок автоматизований","level":0,"todo":true,"done":false}],"note":"","title":"Робочий простір"}},"orders":[{"client":"Угрін Святослав","cur":"USD","deadline":"","id":"o1786230362063","note":"","paid":false,"price":"450","stage":"unpaid","status":"done","type":"Магістерська"},{"client":"Скринник Ігор","cur":"USD","deadline":"","id":"o1786230433279","note":"","paid":false,"price":"300","stage":"active","status":"doing","type":"Магістерська робота"},{"client":"Опацький Ігор","cur":"USD","deadline":"","id":"o1786230595262","note":"","paid":false,"price":"300","stage":"active","status":"doing","type":"Магістерська робота"}],"finance":{"accounts":[{"id":"fa_pko","name":"PKO BP","currency":"PLN","opening":0},{"id":"fa_mono","name":"Monobank","currency":"UAH","opening":0},{"id":"fa_cash","name":"Готівка","currency":"PLN","opening":0}],"archiveOpen":true,"calc":{"amount":"","date":"2026-08-19","fromAccount":"","note":"","received":"","toAccount":""},"capitalNow":"100$","categories":{"expense":["Продукти","Житло / оренда","Комунальні","Транспорт","Здоровʼя","Спорт / зал","Підписки / сервіси","Кафе / розваги","Одяг / покупки","Освіта","Подарунки","Інше"],"income":["Зарплата","Фріланс / текстові роботи","Премія","Повернення коштів","Подарунок","Кешбек","Дохід з інвестицій","Інше"],"investment":["ETF / фонди","Акції","Криптовалюта","Облігації","Депозит","Інше"]},"categoryManagerOpen":false,"chartCurrency":"PLN","currency":"PLN","debtMode":"active","debts":[{"id":"fd1786446720136","name":"MoneyWeo","currency":"UAH","total":49640,"paid":32140,"note":"Оплата 3 частини ","urgent":false,"archived":false,"closedAt":""},{"id":"fd1787230839433","name":"StarFin","currency":"UAH","total":11397,"paid":11397,"note":"","urgent":false,"archived":true,"closedAt":"2026-08-20"}],"defaultCurrency":"PLN","note":"","selectedMonth":"2026-08","view":"dashboard","archivedMonths":[],"transactions":[],"investments":[],"savings":[]},"workBlocks":[{"id":"wb1787160454547o7r","s":"s1","source":"sphere","itemId":"","dates":["2026-08-01","2026-08-02","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-08","2026-08-09","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-15","2026-08-16","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-22","2026-08-23","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-29","2026-08-30","2026-08-31","2026-09-01","2026-09-02"]}],"tasks":[{"archived":true,"days":[0,1,2,3,4,5,6],"id":"t15","off":true,"s":"s4","t":"Читання книги "},{"date":"","days":[1,3,5,6],"id":"t1785672048899","off":false,"s":"s4","t":"Курс -  Арена | Саморозвиток "},{"date":"2026-08-19","id":"t1785672086357","off":false,"s":"s4","t":"Język polski"},{"date":"","days":[0,1,2,3,4,5,6],"id":"t1785672137894","off":false,"s":"s4","t":"Читання книги "},{"date":"2026-08-17","id":"t1786230161938","off":false,"s":"s_text","t":"Створення бот системи для прийому заявок"},{"date":"","days":[0,1,2,3,4,5,6],"id":"t1787078477170","off":false,"s":"s3","t":"Випити креатин та добавки "},{"date":"2026-08-20","id":"t1787166486983","off":false,"s":"s_text","t":"Написати за оплату угріну"}],"ws":[{"col":"work","d":false,"date":"2026-08-25","id":"w1","p":1,"subs":[{"d":false,"id":"z1784540993718","t":"Загальне прибирання всіх кімнат"},{"d":false,"id":"z1784541003993","t":"Детальне прибирання - кухня"},{"d":false,"id":"z1784541030311","t":"Детальне прибирання - ванна"},{"d":false,"id":"z1784541031679","t":"Детальне прибирання - спальня"},{"d":false,"id":"z1784541060062","t":"Детальне прибирання - коридор"},{"d":false,"id":"z1784541067176","t":"Детальне прибирання -офіс"}],"t":"Квартира — ідеальне прибирання"},{"col":"bank","d":false,"date":"","id":"w1786238479168","p":2,"t":"Перевірити безпеку акаунтів ютуба","subs":[]},{"col":"work","d":false,"id":"w1787076968885","p":2,"subs":[{"d":true,"id":"z1787076986553","t":"Запис всіх змін "},{"d":false,"id":"z1787076995239","t":"Перевірка і затверджєення всіх змін"},{"d":false,"id":"z1787077010371","t":"Запис всіх змін в робочий зошит "}],"t":"Створити розрахунок змін по роботі "},{"col":"work","d":false,"date":"","id":"w1787230572163","p":2,"t":"Записати сферу фінансів","subs":[]},{"col":"work","d":false,"id":"w1787230608709","p":2,"t":"Пропрацювати сферу текстових робіт ","subs":[]},{"col":"bank","d":false,"date":"","id":"w1787621843433","p":1,"subs":[{"d":false,"id":"z1787621870378","t":"Ютуб"},{"d":false,"id":"z1787621872082","t":"Текст ворк"},{"d":false,"id":"z1787621873625","t":"Здоров'я"},{"d":false,"id":"z1787621890322","t":"Саморозвиток"},{"d":false,"id":"z1787621914455","t":"Фінанси "},{"d":false,"id":"z1787622049086","t":"Розставити відповідні перші завдання"}],"t":"Розпланувати кожну сферу"},{"col":"bank","d":false,"date":"","id":"w1787622225958","p":1,"t":"Відписати всім а також розплановка бота","subs":[]},{"col":"work","d":false,"id":"w1787708584858","p":2,"t":"Розробити лічильник змін росман","subs":[]}],"yt":[],"reflections":[{"from":"2026-07-21","id":"r1784596502679","miss":"Поки нічого, так як тільки стартую","rec":"Головне почати, в процесі точно можна буде зрозуміти чи подобається а чи ні","to":"2026-07-21","wins":"Дізнався багато чого нового і корисного - як тільки лиш почав, ще купа по переду, але думаю це все оптимізовувати щоб мій час економити - це головне!"},{"from":"2026-08-18","id":"r1787079543599","miss":"Спад енергії і телефон","rec":"Після роботи одразу їжа, душ і сісти за робоче місце без лежання","to":"2026-08-18","wins":"Вечором сісти попрацювати і побачити чіткий напрямок"}],"rossmann":{"countStatsFrom":"2026-07","entries":[{"date":"2026-04-01","id":"rs_1787968051053_w21cg","type":"off"},{"date":"2026-04-02","diff":"","end":"02:00","id":"rs_1787968071804_u4swi","start":"22:00","type":"shift"},{"date":"2026-04-03","diff":"","end":"05:00","id":"rs_1787968088435_yjyk5","start":"22:00","type":"shift"},{"date":"2026-04-04","id":"rs_1787968091067_xl1pv","type":"off"},{"date":"2026-04-05","id":"rs_1787968092103_14oe7","type":"off"},{"date":"2026-04-06","id":"rs_1787968095701_4uzul","type":"off"},{"date":"2026-04-07","diff":"","end":"20:00","id":"rs_1787968120551_dcgsr","start":"14:00","type":"shift"},{"date":"2026-04-08","diff":"","end":"18:00","id":"rs_1787968158917_39zcg","start":"14:00","type":"shift"},{"date":"2026-04-09","diff":"","end":"20:00","id":"rs_1787968139231_6c882","start":"14:00","type":"shift"},{"date":"2026-04-10","id":"rs_1787968163381_4mmus","type":"off"},{"date":"2026-04-11","id":"rs_1787968164259_ucgp6","type":"off"},{"date":"2026-04-12","id":"rs_1787968164919_rzuxu","type":"off"},{"date":"2026-04-13","diff":"","end":"14:00","id":"rs_1787968191392_032a7","start":"08:00","type":"shift"},{"date":"2026-04-14","diff":"","end":"11:00","id":"rs_1787968213351_2nqsi","start":"06:00","type":"shift"},{"date":"2026-04-15","diff":"","end":"11:00","id":"rs_1787968216383_vrgc5","start":"06:00","type":"shift"},{"date":"2026-04-16","diff":"","end":"12:00","id":"rs_1787968231654_1zt1e","start":"06:00","type":"shift"},{"date":"2026-04-17","diff":"","end":"14:00","id":"rs_1787968237672_lrzhl","start":"06:00","type":"shift"},{"date":"2026-04-18","id":"rs_1787968240218_93ihr","type":"off"},{"date":"2026-04-19","diff":"","end":"06:00","id":"rs_1787968246970_2xads","start":"22:00","type":"shift"},{"date":"2026-04-20","diff":"","end":"04:30","id":"rs_1787968268317_i54hk","start":"22:00","type":"shift"},{"date":"2026-04-21","diff":"","end":"03:00","id":"rs_1787968313025_0cb0m","start":"22:00","type":"shift"},{"date":"2026-04-22","diff":"","end":"03:00","id":"rs_1787968330888_4hsi6","start":"22:00","type":"shift"},{"date":"2026-04-23","diff":"","end":"03:00","id":"rs_1787968334488_vs5mz","start":"22:00","type":"shift"},{"date":"2026-04-24","diff":"","end":"05:00","id":"rs_1787968347284_4qw19","start":"22:00","type":"shift"},{"date":"2026-04-25","id":"rs_1787968351012_vzv35","type":"off"},{"date":"2026-04-26","id":"rs_1787968351731_54dpj","type":"off"},{"date":"2026-04-27","diff":"","end":"22:00","id":"rs_1787968737371_qekzn","start":"14:00","type":"shift"},{"date":"2026-04-28","diff":"","end":"22:00","id":"rs_1787968739957_hq4b9","start":"14:00","type":"shift"},{"date":"2026-04-29","diff":"","end":"22:00","id":"rs_1787968742866_x6lcq","start":"14:00","type":"shift"},{"date":"2026-04-30","diff":"","end":"16:00","id":"rs_1787968763990_0ee9s","start":"14:00","type":"shift"},{"date":"2026-05-01","id":"rs_1787967825201_lcgh4","type":"off"},{"date":"2026-05-02","id":"rs_1787967827613_xzz7v","type":"off"},{"date":"2026-05-03","id":"rs_1787967828760_ajpu7","type":"off"},{"date":"2026-05-04","diff":"","end":"11:00","id":"rs_1787967837916_xz7j9","start":"06:00","type":"shift"},{"date":"2026-05-05","diff":"","end":"11:00","id":"rs_1787967842693_8rc5d","start":"06:00","type":"shift"},{"date":"2026-05-06","id":"rs_1787967845654_ho0cp","type":"off"},{"date":"2026-05-07","diff":"","end":"14:00","id":"rs_1787967849955_zxxan","start":"06:00","type":"shift"},{"date":"2026-05-08","diff":"","end":"14:00","id":"rs_1787967852901_avb66","start":"06:00","type":"shift"},{"date":"2026-05-09","id":"rs_1787967855602_sbnfv","type":"off"},{"date":"2026-05-10","diff":"","end":"03:00","id":"rs_1787967867586_lsvn1","start":"22:00","type":"shift"},{"date":"2026-05-11","diff":"","end":"06:00","id":"rs_1787967873708_i70jx","start":"22:00","type":"shift"},{"date":"2026-05-12","id":"rs_1787967876847_0e3hg","type":"off"},{"date":"2026-05-13","diff":"","end":"06:00","id":"rs_1787967882578_5185r","start":"22:00","type":"shift"},{"date":"2026-05-14","diff":"","end":"06:00","id":"rs_1787967883977_tkcrh","start":"22:00","type":"shift"},{"date":"2026-05-15","diff":"","end":"06:00","id":"rs_1787967889273_x1cae","start":"22:00","type":"shift"},{"date":"2026-05-16","id":"rs_1787967895278_r5bno","type":"off"},{"date":"2026-05-17","id":"rs_1787967895990_cx6ac","type":"off"},{"date":"2026-05-18","diff":"","end":"19:00","id":"rs_1787967907068_0nnfr","start":"14:00","type":"shift"},{"date":"2026-05-19","id":"rs_1787967913494_olmgw","type":"off"},{"date":"2026-05-20","diff":"","end":"18:00","id":"rs_1787967922524_kup8i","start":"14:00","type":"shift"},{"date":"2026-05-21","diff":"","end":"22:00","id":"rs_1787967927594_odu8i","start":"14:00","type":"shift"},{"date":"2026-05-22","diff":"","end":"22:00","id":"rs_1787967933300_296o2","start":"14:00","type":"shift"},{"date":"2026-05-23","id":"rs_1787967935980_llec8","type":"off"},{"date":"2026-05-24","id":"rs_1787967936604_j1zni","type":"off"},{"date":"2026-05-25","diff":"","end":"12:00","id":"rs_1787967944935_l1ld0","start":"06:00","type":"shift"},{"date":"2026-05-26","id":"rs_1787967948268_6llqf","type":"off"},{"date":"2026-05-27","diff":"","end":"14:00","id":"rs_1787967952704_95czk","start":"06:00","type":"shift"},{"date":"2026-05-28","diff":"","end":"12:30","id":"rs_1787967988842_117sg","start":"06:00","type":"shift"},{"date":"2026-05-29","diff":"","end":"12:00","id":"rs_1787967999035_00wui","start":"06:00","type":"shift"},{"date":"2026-05-30","id":"rs_1787968002090_p0bhk","type":"off"},{"date":"2026-05-31","diff":"","end":"01:00","id":"rs_1787968549688_1pnya","start":"20:00","type":"shift"},{"date":"2026-06-01","diff":"","end":"02:00","id":"rs_1787967499474_3pza8","start":"22:00","type":"shift"},{"date":"2026-06-02","diff":"","end":"02:00","id":"rs_1787967508408_gu4pe","start":"22:00","type":"shift"},{"date":"2026-06-03","diff":"","end":"01:30","id":"rs_1787967529962_ipdc9","start":"22:00","type":"shift"},{"date":"2026-06-04","id":"rs_1787967538420_3udcn","type":"off"},{"date":"2026-06-05","diff":"","end":"03:00","id":"rs_1787967552120_orygw","start":"22:00","type":"shift"},{"date":"2026-06-06","id":"rs_1787967555512_iapzt","type":"off"},{"date":"2026-06-07","id":"rs_1787967556563_dejic","type":"off"},{"date":"2026-06-08","diff":"","end":"18:00","id":"rs_1787967566408_fv154","start":"14:00","type":"shift"},{"date":"2026-06-09","diff":"","end":"22:00","id":"rs_1787967574570_7jdjf","start":"14:00","type":"shift"},{"date":"2026-06-10","id":"rs_1787967579250_kvp9y","type":"off"},{"date":"2026-06-11","diff":"","end":"22:00","id":"rs_1787967585304_1r7p5","start":"14:00","type":"shift"},{"date":"2026-06-12","diff":"","end":"17:30","id":"rs_1787967603947_k4s68","start":"14:00","type":"shift"},{"date":"2026-06-13","id":"rs_1787967611823_dzpoo","type":"off"},{"date":"2026-06-14","id":"rs_1787967612800_upa33","type":"off"},{"date":"2026-06-15","diff":"","end":"14:00","id":"rs_1787967619841_ufkab","start":"06:00","type":"shift"},{"date":"2026-06-16","diff":"","end":"11:00","id":"rs_1787967627956_5mlsa","start":"06:00","type":"shift"},{"date":"2026-06-17","diff":"","end":"14:00","id":"rs_1787967632884_wzc8v","start":"06:00","type":"shift"},{"date":"2026-06-18","diff":"","end":"14:00","id":"rs_1787967636061_ilxa6","start":"06:00","type":"shift"},{"date":"2026-06-19","diff":"","end":"14:00","id":"rs_1787967639274_4bmwo","start":"06:00","type":"shift"},{"date":"2026-06-20","id":"rs_1787967641942_781eh","type":"off"},{"date":"2026-06-21","diff":"","end":"06:00","id":"rs_1787967660207_r4pga","start":"20:00","type":"shift"},{"date":"2026-06-22","diff":"","end":"06:00","id":"rs_1787967677779_g35ys","start":"22:00","type":"shift"},{"date":"2026-06-23","diff":"","end":"04:00","id":"rs_1787967687466_8v4fv","start":"22:00","type":"shift"},{"date":"2026-06-24","diff":"","end":"06:00","id":"rs_1787967704697_popmb","start":"22:00","type":"shift"},{"date":"2026-06-25","diff":"","end":"03:30","id":"rs_1787967719777_ikbxk","start":"22:00","type":"shift"},{"date":"2026-06-26","diff":"","end":"06:00","id":"rs_1787967740384_noljk","start":"22:00","type":"shift"},{"date":"2026-06-27","id":"rs_1787967744589_viq6d","type":"off"},{"date":"2026-06-28","id":"rs_1787967745384_r9mk3","type":"off"},{"date":"2026-06-29","diff":"","end":"22:00","id":"rs_1787967753267_d9sjv","start":"14:00","type":"shift"},{"date":"2026-06-30","diff":"","end":"22:00","id":"rs_1787967755218_omi9p","start":"14:00","type":"shift"},{"date":"2026-07-01","diff":"","end":"22:00","id":"rs_1787966973668_hiy1n","start":"14:00","type":"shift"},{"date":"2026-07-02","diff":"","end":"22:00","id":"rs_1787966981359_w0e9y","start":"14:00","type":"shift"},{"date":"2026-07-03","diff":"","end":"22:00","id":"rs_1787966986830_q49gp","start":"14:00","type":"shift"},{"date":"2026-07-04","id":"rs_1787966988104_zx6vr","type":"off"},{"date":"2026-07-05","id":"rs_1787966990782_u22x6","type":"off"},{"date":"2026-07-06","diff":"","end":"14:00","id":"rs_1787967010503_ej5pr","start":"06:00","type":"shift"},{"date":"2026-07-07","diff":"","end":"14:00","id":"rs_1787967019325_q8vib","start":"06:00","type":"shift"},{"date":"2026-07-08","diff":"","end":"14:00","id":"rs_1787967025403_z5hqz","start":"06:00","type":"shift"},{"date":"2026-07-09","diff":"","end":"14:00","id":"rs_1787967027623_dx13c","start":"06:00","type":"shift"},{"date":"2026-07-10","diff":"","end":"08:30","id":"rs_1787967043746_arz8r","start":"06:00","type":"shift"},{"date":"2026-07-11","id":"rs_1787967050900_yrgzq","type":"off"},{"date":"2026-07-12","diff":"","end":"06:00","id":"rs_1787967058887_nl854","start":"22:00","type":"shift"},{"date":"2026-07-13","diff":"","end":"04:30","id":"rs_1787967080424_91j56","start":"22:00","type":"shift"},{"date":"2026-07-14","diff":"","end":"06:00","id":"rs_1787967090322_m3iv8","start":"22:00","type":"shift"},{"date":"2026-07-15","diff":"","end":"06:00","id":"rs_1787967098544_76sz3","start":"22:00","type":"shift"},{"date":"2026-07-16","diff":"","end":"06:00","id":"rs_1787967101795_knbrm","start":"22:00","type":"shift"},{"date":"2026-07-17","diff":"","end":"06:00","id":"rs_1787967112948_egy3v","start":"20:00","type":"shift"},{"date":"2026-07-18","diff":"","end":"04:00","id":"rs_1787967199057_717s2","start":"22:00","type":"shift"},{"date":"2026-07-19","id":"rs_1787967203016_vaf43","type":"off"},{"date":"2026-07-20","diff":"","end":"22:00","id":"rs_1787967209105_xo3jo","start":"14:00","type":"shift"},{"date":"2026-07-21","diff":"","end":"00:00","id":"rs_1787967216696_xc7cg","start":"14:00","type":"shift"},{"date":"2026-07-22","diff":"","end":"00:00","id":"rs_1787967222132_iz4z5","start":"14:00","type":"shift"},{"date":"2026-07-23","diff":"","end":"00:00","id":"rs_1787967226850_8by10","start":"14:00","type":"shift"},{"date":"2026-07-24","diff":"","end":"00:00","id":"rs_1787967229311_s5cbc","start":"14:00","type":"shift"},{"date":"2026-07-25","id":"rs_1787967235123_o37wd","type":"off"},{"date":"2026-07-26","id":"rs_1787967236267_elm6x","type":"off"},{"date":"2026-07-27","diff":"","end":"14:00","id":"rs_1787967252445_jrcnx","start":"06:00","type":"shift"},{"date":"2026-07-28","diff":"","end":"14:00","id":"rs_1787967261137_1tq5s","start":"06:00","type":"shift"},{"date":"2026-07-29","diff":"","end":"14:00","id":"rs_1787967264296_vukmn","start":"06:00","type":"shift"},{"date":"2026-07-30","diff":"","end":"16:00","id":"rs_1787967275546_gviuc","start":"06:00","type":"shift"},{"date":"2026-07-31","diff":"","end":"16:00","id":"rs_1787967281719_9q6wy","start":"06:00","type":"shift"},{"date":"2026-08-01","diff":"","end":"14:00","id":"rs_notion_20260801","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-02","diff":"","end":"06:00","id":"rs_notion_20260802","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-03","diff":"","end":"03:00","id":"rs_notion_20260803","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-04","diff":"","end":"06:00","id":"rs_notion_20260804","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-05","diff":"","end":"06:00","id":"rs_notion_20260805","source":"notion","start":"20:00","type":"shift"},{"date":"2026-08-06","diff":"","end":"06:00","id":"rs_notion_20260806","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-07","diff":"","end":"06:00","id":"rs_notion_20260807","source":"notion","start":"21:30","type":"shift"},{"date":"2026-08-08","diff":"","id":"rs_notion_20260808","source":"notion","type":"off"},{"date":"2026-08-09","diff":"","end":"03:00","id":"rs_notion_20260809","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-10","diff":"","end":"22:00","id":"rs_notion_20260810","source":"notion","start":"16:00","type":"shift"},{"date":"2026-08-11","diff":"","end":"00:00","id":"rs_notion_20260811","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-12","diff":"","end":"22:00","id":"rs_notion_20260812","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-13","diff":"","end":"00:00","id":"rs_notion_20260813","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-14","diff":"","end":"00:00","id":"rs_notion_20260814","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-15","diff":"","id":"rs_notion_20260815","source":"notion","type":"off"},{"date":"2026-08-16","diff":"","id":"rs_notion_20260816","source":"notion","type":"off"},{"date":"2026-08-17","diff":"","end":"11:00","id":"rs_notion_20260817","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-18","diff":"","end":"14:00","id":"rs_notion_20260818","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-19","diff":"","end":"14:00","id":"rs_notion_20260819","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-20","diff":"","end":"11:30","id":"rs_notion_20260820","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-21","diff":"","end":"14:00","id":"rs_notion_20260821","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-22","diff":"","id":"rs_notion_20260822","source":"notion","type":"off"},{"date":"2026-08-23","diff":"","end":"03:30","id":"rs_notion_20260823","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-24","diff":"","end":"02:30","id":"rs_notion_20260824","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-25","diff":"","end":"02:30","id":"rs_notion_20260825","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-26","diff":"easy","end":"05:00","id":"rs_1787968937543_8ixzv","start":"22:00","type":"shift"},{"date":"2026-08-27","id":"rs_1787966752240_rl4yv","type":"off"},{"date":"2026-08-28","diff":"medium","end":"02:30","id":"rs_1787968941443_xjdg9","start":"22:00","type":"shift"},{"date":"2026-08-29","id":"rs_1787966786629_w7o4d","type":"off"},{"date":"2026-08-30","id":"rs_1787966787841_jvwxh","type":"off"},{"date":"2025-12-22","diff":"","end":"14:00","id":"rs_1787970411194_rri0m","start":"06:00","type":"shift"},{"date":"2025-12-23","diff":"","end":"14:00","id":"rs_1787970413582_njgq3","start":"06:00","type":"shift"},{"date":"2025-12-24","diff":"","end":"14:00","id":"rs_1787970414674_4cdt2","start":"06:00","type":"shift"},{"date":"2025-12-25","diff":"","end":"14:00","id":"rs_1787970415546_7dlkg","start":"06:00","type":"shift"},{"date":"2025-12-26","diff":"","end":"14:00","id":"rs_1787970417510_g5vu0","start":"06:00","type":"shift"},{"date":"2025-12-27","id":"rs_1787970426729_fldn0","type":"off"},{"date":"2025-12-28","id":"rs_1787970427329_8pmuj","type":"off"},{"date":"2025-12-29","diff":"","end":"22:00","id":"rs_1787970450486_dbs67","start":"14:00","type":"shift"},{"date":"2025-12-31","id":"rs_1787970494238_3ri45","type":"off"},{"date":"2025-12-30","diff":"","end":"17:30","id":"rs_1787970511351_xkqe0","start":"14:00","type":"shift"},{"date":"2026-01-01","diff":"","end":"06:00","id":"rs_1787970778306_ins32","start":"22:00","type":"shift"},{"date":"2026-01-02","diff":"","end":"06:00","id":"rs_1787970779622_qzb91","start":"22:00","type":"shift"},{"date":"2026-01-05","diff":"","end":"14:00","id":"rs_1787970791921_r94e6","start":"06:00","type":"shift"},{"date":"2026-01-06","diff":"","end":"14:00","id":"rs_1787970793329_goovy","start":"06:00","type":"shift"},{"date":"2026-01-07","diff":"","end":"14:00","id":"rs_1787970794498_fyobp","start":"06:00","type":"shift"},{"date":"2026-01-08","diff":"","end":"14:00","id":"rs_1787970795783_i8sip","start":"06:00","type":"shift"},{"date":"2026-01-09","diff":"","end":"14:00","id":"rs_1787970797067_l3yot","start":"06:00","type":"shift"},{"date":"2026-01-12","diff":"","end":"22:00","id":"rs_1787970804665_gssd5","start":"14:00","type":"shift"},{"date":"2026-01-13","diff":"","end":"22:00","id":"rs_1787970806165_vo61a","start":"14:00","type":"shift"},{"date":"2026-01-14","diff":"","end":"22:00","id":"rs_1787970807805_zh85c","start":"14:00","type":"shift"},{"date":"2026-01-15","diff":"","end":"22:00","id":"rs_1787970809151_r043f","start":"14:00","type":"shift"},{"date":"2026-01-16","diff":"","end":"22:00","id":"rs_1787970810395_t2wm7","start":"14:00","type":"shift"},{"date":"2026-01-18","diff":"","end":"06:00","id":"rs_1787970821189_f5nf2","start":"22:00","type":"shift"},{"date":"2026-01-19","diff":"","end":"06:00","id":"rs_1787970824939_unmul","start":"22:00","type":"shift"},{"date":"2026-01-20","diff":"","end":"06:00","id":"rs_1787970826686_swfp8","start":"22:00","type":"shift"},{"date":"2026-01-21","diff":"","end":"06:00","id":"rs_1787970829395_yj0nm","start":"22:00","type":"shift"},{"date":"2026-01-22","diff":"","end":"06:00","id":"rs_1787970830922_6o9i5","start":"22:00","type":"shift"},{"date":"2026-01-23","diff":"","end":"06:00","id":"rs_1787970832476_ig5z1","start":"22:00","type":"shift"},{"date":"2026-01-26","diff":"","end":"22:00","id":"rs_1787970838900_xfdbr","start":"14:00","type":"shift"},{"date":"2026-01-27","diff":"","end":"19:30","id":"rs_1787970866528_xqm8d","start":"14:00","type":"shift"},{"date":"2026-02-02","diff":"","end":"14:00","id":"rs_1787971112045_me3xg","start":"06:00","type":"shift"},{"date":"2026-02-03","diff":"","end":"14:00","id":"rs_1787971113363_s9dkq","start":"06:00","type":"shift"},{"date":"2026-02-04","diff":"","end":"14:00","id":"rs_1787971118479_4oxw2","start":"06:00","type":"shift"},{"date":"2026-02-05","diff":"","end":"14:00","id":"rs_1787971120005_uteq6","start":"06:00","type":"shift"},{"date":"2026-02-06","diff":"","end":"14:00","id":"rs_1787971121176_e68na","start":"06:00","type":"shift"},{"date":"2026-02-09","diff":"","end":"22:00","id":"rs_1787971123809_3u82e","start":"14:00","type":"shift"},{"date":"2026-02-10","diff":"","end":"22:00","id":"rs_1787971125417_hwosd","start":"14:00","type":"shift"},{"date":"2026-02-11","diff":"","end":"22:00","id":"rs_1787971126905_okkhf","start":"14:00","type":"shift"},{"date":"2026-02-12","diff":"","end":"22:00","id":"rs_1787971128539_82x3l","start":"14:00","type":"shift"},{"date":"2026-02-13","diff":"","end":"22:00","id":"rs_1787971129919_sd1wh","start":"14:00","type":"shift"},{"date":"2026-02-16","diff":"","end":"22:00","id":"rs_1787971131303_cxwer","start":"14:00","type":"shift"},{"date":"2026-02-24","diff":"","end":"22:00","id":"rs_1787971132759_flo4w","start":"14:00","type":"shift"},{"date":"2026-02-18","diff":"","end":"22:00","id":"rs_1787971134190_9scsd","start":"14:00","type":"shift"},{"date":"2026-02-26","diff":"","end":"22:30","id":"rs_1787971148111_rmced","start":"14:00","type":"shift"},{"date":"2026-03-02","diff":"","end":"14:00","id":"rs_1787971201594_repf0","start":"06:00","type":"shift"},{"date":"2026-03-03","diff":"","end":"14:00","id":"rs_1787971202929_ye3c9","start":"06:00","type":"shift"},{"date":"2026-03-04","diff":"","end":"14:00","id":"rs_1787971203965_sbd0u","start":"06:00","type":"shift"},{"date":"2026-03-05","diff":"","end":"14:00","id":"rs_1787971205109_b6h62","start":"06:00","type":"shift"},{"date":"2026-03-09","diff":"","end":"14:00","id":"rs_1787971206486_raga0","start":"06:00","type":"shift"},{"date":"2026-03-10","diff":"","end":"14:00","id":"rs_1787971207798_82m5n","start":"06:00","type":"shift"},{"date":"2026-03-11","diff":"","end":"14:00","id":"rs_1787971208966_orwwq","start":"06:00","type":"shift"},{"date":"2026-03-12","diff":"","end":"14:00","id":"rs_1787971209958_997dg","start":"06:00","type":"shift"},{"date":"2026-03-16","diff":"","end":"14:00","id":"rs_1787971213098_kossv","start":"06:00","type":"shift"},{"date":"2026-03-17","diff":"","end":"14:00","id":"rs_1787971214605_bxwp1","start":"06:00","type":"shift"},{"date":"2026-03-18","diff":"","end":"14:00","id":"rs_1787971215648_q0osi","start":"06:00","type":"shift"},{"date":"2026-03-19","diff":"","end":"22:00","id":"rs_1787971223160_kh92d","start":"14:00","type":"shift"},{"date":"2026-03-20","diff":"","end":"22:00","id":"rs_1787971224910_0vgmw","start":"14:00","type":"shift"},{"date":"2026-03-23","diff":"","end":"20:00","id":"rs_1787971237860_yxint","start":"14:00","type":"shift"}],"notionAug2026ImportedV1":true,"rate":27.5,"rates":{}},"healthPages":{"energy":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Пріоритет:\u003c/strong> 4–5 годин сну — це не день для важкого залу або складних рішень. Кава не замінює сон. Мета — заздалегідь захищати вікно відновлення.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\u003cdiv class=\"hkpi\">\u003cb>7–9 год\u003c/b>\u003cspan>найкращий орієнтир\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>7+ год\u003c/b>\u003cspan>базова ціль\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>90 хв\u003c/b>\u003cspan>цикл сну орієнтир\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>20–30 хв\u003c/b>\u003cspan>короткий сон за потреби\u003c/span>\u003c/div>\u003c/div>\n    \u003ch4>Оптимальні шаблони сну\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Лягати\u003c/th>\u003cth>Вставати\u003c/th>\u003cth>Ціль по сну\u003c/th>\u003cth>Коментар\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>6:00–14:00\u003c/td>\u003ctd>21:30–22:30\u003c/td>\u003ctd>5:00–5:20\u003c/td>\u003ctd>6,5–7,5+ год\u003c/td>\u003ctd>Найважливіше — не «добирати» телефон вночі; якщо можливо, короткий відпочинок 20–30 хв після зміни.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>23:00–00:00\u003c/td>\u003ctd>7:30–8:30\u003c/td>\u003ctd>7,5–8,5 год\u003c/td>\u003ctd>Це найзручніша зміна для залу: тренування та основні задачі краще ставити до роботи.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>22:00–6:00\u003c/td>\u003ctd>7:00–8:00\u003c/td>\u003ctd>14:30–15:30\u003c/td>\u003ctd>7–8+ год\u003c/td>\u003ctd>Після зміни — мінімум справ, темна тиха кімната, маска / беруші; за потреби 20–30 хв дрімоти перед наступною зміною.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Вихідний після нічної\u003c/td>\u003ctd>перший сон 7:00–12:00, далі другий блок 22:30–6:30\u003c/td>\u003ctd>за ситуацією\u003c/td>\u003ctd>сума 7–8+ год\u003c/td>\u003ctd>Не треба героїчно триматися без сну весь день: краще плавно повернути ритм.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003ch4>Правила енергії\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Ситуація\u003c/th>\u003cth>Що роблю\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Поганий сон\u003c/td>\u003ctd>Спрощую день, не ставлю важкий зал, пріоритет — їжа, вода, коротка мобільність, сон.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Нічна зміна\u003c/td>\u003ctd>Роблю кімнату максимально темною та тихою, обмежую світло з телефона після зміни.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Кава\u003c/td>\u003ctd>Лише на початку активної частини дня / зміни, не замість сну і не близько до запланованого засинання.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Телефон\u003c/td>\u003ctd>Не «з’їдаю» вечір безцільним скролом, якщо знаю, що завтра рання зміна.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Орієнтир:\u003c/strong> найкраща кількість сну для більшості дорослих — приблизно 7–9 годин. За твого графіка головна мета — не ідеальність, а повторюваний шаблон для кожного типу зміни.\u003c/div>\n    \u003cdiv class=\"table-note\">Ця таблиця редагується. Став курсор у будь-яку клітинку й використай кнопки над сторінкою, якщо захочеш додати свої варіанти режиму.\u003c/div>","ic":"✦","sub":"Система сну під три зміни: не ідеальна, але керована, щоб не жити постійно в режимі дефіциту","title":"Сон, енергія та відновлення"},"nutrition":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Основна мета:\u003c/strong> не сидіти на жорсткій дієті, а стабільно закривати білок, не зриватися в солодкі перекуси замість їжі й мати 5–7 страв, які реально працюють у побуті.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\u003cdiv class=\"hkpi\">\u003cb>120–125 г\u003c/b>\u003cspan>білка на день\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>3\u003c/b>\u003cspan>білкові опори\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>1\u003c/b>\u003cspan>гаряча страва на роботі\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>5–7\u003c/b>\u003cspan>повторюваних страв\u003c/span>\u003c/div>\u003c/div>\n    \u003ch4>Базові продукти\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Група\u003c/th>\u003cth>Що купувати\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Білок\u003c/td>\u003ctd>яйця, skyr, twaróg, serek wiejski, курка, індичка, риба, бобові\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Вуглеводи\u003c/td>\u003ctd>вівсянка, рис, гречка, булгур, картопля, макарони, хліб\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Овочі / фрукти\u003c/td>\u003ctd>заморожені овочі, помідори, огірки, морква, яблука, банани, ягоди\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Жири\u003c/td>\u003ctd>оливкова / ріпакова олія, горіхи, насіння\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Швидкі страви\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Ситуація\u003c/th>\u003cth>Що їм\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Немає сил готувати\u003c/td>\u003ctd>skyr + банан + вівсянка / serek wiejski + хліб + овочі\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Аерогриль\u003c/td>\u003ctd>курка / риба + картопля + овочі\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Сніданок\u003c/td>\u003ctd>яйця або skyr / twaróg + вуглеводи + фрукт\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Після зміни\u003c/td>\u003ctd>нормальна їжа, а не морозиво / печиво замість прийому їжі\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Чого уникаю як бази\u003c/h4>\n    \u003cul>\u003cli>Ковбаси, сосиски, шинка та інше перероблене м’ясо — не роблю основою раціону.\u003c/li>\u003cli>Газовані солодкі напої та солодощі — не як заміна повноцінної їжі.\u003c/li>\u003cli>Великі хаотичні перекуси ввечері після голодного дня.\u003c/li>\u003c/ul>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Просте правило:\u003c/strong> спочатку закриваю білок і нормальний прийом їжі, а вже потім вирішую, чи хочу десерт.\u003c/div>","ic":"●","sub":"Не «ідеальна дієта», а практичне харчування під три зміни, фізичну роботу й набір м’язів","title":"Стратегія харчування"},"strategy":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Головний принцип:\u003c/strong> не «ідеальна форма будь-якою ціною», а здоров’я, яке прогресує роками: сон → регулярна їжа → 2 силові тренування → відновлення → поступове навантаження.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\n      \u003cdiv class=\"hkpi\">\u003cb>40\u003c/b>\u003cspan>тренувань до 31.12\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>2×\u003c/b>\u003cspan>силові на тиждень\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>120–125 г\u003c/b>\u003cspan>орієнтир білка\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>7+ год\u003c/b>\u003cspan>вікно сну\u003c/span>\u003c/div>\n    \u003c/div>\n    \u003ch4>Що я роблю\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Сфера\u003c/th>\u003cth>Мінімальний стандарт\u003c/th>\u003cth>Навіщо\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Сон\u003c/td>\u003ctd>Планую повноцінне вікно сну під кожну зміну\u003c/td>\u003ctd>Відновлення, увага, апетит, сила й настрій\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Харчування\u003c/td>\u003ctd>Страва на роботі + 2 білкові опори вдома\u003c/td>\u003ctd>Енергія для великої кількості кроків і ріст м’язів\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Зал\u003c/td>\u003ctd>2 full-body тренування за будь-які 7 днів\u003c/td>\u003ctd>Сила, м’язи, постава й стійкість до фізичної роботи\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Відновлення\u003c/td>\u003ctd>Не тренуюсь важко після 4–5 год сну або виснажливої 10-годинної зміни\u003c/td>\u003ctd>Зал має покращувати здоров’я, а не додавати виснаження\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003ch4>Модель дня за станом\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Стан\u003c/th>\u003cth>Що роблю\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Червоний\u003c/td>\u003ctd>Мало сну / сильна втома — їжа, вода, сон, 5–10 хв мобільності; зал переноситься.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Жовтий\u003c/td>\u003ctd>Середній стан — звичайний день, коротке тренування можливе.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Зелений\u003c/td>\u003ctd>Виспався — повне тренування, підготовка їжі наперед, важливі задачі.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Критерій успіху:\u003c/strong> не ідеальний тиждень, а система, до якої я повертаюся наступною правильною дією. Симптоми, що тривають або посилюються, не списую автоматично на роботу — звертаюся до лікаря.\u003c/div>\n    \u003cdiv class=\"table-note\">Порада: клікни в таблицю й за потреби використай кнопки над нею, щоб додавати або прибирати рядки та стовпці.\u003c/div>","ic":"◆","sub":"Проста система, що підтримує роботу, YouTube і життя — без крайнощів","title":"Стратегія здоров’я · 2026"},"training":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Мета залу:\u003c/strong> здоров’я, набір м’язів, краща постава й сила. Додаткове кардіо на старті не потрібне: робота вже дає дуже великий обсяг ходьби.\u003c/div>\n    \u003ch4>Формат\u003c/h4>\n    \u003cul>\u003cli>2 тренування за будь-які 7 днів, бажано з днем відпочинку між ними.\u003c/li>\u003cli>45–60 хвилин, перші 2–3 тижні — помірна вага.\u003c/li>\u003cli>Орієнтир інтенсивності — ще 2–3 повторення «в запасі».\u003c/li>\u003cli>Коли двічі поспіль закриваю верхню межу повторень, додаю найменшу вагу.\u003c/li>\u003c/ul>\n    \u003ch4>База full-body\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Вправа\u003c/th>\u003cth>Підходи\u003c/th>\u003cth>Повторення\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Жим ногами\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Жим від грудей у тренажері\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Вертикальна тяга\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Горизонтальна тяга\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Згинання ніг\u003c/td>\u003ctd>2\u003c/td>\u003ctd>10–15\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Hip thrust / ягодичний міст\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Планка / корпус\u003c/td>\u003ctd>2\u003c/td>\u003ctd>по відчуттю\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Коли ставити тренування\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Найкраще вікно\u003c/th>\u003c/tr>\u003ctr>\u003ctd>6:00–14:00\u003c/td>\u003ctd>Після їжі й короткого відпочинку, якщо сон був нормальний\u003c/td>\u003c/tr>\u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>Пізній ранок / до обіду\u003c/td>\u003c/tr>\u003ctr>\u003ctd>22:00–6:00\u003c/td>\u003ctd>Після пробудження, до нічної зміни\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Після нічної або важкої 10-годинної\u003c/td>\u003ctd>Спочатку сон і відновлення; тренування переноситься\u003c/td>\u003c/tr>\u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Стоп-критерій:\u003c/strong> якщо біль у стопах або спині посилюється, обсяг зменшую, техніку перевіряю, а симптоми не ігнорую.\u003c/div>","ic":"▲","sub":"Два контрольовані full-body заняття, що доповнюють фізичну роботу, а не дублюють її","title":"Стратегія тренувань"}},"healthActive":"strategy","healthSimple":{"nutrition":"","sleep":"\u003ctable class=\"sleep-mini\">\u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Лягати\u003c/th>\u003cth>Вставати\u003c/th>\u003c/tr>\u003ctr>\u003ctd>06:00–14:00\u003c/td>\u003ctd>21:30–22:00\u003c/td>\u003ctd>05:00–05:20\u003c/td>\u003c/tr>\u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>23:30–00:00\u003c/td>\u003ctd>08:00–08:30\u003c/td>\u003c/tr>\u003ctr>\u003ctd>22:00–06:00\u003c/td>\u003ctd>07:00–07:30\u003c/td>\u003ctd>14:30–15:30\u003c/td>\u003c/tr>\u003c/table>","training":""},"ytNotes":"","ideas":[],"done":{"2026-08-02":{"t1785672128503":false},"2026-08-08":{"t1785672048899":true,"t1785672137894":true},"2026-08-09":{"t1785672137894":true},"2026-08-18":{"t1785672048899":false,"t1785672137894":false,"t1786236953297":false},"2026-08-19":{"t1785672086357":true,"work:wb1787160501769wyb":true},"2026-08-25":{"work:wb1787160454547o7r":false},"2026-08-30":{"t1787078477170":false,"work:wb1787160454547o7r":false},"2026-08-31":{}},"daySkip":{"2026-08-31":{}},"meta":{"2026-08-02":{"en":0,"note":"","slp":""},"2026-08-03":{"en":0,"note":"","slp":""},"2026-08-04":{"en":0,"note":"","slp":""},"2026-08-08":{"en":0,"note":"","slp":""},"2026-08-09":{"en":0,"note":"","slp":""},"2026-08-10":{"en":0,"note":"","slp":""},"2026-08-11":{"en":0,"note":"","slp":""},"2026-08-16":{"en":0,"note":"","slp":""},"2026-08-17":{"en":0,"note":"","slp":""},"2026-08-18":{"en":0,"note":"","slp":""},"2026-08-19":{"en":0,"note":"","slp":""},"2026-08-20":{"en":0,"note":"","slp":""},"2026-08-23":{"en":0,"note":"","slp":""},"2026-08-24":{"en":0,"note":"","slp":""},"2026-08-25":{"en":0,"note":"","slp":""},"2026-08-26":{"en":0,"note":"","slp":""},"2026-08-29":{"en":0,"note":"","slp":""},"2026-08-30":{"en":0,"note":"","slp":""},"2026-08-31":{"en":0,"note":"","slp":""},"2026-09-01":{"en":0,"note":"","slp":""},"2026-09-02":{"en":0,"note":"","slp":""},"2026-09-03":{"en":0,"note":"","slp":""},"2026-09-04":{"en":0,"note":"","slp":""},"2026-09-05":{"en":0,"note":"","slp":""},"2026-09-06":{"en":0,"note":"","slp":""},"2026-09-07":{"en":0,"note":"","slp":""},"2026-09-08":{"en":0,"note":"","slp":""},"2026-09-09":{"en":0,"note":"","slp":""}},"weekFocus":{"2026-08-17":"YouTube "},"income":{},"snap":{"2026-08-02":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0}},"2026-08-07":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-08":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-09":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-10":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-11":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-16":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-18":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-19":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-20":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-23":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-24":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-25":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-26":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-29":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-30":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-31":{"s1":{"year":0,"big":0},"s_text":{"year":0,"big":0},"s3":{"year":0,"big":0},"s4":{"year":0,"big":0},"s_fin":{"year":0,"big":0},"s_crypto":{"year":0,"big":0},"s5":{"year":0,"big":0}}},"big":"Побудувати один англомовний faceless YouTube-медіаактив зі стабільним онлайн-доходом $1 000+ на місяць, системним AI-assisted виробництвом і достатньою фінансовою стійкістю для виходу з найманої роботи","vision":"\u003cp>\u003cb>Я будую життя, у якому свобода — моя норма.\u003c/b> Я живу у Варшаві, сам керую своїм часом і створюю дохід через власні цифрові активи, медіапроєкти, інвестиції та системи.\u003c/p>\u003cp>Я фінансово сильний, фізично атлетичний, спокійний ментально й дисциплінований у діях. Поруч зі мною кохана людина, сильне оточення, подорожі, знання мов і життя, яке я не відкладаю на потім.\u003c/p>\u003cp>\u003cb>Я створюю не просто високий дохід — я створюю свободу, силу, капітал і життя, яким пишаюся.\u003c/b>\u003c/p>","incGoal":1000,"lastReview":null,"booksOsVersion":1,"healthOsVersion":2,"lifeOsVersion":1,"progressOsVersion":3,"strategyStagesVersion":1,"timelineOsVersion":1,"timerDurations":{"task:work:wb1787160454547o7r":45},"ui":{"sphereGoalFold":{"s1":{"main":true,"year":false},"s1787621761351":{"main":true,"year":true},"s3":{"main":false,"year":false},"s4":{"main":false,"year":false},"s_fin":{"main":false,"year":false}},"sphereNavCollapsed":false,"textOverrides":{}},"visionIdentity":"\u003cp>\u003cb>Я — Стратег-Інвестор.\u003c/b> Я інвестую час, енергію, знання й капітал у системи, які роблять мене сильнішим, вільнішим і масштабнішим. Я дію спокійно, дисципліновано й довгостроково — будую себе, активи та життя, яке не залежить від чужих правил.\u003c/p>","visionRules":"\u003cul>\u003cli>Не змінюю напрямок до завершення повного 90-денного тесту.\u003c/li>\u003cli>Не будую складну систему, якщо можна почати з простої.\u003c/li>\u003cli>Планер допомагає працювати, а не стає окремим проєктом.\u003c/li>\u003cli>Ніколи не пропускай двічі.\u003c/li>\u003cli>Мінімальна версія завжди зараховується.\u003c/li>\u003cli>Кожна дія — голос за того, ким я стаю.\u003c/li>\u003cli>Доказ дією сильніший за афірмацію.\u003c/li>\u003c/ul>","youtubeOsVersion":3,"planner":{"events":[],"people":[],"relationships":[]}};/*SEED*/
+const SEED={"books":[{"a":"Девід Кемерон ","act":true,"cur":18,"id":"b1784587050549","img":"","pg":212,"t":"Щаслива кишеня, повна грошей"},{"a":"Джеймс Клір","act":false,"cur":0,"done":false,"id":"b1","img":"","pg":320,"t":"Атомні звички"},{"a":"Ентоні Роббінс","act":false,"cur":0,"done":false,"id":"lifeBook3","img":"","pg":0,"t":"Розбуди в собі велетня"},{"a":"Вадим Зеланд","act":false,"cur":0,"done":false,"id":"lifeBook4","img":"","pg":0,"t":"Трансерфінг реальності"}],"notes":[{"b":"1. Створити застосунок для рахування змін ","d":"2026-08-09","id":"n1786229601856","t":"Ідеї для реалізації"}],"habits":[{"id":"h1787600044177","since":"2026-08-24","t":""}],"habitLog":{"2026-08-31":{}},"identity":{"beliefs":"• Гроші — це наслідок цінності, яку я створюю для інших. Чим більше людей я реально вдосконалюю, тим більший дохід.\n• Я не мушу бути найрозумнішим. Я мушу не зупинятись довше за інших.\n• Кожен, ким я захоплююсь, колись стояв там, де я зараз.\n• Невдале відео — це дані, а не вирок.\n• Я вже почав. Більшість людей не почне ніколи.","clarity":"Головне зараз: опубліковані відео. Усе інше вторинне.\nЩо відволікає: нові ідеї, порівняння з іншими, нескінченне планування.\nОдне питання щодня: що з мого списку найбільше наближає до свободи?","materials":"Книги:\n• Атомні звички — Джеймс Клір\n\nКурси:\n• (курс з YouTube)\n\nАудіо / подкасти:\n•","who":"Я — людина, яка будує системи й доводить справи до результату. Я керую своїм часом, тілом і увагою. Я створюю цінність, за яку люди платять, і рухаюсь до рівня, де дохід не залежить від чужого графіка."},"spheres":[{"c":"#ff6a3d","ic":"💰","id":"s1","nm":"YouTube • медіабізнес"},{"c":"#9cbbec","ic":"✍️","id":"s_text","nm":"TEXT Work"},{"c":"#07bb4c","ic":"💪","id":"s3","nm":"Здоров’я, тіло та енергія"},{"c":"#5f78dd","ic":"🧠","id":"s4","nm":"Саморозвиток"},{"c":"#d4a24e","ic":"💳","id":"s_fin","nm":"Фінанси "},{"c":"#f0b90b","ic":"₿","id":"s_crypto","nm":"Криптовалюта"},{"c":"#d3f8fd","ic":"🤍","id":"s5","nm":"Духовність, стосунки"}],"sph":{"s1":{"big":"Побудувати системний англомовний YouTube-медіабізнес із сильним флагманським каналом, додатковими медіаактивами, $10 000+ чистого доходу на місяць і значною частиною виробництва, автоматизованою або делегованою без втрати якості.","bigYearShare":50,"stages":[{"d":true,"dt":"2026-08-31","id":"yt_s1","ord":0,"t":"Ніша, аудиторія та позиціонування каналу чітко визначені й зафіксовані","y":1},{"d":true,"dt":"2026-08-31","id":"yt_s2","ord":1,"t":"Створена повна система виробництва: research → script → visuals → voice → edit → thumbnail → publish → analytics","y":1},{"d":true,"dt":"2026-08-31","id":"st1787621006384","ord":16,"t":"Перший тест оформлення каналу через систему","y":1},{"d":true,"dt":"2026-08-31","id":"st1787622128696","ord":3,"t":"Повністю оформлений канал","y":1},{"d":false,"id":"yt_s3","ord":2,"t":"Сформований банк сильних тем і підготовлена перша серія відео","y":1},{"d":false,"id":"st1787622170696","ord":5,"t":"Публікація першого відео","y":1},{"d":false,"id":"yt_s4","ord":3,"t":"Опубліковано перші 5 якісних long-form відео та проведено перший розбір даних","y":1},{"d":false,"id":"yt_s5","ord":4,"t":"Опубліковано 10–16 відео й отримано достатньо даних для оцінки ніші, упаковки та утримання","y":1},{"d":false,"id":"yt_s6","ord":5,"t":"Визначено 1–2 робочі формати й стандартизовано те, що показує найкращий результат","y":1},{"d":false,"id":"yt_s7","ord":6,"t":"Канал підключено до YPP або виконано більшість актуальних вимог монетизації","y":1},{"d":false,"id":"yt_s8","ord":7,"t":"Отримано перший дохід і зафіксовано план масштабування на 2027 рік","y":1},{"d":false,"id":"yt_l1","ord":8,"t":"Канал стабільно приносить $500+ чистими на місяць","y":0},{"d":false,"id":"yt_l2","ord":9,"t":"Канал стабільно приносить $1 000+ чистими на місяць протягом 3 місяців","y":0},{"d":false,"id":"yt_l3","ord":10,"t":"Виробництво повністю стандартизовано, а ключові повторювані процеси автоматизовано або делеговано","y":0},{"d":false,"id":"yt_l4","ord":11,"t":"Флагманський канал виріс до $2 000–3 000+ чистими на місяць","y":0},{"d":false,"id":"yt_l5","ord":12,"t":"Запущено другий канал без погіршення результатів флагманського","y":0},{"d":false,"id":"yt_l6","ord":13,"t":"Сітка каналів приносить $4 000–5 000+ чистими на місяць","y":0},{"d":false,"id":"yt_l7","ord":14,"t":"Побудована єдина медіасистема з 1 флагманським і додатковими прибутковими активами","y":0},{"d":false,"id":"yt_l8","ord":15,"t":"Досягнуто й утримується $10 000+ чистого доходу на місяць","y":0}],"year":"До 31 грудня 2026 року запустити та перевірити один англомовний faceless long-form канал: сформувати сильну систему виробництва, опублікувати достатню кількість відео для реальних висновків, знайти робочі формати та вийти на монетизацію або максимально наблизитися до неї.","goals":[]},"s3":{"big":"Мати сильне атлетичне тіло, стабільну енергію, якісний сон, просте повноцінне харчування і тренування як природну частину життя.","bigYearShare":50,"stages":[{"d":false,"id":"h_s1","ord":0,"t":"Зафіксована проста система сну, харчування, тренувань і відновлення під робочий графік","y":1},{"d":false,"id":"h_s2","ord":1,"t":"Стабільно виконуються 2 силові тренування у більшості тижнів","y":1},{"d":false,"id":"h_s3","ord":2,"t":"Завершено перші 10 силових тренувань і визначена робоча програма","y":1},{"d":false,"id":"h_s4","ord":3,"t":"Харчування працює без постійного хаосу: є базові страви, білок і їжа на роботу","y":1},{"d":false,"id":"h_s5","ord":4,"t":"Завершено 20+ тренувань і є вимірюваний прогрес сили або фізичної форми","y":1},{"d":false,"id":"h_s6","ord":5,"t":"Система здоров’я витримує різні робочі зміни без довгих зривів","y":1},{"d":false,"id":"h_l1","ord":6,"t":"Завершено 50 силових тренувань і сформована стабільна тренувальна база","y":0},{"d":false,"id":"h_l2","ord":7,"t":"Досягнута бажана базова атлетична форма й помітно вищий рівень сили","y":0},{"d":false,"id":"h_l3","ord":8,"t":"Сон і відновлення стабільно працюють навіть у складні робочі періоди","y":0},{"d":false,"id":"h_l4","ord":9,"t":"Система тренувань і харчування утримується 6 місяців без великих перерв","y":0},{"d":false,"id":"h_l5","ord":10,"t":"Здоров’я, енергія та спорт стали стабільною частиною стилю життя","y":0},{"d":false,"id":"h_l6","ord":11,"t":"Сильне атлетичне тіло й високий рівень енергії утримуються системно, без крайнощів","y":0}],"year":"До кінця 2026 року закріпити базову систему здоров’я: регулярний сон під робочі зміни, 2–3 силові тренування у більшості тижнів, нормальне харчування та помітний прогрес сили й форми.","goals":[]},"s4":{"big":"Вільно користуватися польською у повсякденному житті, мати функціональну англійську для YouTube, роботи й подорожей та системно перетворювати знання з книг і Arena VIP на практичні зміни.","bigYearShare":50,"stages":[{"d":false,"id":"sd_s1","ord":0,"t":"Зафіксований простий ритм польської та англійської, який реально працює щотижня","y":1},{"d":false,"id":"sd_s2","ord":1,"t":"Завершено 8 тижнів стабільної практики польської без довгих перерв","y":1},{"d":false,"id":"sd_s3","ord":2,"t":"Завершено 8 тижнів стабільної практики англійської без довгих перерв","y":1},{"d":false,"id":"sd_s4","ord":3,"t":"Завершено запланований блок курсу Arena VIP і виписані практичні висновки","y":1},{"d":false,"id":"sd_s5","ord":4,"t":"Прочитано «Щаслива кишеня, повна грошей» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s6","ord":5,"t":"Прочитано «Атомні звички» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s7","ord":6,"t":"Прочитано «Розбуди в собі велетня» та застосовано щонайменше одну ідею","y":1},{"d":false,"id":"sd_s8","ord":7,"t":"Прочитано «Трансерфінг реальності» та підбито підсумок системи саморозвитку за 2026 рік","y":1},{"d":false,"id":"sd_l1","ord":8,"t":"Польська дозволяє впевнено вирішувати основні побутові та робочі питання","y":0},{"d":false,"id":"sd_l2","ord":9,"t":"Англійська дозволяє працювати з YouTube-матеріалами без постійного перекладу","y":0},{"d":false,"id":"sd_l3","ord":10,"t":"Польська використовується природно у повсякденному житті","y":0},{"d":false,"id":"sd_l4","ord":11,"t":"Англійська стала робочим інструментом для YouTube, подорожей і спілкування","y":0},{"d":false,"id":"sd_l5","ord":12,"t":"Система книги → ідеї → практична дія працює стабільно і без накопичення непотрібного навчання","y":0},{"d":false,"id":"sd_l6","ord":13,"t":"Мови, читання й розвиток підтримуються системно протягом 6+ місяців","y":0}],"year":"До кінця 2026 року стабільно розвивати лише чотири напрямки: польську, англійську, курс Arena VIP та чотири вибрані книги — без розпорошення на інше навчання.","goals":[]},"s5":{"big":"","bigYearShare":0,"notes":"","year":"","goals":[]},"s_crypto":{"big":"","bigYearShare":50,"year":"","goals":[]},"s_fin":{"big":"Мати повний контроль над грошима: позитивний cash flow, відсутність дорогих боргів, резерв на 6+ місяців життя та системно зростаючий інвестиційний капітал.","bigYearShare":50,"stages":[{"d":false,"id":"fin_s1","ord":0,"t":"Повна фінансова картина зібрана: доходи, витрати, рахунки, борги та зобов’язання","y":1},{"d":false,"id":"fin_s2","ord":1,"t":"Побудований простий місячний cash-flow і контроль обов’язкових витрат","y":1},{"d":false,"id":"fin_s3","ord":2,"t":"Зафіксована стратегія погашення боргів і порядок пріоритетів","y":1},{"d":false,"id":"fin_s4","ord":3,"t":"Припинено створення нових дорогих боргів і прострочень","y":1},{"d":false,"id":"fin_s5","ord":4,"t":"Закрито перший великий блок боргів / досягнуто помітного зниження загального боргу","y":1},{"d":false,"id":"fin_s6","ord":5,"t":"Створена перша фінансова подушка та правила її поповнення","y":1},{"d":false,"id":"fin_l1","ord":6,"t":"Закриті всі критичні та дорогі борги","y":0},{"d":false,"id":"fin_l2","ord":7,"t":"Резерв покриває щонайменше 1 місяць життя","y":0},{"d":false,"id":"fin_l3","ord":8,"t":"Резерв збільшено до 3 місяців життя","y":0},{"d":false,"id":"fin_l4","ord":9,"t":"Резерв збільшено до 6+ місяців життя","y":0},{"d":false,"id":"fin_l5","ord":10,"t":"Запущено регулярне інвестування частини доходу та накопичення капіталу","y":0},{"d":false,"id":"fin_l6","ord":11,"t":"Інвестиційний капітал і власні онлайн-активи створюють реальну фінансову незалежність","y":0}],"year":"До кінця 2026 року стабілізувати фінансову систему: бачити повну картину грошей, системно скорочувати борги, не створювати нових дорогих зобов’язань і сформувати першу фінансову подушку.","goals":[]},"s_text":{"big":"","year":"","goals":[]}},"sphNotes":{},"workspaces":{"s1":{"items":[{"id":"wi17870777730234p6","t":"Вибрати нішу — перевірити попит, конкуренцію, evergreen-потенціал і монетизацію","level":0,"todo":true,"done":false},{"id":"wi1787077788981d16","t":"Сформувати концепцію каналу — позиціонування, формат, стиль, цільова аудиторія","level":0,"todo":true,"done":false},{"id":"wi1787077792305wdx","t":"Побудувати production-процес — research → script → voice → visuals → edit → thumbnail → publish","level":0,"todo":true,"done":false},{"id":"wi1787077793130wr8","t":"Підготувати перші 3–5 відео — щоб стартувати без пауз і протестувати формат","level":0,"todo":true,"done":false},{"id":"wi1787077793898jqt","t":"Публікувати стабільно — орієнтир 1–2 якісні long-form відео на тиждень","level":0,"todo":true,"done":false},{"id":"wi17870778354560lq","t":"Аналізувати й покращувати — CTR, retention, watch time, теми, thumbnails, titles","level":0,"todo":true,"done":false},{"id":"wi1787077845313cdv","t":"Досягти YPP і монетизувати канал —  подати заявку та отримати перший дохід","level":0,"todo":true,"done":false}],"note":"","title":"Робочий простір"},"s1786229570240":{"note":"","title":"Робочий простір","items":[]},"s1787621761351":{"note":"","title":"Робочий простір","items":[]},"s3":{"note":"","title":"Робочий простір","items":[]},"s4":{"note":"","title":"Робочий простір","items":[]},"s5":{"items":[{"id":"wi1786294055316h0j","t":"Gliwice","level":0,"todo":false,"done":false},{"id":"wi1786294061346znz","t":"Escape Room - Закрита тематична кімната з загадками, кодами й завданнями","level":1,"todo":true,"done":false},{"id":"wi1786294062238wl9","t":"Kolejkowo - Великий мініатюрний світ: міста, будинки, люди, дороги, поїзди, транспорт, ефекти дня/ночі","level":1,"todo":true,"done":false},{"id":"wi178629411980061q","t":"Zabrze","level":0,"todo":false,"done":false},{"id":"wi17862942247288ms","t":"Kopalnia Guido - Справжня колишня шахта. Спуск приблизно на 320 м під землю, підземні коридори, шахтарська техніка, історія видобутку, частина маршруту з транспортом.","level":1,"todo":true,"done":false},{"id":"wi1786294276607m3p","t":"Tarnowskie Góry","level":0,"todo":false,"done":false},{"id":"wi17862942863954j8","t":"Park Wodny","level":1,"todo":true,"done":false},{"id":"wi1786294312334nvc","t":"Pławniowice","level":0,"todo":false,"done":false},{"id":"wi1786294315181liq","t":"Pałac w Pławniowicach - Красивий історичний палац, парк і територія для прогулянки","level":1,"todo":true,"done":false},{"id":"wi1786294339953ecv","t":"","level":0,"todo":false,"done":false}],"note":"","title":"Робочий простір"},"s_text":{"items":[{"id":"wi1786230200667z6c","t":"Створити бот для прийому заявок автоматизований","level":0,"todo":true,"done":false}],"note":"","title":"Робочий простір"}},"orders":[{"client":"Угрін Святослав","cur":"USD","deadline":"","id":"o1786230362063","note":"","paid":false,"price":"450","stage":"unpaid","status":"done","type":"Магістерська"},{"client":"Скринник Ігор","cur":"USD","deadline":"","id":"o1786230433279","note":"","paid":false,"price":"300","stage":"active","status":"doing","type":"Магістерська робота"},{"client":"Опацький Ігор","cur":"USD","deadline":"","id":"o1786230595262","note":"","paid":false,"price":"300","stage":"active","status":"doing","type":"Магістерська робота"}],"finance":{"accounts":[{"id":"fa_pko","name":"PKO BP","currency":"PLN","opening":0},{"id":"fa_mono","name":"Monobank","currency":"UAH","opening":0},{"id":"fa_cash","name":"Готівка","currency":"PLN","opening":0}],"archiveOpen":true,"calc":{"amount":"","date":"2026-08-19","fromAccount":"","note":"","received":"","toAccount":""},"capitalNow":"100$","categories":{"expense":["Продукти","Житло / оренда","Комунальні","Транспорт","Здоровʼя","Спорт / зал","Підписки / сервіси","Кафе / розваги","Одяг / покупки","Освіта","Подарунки","Інше"],"income":["Зарплата","Фріланс / текстові роботи","Премія","Повернення коштів","Подарунок","Кешбек","Дохід з інвестицій","Інше"],"investment":["ETF / фонди","Акції","Криптовалюта","Облігації","Депозит","Інше"]},"categoryManagerOpen":false,"chartCurrency":"PLN","currency":"PLN","debtMode":"active","debts":[{"id":"fd1786446720136","name":"MoneyWeo","currency":"UAH","total":49640,"paid":32140,"note":"Оплата 3 частини ","urgent":false,"archived":false,"closedAt":""},{"id":"fd1787230839433","name":"StarFin","currency":"UAH","total":11397,"paid":11397,"note":"","urgent":false,"archived":true,"closedAt":"2026-08-20"}],"defaultCurrency":"PLN","note":"","selectedMonth":"2026-08","view":"dashboard","archivedMonths":[],"transactions":[],"investments":[],"savings":[]},"workBlocks":[{"id":"wb1787160454547o7r","s":"s1","source":"sphere","itemId":"","dates":["2026-08-01","2026-08-02","2026-08-03","2026-08-04","2026-08-05","2026-08-06","2026-08-07","2026-08-08","2026-08-09","2026-08-10","2026-08-11","2026-08-12","2026-08-13","2026-08-14","2026-08-15","2026-08-16","2026-08-17","2026-08-18","2026-08-19","2026-08-20","2026-08-21","2026-08-22","2026-08-23","2026-08-24","2026-08-25","2026-08-26","2026-08-27","2026-08-28","2026-08-29","2026-08-30","2026-08-31","2026-09-01","2026-09-02"]}],"tasks":[{"archived":true,"days":[0,1,2,3,4,5,6],"id":"t15","off":true,"s":"s4","t":"Читання книги "},{"date":"","days":[1,3,5,6],"id":"t1785672048899","off":false,"s":"s4","t":"Курс -  Арена | Саморозвиток "},{"date":"2026-08-19","id":"t1785672086357","off":false,"s":"s4","t":"Język polski"},{"date":"","days":[0,1,2,3,4,5,6],"id":"t1785672137894","off":false,"s":"s4","t":"Читання книги "},{"date":"2026-08-17","id":"t1786230161938","off":false,"s":"s_text","t":"Створення бот системи для прийому заявок"},{"date":"","days":[0,1,2,3,4,5,6],"id":"t1787078477170","off":false,"s":"s3","t":"Випити креатин та добавки "},{"date":"2026-08-20","id":"t1787166486983","off":false,"s":"s_text","t":"Написати за оплату угріну"}],"ws":[{"col":"work","d":false,"date":"2026-08-25","id":"w1","p":1,"subs":[{"d":false,"id":"z1784540993718","t":"Загальне прибирання всіх кімнат"},{"d":false,"id":"z1784541003993","t":"Детальне прибирання - кухня"},{"d":false,"id":"z1784541030311","t":"Детальне прибирання - ванна"},{"d":false,"id":"z1784541031679","t":"Детальне прибирання - спальня"},{"d":false,"id":"z1784541060062","t":"Детальне прибирання - коридор"},{"d":false,"id":"z1784541067176","t":"Детальне прибирання -офіс"}],"t":"Квартира — ідеальне прибирання"},{"col":"bank","d":false,"date":"","id":"w1786238479168","p":2,"t":"Перевірити безпеку акаунтів ютуба","subs":[]},{"col":"work","d":false,"id":"w1787076968885","p":2,"subs":[{"d":true,"id":"z1787076986553","t":"Запис всіх змін "},{"d":false,"id":"z1787076995239","t":"Перевірка і затверджєення всіх змін"},{"d":false,"id":"z1787077010371","t":"Запис всіх змін в робочий зошит "}],"t":"Створити розрахунок змін по роботі "},{"col":"work","d":false,"date":"","id":"w1787230572163","p":2,"t":"Записати сферу фінансів","subs":[]},{"col":"work","d":false,"id":"w1787230608709","p":2,"t":"Пропрацювати сферу текстових робіт ","subs":[]},{"col":"bank","d":false,"date":"","id":"w1787621843433","p":1,"subs":[{"d":false,"id":"z1787621870378","t":"Ютуб"},{"d":false,"id":"z1787621872082","t":"Текст ворк"},{"d":false,"id":"z1787621873625","t":"Здоров'я"},{"d":false,"id":"z1787621890322","t":"Саморозвиток"},{"d":false,"id":"z1787621914455","t":"Фінанси "},{"d":false,"id":"z1787622049086","t":"Розставити відповідні перші завдання"}],"t":"Розпланувати кожну сферу"},{"col":"bank","d":false,"date":"","id":"w1787622225958","p":1,"t":"Відписати всім а також розплановка бота","subs":[]},{"col":"work","d":false,"id":"w1787708584858","p":2,"t":"Розробити лічильник змін росман","subs":[]}],"yt":[],"reflections":[{"from":"2026-07-21","id":"r1784596502679","miss":"Поки нічого, так як тільки стартую","rec":"Головне почати, в процесі точно можна буде зрозуміти чи подобається а чи ні","to":"2026-07-21","wins":"Дізнався багато чого нового і корисного - як тільки лиш почав, ще купа по переду, але думаю це все оптимізовувати щоб мій час економити - це головне!"},{"from":"2026-08-18","id":"r1787079543599","miss":"Спад енергії і телефон","rec":"Після роботи одразу їжа, душ і сісти за робоче місце без лежання","to":"2026-08-18","wins":"Вечором сісти попрацювати і побачити чіткий напрямок"}],"rossmann":{"countStatsFrom":"2026-07","entries":[{"date":"2026-04-01","id":"rs_1787968051053_w21cg","type":"off"},{"date":"2026-04-02","diff":"","end":"02:00","id":"rs_1787968071804_u4swi","start":"22:00","type":"shift"},{"date":"2026-04-03","diff":"","end":"05:00","id":"rs_1787968088435_yjyk5","start":"22:00","type":"shift"},{"date":"2026-04-04","id":"rs_1787968091067_xl1pv","type":"off"},{"date":"2026-04-05","id":"rs_1787968092103_14oe7","type":"off"},{"date":"2026-04-06","id":"rs_1787968095701_4uzul","type":"off"},{"date":"2026-04-07","diff":"","end":"20:00","id":"rs_1787968120551_dcgsr","start":"14:00","type":"shift"},{"date":"2026-04-08","diff":"","end":"18:00","id":"rs_1787968158917_39zcg","start":"14:00","type":"shift"},{"date":"2026-04-09","diff":"","end":"20:00","id":"rs_1787968139231_6c882","start":"14:00","type":"shift"},{"date":"2026-04-10","id":"rs_1787968163381_4mmus","type":"off"},{"date":"2026-04-11","id":"rs_1787968164259_ucgp6","type":"off"},{"date":"2026-04-12","id":"rs_1787968164919_rzuxu","type":"off"},{"date":"2026-04-13","diff":"","end":"14:00","id":"rs_1787968191392_032a7","start":"08:00","type":"shift"},{"date":"2026-04-14","diff":"","end":"11:00","id":"rs_1787968213351_2nqsi","start":"06:00","type":"shift"},{"date":"2026-04-15","diff":"","end":"11:00","id":"rs_1787968216383_vrgc5","start":"06:00","type":"shift"},{"date":"2026-04-16","diff":"","end":"12:00","id":"rs_1787968231654_1zt1e","start":"06:00","type":"shift"},{"date":"2026-04-17","diff":"","end":"14:00","id":"rs_1787968237672_lrzhl","start":"06:00","type":"shift"},{"date":"2026-04-18","id":"rs_1787968240218_93ihr","type":"off"},{"date":"2026-04-19","diff":"","end":"06:00","id":"rs_1787968246970_2xads","start":"22:00","type":"shift"},{"date":"2026-04-20","diff":"","end":"04:30","id":"rs_1787968268317_i54hk","start":"22:00","type":"shift"},{"date":"2026-04-21","diff":"","end":"03:00","id":"rs_1787968313025_0cb0m","start":"22:00","type":"shift"},{"date":"2026-04-22","diff":"","end":"03:00","id":"rs_1787968330888_4hsi6","start":"22:00","type":"shift"},{"date":"2026-04-23","diff":"","end":"03:00","id":"rs_1787968334488_vs5mz","start":"22:00","type":"shift"},{"date":"2026-04-24","diff":"","end":"05:00","id":"rs_1787968347284_4qw19","start":"22:00","type":"shift"},{"date":"2026-04-25","id":"rs_1787968351012_vzv35","type":"off"},{"date":"2026-04-26","id":"rs_1787968351731_54dpj","type":"off"},{"date":"2026-04-27","diff":"","end":"22:00","id":"rs_1787968737371_qekzn","start":"14:00","type":"shift"},{"date":"2026-04-28","diff":"","end":"22:00","id":"rs_1787968739957_hq4b9","start":"14:00","type":"shift"},{"date":"2026-04-29","diff":"","end":"22:00","id":"rs_1787968742866_x6lcq","start":"14:00","type":"shift"},{"date":"2026-04-30","diff":"","end":"16:00","id":"rs_1787968763990_0ee9s","start":"14:00","type":"shift"},{"date":"2026-05-01","id":"rs_1787967825201_lcgh4","type":"off"},{"date":"2026-05-02","id":"rs_1787967827613_xzz7v","type":"off"},{"date":"2026-05-03","id":"rs_1787967828760_ajpu7","type":"off"},{"date":"2026-05-04","diff":"","end":"11:00","id":"rs_1787967837916_xz7j9","start":"06:00","type":"shift"},{"date":"2026-05-05","diff":"","end":"11:00","id":"rs_1787967842693_8rc5d","start":"06:00","type":"shift"},{"date":"2026-05-06","id":"rs_1787967845654_ho0cp","type":"off"},{"date":"2026-05-07","diff":"","end":"14:00","id":"rs_1787967849955_zxxan","start":"06:00","type":"shift"},{"date":"2026-05-08","diff":"","end":"14:00","id":"rs_1787967852901_avb66","start":"06:00","type":"shift"},{"date":"2026-05-09","id":"rs_1787967855602_sbnfv","type":"off"},{"date":"2026-05-10","diff":"","end":"03:00","id":"rs_1787967867586_lsvn1","start":"22:00","type":"shift"},{"date":"2026-05-11","diff":"","end":"06:00","id":"rs_1787967873708_i70jx","start":"22:00","type":"shift"},{"date":"2026-05-12","id":"rs_1787967876847_0e3hg","type":"off"},{"date":"2026-05-13","diff":"","end":"06:00","id":"rs_1787967882578_5185r","start":"22:00","type":"shift"},{"date":"2026-05-14","diff":"","end":"06:00","id":"rs_1787967883977_tkcrh","start":"22:00","type":"shift"},{"date":"2026-05-15","diff":"","end":"06:00","id":"rs_1787967889273_x1cae","start":"22:00","type":"shift"},{"date":"2026-05-16","id":"rs_1787967895278_r5bno","type":"off"},{"date":"2026-05-17","id":"rs_1787967895990_cx6ac","type":"off"},{"date":"2026-05-18","diff":"","end":"19:00","id":"rs_1787967907068_0nnfr","start":"14:00","type":"shift"},{"date":"2026-05-19","id":"rs_1787967913494_olmgw","type":"off"},{"date":"2026-05-20","diff":"","end":"18:00","id":"rs_1787967922524_kup8i","start":"14:00","type":"shift"},{"date":"2026-05-21","diff":"","end":"22:00","id":"rs_1787967927594_odu8i","start":"14:00","type":"shift"},{"date":"2026-05-22","diff":"","end":"22:00","id":"rs_1787967933300_296o2","start":"14:00","type":"shift"},{"date":"2026-05-23","id":"rs_1787967935980_llec8","type":"off"},{"date":"2026-05-24","id":"rs_1787967936604_j1zni","type":"off"},{"date":"2026-05-25","diff":"","end":"12:00","id":"rs_1787967944935_l1ld0","start":"06:00","type":"shift"},{"date":"2026-05-26","id":"rs_1787967948268_6llqf","type":"off"},{"date":"2026-05-27","diff":"","end":"14:00","id":"rs_1787967952704_95czk","start":"06:00","type":"shift"},{"date":"2026-05-28","diff":"","end":"12:30","id":"rs_1787967988842_117sg","start":"06:00","type":"shift"},{"date":"2026-05-29","diff":"","end":"12:00","id":"rs_1787967999035_00wui","start":"06:00","type":"shift"},{"date":"2026-05-30","id":"rs_1787968002090_p0bhk","type":"off"},{"date":"2026-05-31","diff":"","end":"01:00","id":"rs_1787968549688_1pnya","start":"20:00","type":"shift"},{"date":"2026-06-01","diff":"","end":"02:00","id":"rs_1787967499474_3pza8","start":"22:00","type":"shift"},{"date":"2026-06-02","diff":"","end":"02:00","id":"rs_1787967508408_gu4pe","start":"22:00","type":"shift"},{"date":"2026-06-03","diff":"","end":"01:30","id":"rs_1787967529962_ipdc9","start":"22:00","type":"shift"},{"date":"2026-06-04","id":"rs_1787967538420_3udcn","type":"off"},{"date":"2026-06-05","diff":"","end":"03:00","id":"rs_1787967552120_orygw","start":"22:00","type":"shift"},{"date":"2026-06-06","id":"rs_1787967555512_iapzt","type":"off"},{"date":"2026-06-07","id":"rs_1787967556563_dejic","type":"off"},{"date":"2026-06-08","diff":"","end":"18:00","id":"rs_1787967566408_fv154","start":"14:00","type":"shift"},{"date":"2026-06-09","diff":"","end":"22:00","id":"rs_1787967574570_7jdjf","start":"14:00","type":"shift"},{"date":"2026-06-10","id":"rs_1787967579250_kvp9y","type":"off"},{"date":"2026-06-11","diff":"","end":"22:00","id":"rs_1787967585304_1r7p5","start":"14:00","type":"shift"},{"date":"2026-06-12","diff":"","end":"17:30","id":"rs_1787967603947_k4s68","start":"14:00","type":"shift"},{"date":"2026-06-13","id":"rs_1787967611823_dzpoo","type":"off"},{"date":"2026-06-14","id":"rs_1787967612800_upa33","type":"off"},{"date":"2026-06-15","diff":"","end":"14:00","id":"rs_1787967619841_ufkab","start":"06:00","type":"shift"},{"date":"2026-06-16","diff":"","end":"11:00","id":"rs_1787967627956_5mlsa","start":"06:00","type":"shift"},{"date":"2026-06-17","diff":"","end":"14:00","id":"rs_1787967632884_wzc8v","start":"06:00","type":"shift"},{"date":"2026-06-18","diff":"","end":"14:00","id":"rs_1787967636061_ilxa6","start":"06:00","type":"shift"},{"date":"2026-06-19","diff":"","end":"14:00","id":"rs_1787967639274_4bmwo","start":"06:00","type":"shift"},{"date":"2026-06-20","id":"rs_1787967641942_781eh","type":"off"},{"date":"2026-06-21","diff":"","end":"06:00","id":"rs_1787967660207_r4pga","start":"20:00","type":"shift"},{"date":"2026-06-22","diff":"","end":"06:00","id":"rs_1787967677779_g35ys","start":"22:00","type":"shift"},{"date":"2026-06-23","diff":"","end":"04:00","id":"rs_1787967687466_8v4fv","start":"22:00","type":"shift"},{"date":"2026-06-24","diff":"","end":"06:00","id":"rs_1787967704697_popmb","start":"22:00","type":"shift"},{"date":"2026-06-25","diff":"","end":"03:30","id":"rs_1787967719777_ikbxk","start":"22:00","type":"shift"},{"date":"2026-06-26","diff":"","end":"06:00","id":"rs_1787967740384_noljk","start":"22:00","type":"shift"},{"date":"2026-06-27","id":"rs_1787967744589_viq6d","type":"off"},{"date":"2026-06-28","id":"rs_1787967745384_r9mk3","type":"off"},{"date":"2026-06-29","diff":"","end":"22:00","id":"rs_1787967753267_d9sjv","start":"14:00","type":"shift"},{"date":"2026-06-30","diff":"","end":"22:00","id":"rs_1787967755218_omi9p","start":"14:00","type":"shift"},{"date":"2026-07-01","diff":"","end":"22:00","id":"rs_1787966973668_hiy1n","start":"14:00","type":"shift"},{"date":"2026-07-02","diff":"","end":"22:00","id":"rs_1787966981359_w0e9y","start":"14:00","type":"shift"},{"date":"2026-07-03","diff":"","end":"22:00","id":"rs_1787966986830_q49gp","start":"14:00","type":"shift"},{"date":"2026-07-04","id":"rs_1787966988104_zx6vr","type":"off"},{"date":"2026-07-05","id":"rs_1787966990782_u22x6","type":"off"},{"date":"2026-07-06","diff":"","end":"14:00","id":"rs_1787967010503_ej5pr","start":"06:00","type":"shift"},{"date":"2026-07-07","diff":"","end":"14:00","id":"rs_1787967019325_q8vib","start":"06:00","type":"shift"},{"date":"2026-07-08","diff":"","end":"14:00","id":"rs_1787967025403_z5hqz","start":"06:00","type":"shift"},{"date":"2026-07-09","diff":"","end":"14:00","id":"rs_1787967027623_dx13c","start":"06:00","type":"shift"},{"date":"2026-07-10","diff":"","end":"08:30","id":"rs_1787967043746_arz8r","start":"06:00","type":"shift"},{"date":"2026-07-11","id":"rs_1787967050900_yrgzq","type":"off"},{"date":"2026-07-12","diff":"","end":"06:00","id":"rs_1787967058887_nl854","start":"22:00","type":"shift"},{"date":"2026-07-13","diff":"","end":"04:30","id":"rs_1787967080424_91j56","start":"22:00","type":"shift"},{"date":"2026-07-14","diff":"","end":"06:00","id":"rs_1787967090322_m3iv8","start":"22:00","type":"shift"},{"date":"2026-07-15","diff":"","end":"06:00","id":"rs_1787967098544_76sz3","start":"22:00","type":"shift"},{"date":"2026-07-16","diff":"","end":"06:00","id":"rs_1787967101795_knbrm","start":"22:00","type":"shift"},{"date":"2026-07-17","diff":"","end":"06:00","id":"rs_1787967112948_egy3v","start":"20:00","type":"shift"},{"date":"2026-07-18","diff":"","end":"04:00","id":"rs_1787967199057_717s2","start":"22:00","type":"shift"},{"date":"2026-07-19","id":"rs_1787967203016_vaf43","type":"off"},{"date":"2026-07-20","diff":"","end":"22:00","id":"rs_1787967209105_xo3jo","start":"14:00","type":"shift"},{"date":"2026-07-21","diff":"","end":"00:00","id":"rs_1787967216696_xc7cg","start":"14:00","type":"shift"},{"date":"2026-07-22","diff":"","end":"00:00","id":"rs_1787967222132_iz4z5","start":"14:00","type":"shift"},{"date":"2026-07-23","diff":"","end":"00:00","id":"rs_1787967226850_8by10","start":"14:00","type":"shift"},{"date":"2026-07-24","diff":"","end":"00:00","id":"rs_1787967229311_s5cbc","start":"14:00","type":"shift"},{"date":"2026-07-25","id":"rs_1787967235123_o37wd","type":"off"},{"date":"2026-07-26","id":"rs_1787967236267_elm6x","type":"off"},{"date":"2026-07-27","diff":"","end":"14:00","id":"rs_1787967252445_jrcnx","start":"06:00","type":"shift"},{"date":"2026-07-28","diff":"","end":"14:00","id":"rs_1787967261137_1tq5s","start":"06:00","type":"shift"},{"date":"2026-07-29","diff":"","end":"14:00","id":"rs_1787967264296_vukmn","start":"06:00","type":"shift"},{"date":"2026-07-30","diff":"","end":"16:00","id":"rs_1787967275546_gviuc","start":"06:00","type":"shift"},{"date":"2026-07-31","diff":"","end":"16:00","id":"rs_1787967281719_9q6wy","start":"06:00","type":"shift"},{"date":"2026-08-01","diff":"","end":"14:00","id":"rs_notion_20260801","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-02","diff":"","end":"06:00","id":"rs_notion_20260802","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-03","diff":"","end":"03:00","id":"rs_notion_20260803","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-04","diff":"","end":"06:00","id":"rs_notion_20260804","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-05","diff":"","end":"06:00","id":"rs_notion_20260805","source":"notion","start":"20:00","type":"shift"},{"date":"2026-08-06","diff":"","end":"06:00","id":"rs_notion_20260806","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-07","diff":"","end":"06:00","id":"rs_notion_20260807","source":"notion","start":"21:30","type":"shift"},{"date":"2026-08-08","diff":"","id":"rs_notion_20260808","source":"notion","type":"off"},{"date":"2026-08-09","diff":"","end":"03:00","id":"rs_notion_20260809","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-10","diff":"","end":"22:00","id":"rs_notion_20260810","source":"notion","start":"16:00","type":"shift"},{"date":"2026-08-11","diff":"","end":"00:00","id":"rs_notion_20260811","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-12","diff":"","end":"22:00","id":"rs_notion_20260812","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-13","diff":"","end":"00:00","id":"rs_notion_20260813","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-14","diff":"","end":"00:00","id":"rs_notion_20260814","source":"notion","start":"14:00","type":"shift"},{"date":"2026-08-15","diff":"","id":"rs_notion_20260815","source":"notion","type":"off"},{"date":"2026-08-16","diff":"","id":"rs_notion_20260816","source":"notion","type":"off"},{"date":"2026-08-17","diff":"","end":"11:00","id":"rs_notion_20260817","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-18","diff":"","end":"14:00","id":"rs_notion_20260818","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-19","diff":"","end":"14:00","id":"rs_notion_20260819","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-20","diff":"","end":"11:30","id":"rs_notion_20260820","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-21","diff":"","end":"14:00","id":"rs_notion_20260821","source":"notion","start":"06:00","type":"shift"},{"date":"2026-08-22","diff":"","id":"rs_notion_20260822","source":"notion","type":"off"},{"date":"2026-08-23","diff":"","end":"03:30","id":"rs_notion_20260823","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-24","diff":"","end":"02:30","id":"rs_notion_20260824","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-25","diff":"","end":"02:30","id":"rs_notion_20260825","source":"notion","start":"22:00","type":"shift"},{"date":"2026-08-26","diff":"easy","end":"05:00","id":"rs_1787968937543_8ixzv","start":"22:00","type":"shift"},{"date":"2026-08-27","id":"rs_1787966752240_rl4yv","type":"off"},{"date":"2026-08-28","diff":"medium","end":"02:30","id":"rs_1787968941443_xjdg9","start":"22:00","type":"shift"},{"date":"2026-08-29","id":"rs_1787966786629_w7o4d","type":"off"},{"date":"2026-08-30","id":"rs_1787966787841_jvwxh","type":"off"},{"date":"2025-12-22","diff":"","end":"14:00","id":"rs_1787970411194_rri0m","start":"06:00","type":"shift"},{"date":"2025-12-23","diff":"","end":"14:00","id":"rs_1787970413582_njgq3","start":"06:00","type":"shift"},{"date":"2025-12-24","diff":"","end":"14:00","id":"rs_1787970414674_4cdt2","start":"06:00","type":"shift"},{"date":"2025-12-25","diff":"","end":"14:00","id":"rs_1787970415546_7dlkg","start":"06:00","type":"shift"},{"date":"2025-12-26","diff":"","end":"14:00","id":"rs_1787970417510_g5vu0","start":"06:00","type":"shift"},{"date":"2025-12-27","id":"rs_1787970426729_fldn0","type":"off"},{"date":"2025-12-28","id":"rs_1787970427329_8pmuj","type":"off"},{"date":"2025-12-29","diff":"","end":"22:00","id":"rs_1787970450486_dbs67","start":"14:00","type":"shift"},{"date":"2025-12-31","id":"rs_1787970494238_3ri45","type":"off"},{"date":"2025-12-30","diff":"","end":"17:30","id":"rs_1787970511351_xkqe0","start":"14:00","type":"shift"},{"date":"2026-01-01","diff":"","end":"06:00","id":"rs_1787970778306_ins32","start":"22:00","type":"shift"},{"date":"2026-01-02","diff":"","end":"06:00","id":"rs_1787970779622_qzb91","start":"22:00","type":"shift"},{"date":"2026-01-05","diff":"","end":"14:00","id":"rs_1787970791921_r94e6","start":"06:00","type":"shift"},{"date":"2026-01-06","diff":"","end":"14:00","id":"rs_1787970793329_goovy","start":"06:00","type":"shift"},{"date":"2026-01-07","diff":"","end":"14:00","id":"rs_1787970794498_fyobp","start":"06:00","type":"shift"},{"date":"2026-01-08","diff":"","end":"14:00","id":"rs_1787970795783_i8sip","start":"06:00","type":"shift"},{"date":"2026-01-09","diff":"","end":"14:00","id":"rs_1787970797067_l3yot","start":"06:00","type":"shift"},{"date":"2026-01-12","diff":"","end":"22:00","id":"rs_1787970804665_gssd5","start":"14:00","type":"shift"},{"date":"2026-01-13","diff":"","end":"22:00","id":"rs_1787970806165_vo61a","start":"14:00","type":"shift"},{"date":"2026-01-14","diff":"","end":"22:00","id":"rs_1787970807805_zh85c","start":"14:00","type":"shift"},{"date":"2026-01-15","diff":"","end":"22:00","id":"rs_1787970809151_r043f","start":"14:00","type":"shift"},{"date":"2026-01-16","diff":"","end":"22:00","id":"rs_1787970810395_t2wm7","start":"14:00","type":"shift"},{"date":"2026-01-18","diff":"","end":"06:00","id":"rs_1787970821189_f5nf2","start":"22:00","type":"shift"},{"date":"2026-01-19","diff":"","end":"06:00","id":"rs_1787970824939_unmul","start":"22:00","type":"shift"},{"date":"2026-01-20","diff":"","end":"06:00","id":"rs_1787970826686_swfp8","start":"22:00","type":"shift"},{"date":"2026-01-21","diff":"","end":"06:00","id":"rs_1787970829395_yj0nm","start":"22:00","type":"shift"},{"date":"2026-01-22","diff":"","end":"06:00","id":"rs_1787970830922_6o9i5","start":"22:00","type":"shift"},{"date":"2026-01-23","diff":"","end":"06:00","id":"rs_1787970832476_ig5z1","start":"22:00","type":"shift"},{"date":"2026-01-26","diff":"","end":"22:00","id":"rs_1787970838900_xfdbr","start":"14:00","type":"shift"},{"date":"2026-01-27","diff":"","end":"19:30","id":"rs_1787970866528_xqm8d","start":"14:00","type":"shift"},{"date":"2026-02-02","diff":"","end":"14:00","id":"rs_1787971112045_me3xg","start":"06:00","type":"shift"},{"date":"2026-02-03","diff":"","end":"14:00","id":"rs_1787971113363_s9dkq","start":"06:00","type":"shift"},{"date":"2026-02-04","diff":"","end":"14:00","id":"rs_1787971118479_4oxw2","start":"06:00","type":"shift"},{"date":"2026-02-05","diff":"","end":"14:00","id":"rs_1787971120005_uteq6","start":"06:00","type":"shift"},{"date":"2026-02-06","diff":"","end":"14:00","id":"rs_1787971121176_e68na","start":"06:00","type":"shift"},{"date":"2026-02-09","diff":"","end":"22:00","id":"rs_1787971123809_3u82e","start":"14:00","type":"shift"},{"date":"2026-02-10","diff":"","end":"22:00","id":"rs_1787971125417_hwosd","start":"14:00","type":"shift"},{"date":"2026-02-11","diff":"","end":"22:00","id":"rs_1787971126905_okkhf","start":"14:00","type":"shift"},{"date":"2026-02-12","diff":"","end":"22:00","id":"rs_1787971128539_82x3l","start":"14:00","type":"shift"},{"date":"2026-02-13","diff":"","end":"22:00","id":"rs_1787971129919_sd1wh","start":"14:00","type":"shift"},{"date":"2026-02-16","diff":"","end":"22:00","id":"rs_1787971131303_cxwer","start":"14:00","type":"shift"},{"date":"2026-02-24","diff":"","end":"22:00","id":"rs_1787971132759_flo4w","start":"14:00","type":"shift"},{"date":"2026-02-18","diff":"","end":"22:00","id":"rs_1787971134190_9scsd","start":"14:00","type":"shift"},{"date":"2026-02-26","diff":"","end":"22:30","id":"rs_1787971148111_rmced","start":"14:00","type":"shift"},{"date":"2026-03-02","diff":"","end":"14:00","id":"rs_1787971201594_repf0","start":"06:00","type":"shift"},{"date":"2026-03-03","diff":"","end":"14:00","id":"rs_1787971202929_ye3c9","start":"06:00","type":"shift"},{"date":"2026-03-04","diff":"","end":"14:00","id":"rs_1787971203965_sbd0u","start":"06:00","type":"shift"},{"date":"2026-03-05","diff":"","end":"14:00","id":"rs_1787971205109_b6h62","start":"06:00","type":"shift"},{"date":"2026-03-09","diff":"","end":"14:00","id":"rs_1787971206486_raga0","start":"06:00","type":"shift"},{"date":"2026-03-10","diff":"","end":"14:00","id":"rs_1787971207798_82m5n","start":"06:00","type":"shift"},{"date":"2026-03-11","diff":"","end":"14:00","id":"rs_1787971208966_orwwq","start":"06:00","type":"shift"},{"date":"2026-03-12","diff":"","end":"14:00","id":"rs_1787971209958_997dg","start":"06:00","type":"shift"},{"date":"2026-03-16","diff":"","end":"14:00","id":"rs_1787971213098_kossv","start":"06:00","type":"shift"},{"date":"2026-03-17","diff":"","end":"14:00","id":"rs_1787971214605_bxwp1","start":"06:00","type":"shift"},{"date":"2026-03-18","diff":"","end":"14:00","id":"rs_1787971215648_q0osi","start":"06:00","type":"shift"},{"date":"2026-03-19","diff":"","end":"22:00","id":"rs_1787971223160_kh92d","start":"14:00","type":"shift"},{"date":"2026-03-20","diff":"","end":"22:00","id":"rs_1787971224910_0vgmw","start":"14:00","type":"shift"},{"date":"2026-03-23","diff":"","end":"20:00","id":"rs_1787971237860_yxint","start":"14:00","type":"shift"}],"notionAug2026ImportedV1":true,"rate":27.5,"rates":{}},"healthPages":{"energy":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Пріоритет:\u003c/strong> 4–5 годин сну — це не день для важкого залу або складних рішень. Кава не замінює сон. Мета — заздалегідь захищати вікно відновлення.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\u003cdiv class=\"hkpi\">\u003cb>7–9 год\u003c/b>\u003cspan>найкращий орієнтир\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>7+ год\u003c/b>\u003cspan>базова ціль\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>90 хв\u003c/b>\u003cspan>цикл сну орієнтир\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>20–30 хв\u003c/b>\u003cspan>короткий сон за потреби\u003c/span>\u003c/div>\u003c/div>\n    \u003ch4>Оптимальні шаблони сну\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Лягати\u003c/th>\u003cth>Вставати\u003c/th>\u003cth>Ціль по сну\u003c/th>\u003cth>Коментар\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>6:00–14:00\u003c/td>\u003ctd>21:30–22:30\u003c/td>\u003ctd>5:00–5:20\u003c/td>\u003ctd>6,5–7,5+ год\u003c/td>\u003ctd>Найважливіше — не «добирати» телефон вночі; якщо можливо, короткий відпочинок 20–30 хв після зміни.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>23:00–00:00\u003c/td>\u003ctd>7:30–8:30\u003c/td>\u003ctd>7,5–8,5 год\u003c/td>\u003ctd>Це найзручніша зміна для залу: тренування та основні задачі краще ставити до роботи.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>22:00–6:00\u003c/td>\u003ctd>7:00–8:00\u003c/td>\u003ctd>14:30–15:30\u003c/td>\u003ctd>7–8+ год\u003c/td>\u003ctd>Після зміни — мінімум справ, темна тиха кімната, маска / беруші; за потреби 20–30 хв дрімоти перед наступною зміною.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Вихідний після нічної\u003c/td>\u003ctd>перший сон 7:00–12:00, далі другий блок 22:30–6:30\u003c/td>\u003ctd>за ситуацією\u003c/td>\u003ctd>сума 7–8+ год\u003c/td>\u003ctd>Не треба героїчно триматися без сну весь день: краще плавно повернути ритм.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003ch4>Правила енергії\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Ситуація\u003c/th>\u003cth>Що роблю\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Поганий сон\u003c/td>\u003ctd>Спрощую день, не ставлю важкий зал, пріоритет — їжа, вода, коротка мобільність, сон.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Нічна зміна\u003c/td>\u003ctd>Роблю кімнату максимально темною та тихою, обмежую світло з телефона після зміни.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Кава\u003c/td>\u003ctd>Лише на початку активної частини дня / зміни, не замість сну і не близько до запланованого засинання.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Телефон\u003c/td>\u003ctd>Не «з’їдаю» вечір безцільним скролом, якщо знаю, що завтра рання зміна.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Орієнтир:\u003c/strong> найкраща кількість сну для більшості дорослих — приблизно 7–9 годин. За твого графіка головна мета — не ідеальність, а повторюваний шаблон для кожного типу зміни.\u003c/div>\n    \u003cdiv class=\"table-note\">Ця таблиця редагується. Став курсор у будь-яку клітинку й використай кнопки над сторінкою, якщо захочеш додати свої варіанти режиму.\u003c/div>","ic":"✦","sub":"Система сну під три зміни: не ідеальна, але керована, щоб не жити постійно в режимі дефіциту","title":"Сон, енергія та відновлення"},"nutrition":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Основна мета:\u003c/strong> не сидіти на жорсткій дієті, а стабільно закривати білок, не зриватися в солодкі перекуси замість їжі й мати 5–7 страв, які реально працюють у побуті.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\u003cdiv class=\"hkpi\">\u003cb>120–125 г\u003c/b>\u003cspan>білка на день\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>3\u003c/b>\u003cspan>білкові опори\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>1\u003c/b>\u003cspan>гаряча страва на роботі\u003c/span>\u003c/div>\u003cdiv class=\"hkpi\">\u003cb>5–7\u003c/b>\u003cspan>повторюваних страв\u003c/span>\u003c/div>\u003c/div>\n    \u003ch4>Базові продукти\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Група\u003c/th>\u003cth>Що купувати\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Білок\u003c/td>\u003ctd>яйця, skyr, twaróg, serek wiejski, курка, індичка, риба, бобові\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Вуглеводи\u003c/td>\u003ctd>вівсянка, рис, гречка, булгур, картопля, макарони, хліб\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Овочі / фрукти\u003c/td>\u003ctd>заморожені овочі, помідори, огірки, морква, яблука, банани, ягоди\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Жири\u003c/td>\u003ctd>оливкова / ріпакова олія, горіхи, насіння\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Швидкі страви\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Ситуація\u003c/th>\u003cth>Що їм\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Немає сил готувати\u003c/td>\u003ctd>skyr + банан + вівсянка / serek wiejski + хліб + овочі\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Аерогриль\u003c/td>\u003ctd>курка / риба + картопля + овочі\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Сніданок\u003c/td>\u003ctd>яйця або skyr / twaróg + вуглеводи + фрукт\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Після зміни\u003c/td>\u003ctd>нормальна їжа, а не морозиво / печиво замість прийому їжі\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Чого уникаю як бази\u003c/h4>\n    \u003cul>\u003cli>Ковбаси, сосиски, шинка та інше перероблене м’ясо — не роблю основою раціону.\u003c/li>\u003cli>Газовані солодкі напої та солодощі — не як заміна повноцінної їжі.\u003c/li>\u003cli>Великі хаотичні перекуси ввечері після голодного дня.\u003c/li>\u003c/ul>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Просте правило:\u003c/strong> спочатку закриваю білок і нормальний прийом їжі, а вже потім вирішую, чи хочу десерт.\u003c/div>","ic":"●","sub":"Не «ідеальна дієта», а практичне харчування під три зміни, фізичну роботу й набір м’язів","title":"Стратегія харчування"},"strategy":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Головний принцип:\u003c/strong> не «ідеальна форма будь-якою ціною», а здоров’я, яке прогресує роками: сон → регулярна їжа → 2 силові тренування → відновлення → поступове навантаження.\u003c/div>\n    \u003cdiv class=\"health-kpis\">\n      \u003cdiv class=\"hkpi\">\u003cb>40\u003c/b>\u003cspan>тренувань до 31.12\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>2×\u003c/b>\u003cspan>силові на тиждень\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>120–125 г\u003c/b>\u003cspan>орієнтир білка\u003c/span>\u003c/div>\n      \u003cdiv class=\"hkpi\">\u003cb>7+ год\u003c/b>\u003cspan>вікно сну\u003c/span>\u003c/div>\n    \u003c/div>\n    \u003ch4>Що я роблю\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Сфера\u003c/th>\u003cth>Мінімальний стандарт\u003c/th>\u003cth>Навіщо\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Сон\u003c/td>\u003ctd>Планую повноцінне вікно сну під кожну зміну\u003c/td>\u003ctd>Відновлення, увага, апетит, сила й настрій\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Харчування\u003c/td>\u003ctd>Страва на роботі + 2 білкові опори вдома\u003c/td>\u003ctd>Енергія для великої кількості кроків і ріст м’язів\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Зал\u003c/td>\u003ctd>2 full-body тренування за будь-які 7 днів\u003c/td>\u003ctd>Сила, м’язи, постава й стійкість до фізичної роботи\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Відновлення\u003c/td>\u003ctd>Не тренуюсь важко після 4–5 год сну або виснажливої 10-годинної зміни\u003c/td>\u003ctd>Зал має покращувати здоров’я, а не додавати виснаження\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003ch4>Модель дня за станом\u003c/h4>\n    \u003ctable>\n      \u003ctr>\u003cth>Стан\u003c/th>\u003cth>Що роблю\u003c/th>\u003c/tr>\n      \u003ctr>\u003ctd>Червоний\u003c/td>\u003ctd>Мало сну / сильна втома — їжа, вода, сон, 5–10 хв мобільності; зал переноситься.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Жовтий\u003c/td>\u003ctd>Середній стан — звичайний день, коротке тренування можливе.\u003c/td>\u003c/tr>\n      \u003ctr>\u003ctd>Зелений\u003c/td>\u003ctd>Виспався — повне тренування, підготовка їжі наперед, важливі задачі.\u003c/td>\u003c/tr>\n    \u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Критерій успіху:\u003c/strong> не ідеальний тиждень, а система, до якої я повертаюся наступною правильною дією. Симптоми, що тривають або посилюються, не списую автоматично на роботу — звертаюся до лікаря.\u003c/div>\n    \u003cdiv class=\"table-note\">Порада: клікни в таблицю й за потреби використай кнопки над нею, щоб додавати або прибирати рядки та стовпці.\u003c/div>","ic":"◆","sub":"Проста система, що підтримує роботу, YouTube і життя — без крайнощів","title":"Стратегія здоров’я · 2026"},"training":{"body":"\n    \u003cdiv class=\"health-callout\">\u003cstrong>Мета залу:\u003c/strong> здоров’я, набір м’язів, краща постава й сила. Додаткове кардіо на старті не потрібне: робота вже дає дуже великий обсяг ходьби.\u003c/div>\n    \u003ch4>Формат\u003c/h4>\n    \u003cul>\u003cli>2 тренування за будь-які 7 днів, бажано з днем відпочинку між ними.\u003c/li>\u003cli>45–60 хвилин, перші 2–3 тижні — помірна вага.\u003c/li>\u003cli>Орієнтир інтенсивності — ще 2–3 повторення «в запасі».\u003c/li>\u003cli>Коли двічі поспіль закриваю верхню межу повторень, додаю найменшу вагу.\u003c/li>\u003c/ul>\n    \u003ch4>База full-body\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Вправа\u003c/th>\u003cth>Підходи\u003c/th>\u003cth>Повторення\u003c/th>\u003c/tr>\u003ctr>\u003ctd>Жим ногами\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Жим від грудей у тренажері\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Вертикальна тяга\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Горизонтальна тяга\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Згинання ніг\u003c/td>\u003ctd>2\u003c/td>\u003ctd>10–15\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Hip thrust / ягодичний міст\u003c/td>\u003ctd>2\u003c/td>\u003ctd>8–12\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Планка / корпус\u003c/td>\u003ctd>2\u003c/td>\u003ctd>по відчуттю\u003c/td>\u003c/tr>\u003c/table>\n    \u003ch4>Коли ставити тренування\u003c/h4>\n    \u003ctable>\u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Найкраще вікно\u003c/th>\u003c/tr>\u003ctr>\u003ctd>6:00–14:00\u003c/td>\u003ctd>Після їжі й короткого відпочинку, якщо сон був нормальний\u003c/td>\u003c/tr>\u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>Пізній ранок / до обіду\u003c/td>\u003c/tr>\u003ctr>\u003ctd>22:00–6:00\u003c/td>\u003ctd>Після пробудження, до нічної зміни\u003c/td>\u003c/tr>\u003ctr>\u003ctd>Після нічної або важкої 10-годинної\u003c/td>\u003ctd>Спочатку сон і відновлення; тренування переноситься\u003c/td>\u003c/tr>\u003c/table>\n    \u003cdiv class=\"health-warn\">\u003cstrong>Стоп-критерій:\u003c/strong> якщо біль у стопах або спині посилюється, обсяг зменшую, техніку перевіряю, а симптоми не ігнорую.\u003c/div>","ic":"▲","sub":"Два контрольовані full-body заняття, що доповнюють фізичну роботу, а не дублюють її","title":"Стратегія тренувань"}},"healthActive":"strategy","healthSimple":{"nutrition":"","sleep":"\u003ctable class=\"sleep-mini\">\u003ctr>\u003cth>Зміна\u003c/th>\u003cth>Лягати\u003c/th>\u003cth>Вставати\u003c/th>\u003c/tr>\u003ctr>\u003ctd>06:00–14:00\u003c/td>\u003ctd>21:30–22:00\u003c/td>\u003ctd>05:00–05:20\u003c/td>\u003c/tr>\u003ctr>\u003ctd>14:00–22:00\u003c/td>\u003ctd>23:30–00:00\u003c/td>\u003ctd>08:00–08:30\u003c/td>\u003c/tr>\u003ctr>\u003ctd>22:00–06:00\u003c/td>\u003ctd>07:00–07:30\u003c/td>\u003ctd>14:30–15:30\u003c/td>\u003c/tr>\u003c/table>","training":""},"ytNotes":"","ideas":[],"done":{"2026-08-02":{"t1785672128503":false},"2026-08-08":{"t1785672048899":true,"t1785672137894":true},"2026-08-09":{"t1785672137894":true},"2026-08-18":{"t1785672048899":false,"t1785672137894":false,"t1786236953297":false},"2026-08-19":{"t1785672086357":true,"work:wb1787160501769wyb":true},"2026-08-25":{"work:wb1787160454547o7r":false},"2026-08-30":{"t1787078477170":false,"work:wb1787160454547o7r":false},"2026-08-31":{}},"daySkip":{"2026-08-31":{}},"meta":{"2026-08-02":{"en":0,"note":"","slp":""},"2026-08-03":{"en":0,"note":"","slp":""},"2026-08-04":{"en":0,"note":"","slp":""},"2026-08-08":{"en":0,"note":"","slp":""},"2026-08-09":{"en":0,"note":"","slp":""},"2026-08-10":{"en":0,"note":"","slp":""},"2026-08-11":{"en":0,"note":"","slp":""},"2026-08-16":{"en":0,"note":"","slp":""},"2026-08-17":{"en":0,"note":"","slp":""},"2026-08-18":{"en":0,"note":"","slp":""},"2026-08-19":{"en":0,"note":"","slp":""},"2026-08-20":{"en":0,"note":"","slp":""},"2026-08-23":{"en":0,"note":"","slp":""},"2026-08-24":{"en":0,"note":"","slp":""},"2026-08-25":{"en":0,"note":"","slp":""},"2026-08-26":{"en":0,"note":"","slp":""},"2026-08-29":{"en":0,"note":"","slp":""},"2026-08-30":{"en":0,"note":"","slp":""},"2026-08-31":{"en":0,"note":"","slp":""},"2026-09-01":{"en":0,"note":"","slp":""},"2026-09-02":{"en":0,"note":"","slp":""},"2026-09-03":{"en":0,"note":"","slp":""},"2026-09-04":{"en":0,"note":"","slp":""},"2026-09-05":{"en":0,"note":"","slp":""},"2026-09-06":{"en":0,"note":"","slp":""},"2026-09-07":{"en":0,"note":"","slp":""},"2026-09-08":{"en":0,"note":"","slp":""},"2026-09-09":{"en":0,"note":"","slp":""}},"weekFocus":{"2026-08-17":"YouTube "},"income":{},"snap":{"2026-08-02":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0}},"2026-08-07":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-08":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-09":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-10":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-11":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-16":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-18":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-19":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-20":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-23":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-24":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-25":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-26":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-29":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-30":{"s1":{"big":0,"year":0},"s3":{"big":0,"year":0},"s4":{"big":0,"year":0},"s5":{"big":0,"year":0},"s_crypto":{"big":0,"year":0},"s_fin":{"big":0,"year":0},"s_text":{"big":0,"year":0}},"2026-08-31":{"s1":{"year":36,"big":21},"s_text":{"year":0,"big":0},"s3":{"year":0,"big":0},"s4":{"year":0,"big":0},"s_fin":{"year":0,"big":0},"s_crypto":{"year":0,"big":0},"s5":{"year":0,"big":0}}},"big":"Побудувати один англомовний faceless YouTube-медіаактив зі стабільним онлайн-доходом $1 000+ на місяць, системним AI-assisted виробництвом і достатньою фінансовою стійкістю для виходу з найманої роботи","vision":"\u003cp>\u003cb>Я будую життя, у якому свобода — моя норма.\u003c/b> Я живу у Варшаві, сам керую своїм часом і створюю дохід через власні цифрові активи, медіапроєкти, інвестиції та системи.\u003c/p>\u003cp>Я фінансово сильний, фізично атлетичний, спокійний ментально й дисциплінований у діях. Поруч зі мною кохана людина, сильне оточення, подорожі, знання мов і життя, яке я не відкладаю на потім.\u003c/p>\u003cp>\u003cb>Я створюю не просто високий дохід — я створюю свободу, силу, капітал і життя, яким пишаюся.\u003c/b>\u003c/p>","incGoal":1000,"lastReview":null,"booksOsVersion":1,"healthOsVersion":2,"lifeOsVersion":1,"progressOsVersion":3,"strategyStagesVersion":1,"timelineOsVersion":1,"timerDurations":{"task:work:wb1787160454547o7r":45},"ui":{"sphereGoalFold":{"s1":{"main":true,"year":false},"s1787621761351":{"main":true,"year":true},"s3":{"main":false,"year":false},"s4":{"main":false,"year":false},"s_fin":{"main":false,"year":false}},"sphereNavCollapsed":false,"textOverrides":{}},"visionIdentity":"\u003cp>\u003cb>Я — Стратег-Інвестор.\u003c/b> Я інвестую час, енергію, знання й капітал у системи, які роблять мене сильнішим, вільнішим і масштабнішим. Я дію спокійно, дисципліновано й довгостроково — будую себе, активи та життя, яке не залежить від чужих правил.\u003c/p>","visionRules":"\u003cul>\u003cli>Не змінюю напрямок до завершення повного 90-денного тесту.\u003c/li>\u003cli>Не будую складну систему, якщо можна почати з простої.\u003c/li>\u003cli>Планер допомагає працювати, а не стає окремим проєктом.\u003c/li>\u003cli>Ніколи не пропускай двічі.\u003c/li>\u003cli>Мінімальна версія завжди зараховується.\u003c/li>\u003cli>Кожна дія — голос за того, ким я стаю.\u003c/li>\u003cli>Доказ дією сильніший за афірмацію.\u003c/li>\u003c/ul>","youtubeOsVersion":3,"planner":{"events":[],"people":[],"relationships":[]}};/*SEED*/
 async function load(){let raw=null,fresh=false;
   try{if(window.storage&&window.storage.get){const r=await window.storage.get('inv_v19');raw=r?r.value:null;}}catch(e){}
   if(!raw){try{raw=localStorage.getItem('inv_v19');}catch(e){}}
@@ -5183,6 +5872,7 @@ function rSnav(){
     if(navMoved){navMoved=false;return;}
     curSph=e.dataset.sn;rSnav();rSph();});
   initNavDrag();
+  requestAnimationFrame(()=>{try{applySphereNavCollapsed();}catch(e){}});
   document.querySelectorAll('[data-addsph]').forEach(e=>e.onclick=()=>{
     const n=spheres().length;
     const nm='Нова сфера';
@@ -5302,6 +5992,8 @@ function sphereHero(s){
     s_crypto:{k:'CRYPTO ASSETS',title:'Криптовалюта',sub:'Системне управління ризиком, капіталом і довгостроковими активами',tag:'RISK · CAPITAL · CONVICTION'},
     s5:{k:'INNER BALANCE',title:'Духовність · Стосунки',sub:'Усвідомленість, внутрішній баланс, зв’язок і присутність',tag:'AWARENESS · BALANCE · CONNECTION'}
   }[s.id]||{k:'LIFE SYSTEM',title:s.nm,sub:'Окрема сфера життя з власною ціллю та вимірюваним прогресом',tag:'FOCUS · SYSTEM · GROWTH'};
+  /* Велика назва банера завжди синхронізована з назвою сфери */
+  cfg.title=(s.nm||cfg.title||'').trim()||cfg.title;
   const deco={
     s1:[
       {t:'▶',c:'play',x:14,y:26,z:1.08,d:0,fo:.34,mx:'18px',my:'-22px',r:'-8deg'},
@@ -5666,30 +6358,51 @@ function bindTasksCard(sid){
 let appearOpen=false;
 function sphControlHTML(s){
   const hex=/^#[0-9a-fA-F]{6}$/.test(s.c||'')?s.c:'#d4a24e';
-  return `<div class="card sphere-control">
-    <button class="sphere-brush ${appearOpen?'on':''}" id="sphAppear" title="Оформлення сфери" aria-label="Оформлення сфери">🖌</button>
-    <div class="sphere-control-main">
-      <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
-      <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:6px 0">
-      <button class="dbtn work-open-btn" data-work-sphere="${s.id}" title="Запланувати BLOCK цієї сфери у «Сьогодні»">▣ WORK</button>
-      <button class="dbtn danger" id="sphDel">${pendDel==="sph"+curSph?"Точно видалити?":"Видалити сферу"}</button>
+  return `<div class="card sphere-control ${appearOpen?'edit-open':''}">
+    <div class="sphere-editor-bar">
+      <div class="sphere-editor-summary" aria-live="polite"><span class="sei">${esc(s.ic)}</span><span class="sen">${esc(s.nm)}</span></div>
+      <button class="sphere-brush ${appearOpen?'on':''}" id="sphAppear" title="${appearOpen?'Закрити редагування':'Редагувати сферу'}" aria-label="${appearOpen?'Закрити редагування':'Редагувати сферу'}" aria-expanded="${appearOpen?'true':'false'}">🖌</button>
     </div>
-    <div class="sc-appear ${appearOpen?'open':''}">
-      <div class="sc-pick"><span class="sc-lbl">Смайлик</span><span class="sc-emojis">${SPH_ICONS.map(e=>`<button class="sc-emoji ${e===s.ic?'on':''}" data-scemoji="${e}">${e}</button>`).join('')}</span></div>
-      <div class="sc-pick"><span class="sc-lbl">Колір</span>
-        <span class="sc-colors">${SPH_COLORS.map(c=>`<span class="sc-swatch" data-sphc="${c}" style="background:${c};box-shadow:0 0 0 2px ${c===s.c?'#fff':'transparent'}"></span>`).join('')}</span>
-        <input type="color" class="sc-color-in" data-sccolor value="${hex}" title="Свій колір — палітра">
-        ${window.EyeDropper?'<button class="dbtn sc-eye" data-sceye>⛏ Піпетка</button>':''}
+    <div class="sphere-edit-panel" aria-hidden="${appearOpen?'false':'true'}"><div>
+      <div class="sphere-editor-inner">
+        <div class="sphere-control-main">
+          <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
+          <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:6px 0">
+          <button class="dbtn work-open-btn" data-work-sphere="${s.id}" title="Запланувати BLOCK цієї сфери у «Сьогодні»">▣ WORK</button>
+          <button class="dbtn danger" id="sphDel">${pendDel==="sph"+curSph?"Точно видалити?":"Видалити сферу"}</button>
+        </div>
+        <div class="sc-appear open">
+          <div class="sc-pick"><span class="sc-lbl">Смайлик</span><span class="sc-emojis">${SPH_ICONS.map(e=>`<button class="sc-emoji ${e===s.ic?'on':''}" data-scemoji="${e}">${e}</button>`).join('')}</span></div>
+          <div class="sc-pick"><span class="sc-lbl">Колір</span>
+            <span class="sc-colors">${SPH_COLORS.map(c=>`<span class="sc-swatch" data-sphc="${c}" style="background:${c};box-shadow:0 0 0 2px ${c===s.c?'#fff':'transparent'}"></span>`).join('')}</span>
+            <input type="color" class="sc-color-in" data-sccolor value="${hex}" title="Свій колір — палітра">
+            ${window.EyeDropper?'<button class="dbtn sc-eye" data-sceye>⛏ Піпетка</button>':''}
+          </div>
+        </div>
       </div>
-    </div>
+    </div></div>
   </div>`;
 }
 function bindSphControl(){
   const cur=()=>DB.spheres.find(x=>x.id===curSph);
   const nm=document.getElementById('sphName');
-  if(nm)nm.oninput=e=>{cur().nm=e.target.value;save();rSnav();rGoals();};
+  if(nm)nm.oninput=e=>{
+    const value=e.target.value;
+    cur().nm=value;
+
+    /* Оновлюємо великий заголовок одразу під час введення,
+       без перерендеру всього блоку — курсор у полі не збивається. */
+    const heroTitle=document.querySelector('.shero-t');
+    if(heroTitle)heroTitle.textContent=value;
+    const summaryName=document.querySelector('.sphere-editor-summary .sen');
+    if(summaryName)summaryName.textContent=value;
+
+    save();
+    rSnav();
+    rGoals();
+  };
   const ic=document.querySelector('[data-scic]');
-  if(ic)ic.onchange=e=>{const v=e.target.value.trim();if(v){cur().ic=v;save();rSph();rSnav();rGoals();}};
+  if(ic)ic.onchange=e=>{const v=e.target.value.trim();if(v){cur().ic=v;const summaryIcon=document.querySelector('.sphere-editor-summary .sei');if(summaryIcon)summaryIcon.textContent=v;save();rSph();rSnav();rGoals();}};
   document.querySelectorAll('[data-scemoji]').forEach(e=>e.onclick=()=>{cur().ic=e.dataset.scemoji;save();rSph();rSnav();rGoals();});
   document.querySelectorAll('[data-sphc]').forEach(e=>e.onclick=()=>{cur().c=e.dataset.sphc;save();rSph();rSnav();rGoals();});
   const ci=document.querySelector('[data-sccolor]');
@@ -7057,13 +7770,26 @@ function applySphereNavCollapsed(){
   const pg=document.getElementById('pg-sph');
   if(!pg)return;
   const collapsed=sphereNavCollapsed();
+  const nav=document.getElementById('snav');
+  if(nav){
+    const items=[...nav.querySelectorAll('button')];
+    const mid=(items.length-1)/2;
+    items.forEach((item,i)=>{
+      const delta=i-mid;
+      const side=delta<0?-1:delta>0?1:0;
+      const distance=side===0?0:(110+Math.abs(delta)*38);
+      item.style.setProperty('--curtain-x',`${side*distance}px`);
+      item.style.setProperty('--curtain-y',side===0?'-12px':'0px');
+      item.style.setProperty('--curtain-delay',`${Math.min(90,Math.abs(delta)*11)}ms`);
+    });
+  }
   pg.classList.toggle('snav-collapsed',collapsed);
   const btn=document.getElementById('sphNavToggle');
   const arr=document.getElementById('sphNavToggleLbl');
   const txt=document.getElementById('sphNavToggleText');
-  if(btn){btn.setAttribute('aria-expanded',String(!collapsed));btn.title=collapsed?'Розгорнути сфери':'Згорнути сфери';}
-  if(arr)arr.textContent=collapsed?'▸':'▾';
-  if(txt)txt.textContent=collapsed?'Розгорнути':'Згорнути';
+  if(btn){btn.setAttribute('aria-expanded',String(!collapsed));btn.title=collapsed?'Відкрити сфери':'Закрити сфери';}
+  if(arr)arr.textContent=collapsed?'⌄':'⌃';
+  if(txt)txt.textContent='Сфери';
 }
 
 function openVisionSphere(id){
@@ -7860,7 +8586,332 @@ function initLifePlannerModule(){
 
   // Replace old planner tab behavior with review; keep calendar available only through Quick Add.
   const reviewTab=$('.tab[data-pg="review"]');if(reviewTab)reviewTab.onclick=()=>{go('review');renderReview()};
+
+
+  /* ===== refreshed charts + centered goals · 2026-08-31 ===== */
+  spark=function(sid,which){
+    const W=436,H=146,padL=40,padR=14,padT=12,padB=24;
+    const current=Math.max(0,Math.min(100,which==='year'?pctYear(sid):pctBig(sid)));
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    const seed=[...String(sid+'|'+which)].reduce((a,ch)=>a+ch.charCodeAt(0),0)+97;
+    const rand=n=>{const x=Math.sin((seed+n*17.913)*12.9898)*43758.5453;return x-Math.floor(x)};
+    const startX=padL, endX=W-padR, plotW=endX-startX;
+    const axisMax=100, axisMid=50;
+    const Y=v=>H-padB-(H-padT-padB)*(clamp(v,0,axisMax)/axisMax);
+    const xGrid=[.2,.4,.6,.8].map(r=>{const x=(startX+plotW*r).toFixed(1);return `<path class="spark-vgrid" d="M${x} ${padT}V${H-padB}"/>`;}).join('');
+    let chartCore='';
+    if(current>0){
+      const activeEndX=startX + plotW*(current/100);
+      const N=Math.max(6,Math.round(6+current*0.17));
+      const weights=[];
+      for(let i=0;i<N-1;i++){
+        const t=i/(N-2||1);
+        const w=0.68 + 0.38*Math.sin(t*Math.PI)**2 + 0.25*rand(i+3) + 0.06*Math.cos(t*Math.PI*2.4);
+        weights.push(Math.max(0.16,w));
+      }
+      const total=weights.reduce((a,b)=>a+b,0)||1;
+      const vals=[0];
+      let acc=0;
+      for(let i=0;i<weights.length;i++){
+        acc += weights[i];
+        let v=current*(acc/total);
+        v += (rand(i+44)-0.5)*Math.min(3.2,current*0.05);
+        v = Math.max(vals[vals.length-1], v);
+        v = Math.min(current, v);
+        vals.push(v);
+      }
+      vals[0]=0; vals[vals.length-1]=current;
+      const pts=vals.map((v,i)=>[startX+(activeEndX-startX)*(i/(vals.length-1)),Y(v),v]);
+      const d=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const baseY=(H-padB).toFixed(1);
+      const area=`${d} L${pts[pts.length-1][0].toFixed(1)} ${baseY} L${pts[0][0].toFixed(1)} ${baseY} Z`;
+      const gid='rg'+sid.replace(/[^a-z0-9]/gi,'')+which;
+      chartCore=`
+        <defs>
+          <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f1bf24" stop-opacity=".34"/>
+            <stop offset="58%" stop-color="#d3a236" stop-opacity=".10"/>
+            <stop offset="100%" stop-color="#d3a236" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="spark-area" d="${area}" fill="url(#${gid})"/>
+        <path class="spark-line-under" d="${d}"/>
+        <path class="spark-main-line" d="${d}"/>
+        <circle class="spark-pt" cx="${pts[0][0].toFixed(1)}" cy="${pts[0][1].toFixed(1)}" r="2.5"/>
+        <circle class="spark-pt" cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="2.8"/>
+      `;
+    }
+    return `<div class="spark premium-spark"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Графік прогресу"><g aria-hidden="true"><path class="spark-grid" d="M${startX} ${padT}H${endX} M${startX} ${Y(axisMid).toFixed(1)}H${endX} M${startX} ${H-padB}H${endX}"/>${xGrid}</g>${chartCore}<text class="spark-axis-label" x="2" y="${padT+4}">100%</text><text class="spark-axis-label" x="8" y="${Y(axisMid)+4}">50%</text><text class="spark-axis-label" x="16" y="${H-padB+4}">0%</text><text class="spark-time-label" x="${startX}" y="${H-6}">START</text><text class="spark-time-label" x="${endX}" y="${H-6}" text-anchor="end">NOW</text></svg></div>`;
+  };
+
+
+
+  /* ===== HARD FIX: graph + live editing ===== */
+  spark=function(sid,which){
+    const W=436,H=146,padL=40,padR=14,padT=12,padB=24;
+    const current=Math.max(0,Math.min(100,which==='year'?pctYear(sid):pctBig(sid)));
+    const startX=padL,endX=W-padR,plotW=endX-startX;
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    const Y=v=>H-padB-(H-padT-padB)*(clamp(v,0,100)/100);
+    const seed=[...String(sid+'|'+which)].reduce((a,ch)=>a+ch.charCodeAt(0),0)+313;
+    const rand=n=>{const x=Math.sin((seed+n*23.771)*12.9898)*43758.5453;return x-Math.floor(x)};
+    const xGrid=[.2,.4,.6,.8].map(r=>{const x=(startX+plotW*r).toFixed(1);return `<path class="spark-vgrid" d="M${x} ${padT}V${H-padB}"/>`;}).join('');
+    let chart='';
+
+    if(current>0){
+      // The drawn width is proportional to completed progress. 38% = only first 38% of chart width.
+      const activeEndX=startX+plotW*(current/100);
+      const N=Math.max(7,Math.min(28,Math.round(7+current*.20)));
+      const vals=[0];
+      let acc=0;
+      const increments=[];
+      for(let i=0;i<N-1;i++){
+        const t=i/Math.max(1,N-2);
+        const raw=.58 + rand(i+8)*.75 + Math.sin(t*Math.PI*3.2)*.18;
+        increments.push(Math.max(.12,raw));
+      }
+      const sum=increments.reduce((a,b)=>a+b,0)||1;
+      for(let i=0;i<increments.length;i++){
+        acc+=increments[i];
+        let v=current*(acc/sum);
+        // slight broken-market character while keeping general growth
+        if(i<increments.length-1){v += (rand(i+90)-.5)*Math.min(2.6,current*.045);}
+        const prev=vals[vals.length-1];
+        v=Math.max(prev-Math.min(1.1,current*.018),v);
+        v=Math.min(current,v);
+        vals.push(v);
+      }
+      vals[0]=0; vals[vals.length-1]=current;
+      const pts=vals.map((v,i)=>[startX+(activeEndX-startX)*(i/(vals.length-1)),Y(v)]);
+      const d=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const baseY=(H-padB).toFixed(1);
+      const area=`${d} L${pts[pts.length-1][0].toFixed(1)} ${baseY} L${pts[0][0].toFixed(1)} ${baseY} Z`;
+      const gid='finalg'+sid.replace(/[^a-z0-9]/gi,'')+which;
+      chart=`<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f1bf24" stop-opacity=".18"/><stop offset="38%" stop-color="#8fbd68" stop-opacity=".12"/><stop offset="72%" stop-color="#5a9367" stop-opacity=".20"/><stop offset="100%" stop-color="#2a4a36" stop-opacity=".34"/></linearGradient></defs><path class="spark-area" d="${area}" fill="url(#${gid})"/><path class="spark-line-under" d="${d}" fill="none"/><path class="spark-main-line" d="${d}" fill="none"/>`;
+    }
+
+    return `<div class="spark premium-spark"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Графік прогресу"><g aria-hidden="true"><path class="spark-grid" d="M${startX} ${padT}H${endX} M${startX} ${Y(50).toFixed(1)}H${endX} M${startX} ${H-padB}H${endX}"/>${xGrid}</g>${chart}<text class="spark-axis-label" x="2" y="${padT+4}">100%</text><text class="spark-axis-label" x="8" y="${Y(50)+4}">50%</text><text class="spark-axis-label" x="16" y="${H-padB+4}">0%</text><text class="spark-time-label" x="${startX}" y="${H-6}">START</text><text class="spark-time-label" x="${endX}" y="${H-6}" text-anchor="end">NOW</text></svg></div>`;
+  };
+
+
+  /* ===== CLEAN FINAL GRAPH: one jagged mini-segment per completed stage ===== */
+  spark=function(sid,which){
+    const obj=(DB.sph||{})[sid]||{stages:[]};
+    const grp=(obj.stages||[]).filter(x=>which==='year'?!!x.y:true);
+    const total=grp.length;
+    const done=grp.filter(x=>x.d).length;
+    const current=total?Math.round(done/total*100):0;
+    const W=560,H=124;
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    const Y=v=>H-(H*clamp(v,0,100)/100);
+    const xGrid=[.2,.4,.6,.8].map(r=>{
+      const x=(W*r).toFixed(1);
+      return `<path class="spark-vgrid" d="M${x} 0V${H}"/>`;
+    }).join('');
+    let chart='';
+
+    if(total>0 && done>0){
+      const activeW=W*(done/total);
+      const segW=activeW/done;
+      const pts=[[0,Y(0)]];
+      const seed=[...String(sid+'|'+which)].reduce((a,ch)=>a+ch.charCodeAt(0),0)+719;
+      const rand=n=>{const z=Math.sin((seed+n*17.137)*12.9898)*43758.5453;return z-Math.floor(z)};
+
+      for(let i=1;i<=done;i++){
+        const prev=((i-1)/total)*100;
+        const cur=(i/total)*100;
+        const delta=cur-prev;
+        const x0=segW*(i-1);
+        const mode=(i+Math.floor(rand(i)*3))%3;
+        let rel;
+        if(mode===0) rel=[[.22,.34],[.43,.55],[.61,.46],[.79,.78],[1,1]];
+        else if(mode===1) rel=[[.19,.28],[.37,.47],[.55,.37],[.73,.72],[.88,.66],[1,1]];
+        else rel=[[.20,.38],[.40,.31],[.58,.60],[.76,.52],[.90,.84],[1,1]];
+        rel.forEach(([rx,ry],j)=>{
+          let yPct=prev+delta*ry;
+          // very small deterministic variation keeps the market-like broken character stable.
+          if(j<rel.length-1){yPct += (rand(i*19+j)-.5)*Math.min(1.8,delta*.16);}
+          yPct=clamp(yPct,prev,cur);
+          pts.push([x0+segW*rx,Y(yPct)]);
+        });
+      }
+      // exact current endpoint; no dot is drawn.
+      pts[pts.length-1]=[activeW,Y(current)];
+      const d=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const area=`${d} L${activeW.toFixed(1)} ${H} L0 ${H} Z`;
+      const gid='clean'+sid.replace(/[^a-z0-9]/gi,'')+which;
+      chart=`
+        <defs>
+          <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f1bf24" stop-opacity=".17"/>
+            <stop offset="38%" stop-color="#8eb45d" stop-opacity=".11"/>
+            <stop offset="72%" stop-color="#5a9367" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#294d35" stop-opacity=".38"/>
+          </linearGradient>
+        </defs>
+        <path class="spark-area" d="${area}" fill="url(#${gid})"/>
+        <path class="spark-main-line" d="${d}"/>`;
+    }
+
+    return `<div class="spark premium-spark">
+      <div class="spark-ylabels"><span>100%</span><span>50%</span><span>0%</span></div>
+      <div class="spark-plot">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Графік прогресу">
+          <g aria-hidden="true">
+            <path class="spark-grid" d="M0 0H${W} M0 ${H/2}H${W} M0 ${H}H${W}"/>
+            ${xGrid}
+          </g>
+          ${chart}
+        </svg>
+      </div>
+      <div class="spark-xlabels"><span>START</span><span>NOW</span></div>
+    </div>`;
+  };
+
+  // Make stage editing save LIVE instead of only after blur/change.
+  const __bindStrategyStagesHard=bindStrategyStages;
+  bindStrategyStages=function(sid){
+    __bindStrategyStagesHard(sid);
+    document.querySelectorAll('[data-sstaget]').forEach(el=>{
+      el.onpointerdown=ev=>ev.stopPropagation();
+      el.onclick=ev=>ev.stopPropagation();
+      el.oninput=()=>{
+        const [s,i]=el.dataset.sstaget.split('|');
+        if(DB.sph[s]&&DB.sph[s].stages[i]){DB.sph[s].stages[i].t=el.value;save();}
+      };
+    });
+    document.querySelectorAll('.gb-txt[contenteditable="true"][data-f]').forEach(el=>{
+      el.onpointerdown=ev=>ev.stopPropagation();
+      el.onclick=ev=>ev.stopPropagation();
+      el.oninput=()=>{if(DB.sph[curSph]){DB.sph[curSph][el.dataset.f]=el.innerText;save();}};
+    });
+  };
+
+  // The old DOM was rendered before the new spark() existed. Force one clean rerender now.
+  setTimeout(()=>{
+    try{
+      if(typeof rSph==='function')rSph();
+      if(typeof rDash==='function')rDash();
+      if(typeof rGoals==='function')rGoals();
+    }catch(e){console.error(e)}
+  },0);
+
+
+  /* ===== CLEAN GRAPH V2: compact brush + denser pseudo-staircase progression ===== */
+  sphControlHTML=function(s){
+    const hex=/^#[0-9a-fA-F]{6}$/.test(s.c||'')?s.c:'#d4a24e';
+    return `<div class="sphere-control brush-only ${appearOpen?'edit-open':''}">
+      <button class="sphere-brush ${appearOpen?'on':''}" id="sphAppear" title="${appearOpen?'Закрити редагування':'Редагувати сферу'}" aria-label="${appearOpen?'Закрити редагування':'Редагувати сферу'}" aria-expanded="${appearOpen?'true':'false'}">🖌</button>
+      <div class="sphere-edit-panel" aria-hidden="${appearOpen?'false':'true'}"><div>
+        <div class="sphere-editor-inner">
+          <div class="sphere-control-main">
+            <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
+            <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Spectral',serif;font-size:17px;font-weight:600;letter-spacing:0;padding:6px 0">
+            <button class="dbtn work-open-btn" data-work-sphere="${s.id}" title="Запланувати BLOCK цієї сфери у «Сьогодні»">▣ WORK</button>
+            <button class="dbtn danger" id="sphDel">${pendDel==='sph'+curSph?'Точно видалити?':'Видалити сферу'}</button>
+          </div>
+          <div class="sc-appear open">
+            <div class="sc-pick"><span class="sc-lbl">Смайлик</span><span class="sc-emojis">${SPH_ICONS.map(e=>`<button class="sc-emoji ${e===s.ic?'on':''}" data-scemoji="${e}">${e}</button>`).join('')}</span></div>
+            <div class="sc-pick"><span class="sc-lbl">Колір</span>
+              <span class="sc-colors">${SPH_COLORS.map(c=>`<span class="sc-swatch" data-sphc="${c}" style="background:${c};box-shadow:0 0 0 2px ${c===s.c?'#fff':'transparent'}"></span>`).join('')}</span>
+              <input type="color" class="sc-color-in" data-sccolor value="${hex}" title="Свій колір — палітра">
+              ${window.EyeDropper?'<button class="dbtn sc-eye" data-sceye>⛏ Піпетка</button>':''}
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>`;
+  };
+
+  spark=function(sid,which){
+    const obj=(DB.sph||{})[sid]||{stages:[]};
+    const grp=(obj.stages||[]).filter(x=>which==='year'?!!x.y:true);
+    const total=grp.length;
+    const done=grp.filter(x=>x.d).length;
+    const current=total?Math.round(done/total*100):0;
+    const W=560,H=124;
+    const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    const Y=v=>H-(H*clamp(v,0,100)/100);
+    const xGrid=[.2,.4,.6,.8].map(r=>{
+      const x=(W*r).toFixed(1);
+      return `<path class="spark-vgrid" d="M${x} 0V${H}"/>`;
+    }).join('');
+    let chart='';
+
+    if(total>0 && done>0){
+      const stepPct=100/total;
+      const activeW=W*(done/total);
+      const pts=[[0,Y(0),0,false]];
+
+      /*
+        Each completed stage becomes ONE sharp market-style vertex.
+        Odd stages overshoot, even stages pull back, while the overall
+        trend keeps rising and the final point always equals real progress.
+      */
+      for(let i=1;i<=done;i++){
+        const x=activeW*(i/done);
+        let v;
+        if(i===done){
+          v=current;
+        }else{
+          const base=i*stepPct;
+          if(i%2===1){
+            v=base + stepPct*.66;       // sharp push up
+          }else{
+            v=base - stepPct*.56;       // visible pullback
+          }
+          v=clamp(v,0,current-stepPct*.10);
+        }
+        pts.push([x,Y(v),v,true]);
+      }
+
+      const d=pts.map((p,i)=>`${i?'L':'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const area=`${d} L${activeW.toFixed(1)} ${H} L0 ${H} Z`;
+      const gid='sharp'+sid.replace(/[^a-z0-9]/gi,'')+which;
+      const markers=pts.slice(1).map(p=>{
+        const size=5.2;
+        return `<rect class="spark-stage-point" x="${(p[0]-size/2).toFixed(1)}" y="${(p[1]-size/2).toFixed(1)}" width="${size}" height="${size}" rx=".7"/>`;
+      }).join('');
+
+      chart=`
+        <defs>
+          <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f1bf24" stop-opacity=".17"/>
+            <stop offset="38%" stop-color="#8eb45d" stop-opacity=".11"/>
+            <stop offset="72%" stop-color="#5a9367" stop-opacity=".20"/>
+            <stop offset="100%" stop-color="#294d35" stop-opacity=".38"/>
+          </linearGradient>
+        </defs>
+        <path class="spark-area" d="${area}" fill="url(#${gid})"/>
+        <path class="spark-main-line" d="${d}"/>
+        ${markers}`;
+    }
+
+    return `<div class="spark premium-spark">
+      <div class="spark-ylabels"><span>100%</span><span>50%</span><span>0%</span></div>
+      <div class="spark-plot">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Графік прогресу">
+          <g aria-hidden="true">
+            <path class="spark-grid" d="M0 0H${W} M0 ${H/2}H${W} M0 ${H}H${W}"/>
+            ${xGrid}
+          </g>
+          ${chart}
+        </svg>
+      </div>
+      <div class="spark-xlabels"><span>START</span><span>NOW</span></div>
+    </div>`;
+  };
+
+  setTimeout(()=>{
+    try{
+      if(document.body.dataset.page==='sph'){
+        rSph();
+        applySphereNavCollapsed();
+      }
+    }catch(e){}
+  },0);
+
   ensureReview();
 })();
 </script>
-<a id="bottomBar" style="position: fixed; bottom: -40px; left: 0px; z-index: 9999; transform: translateX(-50%); background-color: transparent; border-radius: 5px 5px 0px 0px; opacity: 0.3; padding: 5px; transition: 0.3s; cursor: pointer; max-height: 100px; max-width: 45px;"><img src="chrome-extension://kobncfkmjelbefaoohoblamnbackjggk/icon/icon_32.png" style="width: 32px; height: 32px;"></a><div class="glasp-extension-toaster glasp-extension-toaster--youtube-summary" data-glasp-print="hide" style="display: block; width: 320px; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; top: 40px; right: 24px; z-index: 9999;"></div></body><div class="glasp-extension" data-glasp-print="hide" id="glasp-web-summary-button" style="display: block; width: unset; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; bottom: 16px; right: 16px; z-index: 9999;"><div class="glasp-extension" style="font-family: inherit;"></div></div></html>
+</div></body></html>
