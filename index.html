@@ -3448,6 +3448,139 @@ input[type="text"],input[type="search"],input:not([type]),textarea,[contentedita
 }
 </style>
 
+
+<style id="calendar-smooth-reminders-v4">
+/* Smooth native calendar swipe, especially inside Telegram/iOS WebView */
+#pg-today .tds-grid{
+  display:grid!important;
+  grid-template-columns:none!important;
+  grid-auto-flow:column!important;
+  grid-auto-columns:calc((100% - 4px)/5)!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-behavior:smooth!important;
+  scroll-snap-type:x proximity!important;
+  overscroll-behavior-x:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-x!important;
+  scrollbar-width:none!important;
+  cursor:grab;
+}
+#pg-today .tds-grid::-webkit-scrollbar{display:none!important}
+#pg-today .tds-grid:active{cursor:grabbing}
+#pg-today .tds-day{scroll-snap-align:start;scroll-snap-stop:normal;user-select:none;-webkit-user-select:none}
+#pg-today .tds-controls{flex-wrap:nowrap}
+#pg-today .tds-notify{width:34px;height:32px;border:1px solid #334252;border-radius:8px;background:#1a2430;color:#d8b96f;display:inline-flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+#pg-today .tds-notify:hover,#pg-today .tds-notify.on{border-color:#d4a24e;background:rgba(212,162,78,.08);color:#f0d28c}
+#pg-today .tds-notify:active{transform:scale(.96)}
+
+/* Reminder cards shown directly in Today */
+.today-reminder-stack{display:grid;gap:7px;margin:0 0 9px}
+.today-reminder-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.today-reminder-head b{font:600 9px 'Oswald',sans-serif;letter-spacing:1.35px;text-transform:uppercase;color:#d8b96f}
+.today-reminder-head span{font:500 8px 'Oswald',sans-serif;color:#687584;letter-spacing:.7px}
+.today-reminder-item{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:54px;padding:8px 10px;border:1px solid rgba(212,162,78,.18);border-radius:11px;background:linear-gradient(135deg,rgba(212,162,78,.065),rgba(111,184,126,.025)),#121923;box-shadow:inset 0 1px 0 rgba(255,255,255,.018)}
+.today-reminder-ic{width:34px;height:34px;border:1px solid rgba(212,162,78,.26);border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(212,162,78,.055);font-size:15px}
+.today-reminder-main{min-width:0}
+.today-reminder-main b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 14px 'Spectral',serif;color:#eee9df}
+.today-reminder-main small{display:block;margin-top:2px;font:500 8px 'Oswald',sans-serif;letter-spacing:.65px;color:#7b8794;text-transform:uppercase}
+.today-reminder-time{font:600 11px 'Oswald',sans-serif;color:#e7c88a;white-space:nowrap}
+.today-reminder-more{padding:5px 8px;border:1px solid #334252;border-radius:999px;background:#17212b;color:#8e9aa7;font:600 8px 'Oswald',sans-serif;letter-spacing:.6px}
+
+/* Exact-time in-app reminder */
+.planner-live-reminder{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));z-index:4800;width:min(520px,calc(100vw - 24px));transform:translate(-50%,-18px);opacity:0;pointer-events:none;transition:opacity .28s ease,transform .34s cubic-bezier(.2,.8,.2,1);border:1px solid rgba(212,162,78,.34);border-radius:15px;background:linear-gradient(135deg,rgba(212,162,78,.10),rgba(111,184,126,.045)),rgba(13,18,24,.97);box-shadow:0 18px 48px rgba(0,0,0,.48),0 0 28px rgba(212,162,78,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.planner-live-reminder.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.planner-live-reminder-inner{display:grid;grid-template-columns:42px minmax(0,1fr) 34px;gap:10px;align-items:center;padding:10px 10px 10px 11px}
+.planner-live-reminder-icon{width:42px;height:42px;border:1px solid rgba(212,162,78,.28);border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(212,162,78,.07);font-size:19px}
+.planner-live-reminder-copy{min-width:0}
+.planner-live-reminder-copy small{display:block;font:600 8px 'Oswald',sans-serif;letter-spacing:1.3px;text-transform:uppercase;color:#d4a24e;margin-bottom:2px}
+.planner-live-reminder-copy b{display:block;font:600 15px 'Spectral',serif;color:#f3eee4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.planner-live-reminder-copy span{display:block;margin-top:2px;font:500 9px 'Oswald',sans-serif;color:#84909e}
+.planner-live-reminder-close{width:34px;height:34px;border:1px solid #334252;border-radius:10px;background:#151e28;color:#8995a2;font-size:17px;cursor:pointer}
+
+@media(max-width:620px){
+  #pg-today .tds-grid{grid-auto-columns:calc((100% - 4px)/5)!important;scroll-snap-type:x proximity!important}
+  #pg-today .tds-notify{height:34px;width:34px}
+  .today-reminder-stack{margin-bottom:8px}
+  .today-reminder-item{grid-template-columns:32px minmax(0,1fr) auto;min-height:50px;padding:7px 8px;gap:7px;border-radius:10px}
+  .today-reminder-ic{width:32px;height:32px;border-radius:9px;font-size:14px}
+  .today-reminder-main b{font-size:13px}
+  .today-reminder-time{font-size:10px}
+  .planner-live-reminder{top:calc(10px + env(safe-area-inset-top));width:calc(100vw - 16px);border-radius:13px}
+  .planner-live-reminder-inner{grid-template-columns:38px minmax(0,1fr) 32px;gap:8px;padding:8px}
+  .planner-live-reminder-icon{width:38px;height:38px;border-radius:10px;font-size:17px}
+  .planner-live-reminder-copy b{font-size:14px}
+  .planner-live-reminder-close{width:32px;height:32px}
+}
+</style>
+
+
+<style id="today-calendar-desktop-mobile-scroll-v6">
+/* Laptop: use calm arrow navigation; phone: direct inertial finger swipe. */
+@media (min-width:621px){
+  #pg-today .tds-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:12px!important;
+    padding:8px 13px 7px!important;
+  }
+  #pg-today .tds-controls{
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+  }
+  /* Keep the desktop header clean: navigation arrows only. */
+  #pg-today .tds-controls .tds-today,
+  #pg-today .tds-controls .tds-notify{display:none!important}
+  #pg-today .tds-nav{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:34px!important;
+    height:30px!important;
+    padding:0!important;
+    border-radius:9px!important;
+    border:1px solid rgba(212,162,78,.20)!important;
+    background:linear-gradient(180deg,rgba(212,162,78,.045),rgba(255,255,255,.012)),#161f29!important;
+    color:#c7af78!important;
+    font-size:18px!important;
+    line-height:1!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+    transition:border-color .18s ease,color .18s ease,background .18s ease,transform .14s ease!important;
+  }
+  #pg-today .tds-nav:hover{
+    border-color:rgba(212,162,78,.55)!important;
+    color:#f0d28c!important;
+    background:rgba(212,162,78,.065)!important;
+  }
+  #pg-today .tds-nav:active{transform:scale(.96)!important}
+  #pg-today .tds-grid{
+    scroll-behavior:auto!important; /* JS owns desktop arrow speed. */
+    scroll-snap-type:x proximity!important;
+    cursor:default!important;
+  }
+}
+
+@media (max-width:620px){
+  #pg-today .tds-controls{display:none!important}
+  #pg-today .tds-grid{
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x!important;
+    overscroll-behavior-x:contain!important;
+    scroll-behavior:smooth!important;
+    scroll-snap-type:x proximity!important;
+    cursor:default!important;
+  }
+  #pg-today .tds-day{
+    scroll-snap-align:start!important;
+    scroll-snap-stop:normal!important;
+  }
+}
+</style>
+
 </head>
 <body data-page="sph">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
@@ -7984,7 +8117,7 @@ function initRossmannModule(){
 
       .editor{padding:18px 17px;background:linear-gradient(145deg,rgba(212,162,78,.025),transparent 42%),var(--r-panel3);min-width:0}.eyebrow{font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.5px;color:var(--r-faint);margin-bottom:5px}.selectedTitle{font:700 22px 'Oswald',sans-serif;color:var(--r-gold2);line-height:1.2;margin-bottom:18px;text-transform:capitalize}.timeGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.2px;color:var(--r-faint);margin:0 0 6px}.timeInput{width:100%;height:56px;border:1px solid var(--r-line);border-radius:12px;background:var(--r-panel2);color:#fff;padding:0 12px;outline:none;font:700 21px 'Oswald',sans-serif;color-scheme:dark}.timeInput:focus{border-color:var(--r-gold)}
       .presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.preset{height:32px;padding:0 9px;border:1px solid var(--r-line);border-radius:8px;background:transparent;color:var(--r-muted);font:500 9px 'Oswald',sans-serif}.preset:hover{border-color:var(--r-gold);color:var(--r-gold2)}
-      .duration{display:flex;align-items:end;justify-content:space-between;gap:10px;padding:16px 0;border-bottom:1px solid var(--r-line);margin-bottom:15px}.duration span{font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.3px;color:var(--r-faint)}.duration strong{font:700 28px 'Oswald',sans-serif;color:var(--r-gold2);line-height:1}.duration strong em{font-style:normal;font-size:12px;color:var(--r-muted);margin-left:3px}
+      .duration{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid var(--r-line);margin-bottom:15px}.duration>span{font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.3px;color:var(--r-faint)}.durationValues{display:flex;align-items:baseline;justify-content:flex-end;gap:10px;min-width:0;flex-wrap:wrap}.duration strong{font:700 28px 'Oswald',sans-serif;color:var(--r-gold2);line-height:1;white-space:nowrap}.duration strong em{font-style:normal;font-size:12px;color:var(--r-muted);margin-left:3px}.duration .incomeSep{font:500 16px 'Oswald',sans-serif;color:#4e5d6c}.duration .shiftIncome{font-size:23px;color:#7ed28f;text-shadow:0 0 14px rgba(104,188,123,.12)}.duration .shiftIncome em{color:#789486}
       .diffRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}.diffRow span{font:500 8px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1.3px;color:var(--r-faint)}.diffs{display:flex;gap:7px}.diff{width:42px;height:42px;border:1px solid var(--r-line);border-radius:11px;background:var(--r-panel2);display:grid;place-items:center}.diff i{width:11px;height:11px;border-radius:50%}.diff[data-d="easy"] i{background:var(--r-easy)}.diff[data-d="medium"] i{background:var(--r-mid)}.diff[data-d="hard"] i{background:var(--r-hard)}.diff.on[data-d="easy"]{border-color:var(--r-easy)}.diff.on[data-d="medium"]{border-color:var(--r-mid)}.diff.on[data-d="hard"]{border-color:var(--r-hard)}
       .save{width:100%;min-height:54px;border:1px solid rgba(104,188,123,.55);border-radius:12px;background:linear-gradient(135deg,rgba(104,188,123,.22),rgba(212,162,78,.06));color:#f0f8f1;font:700 11px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.9px}.editorActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.offBtn,.deleteBtn{min-height:46px;border-radius:11px;background:var(--r-panel2);font:600 10px 'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.7px}.offBtn{border:1px solid var(--r-line);color:var(--r-muted)}.deleteBtn{border:1px solid rgba(220,103,91,.35);color:#e69b93}.deleteBtn:disabled{opacity:.3;cursor:default}
 
@@ -7994,7 +8127,7 @@ function initRossmannModule(){
       .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(12px);opacity:0;pointer-events:none;border:1px solid var(--r-line);border-radius:999px;background:rgba(17,23,31,.98);color:var(--r-gold2);padding:9px 14px;font:600 10px 'Oswald',sans-serif;letter-spacing:.7px;transition:.2s;z-index:120}.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
       @media(max-width:900px){.workspace{grid-template-columns:1fr}.calendarPane{border-right:0;border-bottom:1px solid var(--r-line)}.editor{padding:15px}.statsGrid{grid-template-columns:repeat(3,1fr)}.charts{grid-template-columns:1fr}.day{min-height:92px}.toolbar{grid-template-columns:44px 1fr 112px 44px auto}.nav{width:44px}.miniStats{grid-template-columns:repeat(2,1fr)}.countScope{align-items:flex-start;flex-wrap:wrap}.countScopeControls{margin-left:auto}}}
-      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.topActions{width:100%;display:grid;grid-template-columns:1fr 1fr}.btn{min-height:42px}.miniStats{gap:7px}.stat{padding:10px 11px}.countScope{padding:10px 11px;gap:9px}.countScopeInfo{width:100%}.countScopeText b{font-size:12px}.countScopeControls{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) 88px;gap:6px;align-items:center}.countScopeMonth{min-width:0;width:100%}.countScopeYear{width:100%}.countScope select{height:42px;font-size:13px}.allHoursTag{grid-column:2/4;justify-self:start;height:28px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.bookBody{padding:10px}.bookToolbar{grid-template-columns:42px minmax(0,1fr) 88px 42px;gap:6px}.bookNav{width:42px;height:42px}.bookToolbar select{height:42px;padding:0 8px;font-size:13px}.bookCaption{font-size:18px;margin-bottom:10px}.ledgerRow{grid-template-columns:72px minmax(0,1fr) 76px;gap:7px;min-height:46px;padding:9px 9px;font-size:12px}.ledgerTime,.ledgerHours{font-size:13px}.ledgerHead{font-size:7.5px}.toast{bottom:72px;max-width:88vw;text-align:center}}
+      @media(max-width:620px){.rs{padding-bottom:24px}.top{align-items:center}.brand b{font-size:17px}.topActions{width:100%;display:grid;grid-template-columns:1fr 1fr}.btn{min-height:42px}.miniStats{gap:7px}.stat{padding:10px 11px}.countScope{padding:10px 11px;gap:9px}.countScopeInfo{width:100%}.countScopeText b{font-size:12px}.countScopeControls{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) 88px;gap:6px;align-items:center}.countScopeMonth{min-width:0;width:100%}.countScopeYear{width:100%}.countScope select{height:42px;font-size:13px}.allHoursTag{grid-column:2/4;justify-self:start;height:28px}.stat strong{font-size:20px}.rateWrap input{font-size:20px;width:68px}.shell{border-radius:14px}.toolbar{grid-template-columns:42px minmax(0,1fr) 92px 42px;padding:8px;gap:6px}.todayBtn{grid-column:1/-1;height:38px}.nav{width:42px;height:42px}.toolbar select{height:42px;padding:0 8px;font-size:13px}.week span{padding:8px 1px;font-size:7px}.day{min-height:61px;padding:5px 4px}.dn{font-size:11px}.entry{margin-top:5px;padding:3px 3px 3px 5px;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.entry span{display:none}.editor{padding:14px 12px}.selectedTitle{font-size:20px;margin-bottom:14px}.timeInput{height:54px;font-size:20px}.presets{gap:5px}.preset{font-size:8px;padding:0 8px}.duration{align-items:center;padding:15px 0}.durationValues{gap:8px}.duration strong{font-size:27px}.duration .shiftIncome{font-size:21px}.duration .incomeSep{font-size:13px}.statsGrid{grid-template-columns:repeat(2,1fr)}.modalBody{padding:11px}.jr{grid-template-columns:75px 1fr 72px;padding:9px 8px;font-size:10px}.bookBody{padding:10px}.bookToolbar{grid-template-columns:42px minmax(0,1fr) 88px 42px;gap:6px}.bookNav{width:42px;height:42px}.bookToolbar select{height:42px;padding:0 8px;font-size:13px}.bookCaption{font-size:18px;margin-bottom:10px}.ledgerRow{grid-template-columns:72px minmax(0,1fr) 76px;gap:7px;min-height:46px;padding:9px 9px;font-size:12px}.ledgerTime,.ledgerHours{font-size:13px}.ledgerHead{font-size:7.5px}.toast{bottom:72px;max-width:88vw;text-align:center}}
       @media(max-width:620px){
         .overlay{align-items:flex-end;padding:0;background:rgba(3,6,9,.76)}
         .overlay .modal{width:100%;max-height:calc(100dvh - max(10px,env(safe-area-inset-top)));border-radius:22px 22px 0 0;border-bottom:0;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom)}
@@ -8039,7 +8172,7 @@ function initRossmannModule(){
               <div class="field"><label>По яку</label><input class="timeInput" id="endTime" type="time" value="14:00"></div>
             </div>
             <div class="presets"><button class="preset" data-preset="06:00|14:00">06–14</button><button class="preset" data-preset="14:00|22:00">14–22</button><button class="preset" data-preset="22:00|06:00">22–06</button></div>
-            <div class="duration"><span>Тривалість</span><strong id="duration">8 <em>год</em></strong></div>
+            <div class="duration"><span>Тривалість · дохід</span><div class="durationValues"><strong id="duration">8 <em>год</em></strong><span class="incomeSep">•</span><strong class="shiftIncome" id="shiftIncome">220 <em>zł</em></strong></div></div>
             <div class="diffRow"><span>Складність</span><div class="diffs"><button class="diff" data-d="easy" title="Легка"><i></i></button><button class="diff" data-d="medium" title="Середня"><i></i></button><button class="diff" data-d="hard" title="Важка"><i></i></button></div></div>
             <button class="save" id="saveShift">Зберегти зміну</button>
             <div class="editorActions"><button class="offBtn" id="saveOff">Вихідний</button><button class="deleteBtn" id="deleteEntry" disabled>Видалити</button></div>
@@ -8189,8 +8322,13 @@ function initRossmannModule(){
   }
   function setSelected(date){state.selected=date;const e=state.entries.find(x=>x.date===date);if(e&&e.type==='shift'){ $('#startTime').value=e.start||'06:00';$('#endTime').value=e.end||'14:00';state.diff=e.diff||'' }else{state.diff='';if(e&&e.type==='off'){ $('#startTime').value='06:00';$('#endTime').value='14:00' }}renderEditor();renderCalendar()}
   function selectedEntry(){return state.entries.find(e=>e.date===state.selected)}
-  function renderEditor(){const d=parseDate(state.selected);$('#selectedTitle').textContent=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const hrs=durationNow();$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));const e=selectedEntry();$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
+  function renderEditor(){const d=parseDate(state.selected);$('#selectedTitle').textContent=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const hrs=durationNow(),shiftIncome=money(hrs*selectedRateNow());$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$('#shiftIncome').innerHTML=`${shiftIncome.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2})} <em>zł</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));const e=selectedEntry();$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
   function durationNow(){let a=mins($('#startTime').value),b=mins($('#endTime').value);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
+  function selectedRateNow(){
+    if(!state.selected)return currentRate();
+    const [y,m]=state.selected.split('-').map(Number);
+    return rateFor(y,m-1);
+  }
   function renderMini(){syncRateInput();syncCountStart();const es=monthEntries(state.year,state.month),s=calc(es),cs=countCalc(es),eligible=monthKey(state.year,state.month)>=countStatsFrom();$('#mHours').textContent=hfmt(s.hours);$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});$('#mShifts').textContent=eligible?cs.shifts.length:'—';$('#mShifts').title=eligible?'Повна статистика місяця':`Не враховується у кількості змін до ${countStatsFrom()}` }
   function renderCalendar(){
     $('#monthSelect').value=String(state.month);$('#yearSelect').value=String(state.year);
@@ -8265,7 +8403,7 @@ function initRossmannModule(){
   $('#yearSelect').addEventListener('change',e=>{state.year=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;renderAll()});
   $('#startTime').addEventListener('input',renderEditor);$('#endTime').addEventListener('input',renderEditor);
   $('#saveShift').addEventListener('click',saveShift);$('#saveOff').addEventListener('click',saveOff);$('#deleteEntry').addEventListener('click',deleteEntry);
-  $('#rateInput').addEventListener('input',()=>{saveCurrentRate();const s=calc(monthEntries(state.year,state.month));$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});if($('#statsOverlay').classList.contains('open'))renderStats()});
+  $('#rateInput').addEventListener('input',()=>{saveCurrentRate();const s=calc(monthEntries(state.year,state.month));$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});renderEditor();if($('#statsOverlay').classList.contains('open'))renderStats()});
   $('#countStartMonth').addEventListener('change',saveCountStart);$('#countStartYear').addEventListener('change',saveCountStart);
   $('#openJournal').addEventListener('click',openJournal);$('#closeJournal').addEventListener('click',()=>$('#journalOverlay').classList.remove('open'));$('#journalOverlay').addEventListener('click',e=>{if(e.target===$('#journalOverlay'))$('#journalOverlay').classList.remove('open')});
   $('#journalPrev').addEventListener('click',()=>moveJournalMonth(-1));$('#journalNext').addEventListener('click',()=>moveJournalMonth(1));
@@ -8437,26 +8575,125 @@ function initLifePlannerModule(){
     const icons=[];ev.forEach(e=>{const ic=(typeMeta[e.type]||typeMeta.event).icon;if(ic&&!icons.includes(ic))icons.push(ic)});
     return{events:ev,reminders:rem,icons:icons.slice(0,3)};
   }
+
+  function notificationAvailable(){return typeof window!=='undefined'&&'Notification' in window}
+  function notificationGranted(){return notificationAvailable()&&Notification.permission==='granted'}
+  async function requestPlannerNotifications(){
+    if(!notificationAvailable()){historyToast('На цьому пристрої системні web-сповіщення недоступні');return false}
+    try{
+      const p=await Notification.requestPermission();
+      historyToast(p==='granted'?'Системні сповіщення увімкнено':'Сповіщення не дозволено');
+      return p==='granted';
+    }catch(e){historyToast('У Telegram WebView системні сповіщення можуть бути недоступні');return false}
+  }
+
+  function selectedReminderRows(k){
+    const rows=remindersFor(k).filter(x=>{
+      const e=x.event||{};
+      return e.type==='reminder'||Number(e.reminder||0)>0||e.type==='birthday'||e.type==='relationship'||x.until===0;
+    });
+    return rows.slice(0,4);
+  }
+  function reminderRowsHTML(k){
+    const rows=selectedReminderRows(k);if(!rows.length)return'';
+    const isToday=k===iso(new Date());
+    return `<div class="today-reminder-stack"><div class="today-reminder-head"><b>🔔 ${isToday?'Нагадування сьогодні':'Нагадування'}</b><span>${rows.length}${remindersFor(k).length>rows.length?' +':''}</span></div>${rows.map(r=>{
+      const e=r.event||{},meta=typeMeta[e.type]||typeMeta.event;
+      const time=e.allDay?'Весь день':(e.start||'');
+      const when=r.until===0?(time||'Сьогодні'):`через ${r.until} дн.`;
+      const sub=r.until===0?(e.note||meta.label||'Подія'):`${shortDate(r.date)} · ${meta.label||'Подія'}`;
+      return `<div class="today-reminder-item" data-reminder-event="${esc(e.id||'')}"><span class="today-reminder-ic">${esc(meta.icon||'🔔')}</span><span class="today-reminder-main"><b>${esc(e.title||'Нагадування')}</b><small>${esc(sub)}</small></span><span class="today-reminder-time">${esc(when)}</span></div>`;
+    }).join('')}</div>`;
+  }
+
+  function ensureReminderToast(){
+    let el=document.getElementById('plannerLiveReminder');if(el)return el;
+    el=document.createElement('div');el.id='plannerLiveReminder';el.className='planner-live-reminder';el.setAttribute('role','alert');el.setAttribute('aria-live','assertive');
+    el.innerHTML=`<div class="planner-live-reminder-inner"><div class="planner-live-reminder-icon">🔔</div><div class="planner-live-reminder-copy"><small>Нагадування</small><b></b><span></span></div><button type="button" class="planner-live-reminder-close" aria-label="Закрити">×</button></div>`;
+    document.body.appendChild(el);
+    el.querySelector('.planner-live-reminder-close').onclick=()=>el.classList.remove('show');
+    el.querySelector('.planner-live-reminder-copy').onclick=()=>{try{go('today');cur=iso(new Date());rToday()}catch(e){}el.classList.remove('show')};
+    return el;
+  }
+  function reminderShownSet(){
+    try{return new Set(JSON.parse(localStorage.getItem('INVESTOR_REMINDER_SHOWN_V1')||'[]'))}catch(e){return new Set()}
+  }
+  function markReminderShown(key){
+    try{const s=reminderShownSet();s.add(key);const arr=[...s].slice(-180);localStorage.setItem('INVESTOR_REMINDER_SHOWN_V1',JSON.stringify(arr))}catch(e){}
+  }
+  function showLiveReminder(e){
+    const el=ensureReminderToast(),meta=typeMeta[e.type]||typeMeta.event;
+    el.querySelector('.planner-live-reminder-icon').textContent=meta.icon||'🔔';
+    el.querySelector('.planner-live-reminder-copy b').textContent=e.title||'Нагадування';
+    el.querySelector('.planner-live-reminder-copy span').textContent=e.allDay?'Сьогодні':`${e.start||''}${e.note?' · '+e.note:''}`;
+    el.classList.add('show');clearTimeout(window.__plannerReminderHide);window.__plannerReminderHide=setTimeout(()=>el.classList.remove('show'),14000);
+    try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback)Telegram.WebApp.HapticFeedback.notificationOccurred('warning')}catch(x){}
+    if(notificationGranted()){
+      try{new Notification('INVE$TOR Planner',{body:e.title||'Нагадування',tag:`investor-${e.id||Date.now()}`,renotify:false})}catch(x){}
+    }
+  }
+  function plannerReminderTick(){
+    try{
+      ensure();const now=new Date(),today=iso(now),mins=now.getHours()*60+now.getMinutes(),shown=reminderShownSet();
+      occurrencesOn(today).forEach(e=>{
+        if(e.allDay||!e.start)return;
+        const mm=/^(\d{1,2}):(\d{2})$/.exec(String(e.start));if(!mm)return;
+        const target=Number(mm[1])*60+Number(mm[2]),delta=mins-target;
+        if(delta<0||delta>8)return;
+        const key=`${today}|${e.id}|${e.start}`;if(shown.has(key))return;
+        markReminderShown(key);showLiveReminder(e);
+      });
+    }catch(e){}
+  }
+
   function renderTodayAlerts(k){
     const host=document.getElementById('todayPlannerAlerts');if(!host)return;ensure();
     const realToday=iso(new Date());
     if(!todayStripStart)todayStripStart=k||realToday;
-    const start=pd(todayStripStart),end=iso(addDays(start,4));
-    if(k<todayStripStart||k>end)todayStripStart=k;
-    const days=Array.from({length:5},(_,i)=>iso(addDays(pd(todayStripStart),i)));
-    host.innerHTML=`<div class="today-daystrip" id="todayDayStrip">
-      <div class="tds-head"><div class="tds-title">Календар · 5 днів</div><div class="tds-controls"><button type="button" class="tds-nav" data-tds-prev aria-label="Попередні 5 днів">‹</button><button type="button" class="tds-today" data-tds-today>Сьогодні</button><button type="button" class="tds-nav" data-tds-next aria-label="Наступні 5 днів">›</button></div></div>
-      <div class="tds-grid">${days.map(day=>{const d=pd(day),inf=todayStripInfo(day),isSel=day===k,isToday=day===realToday;const first=inf.events[0];const tip=[...inf.events.map(e=>(typeMeta[e.type]||typeMeta.event).icon+' '+e.title),...inf.reminders.map(r=>'🔔 '+r.event.title)].join(' · ');return `<button type="button" class="tds-day ${isSel?'selected':''} ${isToday?'today':''}" data-tds-day="${day}" title="${esc(tip)}"><span class="tds-week">${esc(d.toLocaleDateString('uk-UA',{weekday:'short'}).replace('.',''))}</span><strong>${d.getDate()}</strong><span class="tds-month">${esc(MNS_S[d.getMonth()])}</span><span class="tds-badges">${inf.events.length?`<i class="event">${inf.icons.join('')||'◆'}${inf.events.length>1?` <b>${inf.events.length}</b>`:''}</i>`:''}${inf.reminders.length?`<i class="rem">🔔${inf.reminders.length>1?` <b>${inf.reminders.length}</b>`:''}</i>`:''}${!inf.events.length&&!inf.reminders.length?'<i class="empty">·</i>':''}</span>${first?`<span class="tds-event-name">${esc(first.title)}</span>`:''}</button>`}).join('')}</div>
+    const rangeEnd=iso(addDays(pd(todayStripStart),24));
+    if(k<todayStripStart||k>rangeEnd)todayStripStart=k;
+    const days=Array.from({length:25},(_,i)=>iso(addDays(pd(todayStripStart),i)));
+    const notifyBtn=notificationAvailable()?`<button type="button" class="tds-notify ${notificationGranted()?'on':''}" data-tds-notify title="${notificationGranted()?'Системні сповіщення увімкнено':'Увімкнути системні сповіщення'}">${notificationGranted()?'🔔':'🔕'}</button>`:'';
+    host.innerHTML=`${reminderRowsHTML(k)}<div class="today-daystrip" id="todayDayStrip">
+      <div class="tds-head"><div class="tds-title">Календар · плавна прокрутка</div><div class="tds-controls">${notifyBtn}<button type="button" class="tds-nav" data-tds-prev aria-label="Попередні 5 днів">‹</button><button type="button" class="tds-today" data-tds-today>Сьогодні</button><button type="button" class="tds-nav" data-tds-next aria-label="Наступні 5 днів">›</button></div></div>
+      <div class="tds-grid" id="todayDayScroller">${days.map(day=>{const d=pd(day),inf=todayStripInfo(day),isSel=day===k,isToday=day===realToday;const first=inf.events[0];const tip=[...inf.events.map(e=>(typeMeta[e.type]||typeMeta.event).icon+' '+e.title),...inf.reminders.map(r=>'🔔 '+r.event.title)].join(' · ');return `<button type="button" class="tds-day ${isSel?'selected':''} ${isToday?'today':''}" data-tds-day="${day}" title="${esc(tip)}"><span class="tds-week">${esc(d.toLocaleDateString('uk-UA',{weekday:'short'}).replace('.',''))}</span><strong>${d.getDate()}</strong><span class="tds-month">${esc(MNS_S[d.getMonth()])}</span><span class="tds-badges">${inf.events.length?`<i class="event">${inf.icons.join('')||'◆'}${inf.events.length>1?` <b>${inf.events.length}</b>`:''}</i>`:''}${inf.reminders.length?`<i class="rem">🔔${inf.reminders.length>1?` <b>${inf.reminders.length}</b>`:''}</i>`:''}${!inf.events.length&&!inf.reminders.length?'<i class="empty">·</i>':''}</span>${first?`<span class="tds-event-name">${esc(first.title)}</span>`:''}</button>`}).join('')}</div>
     </div>`;
-    host.querySelector('[data-tds-prev]').onclick=()=>{todayStripStart=iso(addDays(pd(todayStripStart),-5));renderTodayAlerts(k)};
-    host.querySelector('[data-tds-next]').onclick=()=>{todayStripStart=iso(addDays(pd(todayStripStart),5));renderTodayAlerts(k)};
+    const scroller=host.querySelector('#todayDayScroller');
+    let tdsScrollRaf=0;
+    const easeInOutCubic=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+    const animateDayScroll=(dir)=>{
+      if(!scroller)return;
+      const firstDay=scroller.querySelector('.tds-day');
+      const step=(firstDay?.getBoundingClientRect().width||Math.max(72,scroller.clientWidth/5))+1;
+      const start=scroller.scrollLeft;
+      const max=Math.max(0,scroller.scrollWidth-scroller.clientWidth);
+      const target=Math.max(0,Math.min(max,start+dir*step));
+      if(Math.abs(target-start)<1)return;
+      if(tdsScrollRaf)cancelAnimationFrame(tdsScrollRaf);
+      const duration=620;
+      const t0=performance.now();
+      const tick=now=>{
+        const t=Math.min(1,(now-t0)/duration);
+        scroller.scrollLeft=start+(target-start)*easeInOutCubic(t);
+        if(t<1)tdsScrollRaf=requestAnimationFrame(tick);else tdsScrollRaf=0;
+      };
+      tdsScrollRaf=requestAnimationFrame(tick);
+    };
+    host.querySelector('[data-tds-prev]').onclick=()=>animateDayScroll(-1);
+    host.querySelector('[data-tds-next]').onclick=()=>animateDayScroll(1);
     host.querySelector('[data-tds-today]').onclick=()=>{todayStripStart=realToday;cur=realToday;rToday()};
+    const nb=host.querySelector('[data-tds-notify]');if(nb)nb.onclick=async()=>{await requestPlannerNotifications();renderTodayAlerts(k)};
     host.querySelectorAll('[data-tds-day]').forEach(b=>b.onclick=()=>{cur=b.dataset.tdsDay;rToday()});
-    const strip=host.querySelector('#todayDayStrip');let sx=0,sy=0;
-    strip.addEventListener('touchstart',e=>{const t=e.touches&&e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY},{passive:true});
-    strip.addEventListener('touchend',e=>{const t=e.changedTouches&&e.changedTouches[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.35){todayStripStart=iso(addDays(pd(todayStripStart),dx<0?5:-5));renderTodayAlerts(k)}},{passive:true});
+    requestAnimationFrame(()=>{
+      const selected=host.querySelector('[data-tds-day].selected');
+      if(selected&&scroller){const target=Math.max(0,selected.offsetLeft-(scroller.clientWidth-selected.offsetWidth)/2);scroller.scrollTo({left:target,behavior:'smooth'})}
+    });
   }
   window.renderTodayPlannerAlerts=renderTodayAlerts;
+  window.plannerReminderTick=plannerReminderTick;
+  setTimeout(plannerReminderTick,1200);
+  setInterval(plannerReminderTick,30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)plannerReminderTick()});
   if(!window.__lifePlannerTodayWrap){window.__lifePlannerTodayWrap=true;const baseToday=rToday;rToday=function(){baseToday();renderTodayAlerts(cur)}}
   window.refreshLifePlanner=function(){ensure();const n=new Date();if(!state.selected)state.selected=iso(n);renderCalendar()};
   populateControls();ensure();if(migrateBirthdays())save();
