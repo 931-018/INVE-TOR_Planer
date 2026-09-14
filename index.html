@@ -13411,4 +13411,369 @@ input[type="date"].date-is-today{
 })();
 </script>
 
+
+
+<style id="planner-v10-sphere-edit-bg">
+/* ───────────────────────────────────────────────────────────
+   SPHERE EDITING
+   No brush icon / no extra editor header.
+   The editor exists only while explicitly opened from the hero title.
+   ─────────────────────────────────────────────────────────── */
+#pg-sph .sphere-control.v10-sphere-editor{
+  margin-top:12px!important;
+  padding:13px 14px!important;
+  border:1px solid rgba(255,255,255,.075)!important;
+  border-radius:12px!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.025),transparent 54%),
+    rgba(12,19,19,.54)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+#pg-sph .sphere-control.v10-sphere-editor .sphere-editor-inner{
+  padding:0!important;
+}
+#pg-sph .sphere-control.v10-sphere-editor .sphere-control-main{
+  margin:0!important;
+}
+#pg-sph .sphere-control.v10-sphere-editor .sc-appear{
+  margin-top:10px!important;
+}
+#pg-sph .shero-t.v10-edit-trigger{
+  cursor:default;
+  transition:color .18s,text-shadow .18s;
+  -webkit-tap-highlight-color:transparent;
+}
+#pg-sph .shero-t.v10-edit-trigger:hover{
+  color:#fff0c8!important;
+  text-shadow:0 3px 24px rgba(212,162,78,.16)!important;
+}
+#pg-sph .shero-t.v10-edit-active{
+  color:#fff0c8!important;
+}
+@media(max-width:700px){
+  #pg-sph .sphere-control.v10-sphere-editor{
+    padding:11px!important;
+    margin-top:9px!important;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────
+   DARKER / MORE MATTE EMERALD BACKGROUND — background only
+   ─────────────────────────────────────────────────────────── */
+body{
+  background-color:#000d08!important;
+  background-image:
+    radial-gradient(circle at 14% 8%,rgba(8,54,37,.20),transparent 37%),
+    radial-gradient(circle at 86% 17%,rgba(5,42,30,.16),transparent 40%),
+    radial-gradient(circle at 50% 90%,rgba(7,48,34,.13),transparent 46%),
+    linear-gradient(158deg,#000a06 0%,#00140d 48%,#000c08 100%)!important;
+  background-attachment:fixed!important;
+}
+.bgfx:after{
+  background:
+    linear-gradient(rgba(0,8,5,.17),rgba(0,8,5,.17)),
+    radial-gradient(ellipse 67% 60% at 50% 44%,
+      rgba(0,9,6,.54) 0%,
+      rgba(0,9,6,.30) 48%,
+      rgba(0,9,6,.08) 76%,
+      transparent 100%)!important;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Every visible background object floats.
+   Overrides earlier mixed animation rules so nothing remains static.
+   ─────────────────────────────────────────────────────────── */
+.bgfx .fx:not(.legacy-special-fx){
+  animation:v10BackgroundFloat var(--v10dur,38s) ease-in-out var(--v10delay,-11s) infinite!important;
+  will-change:transform,opacity!important;
+  transform-origin:center!important;
+}
+@keyframes v10BackgroundFloat{
+  0%,100%{
+    opacity:calc(var(--v10op,.13) * .52);
+    transform:
+      translate3d(calc(var(--v10x,18px) * -.55),calc(var(--v10y,-22px) * -.48),0)
+      rotate(var(--v10r1,-3deg))
+      scale(.96);
+  }
+  18%{opacity:calc(var(--v10op,.13) * .86)}
+  48%{
+    opacity:var(--v10op,.13);
+    transform:
+      translate3d(var(--v10x,18px),var(--v10y,-22px),0)
+      rotate(var(--v10r2,2deg))
+      scale(1.025);
+  }
+  76%{opacity:calc(var(--v10op,.13) * .82)}
+}
+
+/* Keep text/metal motion alive too. */
+.bgfx .fx:not(.legacy-special-fx) b{
+  animation:fxmetal var(--mt,8s) linear infinite!important;
+}
+
+/* User explicitly wants the visual background animated. */
+@media(prefers-reduced-motion:reduce){
+  .bgfx .fx:not(.legacy-special-fx){
+    animation:v10BackgroundFloat var(--v10dur,42s) ease-in-out var(--v10delay,-14s) infinite!important;
+  }
+  .bgfx .fx:not(.legacy-special-fx) b{
+    animation:fxmetal var(--mt,10s) linear infinite!important;
+  }
+}
+</style>
+
+
+<script id="planner-v10-runtime">
+(function(){
+  /* ─────────────────────────────────────────────────────────
+     Sphere editor is completely absent while closed.
+     All existing editing controls/functions are preserved.
+     ───────────────────────────────────────────────────────── */
+  sphControlHTML=function(s){
+    if(!appearOpen)return '';
+
+    const hex=/^#[0-9a-fA-F]{6}$/.test(s.c||'')?s.c:'#d4a24e';
+    const hasStagePanel=!(s.id===TEXT_ID || s.id==='s5' || s.id===CRYPTO_ID);
+
+    return `<div class="card sphere-control v10-sphere-editor edit-open">
+      <div class="sphere-editor-inner">
+        <div class="sphere-control-main">
+          <input class="sc-ic-in" data-scic value="${esc(s.ic)}" title="Свій смайлик — встав або введи">
+          <input id="sphName" value="${esc(s.nm)}" style="flex:1;min-width:150px;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--gold-soft);font-family:'Oswald',sans-serif;font-size:17px;text-transform:uppercase;letter-spacing:1px;padding:6px 0">
+          ${hasStagePanel?'':`<button class="dbtn work-open-btn" data-work-sphere="${s.id}" title="Запланувати BLOCK цієї сфери у «Сьогодні»">▣ WORK</button>`}
+          <button class="dbtn danger" id="sphDel">${pendDel==="sph"+curSph?"Точно видалити?":"Видалити сферу"}</button>
+        </div>
+
+        <div class="sc-appear open">
+          <div class="sc-pick">
+            <span class="sc-lbl">Смайлик</span>
+            <span class="sc-emojis">${SPH_ICONS.map(e=>`<button class="sc-emoji ${e===s.ic?'on':''}" data-scemoji="${e}">${e}</button>`).join('')}</span>
+          </div>
+          <div class="sc-pick">
+            <span class="sc-lbl">Колір</span>
+            <span class="sc-colors">${SPH_COLORS.map(c=>`<span class="sc-swatch" data-sphc="${c}" style="background:${c};box-shadow:0 0 0 2px ${c===s.c?'#fff':'transparent'}"></span>`).join('')}</span>
+            <input type="color" class="sc-color-in" data-sccolor value="${hex}" title="Свій колір — палітра">
+            ${window.EyeDropper?'<button class="dbtn sc-eye" data-sceye>⛏ Піпетка</button>':''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  };
+
+  function v10OpenSphereEditor(){
+    appearOpen=!appearOpen;
+    rSph();
+
+    if(appearOpen){
+      requestAnimationFrame(()=>{
+        const panel=document.querySelector('#pg-sph .v10-sphere-editor');
+        if(panel){
+          panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      });
+    }
+  }
+
+  function v10BindSphereHeroEdit(){
+    const title=document.querySelector('#pg-sph .shero-t');
+    if(!title || title.dataset.v10EditBound==='1')return;
+
+    title.dataset.v10EditBound='1';
+    title.classList.add('v10-edit-trigger');
+    if(appearOpen)title.classList.add('v10-edit-active');
+    title.title='Двічі натисни, щоб редагувати сферу';
+
+    let lastTap=0;
+
+    title.addEventListener('dblclick',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      v10OpenSphereEditor();
+    });
+
+    /* reliable double-tap on iPhone */
+    title.addEventListener('pointerup',e=>{
+      if(e.pointerType==='mouse')return;
+      const now=Date.now();
+      if(now-lastTap<390){
+        e.preventDefault();
+        e.stopPropagation();
+        lastTap=0;
+        v10OpenSphereEditor();
+      }else{
+        lastTap=now;
+      }
+    });
+  }
+
+  /* rSph has many specialized sphere render paths.
+     A mutation observer makes the title trigger universal. */
+  const sphereHost=document.getElementById('sphDetail');
+  if(sphereHost){
+    const obs=new MutationObserver(()=>{
+      requestAnimationFrame(v10BindSphereHeroEdit);
+    });
+    obs.observe(sphereHost,{childList:true,subtree:true});
+  }
+  requestAnimationFrame(v10BindSphereHeroEdit);
+
+  /* Escape closes the edit panel without adding a close icon. */
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape' && appearOpen && document.body.dataset.page==='sph'){
+      appearOpen=false;
+      rSph();
+    }
+  });
+
+  /* ─────────────────────────────────────────────────────────
+     Give every background item its own smooth path.
+     Balanced distribution remains intact; only movement changes.
+     ───────────────────────────────────────────────────────── */
+  function v10AnimateAllBackground(){
+    const items=[...document.querySelectorAll('.bgfx .fx:not(.legacy-special-fx)')];
+    items.forEach((el,i)=>{
+      if(el.dataset.v10Motion==='1')return;
+      el.dataset.v10Motion='1';
+
+      const col=i%7;
+      const row=Math.floor(i/7)%6;
+
+      const x=((col%2===0)?1:-1)*(12+((i*7)%19));
+      const y=((row%2===0)?-1:1)*(14+((i*5)%21));
+      const dur=31+((i*3)%19);
+      const delay=-(5+((i*11)%dur));
+      const op=0.10+((i%5)*0.012);
+      const r1=-4+(i%4);
+      const r2=1+(i%4);
+
+      el.style.setProperty('--v10x',x+'px');
+      el.style.setProperty('--v10y',y+'px');
+      el.style.setProperty('--v10dur',dur+'s');
+      el.style.setProperty('--v10delay',delay+'s');
+      el.style.setProperty('--v10op',op.toFixed(3));
+      el.style.setProperty('--v10r1',r1+'deg');
+      el.style.setProperty('--v10r2',r2+'deg');
+    });
+  }
+
+  v10AnimateAllBackground();
+
+  const bg=document.querySelector('.bgfx');
+  if(bg){
+    const bgObs=new MutationObserver(v10AnimateAllBackground);
+    bgObs.observe(bg,{childList:true,subtree:true});
+  }
+})();
+</script>
+
+
+
+<style id="planner-v11-bg-visibility">
+/* Slightly lighter, gentle dark emerald background */
+body{
+  background-color:#02150f!important;
+  background-image:
+    radial-gradient(circle at 14% 8%,rgba(18,92,66,.23),transparent 38%),
+    radial-gradient(circle at 86% 17%,rgba(15,74,56,.18),transparent 40%),
+    radial-gradient(circle at 50% 90%,rgba(12,82,59,.13),transparent 46%),
+    linear-gradient(158deg,#02110c 0%,#052119 48%,#03140f 100%)!important;
+}
+
+/* Less heavy matte veil so icons feel ON the background, not buried under it */
+.bgfx:after{
+  background:
+    linear-gradient(rgba(0,8,5,.10),rgba(0,8,5,.10)),
+    radial-gradient(ellipse 67% 60% at 50% 44%,
+      rgba(0,10,7,.32) 0%,
+      rgba(0,10,7,.18) 50%,
+      rgba(0,10,7,.04) 78%,
+      transparent 100%)!important;
+}
+
+/* Make floating symbols more visible and visually on top of the background */
+.bgfx .fx:not(.legacy-special-fx){
+  z-index:2!important;
+  opacity:.20!important;
+  filter:
+    drop-shadow(0 2px 10px rgba(0,0,0,.18))
+    drop-shadow(0 0 16px rgba(212,162,78,.05))!important;
+}
+.bgfx .fx:not(.legacy-special-fx) b{
+  opacity:.96!important;
+}
+.bgfx .fx:not(.legacy-special-fx) i{
+  opacity:.78!important;
+  text-shadow:0 1px 8px rgba(0,0,0,.14)!important;
+}
+
+/* Category-specific presence boost */
+.bgfx .fx.balanced-ytred b{
+  box-shadow:0 0 20px rgba(216,58,52,.22)!important;
+}
+.bgfx .fx.balanced-ytgold b{
+  box-shadow:0 0 20px rgba(212,162,78,.26), inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+.bgfx .fx.balanced-btc b,
+.bgfx .fx.balanced-eth b,
+.bgfx .fx.balanced-usdt b{
+  box-shadow:0 0 18px rgba(0,0,0,.10)!important;
+}
+.bgfx .fx.balanced-bmw b,
+.bgfx .fx.balanced-porsche b{
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(0,0,0,.07))!important;
+}
+
+/* Let the float animation hold a bit more presence */
+@keyframes v11BackgroundFloat{
+  0%,100%{
+    opacity:calc(var(--v11op,.19) * .62);
+    transform:
+      translate3d(calc(var(--v10x,18px) * -.55),calc(var(--v10y,-22px) * -.48),0)
+      rotate(var(--v10r1,-3deg))
+      scale(.97);
+  }
+  18%{opacity:calc(var(--v11op,.19) * .90)}
+  48%{
+    opacity:var(--v11op,.19);
+    transform:
+      translate3d(var(--v10x,18px),var(--v10y,-22px),0)
+      rotate(var(--v10r2,2deg))
+      scale(1.03);
+  }
+  76%{opacity:calc(var(--v11op,.19) * .88)}
+}
+.bgfx .fx:not(.legacy-special-fx){
+  animation:v11BackgroundFloat var(--v10dur,38s) ease-in-out var(--v10delay,-11s) infinite!important;
+}
+
+/* Mobile: still visible, but not overloaded */
+@media(max-width:700px){
+  .bgfx .fx:not(.legacy-special-fx){
+    opacity:.17!important;
+    filter:drop-shadow(0 1px 8px rgba(0,0,0,.16))!important;
+  }
+}
+</style>
+
+
+<script id="planner-v11-bg-runtime">
+(function(){
+  function boostBackgroundPresence(){
+    const items=[...document.querySelectorAll('.bgfx .fx:not(.legacy-special-fx)')];
+    items.forEach((el,i)=>{
+      const op=0.17+((i%5)*0.016);   // more visible than V10
+      el.style.setProperty('--v11op',op.toFixed(3));
+    });
+  }
+  boostBackgroundPresence();
+  const bg=document.querySelector('.bgfx');
+  if(bg){
+    const obs=new MutationObserver(boostBackgroundPresence);
+    obs.observe(bg,{childList:true,subtree:true});
+  }
+})();
+</script>
+
 </body></html>
