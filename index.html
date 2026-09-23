@@ -7,7 +7,7 @@ body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relati
 .fin-capital-edit:empty:before{content:attr(data-placeholder);color:var(--muted)}
 </style>
 <meta charset="UTF-8">
-<meta name="investor-build" content="FINANCE-OS-17-20260923">
+<meta name="investor-build" content="FINANCE-OS-18-20260923">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a0c10">
 <title>INVE$TOR · Система свободи</title>
@@ -3574,6 +3574,31 @@ input[type="text"],input[type="search"],input:not([type]),textarea,[contentedita
 }
 </style>
 
+<style>
+/* FINANCE OS v18 — open the finance dashboard before the optional strategy. */
+#sphDetail.finance-sphere .fin-strategy-details{
+  margin:24px 0 36px;border:1px solid rgba(212,162,78,.27);border-radius:14px;
+  background:linear-gradient(130deg,rgba(212,162,78,.07),rgba(10,12,16,.96) 65%);
+  box-shadow:0 14px 38px rgba(0,0,0,.17);overflow:hidden
+}
+#sphDetail.finance-sphere .fin-strategy-details>summary{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:19px 22px;cursor:pointer;list-style:none;color:var(--gold-soft)
+}
+#sphDetail.finance-sphere .fin-strategy-details>summary::-webkit-details-marker{display:none}
+#sphDetail.finance-sphere .fin-strategy-details>summary strong{
+  display:block;font-family:'Oswald',sans-serif;letter-spacing:.5px;font-size:20px;font-weight:500
+}
+#sphDetail.finance-sphere .fin-strategy-kicker{
+  display:block;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;
+  color:var(--txt-faint);margin-bottom:6px
+}
+#sphDetail.finance-sphere .fin-strategy-chevron{font-size:24px;line-height:1;transition:transform .2s}
+#sphDetail.finance-sphere .fin-strategy-details[open] .fin-strategy-chevron{transform:rotate(180deg)}
+#sphDetail.finance-sphere .fin-strategy-body{padding:0 16px 10px}
+@media(max-width:600px){#sphDetail.finance-sphere .fin-strategy-details>summary{padding:16px}
+#sphDetail.finance-sphere .fin-strategy-body{padding:0 10px 10px}}
+</style>
 </head>
 <body data-page="sph" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
@@ -7168,7 +7193,17 @@ function rFinance(){
       <button class="goal-fold-btn" data-gfold="year">${gf.year?'▸':'▾'}</button></div>
       <div class="gb-txt" contenteditable="true" data-f="year">${esc(o.year)}</div></div>
     </div>${goalProgressHTML(FIN_ID)}${strategyStagesHTML(FIN_ID)}`;
-  document.getElementById('sphDetail').innerHTML=sphereHero(s)+sphControlHTML(s)+strategy+finNavHTML(f);
+  DB.ui=DB.ui||{};
+  const strategyExpanded=!!DB.ui.financeStrategyOpen;
+  const strategyDetails=`<details id="finStrategyDetails" class="fin-strategy-details" ${strategyExpanded?'open':''}>
+    <summary><span><span class="fin-strategy-kicker">LIFE OS · ФІНАНСОВА СТРАТЕГІЯ</span><strong>Цілі, прогрес і етапи виконання</strong></span><span class="fin-strategy-chevron" aria-hidden="true">⌄</span></summary>
+    <div class="fin-strategy-body">${strategy}</div>
+  </details>`;
+  document.getElementById('sphDetail').innerHTML=sphereHero(s)+sphControlHTML(s)+finNavHTML(f)+strategyDetails;
+  const strategyPanel=document.getElementById('finStrategyDetails');
+  if(strategyPanel)strategyPanel.addEventListener('toggle',()=>{
+    if(DB.ui.financeStrategyOpen!==strategyPanel.open){DB.ui.financeStrategyOpen=strategyPanel.open;save();}
+  });
   bindSphControl();
   document.querySelectorAll('[data-f]').forEach(e=>e.oninput=()=>{DB.sph[FIN_ID][e.dataset.f]=e.innerText;save();});
   document.querySelectorAll('[data-gfold]').forEach(e=>e.onclick=()=>{const gf=sphereGoalFoldState(FIN_ID),k=e.dataset.gfold;gf[k]=!gf[k];save();rSph();});
