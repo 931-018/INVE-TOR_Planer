@@ -13148,8 +13148,34 @@ let fin2RenderCache=null;
 function fin2BuildRenderCache(){const balances=new Map(),paid=new Map();for(const t of fin2().transactions){if(t.to)balances.set(t.to,(balances.get(t.to)||0)+(Number(t.toAmount??t.amount)||0));if(t.from)balances.set(t.from,(balances.get(t.from)||0)-(Number(t.amount)||0));if(t.type==='debt_payment')paid.set(t.debtId,(paid.get(t.debtId)||0)+(Number(t.amount)||0))}return {balances,paid}}
 function fin2DebtHistoryHTML(){const arr=fin2().transactions.filter(t=>t.type==='debt_payment').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.created)||0)-(Number(a.created)||0));if(!arr.length)return '';const limit=Number(fin2().debtHistoryLimit)||20;return `<section class="fin2-section fin2-debt-payment-history"><div class="fin2-section-head"><h3>Історія погашень</h3><span class="fin2-muted">${arr.length} платежів</span></div><div class="fin2-list">${arr.slice(0,limit).map(t=>{const d=fin2().debts.find(d=>d.id===t.debtId);return `<div class="fin2-row"><span class="fin2-ico">↘</span><div><div class="fin2-row-title">${fin2Esc(d?.name||t.note||'Погашення боргу')}</div><div class="fin2-row-meta">${fin2Esc([t.date,fin2Name(t.from),t.note!==d?.name?t.note:''].filter(Boolean).join(' · '))}</div></div><div class="fin2-row-amount out">−${fin2Fmt(t.amount,t.currency)}</div><button type="button" class="fin2-btn small fin2-remove" data-fin2="deltx" data-id="${fin2Esc(t.id)}" aria-label="Видалити платіж" title="Видалити платіж">×</button></div>`}).join('')}</div>${arr.length>limit?`<button type="button" class="fin2-btn fin2-history-more" data-fin2="moredebtpayments">Показати ще</button>`:''}</section>`}
 
+// Finance navigation belongs to this visit, not to the saved or synced data.
+let fin2ViewTab='overview',fin2LastSphere=null;
+const fin2BaseRender=fin2Render;
+fin2Render=function(){if(curSph===FIN_ID)fin2LastSphere=FIN_ID;fin2().activeTab=fin2ViewTab;return fin2BaseRender.apply(this,arguments)};
+const fin2BaseAction=fin2Action;
+fin2Action=function(action,id,kind){
+  const pages=['overview','accounts','transactions','statistics','budgets','capital','debts','tasks'];
+  if(action==='tab'&&pages.includes(id))fin2ViewTab=id;
+  else if(pages.includes(action))fin2ViewTab=action;
+  else if(action==='strategy')fin2ViewTab='overview';
+  return fin2BaseAction.apply(this,arguments);
+};
 const fin2BaseRSph=rSph;
-rSph=function(){if(curSph===FIN_ID){rSnav();fin2Render();return}document.getElementById('sphDetail')?.classList.remove('finance-sphere');fin2BaseRSph()};
+rSph=function(){
+  if(curSph===FIN_ID){
+    if(fin2LastSphere!==FIN_ID)fin2ViewTab='overview';
+    fin2LastSphere=FIN_ID;rSnav();fin2Render();return;
+  }
+  fin2LastSphere=curSph;fin2ViewTab='overview';
+  document.getElementById('sphDetail')?.classList.remove('finance-sphere');
+  return fin2BaseRSph.apply(this,arguments);
+};
+const fin2BaseGo=go;
+go=function(p){
+  const page=p==='goals'?'sph':p;
+  if(page!=='sph'||document.body.dataset.page!=='sph')fin2ViewTab='overview';
+  return fin2BaseGo.apply(this,arguments);
+};
 function fin2Bootstrap(){
   const f=fin2();if(!Array.isArray(DB.spheres))DB.spheres=[];
   if(!DB.spheres.some(s=>s.id===FIN_ID)){const def={id:FIN_ID,ic:'💳',nm:'Фінанси',c:'#d4a24e'};const ti=DB.spheres.findIndex(s=>s.id===TEXT_ID);DB.spheres.splice(ti>=0?ti+1:DB.spheres.length,0,def)}
