@@ -4336,6 +4336,7 @@ function blank(){return{
   ws:JSON.parse(JSON.stringify(D_WS)),
   yt:JSON.parse(JSON.stringify(D_YT)),
   reflections:[],
+  journalVault:null,
   rossmann:{rate:27.5,rates:{},countStatsFrom:'',entries:[]},
   healthPages:JSON.parse(JSON.stringify(D_HEALTH_PAGES)),healthActive:'strategy',
   healthSimple:JSON.parse(JSON.stringify(D_HEALTH_SIMPLE)),
@@ -13201,4 +13202,427 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
 .fin2-debt-fx{border:1px solid #d6bb7660;border-radius:20px;padding:24px;background:linear-gradient(125deg,#243829,#0e2118);margin-bottom:24px}.fin2-debt-fx>header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.fin2-debt-fx small{color:#c6b47e;font:11px/1.5 sans-serif;letter-spacing:1.6px}.fin2-debt-fx h4{margin:7px 0;color:#dce5d0;font-size:20px}.fin2-debt-fx-controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.fin2-debt-fx-controls label{display:grid;gap:5px;color:#b1c0a8;font:11px/1.5 sans-serif}.fin2-debt-fx-controls select{background:#14291c;border:1px solid #d4bd7855;color:#ecdbab;border-radius:10px;padding:9px;min-height:42px}.fin2-debt-fx-controls button{min-height:42px}.fin2-debt-fx-total{font:700 clamp(32px,5vw,48px)/1.2 sans-serif;letter-spacing:-1px;color:#efd69c;margin:24px 0;overflow-wrap:anywhere}.fin2-debt-fx-metrics{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding-top:18px;border-top:1px solid #afc19d26}.fin2-debt-fx-metrics span{display:block;color:#acbea5;font:12px/1.5 sans-serif;margin-bottom:7px}.fin2-debt-fx-metrics strong{color:#e0d5b5;font:600 21px/1.4 sans-serif;overflow-wrap:anywhere}.fin2-debt-fx-progress{height:9px;border-radius:10px;background:#344734;overflow:hidden;margin:22px 0 9px}.fin2-debt-fx-progress i{display:block;height:100%;background:linear-gradient(90deg,#779f74,#d4bc7f);transition:width .4s}.fin2-debt-fx-caption{display:flex;gap:12px;justify-content:space-between;color:#b6c5aa;font:12px/1.5 sans-serif}.fin2-debt-fx-rates{margin-top:20px;border-top:1px solid #afc19d26;padding-top:14px;color:#b7c4ac;font:12px/1.7 sans-serif}.fin2-debt-fx-rates summary{cursor:pointer;color:#d9c795}.fin2-debt-fx-rates div{padding-top:6px}.fin2-debt-fx-rates p{margin-bottom:0}.fin2-debt-fx-warning{color:#e1c58b;font:14px/1.6 sans-serif}.fin2-debt-breakdown-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 14px}.fin2-debt-breakdown-head h4{margin:0;font-size:20px;color:#e1cea2}
 @media(max-width:600px){.fin2-debt-fx{padding:18px;border-radius:16px}.fin2-debt-fx>header{flex-direction:column}.fin2-debt-fx-controls{width:100%}.fin2-debt-fx-controls label{flex:1;min-width:0}.fin2-debt-fx-metrics{gap:14px}.fin2-debt-fx-metrics strong{font-size:18px}.fin2-debt-fx-caption{font-size:11px}.fin2-debt-fx-controls button,.fin2-debt-fx-controls select{min-height:44px}}
 </style>
+
+<style id="private-journal-style">
+/* PRIVATE JOURNAL · discreet quick-dock module */
+#fbJournal{line-height:1!important;opacity:.72;font-size:18px}
+#fbJournal:hover,#fbJournal:focus-visible{opacity:1}
+.journal-overlay{
+  position:fixed;inset:0;z-index:230;display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(4,7,9,.90);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)
+}
+.journal-overlay.open{display:flex}
+.journal-shell{
+  position:relative;width:min(1040px,100%);height:min(820px,92dvh);overflow:hidden;
+  border:1px solid rgba(212,162,78,.28);border-radius:22px;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(212,162,78,.08),transparent 31%),
+    radial-gradient(circle at 96% 96%,rgba(72,115,84,.08),transparent 34%),#0f151d;
+  box-shadow:0 34px 110px rgba(0,0,0,.62)
+}
+.journal-close{
+  position:absolute;right:14px;top:13px;z-index:6;width:42px;height:42px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);background:#18212b;color:#8f99a6;
+  font-size:25px;line-height:1;cursor:pointer
+}
+.journal-close:hover{border-color:rgba(212,162,78,.45);color:#ead59c}
+.journal-lock{
+  height:100%;display:flex;align-items:center;justify-content:center;padding:28px
+}
+.journal-lock-card{
+  width:min(390px,100%);text-align:center;padding:34px 30px 30px;border-radius:20px;
+  border:1px solid rgba(212,162,78,.18);
+  background:linear-gradient(145deg,rgba(212,162,78,.06),rgba(42,74,54,.05)),#121a23
+}
+.journal-lock-mark{
+  width:64px;height:64px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(212,162,78,.36);color:#dfc47f;font:300 31px/1 'Oswald',sans-serif;
+  background:rgba(212,162,78,.05);box-shadow:0 0 30px rgba(212,162,78,.07)
+}
+.journal-lock-kicker,.journal-kicker{
+  font:600 9px/1 'Oswald',sans-serif;letter-spacing:2.5px;text-transform:uppercase;color:#716d61
+}
+.journal-lock h2{margin:9px 0 8px;color:#efddb1;font:600 28px/1.1 'Oswald',sans-serif}
+.journal-lock p{margin:0 auto 21px;max-width:300px;color:#7e8996;font-size:13px;line-height:1.55}
+.journal-pin{
+  width:100%;height:54px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#0c131b;
+  color:#f2dfad;text-align:center;font:600 24px/1 'Oswald',sans-serif;letter-spacing:10px;
+  outline:none;padding:0 12px
+}
+.journal-pin:focus{border-color:rgba(212,162,78,.55);box-shadow:0 0 0 3px rgba(212,162,78,.07)}
+.journal-unlock{
+  width:100%;height:50px;margin-top:10px;border:1px solid rgba(111,184,126,.30);border-radius:11px;
+  background:linear-gradient(135deg,rgba(111,184,126,.16),rgba(212,162,78,.08)),#17221d;
+  color:#ead9aa;font:700 11px/1 'Oswald',sans-serif;letter-spacing:1.4px;text-transform:uppercase;cursor:pointer
+}
+.journal-unlock:hover{border-color:rgba(212,162,78,.45)}
+.journal-lock-status{min-height:20px;margin-top:10px;color:#c66d5c;font-size:12px}
+.journal-app{height:100%;display:flex;flex-direction:column}
+.journal-app[hidden],.journal-lock[hidden]{display:none!important}
+.journal-head{
+  min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:18px 70px 16px 22px;border-bottom:1px solid rgba(255,255,255,.055)
+}
+.journal-title-wrap h2{margin:5px 0 0;color:#efddb1;font:600 25px/1.1 'Oswald',sans-serif;letter-spacing:.4px}
+.journal-head-actions{display:flex;gap:8px}
+.journal-mini-btn,.journal-new,.journal-delete{
+  min-height:40px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#151e28;
+  color:#9aa4b0;font:600 10px/1 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;
+  padding:0 13px;cursor:pointer
+}
+.journal-mini-btn:hover,.journal-new:hover{border-color:rgba(212,162,78,.42);color:#e8d39c}
+.journal-new{border-color:rgba(212,162,78,.25);color:#dfc785;background:rgba(212,162,78,.055)}
+.journal-layout{min-height:0;flex:1;display:grid;grid-template-columns:300px minmax(0,1fr)}
+.journal-sidebar{min-height:0;display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.055);background:#101720}
+.journal-search-wrap{padding:14px}
+.journal-search{
+  width:100%;height:43px;border:1px solid rgba(255,255,255,.075);border-radius:10px;background:#0b1219;
+  color:#d8dde3;padding:0 12px;outline:none;font-size:15px
+}
+.journal-search:focus{border-color:rgba(212,162,78,.4)}
+.journal-list{min-height:0;overflow:auto;padding:0 9px 12px}
+.journal-item{
+  width:100%;display:block;text-align:left;border:1px solid transparent;border-radius:11px;background:transparent;
+  padding:12px 12px 11px;color:#9ba5b1;cursor:pointer;margin-bottom:4px
+}
+.journal-item:hover{background:#151e28}
+.journal-item.on{border-color:rgba(212,162,78,.20);background:linear-gradient(135deg,rgba(212,162,78,.075),transparent),#151e28}
+.journal-item b{display:block;color:#d8dde3;font:600 14px/1.35 'Oswald',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.journal-item.on b{color:#ead59c}
+.journal-item small{display:block;margin-top:5px;color:#66717d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.journal-empty-list{padding:30px 17px;color:#687481;text-align:center;font-size:13px;line-height:1.55}
+.journal-editor{min-width:0;min-height:0;display:flex;flex-direction:column;padding:22px 24px 18px}
+.journal-editor-empty{height:100%;display:grid;place-items:center;text-align:center;color:#697582;padding:28px}
+.journal-editor-empty b{display:block;color:#d9c382;font:600 21px/1.2 'Oswald',sans-serif;margin-bottom:6px}
+.journal-editor-form{height:100%;min-height:0;display:flex;flex-direction:column}
+.journal-meta-row{display:grid;grid-template-columns:minmax(0,1fr) 155px;gap:10px;margin-bottom:13px}
+.journal-title,.journal-date{
+  width:100%;height:47px;border:1px solid rgba(255,255,255,.075);border-radius:10px;background:#0c131b;color:#e8ebee;
+  outline:none;padding:0 13px
+}
+.journal-title{font:600 18px/1 'Oswald',sans-serif}
+.journal-date{font:500 13px/1 'Oswald',sans-serif;color:#cdb778}
+.journal-title:focus,.journal-date:focus,.journal-body:focus{border-color:rgba(212,162,78,.42)}
+.journal-body{
+  flex:1;min-height:220px;resize:none;width:100%;border:1px solid rgba(255,255,255,.07);border-radius:12px;
+  background:#0b1219;color:#d9dde2;outline:none;padding:17px 18px;font:16px/1.75 'Spectral',serif
+}
+.journal-body::placeholder{color:#59636f}
+.journal-foot{
+  min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:10px
+}
+.journal-save-state{color:#687481;font-size:11px}
+.journal-save-state.ok{color:#78a985}
+.journal-save-state.err{color:#c57663}
+.journal-delete{border-color:rgba(200,83,58,.18);color:#a96a5d;background:rgba(200,83,58,.035)}
+.journal-delete:hover{border-color:rgba(200,83,58,.42);color:#df8a78}
+@media(max-width:700px){
+  #fbJournal{font-size:17px}
+  .journal-overlay{padding:0;align-items:stretch}
+  .journal-shell{width:100%;height:100dvh;border:0;border-radius:0}
+  .journal-head{min-height:70px;padding:14px 60px 12px 14px}
+  .journal-title-wrap h2{font-size:21px}
+  .journal-head-actions{gap:5px}.journal-mini-btn,.journal-new{padding:0 9px;min-height:38px;font-size:9px}
+  .journal-layout{display:flex;flex-direction:column}
+  .journal-sidebar{flex:0 0 auto;max-height:190px;border-right:0;border-bottom:1px solid rgba(255,255,255,.055)}
+  .journal-search-wrap{padding:9px 10px 7px}
+  .journal-search{height:40px}
+  .journal-list{display:flex;overflow-x:auto;overflow-y:hidden;padding:0 8px 9px;gap:5px}
+  .journal-item{flex:0 0 180px;margin:0;padding:10px}
+  .journal-editor{padding:12px 11px 10px;flex:1}
+  .journal-meta-row{grid-template-columns:minmax(0,1fr) 132px;gap:7px;margin-bottom:8px}
+  .journal-title,.journal-date{height:44px}
+  .journal-title{font-size:16px}
+  .journal-body{min-height:160px;font-size:16px;padding:14px}
+  .journal-foot{min-height:48px;padding-top:7px}
+  .journal-lock{padding:18px}.journal-lock-card{padding:28px 20px 24px}
+}
+</style>
+
+<script id="private-journal-module">
+(function(){
+  'use strict';
+  const PIN_SHA='617ce64d3266576f07211835cf2f6421f3b2ea39a18a23568f22da4884dc16c9';
+  const KDF_ITER=120000;
+
+  let unlocked=false, entries=[], selectedId='', cryptoKey=null, saltBytes=null, vaultStamp=0;
+  let saveTimer=null, dirty=false, opening=false;
+
+  const $=s=>document.querySelector(s);
+  const escJ=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  const id=()=> 'j_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+
+  function bytesToB64(bytes){
+    let s=''; const u=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);
+    for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));
+    return btoa(s);
+  }
+  function b64ToBytes(s){
+    const bin=atob(String(s||'')),u=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i); return u;
+  }
+  async function sha256(s){
+    const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(String(s)));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  }
+  async function deriveKey(pin,salt){
+    const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2',salt,iterations:KDF_ITER,hash:'SHA-256'},
+      base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']
+    );
+  }
+  function ensureVaultField(){
+    if(typeof DB==='object'&&DB&&!Object.prototype.hasOwnProperty.call(DB,'journalVault'))DB.journalVault=null;
+  }
+
+  function injectUI(){
+    if($('#journalOverlay'))return;
+    const dataBtn=$('#fbData');
+    if(dataBtn&&!$('#fbJournal')){
+      const btn=document.createElement('button');
+      btn.className='fab';btn.id='fbJournal';btn.type='button';
+      btn.title='Щоденник';btn.setAttribute('aria-label','Щоденник');btn.textContent='◌';
+      dataBtn.insertAdjacentElement('beforebegin',btn);
+    }
+    document.body.insertAdjacentHTML('beforeend',`
+      <div class="journal-overlay" id="journalOverlay" aria-hidden="true">
+        <div class="journal-shell" role="dialog" aria-modal="true" aria-label="Приватний щоденник">
+          <button class="journal-close" id="journalClose" type="button" aria-label="Закрити">×</button>
+
+          <section class="journal-lock" id="journalLock">
+            <div class="journal-lock-card">
+              <div class="journal-lock-mark">◌</div>
+              <div class="journal-lock-kicker">PRIVATE SPACE</div>
+              <h2>Особистий щоденник</h2>
+              <p>Закритий розділ. Після виходу доступ автоматично блокується.</p>
+              <input class="journal-pin" id="journalPin" type="password" inputmode="numeric" pattern="[0-9]*"
+                     maxlength="4" autocomplete="off" aria-label="Пароль" placeholder="••••">
+              <button class="journal-unlock" id="journalUnlock" type="button">Відкрити</button>
+              <div class="journal-lock-status" id="journalLockStatus" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <section class="journal-app" id="journalApp" hidden>
+            <header class="journal-head">
+              <div class="journal-title-wrap">
+                <div class="journal-kicker">PRIVATE JOURNAL</div>
+                <h2>Щоденник</h2>
+              </div>
+              <div class="journal-head-actions">
+                <button class="journal-new" id="journalNew" type="button">＋ Запис</button>
+                <button class="journal-mini-btn" id="journalLockNow" type="button">Закрити доступ</button>
+              </div>
+            </header>
+
+            <div class="journal-layout">
+              <aside class="journal-sidebar">
+                <div class="journal-search-wrap"><input class="journal-search" id="journalSearch" placeholder="Пошук у записах…" autocomplete="off"></div>
+                <div class="journal-list" id="journalList"></div>
+              </aside>
+              <main class="journal-editor" id="journalEditor"></main>
+            </div>
+          </section>
+        </div>
+      </div>
+    `);
+
+    $('#fbJournal').addEventListener('click',openJournal);
+    $('#journalClose').addEventListener('click',closeJournal);
+    $('#journalUnlock').addEventListener('click',unlockJournal);
+    $('#journalPin').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();unlockJournal();}});
+    $('#journalNew').addEventListener('click',newEntry);
+    $('#journalLockNow').addEventListener('click',lockNow);
+    $('#journalSearch').addEventListener('input',renderList);
+    $('#journalOverlay').addEventListener('click',e=>{if(e.target===$('#journalOverlay'))closeJournal();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#journalOverlay')?.classList.contains('open'))closeJournal();});
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden&&unlocked){
+        clearTimeout(saveTimer);
+        Promise.resolve(dirty?persistVault():null).finally(()=>lockJournal(true));
+      }
+    });
+  }
+
+  function setStatus(msg,tone=''){
+    const el=$('#journalSaveState'); if(!el)return;
+    el.textContent=msg||'';el.className='journal-save-state'+(tone?' '+tone:'');
+  }
+  function setLockStatus(msg){const el=$('#journalLockStatus');if(el)el.textContent=msg||'';}
+
+  function openJournal(){
+    if(!window.plannerReady){setTimeout(openJournal,120);return;}
+    closeMobileFabs?.();
+    ensureVaultField();
+    const ov=$('#journalOverlay');ov.classList.add('open');ov.setAttribute('aria-hidden','false');
+    lockJournal(true);
+    setTimeout(()=>$('#journalPin')?.focus(),30);
+  }
+  async function closeJournal(){
+    if(unlocked&&dirty){clearTimeout(saveTimer);await persistVault();}
+    lockJournal(false);
+    const ov=$('#journalOverlay');ov.classList.remove('open');ov.setAttribute('aria-hidden','true');
+  }
+  async function lockNow(){
+    if(unlocked&&dirty){clearTimeout(saveTimer);await persistVault();}
+    lockJournal(true);setTimeout(()=>$('#journalPin')?.focus(),30);
+  }
+  function lockJournal(keepOpen){
+    unlocked=false;entries=[];selectedId='';cryptoKey=null;saltBytes=null;vaultStamp=0;dirty=false;
+    clearTimeout(saveTimer);saveTimer=null;
+    if($('#journalPin'))$('#journalPin').value='';
+    setLockStatus('');
+    if($('#journalLock'))$('#journalLock').hidden=false;
+    if($('#journalApp'))$('#journalApp').hidden=true;
+    if(!keepOpen&&$('#journalOverlay')){$('#journalOverlay').classList.remove('open');$('#journalOverlay').setAttribute('aria-hidden','true');}
+  }
+
+  async function unlockJournal(){
+    if(opening)return;
+    opening=true;setLockStatus('');
+    try{
+      if(!window.crypto?.subtle)throw new Error('Цей браузер не підтримує захищене сховище.');
+      const pin=($('#journalPin')?.value||'').trim();
+      if(pin.length!==4||await sha256(pin)!==PIN_SHA){
+        setLockStatus('Невірний пароль.');$('#journalPin')?.select();return;
+      }
+      ensureVaultField();
+      const v=DB.journalVault;
+      if(v&&v.data&&v.salt&&v.iv){
+        saltBytes=b64ToBytes(v.salt);
+        cryptoKey=await deriveKey(pin,saltBytes);
+        try{
+          const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64ToBytes(v.iv)},cryptoKey,b64ToBytes(v.data));
+          const parsed=JSON.parse(new TextDecoder().decode(plain));
+          entries=Array.isArray(parsed)?parsed:[];
+          vaultStamp=Number(v.updatedAt)||0;
+        }catch(e){
+          cryptoKey=null;saltBytes=null;
+          setLockStatus('Не вдалося розшифрувати записи. Не змінюй файл даних вручну.');
+          return;
+        }
+      }else{
+        saltBytes=crypto.getRandomValues(new Uint8Array(16));
+        cryptoKey=await deriveKey(pin,saltBytes);
+        entries=[];vaultStamp=0;
+      }
+      entries=entries.filter(x=>x&&typeof x==='object').map(x=>({
+        id:String(x.id||id()),date:String(x.date||today()),title:String(x.title||''),body:String(x.body||''),
+        createdAt:Number(x.createdAt)||Date.now(),updatedAt:Number(x.updatedAt)||Date.now()
+      }));
+      selectedId=entries.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.updatedAt||0)-(a.updatedAt||0))[0]?.id||'';
+      unlocked=true;dirty=false;
+      $('#journalLock').hidden=true;$('#journalApp').hidden=false;
+      $('#journalPin').value='';renderAll();
+    }finally{opening=false;}
+  }
+
+  function filteredEntries(){
+    const q=($('#journalSearch')?.value||'').trim().toLowerCase();
+    return entries.slice()
+      .sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.updatedAt||0)-(a.updatedAt||0))
+      .filter(x=>!q||(`${x.title}\n${x.body}\n${x.date}`).toLowerCase().includes(q));
+  }
+  function excerpt(body){
+    const s=String(body||'').replace(/\s+/g,' ').trim();
+    return s?s.slice(0,72):'Порожній запис';
+  }
+  function renderList(){
+    if(!unlocked)return;
+    const host=$('#journalList'),arr=filteredEntries();
+    if(!arr.length){host.innerHTML='<div class="journal-empty-list">Записів не знайдено.<br>Створи новий через «＋ Запис».</div>';return;}
+    host.innerHTML=arr.map(x=>`
+      <button class="journal-item ${x.id===selectedId?'on':''}" type="button" data-journal-id="${escJ(x.id)}">
+        <b>${escJ(x.title.trim()||'Без назви')}</b>
+        <small>${escJ(x.date)} · ${escJ(excerpt(x.body))}</small>
+      </button>`).join('');
+    host.querySelectorAll('[data-journal-id]').forEach(btn=>btn.onclick=()=>{
+      selectedId=btn.dataset.journalId;renderList();renderEditor();
+    });
+  }
+  function renderEditor(){
+    if(!unlocked)return;
+    const host=$('#journalEditor'),x=entries.find(e=>e.id===selectedId);
+    if(!x){
+      host.innerHTML='<div class="journal-editor-empty"><div><b>Тихий простір для думок</b><span>Створи перший запис — він залишиться у зашифрованому сховищі планера.</span></div></div>';
+      return;
+    }
+    host.innerHTML=`
+      <div class="journal-editor-form">
+        <div class="journal-meta-row">
+          <input class="journal-title" id="journalTitle" maxlength="140" placeholder="Назва запису" value="${escJ(x.title)}">
+          <input class="journal-date" id="journalDate" type="date" value="${escJ(x.date)}">
+        </div>
+        <textarea class="journal-body" id="journalBody" placeholder="Пиши тут без фільтрів…">${escJ(x.body)}</textarea>
+        <div class="journal-foot">
+          <div class="journal-save-state ok" id="journalSaveState">Збережено · зашифровано</div>
+          <button class="journal-delete" id="journalDelete" type="button">Видалити</button>
+        </div>
+      </div>`;
+    const title=$('#journalTitle'),date=$('#journalDate'),body=$('#journalBody');
+    title.oninput=()=>updateActive('title',title.value);
+    date.onchange=()=>updateActive('date',date.value||today());
+    body.oninput=()=>updateActive('body',body.value);
+    $('#journalDelete').onclick=deleteActive;
+  }
+  function renderAll(){renderList();renderEditor();}
+
+  function newEntry(){
+    if(!unlocked)return;
+    const now=Date.now(),x={id:id(),date:today(),title:'',body:'',createdAt:now,updatedAt:now};
+    entries.push(x);selectedId=x.id;dirty=true;renderAll();persistVault();
+    setTimeout(()=>$('#journalTitle')?.focus(),20);
+  }
+  function updateActive(field,value){
+    const x=entries.find(e=>e.id===selectedId);if(!x)return;
+    x[field]=value;x.updatedAt=Date.now();dirty=true;setStatus('Зберігаю…');
+    clearTimeout(saveTimer);saveTimer=setTimeout(()=>persistVault(),320);
+    if(field==='title'||field==='date'){clearTimeout(updateActive._listTimer);updateActive._listTimer=setTimeout(renderList,180);}
+  }
+  async function deleteActive(){
+    const x=entries.find(e=>e.id===selectedId);if(!x)return;
+    if(!confirm('Видалити цей запис зі щоденника?'))return;
+    entries=entries.filter(e=>e.id!==selectedId);
+    selectedId=entries.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.updatedAt||0)-(a.updatedAt||0))[0]?.id||'';
+    dirty=true;renderAll();await persistVault();
+  }
+
+  async function persistVault(){
+    if(!unlocked||!cryptoKey||!saltBytes)return false;
+    clearTimeout(saveTimer);saveTimer=null;
+    const currentStamp=Number(DB.journalVault?.updatedAt)||0;
+    if(vaultStamp&&currentStamp&&currentStamp!==vaultStamp){
+      setStatus('Зміни на іншому пристрої. Розблокуй щоденник знову.','err');
+      lockJournal(true);return false;
+    }
+    try{
+      const iv=crypto.getRandomValues(new Uint8Array(12));
+      const payload=new TextEncoder().encode(JSON.stringify(entries));
+      const encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv},cryptoKey,payload);
+      const stamp=Date.now();
+      DB.journalVault={
+        v:1,alg:'AES-GCM',kdf:'PBKDF2-SHA256',iter:KDF_ITER,
+        salt:bytesToB64(saltBytes),iv:bytesToB64(iv),data:bytesToB64(encrypted),updatedAt:stamp
+      };
+      vaultStamp=stamp;dirty=false;
+      await save();
+      setStatus('Збережено · зашифровано','ok');
+      return true;
+    }catch(e){
+      dirty=true;setStatus('Помилка збереження','err');console.error('Journal save failed',e);return false;
+    }
+  }
+
+  function start(){
+    injectUI();
+    const wait=setInterval(()=>{
+      if(window.plannerReady){clearInterval(wait);ensureVaultField();}
+    },80);
+    setTimeout(()=>clearInterval(wait),30000);
+  }
+  start();
+})();
+</script>
+
 </body></html>
