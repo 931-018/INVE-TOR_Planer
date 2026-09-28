@@ -4521,13 +4521,17 @@ async function applyCloudRecord(rec,doRender=true){
     return true;
   }finally{syncApplying=false;}
 }
+function plannerHasActiveEditor(){
+  const el=document.activeElement;
+  return !!(el&&((el.matches&&el.matches('input:not([readonly]):not([disabled]),textarea:not([readonly]):not([disabled]),select:not([disabled])'))||el.isContentEditable));
+}
 async function cloudPoll(){
-  if(!syncUid||syncBusy||syncDirty||syncInitializing||syncConflict||document.hidden)return;
+  if(!syncUid||syncBusy||syncDirty||syncInitializing||syncConflict||document.hidden||plannerHasActiveEditor())return;
   const revisionAtRead=plannerEditRevision,uidAtRead=syncUid;
   try{
     const rec=await cloudRead();
     const at=Number(rec&&rec.updatedAt)||0;
-    if(rec&&rec.data&&at>syncLastRemoteAt&&syncUid===uidAtRead&&!syncDirty&&plannerEditRevision===revisionAtRead)await applyCloudRecord(rec,true);
+    if(rec&&rec.data&&at>syncLastRemoteAt&&syncUid===uidAtRead&&!syncDirty&&plannerEditRevision===revisionAtRead&&!plannerHasActiveEditor())await applyCloudRecord(rec,true);
   }catch(e){
     syncSetStatus('Хмара тимчасово недоступна. Планер продовжує працювати локально.','warn');
   }
@@ -6184,7 +6188,7 @@ function bindWorkspace(){
   document.querySelectorAll('[data-wstitle]').forEach(e=>e.oninput=()=>{wsData(e.dataset.wstitle).title=e.value;save();});
   document.querySelectorAll('[data-wst]').forEach(e=>{
     e.oninput=()=>{const it=getItem(e.dataset.wst);if(it){it.t=e.value;save();}};
-    e.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();const[s]=e.dataset.wst.split('|');addWsItem(s,getItem(e.dataset.wst));}};
+    e.onkeydown=ev=>{if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();const[s]=e.dataset.wst.split('|');addWsItem(s,getItem(e.dataset.wst));}};
   });
   document.querySelectorAll('[data-wschk]').forEach(e=>e.onclick=()=>{const it=getItem(e.dataset.wschk);if(it){it.done=!it.done;save();rSph();}});
   document.querySelectorAll('[data-wsind]').forEach(e=>e.onclick=()=>{const it=getItem(e.dataset.wsind);if(it){it.level=it.level?0:1;save();rSph();}});
@@ -7831,7 +7835,7 @@ function initLifePlannerModule(){
   window.refreshLifePlanner=function(){ensure();const n=new Date();if(!state.selected)state.selected=iso(n);renderCalendar()};
   populateControls();ensure();if(migrateBirthdays())save();
   $('#lpPrev').onclick=()=>setMonth(-1);$('#lpNext').onclick=()=>setMonth(1);$('#lpToday').onclick=goToday;$('#lpMonth').onchange=()=>{state.month=Number($('#lpMonth').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};$('#lpYear').onchange=()=>{state.year=Number($('#lpYear').value);state.selected=dIso(state.year,state.month,Math.min(pd(state.selected).getDate(),new Date(state.year,state.month+1,0).getDate()));state.editing='';renderCalendar()};
-  $('#lpNewEvent').onclick=()=>{state.editing='';resetEditor(true);$('#lpTitle').focus()};$('#lpResetEvent').onclick=()=>resetEditor(true);$('#lpResetEvent2').onclick=()=>resetEditor(true);$('#lpAllDay').onchange=()=>{syncTimeDisabled();captureEditorDraft()};$('#lpType').onchange=()=>{if($('#lpType').value==='birthday'){if($('#lpRepeat').value==='none')$('#lpRepeat').value='yearly';if($('#lpReminder').value==='0')$('#lpReminder').value='7'}syncBirthdayFields();captureEditorDraft()};$('#lpPerson').onchange=()=>{const p=personById($('#lpPerson').value);if($('#lpType').value==='birthday'&&p){if(p.birthDate)$('#lpBirthDate').value=p.birthDate;if(!$('#lpTitle').value.trim())$('#lpTitle').value=`День народження ${p.name}`}captureEditorDraft()};$('#lpBirthDate').onchange=captureEditorDraft;$('#lpQuickPerson').onclick=()=>{const pre=$('#lpType').value==='birthday'?cleanBirthdayName($('#lpTitle').value):'';openData('people');resetPersonForm(pre);setTimeout(()=>$('#lpPersonName').focus(),60)};$('#lpEventForm').onsubmit=saveEvent;$('#lpDelete').onclick=deleteEvent;
+  $('#lpNewEvent').onclick=()=>{state.editing='';resetEditor(true);$('#lpTitle').focus()};$('#lpResetEvent').onclick=()=>resetEditor(true);$('#lpResetEvent2').onclick=()=>resetEditor(true);$('#lpAllDay').onchange=()=>{syncTimeDisabled();captureEditorDraft()};$('#lpType').onchange=()=>{if($('#lpType').value==='birthday'){if($('#lpRepeat').value==='none')$('#lpRepeat').value='yearly';if($('#lpReminder').value==='0')$('#lpReminder').value='7'}syncBirthdayFields();captureEditorDraft()};$('#lpPerson').onchange=()=>{const p=personById($('#lpPerson').value);if($('#lpType').value==='birthday'&&p){if(p.birthDate)$('#lpBirthDate').value=p.birthDate;if(!$('#lpTitle').value.trim())$('#lpTitle').value=`День народження ${p.name}`}captureEditorDraft()};$('#lpBirthDate').onchange=captureEditorDraft;$('#lpQuickPerson').onclick=()=>{const pre=$('#lpType').value==='birthday'?cleanBirthdayName($('#lpTitle').value):'';openData('people');resetPersonForm(pre);$('#lpPersonName').focus()};$('#lpEventForm').onsubmit=saveEvent;$('#lpDelete').onclick=deleteEvent;
   $('#lpOpenUpcoming').onclick=openUpcoming;$('#lpCloseUpcoming').onclick=closeUpcoming;$('#lpUpcomingOverlay').addEventListener('click',e=>{if(e.target===$('#lpUpcomingOverlay'))closeUpcoming()});$$('#lpRangeButtons [data-range]').forEach(b=>b.onclick=()=>{state.range=b.dataset.range;$$('#lpRangeButtons [data-range]').forEach(x=>x.classList.toggle('on',x===b));$('#lpCustomRange').classList.toggle('on',state.range==='custom');if(state.range!=='custom')renderUpcoming()});$('#lpApplyRange').onclick=renderUpcoming;
   $('#lpEventForm').addEventListener('input',captureEditorDraft);$('#lpEventForm').addEventListener('change',captureEditorDraft);
   $('#lpOpenData').onclick=()=>openData('people');$('#lpCloseData').onclick=closeData;$('#lpDataOverlay').addEventListener('click',e=>{if(e.target===$('#lpDataOverlay'))closeData()});$$('[data-lpdatatab]').forEach(b=>b.onclick=()=>{state.dataTab=b.dataset.lpdatatab;renderData()});$('#lpNewPerson').onclick=()=>{resetPersonForm();$('#lpPersonName').focus()};$('#lpPersonForm').onsubmit=savePersonCard;$('#lpDeletePerson').onclick=deletePersonCard;$('#lpNewRelation').onclick=()=>resetRelationForm();$('#lpRelationForm').onsubmit=saveRelationCard;$('#lpDeleteRelation').onclick=deleteRelationCard;$('#lpRelationForm').addEventListener('input',()=>renderRelationPreview(relationDraftFromForm()));$('#lpRelationForm').addEventListener('change',()=>renderRelationPreview(relationDraftFromForm()));
@@ -10390,7 +10394,7 @@ body{
       const id='spr'+Date.now();
       DB.sprints.push({id,name:'',tasks:[],createdAt:iso(new Date()),updatedAt:iso(new Date())});
       save();renderV5Projects();openV5Sprint(id);
-      setTimeout(()=>document.getElementById('wsSprintName')?.focus(),0);
+      document.getElementById('wsSprintName')?.focus();
     };
   }
 
@@ -10447,7 +10451,7 @@ body{
     document.getElementById('wsV5AddPoint').onclick=()=>{
       s.tasks.push({id:'sp'+Date.now()+Math.random().toString(36).slice(2,5),t:'',d:false});
       s.updatedAt=iso(new Date());save();renderV5SprintModal();
-      setTimeout(()=>{const ins=box.querySelectorAll('[data-v5text]');if(ins.length)ins[ins.length-1].focus();},0);
+      const ins=box.querySelectorAll('[data-v5text]');if(ins.length)ins[ins.length-1].focus();
     };
     document.getElementById('wsV5DeleteProject').onclick=()=>{
       if(!confirm('Видалити цей Project Sprint?'))return;
@@ -10928,7 +10932,7 @@ body.ws6-drag-active{
     return `<div class="ws6-task ${open?'open':''}" data-ws6-id="${x.id}" data-ws6-col="${x.col||'work'}">
       <div class="ws6-task-main">
         <button type="button" class="ws6-status ${x.col==='work'?'active':''}" data-ws6-toggle="${x.id}" title="${x.col==='work'?'Активне — натисни, щоб вимкнути':'Неактивне — натисни, щоб активувати'}"><i></i><span>${x.col==='work'?'АКТИВНЕ':'НЕАКТИВНЕ'}</span></button>
-        <input class="ws6-title" data-ws6-title="${x.id}" value="${esc(x.t||'')}" placeholder="Завдання…" readonly title="Затисни для перенесення · двічі натисни для редагування">
+        <input class="ws6-title" data-ws6-title="${x.id}" value="${esc(x.t||'')}" placeholder="Завдання…" title="Натисни, щоб редагувати назву">
         <input class="ws6-date" type="date" data-ws6-date="${x.id}" value="${x.date||''}" title="Дата — автоматично додасть завдання у «Сьогодні»">
         <button type="button" class="ws6-trash" data-ws6-trash="${x.id}" title="Видалити">${trashSVG}</button>
       </div>
@@ -10994,15 +10998,12 @@ body.ws6-drag-active{
     document.querySelectorAll('[data-ws6-title]').forEach(i=>{
       i.oninput=e=>{const x=ws6Get(i.dataset.ws6Title);if(x){x.t=i.value;save();}};
       i.onclick=e=>e.stopPropagation();
-      i.ondblclick=e=>{
-        e.stopPropagation();
-        i.readOnly=false;
-        i.classList.add('editing');
-        requestAnimationFrame(()=>{i.focus();try{i.setSelectionRange(i.value.length,i.value.length)}catch(_){}})
-      };
-      i.onblur=()=>{i.readOnly=true;i.classList.remove('editing');};
+      // Native single-tap focus opens the iOS keyboard in the user gesture.
+      i.onpointerdown=e=>e.stopPropagation();
+      i.onfocus=()=>i.classList.add('editing');
+      i.onblur=()=>i.classList.remove('editing');
       i.onkeydown=e=>{
-        if(e.key==='Enter'){e.preventDefault();i.blur();}
+        if(e.key==='Enter'&&!e.isComposing){e.preventDefault();i.blur();}
         if(e.key==='Escape'){e.preventDefault();i.blur();}
       };
     });
@@ -11093,8 +11094,6 @@ body.ws6-drag-active{
 
   let taskDrag=null,taskTimer=null,taskStart=null;
   function isInteractive(t){
-    const title=t.closest&&t.closest('.ws6-title');
-    if(title&&title.readOnly)return false;
     return !!(t.closest&&t.closest('input,button,select,textarea,a,[contenteditable="true"]'));
   }
   function activateTaskDrag(card,e){
@@ -11255,7 +11254,7 @@ body.ws6-drag-active{
   if(addBtn)addBtn.onclick=()=>{
     DB.ws.push({id:'w'+Date.now(),t:'',p:2,d:false,subs:[],col:'work',date:'',closedAt:''});
     save();rWS();
-    setTimeout(()=>document.querySelector('#wsList .ws6-task:last-of-type .ws6-title')?.focus(),0);
+    document.querySelector('#wsList .ws6-task:last-of-type .ws6-title')?.focus();
   };
 
   /* Existing history button is retained. */
@@ -12115,7 +12114,7 @@ input[type="date"].date-is-today{
       return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}" data-stage-row="${x.id}">
         <span class="n">${String(i+1).padStart(2,'0')}</span>
         <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
-        <input class="tin stage-title-v9" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу" readonly title="Затисни для перенесення · двічі натисни для редагування">
+        <input class="tin stage-title-v9" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу" title="Натисни, щоб редагувати етап">
         <div class="stage-actions">
           <button class="deadline-trigger ${deadlineClass(x)}" data-deadline-stage="${sid}|${x.id}" title="Дедлайн етапу">${deadlineLabel(x)}</button>
           <button class="stage-mini-btn" data-sstagedel="${sid}|${idx}" title="Видалити">×</button>
@@ -12159,9 +12158,7 @@ input[type="date"].date-is-today{
   let v9Drag=null,v9Timer=null,v9Start=null,v9SuppressUntil=0;
 
   function v9StageInteractive(target){
-    const title=target.closest&&target.closest('.stage-title-v9');
-    if(title&&title.readOnly)return false;
-    return !!(target.closest&&target.closest('button,select,textarea,a,[contenteditable="true"],input:not(.stage-title-v9)'));
+    return !!(target.closest&&target.closest('button,input,select,textarea,a,[contenteditable="true"]'));
   }
 
   function v9PersistStageOrder(root,sid){
@@ -12355,35 +12352,9 @@ input[type="date"].date-is-today{
     });
 
     document.querySelectorAll('[data-sstaget]').forEach(input=>{
-      let lastTap=0;
-
-      const enableEdit=()=>{
-        input.readOnly=false;
-        input.classList.add('v9-editing');
-        requestAnimationFrame(()=>{
-          input.focus();
-          try{input.setSelectionRange(input.value.length,input.value.length)}catch(_){}
-        });
-      };
-
-      input.ondblclick=e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        enableEdit();
-      };
-
-      input.addEventListener('pointerup',e=>{
-        if(!input.readOnly)return;
-        if(Date.now()<v9SuppressUntil)return;
-        const now=Date.now();
-        if(now-lastTap<390){
-          e.preventDefault();
-          e.stopPropagation();
-          lastTap=0;
-          enableEdit();
-        }else lastTap=now;
-      });
-
+      input.onpointerdown=e=>e.stopPropagation();
+      input.onclick=e=>e.stopPropagation();
+      input.onfocus=()=>input.classList.add('v9-editing');
       input.oninput=()=>{
         const [s,i]=input.dataset.sstaget.split('|');
         if(DB.sph[s]&&DB.sph[s].stages[i]){
@@ -12392,11 +12363,10 @@ input[type="date"].date-is-today{
         }
       };
       input.onblur=()=>{
-        input.readOnly=true;
         input.classList.remove('v9-editing');
       };
       input.onkeydown=e=>{
-        if(e.key==='Enter'){
+        if(e.key==='Enter'&&!e.isComposing){
           e.preventDefault();
           input.blur();
         }
@@ -12916,42 +12886,7 @@ body.v9-stage-drag-active *{user-select:none!important}
 (function(){
   "use strict";
 
-  /* ================================================================
-     1) ЕТАПИ: затиск = перетягування, подвійний тап = редагування.
-        Під час редагування пункт НЕ рухається.
-        Робимо через capture-перехоплення pointerdown ДО старого drag.
-     ================================================================ */
-  let lastDownRow=null,lastDownTime=0;
-  document.addEventListener('pointerdown',function(e){
-    const row=e.target.closest?e.target.closest('[data-stage-row]'):null;
-    if(!row||!(row.closest&&row.closest('#pg-sph .strategy-stages')))return;
-
-    const editing=document.querySelector('.stage-title-v9.v9-editing');
-
-    // A. Якщо щось редагується — жодного drag (пункт стоїть на місці)
-    if(editing){
-      e.stopImmediatePropagation();
-      // тап поза активним полем → завершуємо редагування
-      if(editing!==e.target && !(editing.contains&&editing.contains(e.target))){
-        try{editing.blur();}catch(_){}
-      }
-      return;
-    }
-
-    // B. Подвійний тап по заголовку (readonly) → лише редагування, без drag
-    const title=e.target.closest?e.target.closest('.stage-title-v9'):null;
-    if(title){
-      const now=Date.now();
-      if(lastDownRow===row && (now-lastDownTime)<430){
-        e.stopImmediatePropagation();   // прибиваємо старт перетягування на 2-му тапі
-        lastDownRow=null;lastDownTime=0;
-        return;
-      }
-      lastDownRow=row;lastDownTime=now;
-    }
-    // C. Інакше не втручаємось — утриманий натиск (long-press) запустить перетягування
-  }, true);
-
+  // Title fields use native editing. Drag guards live on their row handlers.
   /* ================================================================
      2) ДЕДЛАЙН-БАР: чим ближче дедлайн — тим червоніший,
         чим далі — тим зеленіший (салатовий → оранж → червоний).
@@ -13207,5 +13142,13 @@ let fin2InitTries=0;const fin2InitTimer=setInterval(()=>{if(window.plannerReady)
 <style id="finance-accounts-savings-css">
 .fin2-savings .f13-section-head p{margin:5px 0 0;color:#a8bda7;font:13px/1.5 sans-serif}.fin2-savings-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:16px}.fin2-saving-card{background:linear-gradient(145deg,#192f20,#102319);border:1px solid #d1b36d42;border-radius:18px;padding:20px;min-width:0}.fin2-saving-card header{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}.fin2-saving-card header>div{min-width:0}.fin2-saving-card small{color:#b8c6ae;font:10px/1.5 sans-serif;letter-spacing:1.5px}.fin2-saving-card h4{margin:7px 0 20px;color:#e8d29d;font-size:20px;overflow-wrap:anywhere}.fin2-saving-value{color:#ebd7a6;font:700 27px/1.25 sans-serif;overflow-wrap:anywhere}.fin2-saving-value span{display:block;color:#aabca5;font:13px/1.5 sans-serif;margin-top:5px}.fin2-saving-meter{height:10px;overflow:hidden;border-radius:20px;background:#314631;margin:20px 0 10px}.fin2-saving-meter i{display:block;width:100%;height:100%;transform-origin:left;background:linear-gradient(90deg,#92b789,#e1c17d);border-radius:20px}.fin2-saving-meta{display:flex;justify-content:space-between;align-items:center;gap:14px;color:#b8c6ae;font:12px/1.5 sans-serif}.fin2-saving-meta b{display:block;color:#e1d7b3}.fin2-saving-meta>strong{color:#e8d29d;font-size:20px}.fin2-saving-card footer{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.fin2-saving-card.complete{border-color:#9ebd7c88}.fin2-account-help{font:13px/1.6 sans-serif;color:#c0ceb6;margin:16px 0}.fin2-modal .danger{color:#e9ab9c;border-color:#bc6e5e77}.fin2-modal-actions{flex-wrap:wrap}.fin2-saving-card button{min-height:40px}.fin2-saving-card .fin2-btn.primary{background:#ced8b9;color:#16271c}
 @media(max-width:600px){.fin2-savings .f13-section-head{gap:12px;align-items:flex-start}.fin2-saving-card{padding:18px}.fin2-saving-card footer button{flex:1;min-height:44px}.fin2-modal-actions button{min-height:44px}.fin2-modal{max-height:calc(100dvh - 28px);overflow-y:auto}.fin2-savings .f13-section-head p{max-width:220px}}
+</style>
+
+<style id="planner-mobile-native-editing">
+/* Text selection and native caret must survive non-selectable task containers. */
+input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]):not([type=submit]),textarea,[contenteditable=true]{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default;caret-color:var(--gold-soft,#e8d29d)}
+#pg-ws .ws6-title,#pg-sph .stage-title-v9{cursor:text!important;touch-action:manipulation}
+#pg-ws .ws6-title:focus,#pg-sph .stage-title-v9:focus{border-bottom:1px dashed rgba(212,162,78,.45);background:rgba(212,162,78,.025);border-radius:4px}
+@media (pointer:coarse){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=button]):not([type=submit]),textarea,select{font-size:max(16px,1em)!important}input,textarea,[contenteditable=true]{scroll-margin-block:88px}}
 </style>
 </body></html>
