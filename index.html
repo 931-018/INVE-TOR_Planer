@@ -3605,6 +3605,70 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
 }
 </style>
 
+
+<style id="textwork-quickadd-final-polish-20261001">
+/* Rules remain available inside Vision, but are removed from the quick dock. */
+#quickFabs #fbRules{display:none!important}
+
+/* Five visible dock buttons now fit evenly. */
+#quickFabs{gap:7px!important}
+@media(max-width:700px){
+  #quickFabs .fab:not(#fbRules){flex:1 1 0!important}
+}
+
+/* TEXT WORK: calm hierarchy — stages first, Workspace second, no charts. */
+#pg-sph .text-work-simple-workspace{margin-top:18px}
+#pg-sph .text-work-simple-workspace .tbp-workspace-toggle{
+  border-color:rgba(212,162,78,.18)!important;
+  background:linear-gradient(135deg,rgba(212,162,78,.045),transparent),var(--panel)!important;
+}
+#pg-sph .text-work-simple-workspace .tbp-workspace-title{color:var(--gold-soft)!important}
+
+/* Quick Add: exactly two clean rows on desktop (10 actions). */
+.qa-types{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:9px!important;
+  padding:15px 18px 8px!important
+}
+.qa-types button{
+  min-height:70px!important;
+  border-radius:13px!important;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease!important
+}
+.qa-types button:hover{transform:translateY(-1px)}
+.qa-types button.qa-primary-type{
+  border-color:rgba(111,184,126,.16)!important;
+  background:linear-gradient(145deg,rgba(111,184,126,.055),rgba(212,162,78,.035)),#151d27!important
+}
+.qa-types button.qa-primary-type i{color:#cbb878!important}
+.qa-types button.qa-primary-type.on{
+  border-color:rgba(212,162,78,.52)!important;
+  background:linear-gradient(145deg,rgba(212,162,78,.13),rgba(111,184,126,.09)),#19212a!important
+}
+.qa-form{padding-top:16px!important}
+.qa-form .qa-mini-note{
+  margin-top:3px;padding:10px 12px;border:1px dashed rgba(111,184,126,.14);
+  border-radius:9px;background:rgba(111,184,126,.025);color:#77838e;font-size:12px;line-height:1.5
+}
+@media(max-width:620px){
+  .qa-types{
+    display:grid!important;
+    grid-template-columns:repeat(5,82px)!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    gap:7px!important;
+    padding:11px 12px 7px!important;
+    scroll-snap-type:x proximity
+  }
+  .qa-types button{
+    width:82px!important;min-width:82px!important;min-height:66px!important;
+    padding:7px 4px!important;scroll-snap-align:start
+  }
+  .qa-types button i{font-size:18px!important}
+  .qa-form{padding-top:12px!important}
+}
+</style>
+
 </head>
 <body data-page="sph" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
@@ -4118,12 +4182,13 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
     <div class="qa-head"><div><small data-ui-text-key="qaOverlay|div:0/div:0/div:0/small:0" class="ui-text-editable">QUICK ADD</small><b>Швидко додати</b></div><button type="button" id="qaClose">×</button></div>
     <div class="qa-types" id="qaTypes">
       <button type="button" data-qatype="task" class="on"><i>✓</i><span>Завдання</span></button>
+      <button type="button" data-qatype="purchase" class="qa-primary-type"><i>☑</i><span>Покупка</span></button>
+      <button type="button" data-qatype="note" class="qa-primary-type"><i>✎</i><span>Нотатка</span></button>
       <button type="button" data-qatype="event"><i>◆</i><span>Подія</span></button>
       <button type="button" data-qatype="reminder"><i>◴</i><span>Нагадування</span></button>
       <button type="button" data-qatype="birthday"><i>🎂</i><span>День народження</span></button>
       <button type="button" data-qatype="person"><i>◉</i><span>Людина</span></button>
       <button type="button" data-qatype="relationship"><i>♥</i><span>Стосунки</span></button>
-      <button type="button" data-qatype="note"><i>✎</i><span>Нотатка</span></button>
       <button type="button" data-qatype="shift"><i>▦</i><span>Rossmann</span></button>
       <button type="button" data-qatype="calendar"><i>▣</i><span>Календар</span></button>
     </div>
@@ -4136,7 +4201,7 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
   <button class="fab fab-quick-add" id="qaFab" data-label="Швидко додати" title="Швидко додати" aria-label="Швидко додати">＋</button>
   <button class="fab" id="fbNotes" data-label="Нотатки" title="Нотатки" aria-label="Нотатки">✎</button>
   <button class="fab" id="fbVision" data-label="Бачення" title="Бачення" aria-label="Бачення">◇</button>
-  <button class="fab" id="fbRules" data-label="Правила" title="Правила" aria-label="Правила">≡</button>
+  <button class="fab" id="fbRules" data-label="Правила" title="Правила" aria-label="Правила" hidden tabindex="-1">≡</button>
   <button class="fab" id="fbData" data-label="Дані" title="Дані" aria-label="Дані">⇅</button>
 </div>
 
@@ -6637,39 +6702,35 @@ function ordersTableHTML(list,ctx){
 function rTextWork(){
   const s=SCf(TEXT_ID);
   DB.ui=DB.ui||{};
+  DB.sph=DB.sph||{};
+  DB.sph[TEXT_ID]=DB.sph[TEXT_ID]||{big:'',year:'',goals:[],stages:[]};
+  if(!Array.isArray(DB.sph[TEXT_ID].stages))DB.sph[TEXT_ID].stages=[];
   const collapsed=!!DB.ui.textWorkWorkspaceCollapsed;
+
+  /* TEXT WORK is intentionally simple:
+     standard stages with deadlines + one detailed Workspace below. */
   let h=sphereHero(s)+sphControlHTML(s);
-  // TEXT BY PETRO is a separate, secured GitHub Pages application.
-  // The planner never embeds admin credentials or duplicates Supabase data.
-  h+=`<section class="tbp-launcher" aria-label="TEXT BY PETRO · бізнес-адмінка">
-    <div class="tbp-launcher-mark" aria-hidden="true">P</div>
-    <div class="tbp-launcher-content">
-      <span class="tbp-launcher-overline">TEXT WORK · БІЗНЕС-ПРОСТІР</span>
-      <strong>TEXT <em>BY PETRO</em></strong>
-      <span class="tbp-launcher-sub">Замовлення · клієнти · оплати · бонуси</span>
-    </div>
-    <a class="tbp-launcher-link" href="https://931-018.github.io/textBot/admin.html" target="_blank" rel="noopener noreferrer" title="Відкрити захищену адмінку в новій вкладці">ВІДКРИТИ АДМІНКУ <span aria-hidden="true">↗</span></a>
-  </section>`;
-  h+=`<section class="tbp-workspace-shell" aria-label="Робочий простір TEXT WORK">
+  h+=strategyStagesHTML(TEXT_ID);
+  h+=`<section class="tbp-workspace-shell text-work-simple-workspace" aria-label="Робочий простір TEXT WORK">
     <button type="button" class="tbp-workspace-toggle" data-text-workspace-toggle aria-expanded="${collapsed?'false':'true'}" aria-controls="textWorkspacePanel">
       <span class="tbp-workspace-title">✦ РОБОЧИЙ ПРОСТІР</span>
       <span class="tbp-workspace-label">${collapsed?'РОЗГОРНУТИ':'ЗГОРНУТИ'} <span aria-hidden="true">${collapsed?'▸':'▾'}</span></span>
     </button>
     <div id="textWorkspacePanel" ${collapsed?'hidden':''}>${workspaceHTML(TEXT_ID)}</div>
   </section>`;
-  // Tasks are independent from the legacy duplicate order/payment/archive interface.
-  h+=tasksCardHTML(TEXT_ID);
+
   document.getElementById('sphDetail').innerHTML=h;
+  bindStrategyStages(TEXT_ID);
   bindWorkspace();
-  bindTasksCard(TEXT_ID);
   bindSphControl();
+  if(typeof applyDeadlineEnhancements==='function')applyDeadlineEnhancements();
+
   const toggle=document.querySelector('[data-text-workspace-toggle]');
   if(toggle)toggle.onclick=()=>{
     DB.ui.textWorkWorkspaceCollapsed=!DB.ui.textWorkWorkspaceCollapsed;
     save();rSph();
   };
 }
-
 /* ═══ ЗВИЧКИ ═══ */
 let pendDel=null,pendT=null;
 function askDel(key,onYes,rerender){pendDel=null;clearTimeout(pendT);onYes();}
@@ -8124,6 +8185,16 @@ function initLifePlannerModule(){
   function peopleOptions(){return ensurePlanner().people.slice().sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'uk')).map(p=>`<option value="${p.id}">${esc2(p.name||'Без імені')}</option>`).join('')}
   function metricOptions(){return ensureReview().metrics.map(m=>{const s=sphereById(m.sphereId);return `<option value="${m.id}">${esc2(s.ic+' '+m.name)}</option>`}).join('')}
   function sphereOptions(){return (DB.spheres||[]).map(s=>`<option value="${s.id}">${esc2(s.ic+' '+s.nm)}</option>`).join('')}
+  function qaShoppingLists(){
+    DB.notes=Array.isArray(DB.notes)?DB.notes:[];
+    return DB.notes.filter(n=>n&&n.kind==='shopping');
+  }
+  function qaShoppingOptions(){
+    const lists=qaShoppingLists();
+    if(!lists.length)return '<option value="__new__">Новий список покупок</option>';
+    return lists.map(n=>`<option value="${esc2(String(n.id))}">${esc2((n.t||'Список покупок').trim()||'Список покупок')}</option>`).join('')+
+      '<option value="__new__">＋ Новий список покупок</option>';
+  }
   function renderQaType(type){
     $$('#qaTypes [data-qatype]').forEach(b=>b.classList.toggle('on',b.dataset.qatype===type));
     const d=todayISO();let h='';
@@ -8132,7 +8203,8 @@ function initLifePlannerModule(){
     if(type==='birthday')h=`<label><span>ПІБ</span><input id="qaName" maxlength="100" placeholder="Ім’я людини" required></label><div class="qa-form-grid"><label><span>Дата народження</span><input id="qaBirth" type="date" required></label><label><span>Нагадати</span><select id="qaReminder"><option value="0">У день</option><option value="3">За 3 дні</option><option value="7" selected>За 7 днів</option><option value="14">За 14 днів</option></select></label></div><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
     if(type==='person')h=`<label><span>ПІБ</span><input id="qaName" maxlength="100" placeholder="Прізвище Ім’я" required></label><label><span>Дата народження</span><input id="qaBirth" type="date"></label><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
     if(type==='relationship')h=`<label><span>Людина</span><select id="qaPerson" required><option value="">Оберіть людину</option>${peopleOptions()}</select></label><label><span>Разом від</span><input id="qaDate" type="date" value="${d}" required></label><div class="qa-form-grid"><label><span>Свій відлік · необов’язково</span><input id="qaRelValue" type="number" min="1" inputmode="numeric" placeholder="100"></label><label><span>Одиниця</span><select id="qaRelUnit"><option value="days">днів</option><option value="months">місяців</option><option value="years">років</option></select></label></div><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
-    if(type==='note')h=`<label><span>Назва</span><input id="qaTitle" maxlength="100" placeholder="Нотатка" required></label><label><span>Текст</span><textarea id="qaNote" maxlength="1200" placeholder="Запиши думку…" required></textarea></label><label><span>Дата</span><input id="qaDate" type="date" value="${d}"></label>`;
+    if(type==='purchase')h=`<div class="qa-form-grid"><label><span>Покупка</span><input id="qaPurchase" maxlength="120" placeholder="Що потрібно купити?" required autofocus></label><label><span>Список</span><select id="qaShoppingList">${qaShoppingOptions()}</select></label></div><label><span>Примітка · необов’язково</span><input id="qaPurchaseNote" maxlength="120" placeholder="Наприклад: 2 шт., 1 кг, конкретний бренд"></label><div class="qa-mini-note">Позиція одразу збережеться у «Нотатки → Список покупок».</div>`;
+    if(type==='note')h=`<label><span>Нотатка</span><textarea id="qaNote" maxlength="1600" placeholder="Запиши думку…" required autofocus></textarea></label><label><span>Назва · необов’язково</span><input id="qaTitle" maxlength="100" placeholder="Створиться автоматично, якщо залишити порожнім"></label><label><span>Дата</span><input id="qaDate" type="date" value="${d}"></label>`;
     if(type==='shift')h=`<div class="qa-form-grid"><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label><label><span>Тип</span><select id="qaShiftType"><option value="shift">Зміна</option><option value="off">Вихідний</option></select></label></div><div class="qa-form-grid" id="qaShiftTimes"><label><span>З якої</span><input id="qaStart" type="time" value="06:00"></label><label><span>По яку</span><input id="qaEnd" type="time" value="14:00"></label></div><div class="qa-mini-note">Якщо на цю дату вже є запис — він буде замінений.</div>`;
     if(type==='metric')h=`<label><span>Показник</span><select id="qaMetric">${metricOptions()}</select></label><div class="qa-form-grid"><label><span>Значення</span><input id="qaMetricValue" type="number" step="any" inputmode="decimal" required></label><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label></div>`;
     qaForm.innerHTML=h+`<button type="submit" class="qa-save">Зберегти</button><div class="qa-status" aria-live="polite"></div>`;
@@ -8151,14 +8223,31 @@ function initLifePlannerModule(){
       const name=$('#qaName').value.trim(),birth=$('#qaBirth').value||'',note=$('#qaNote').value.trim();if(!name)return;let person=p.people.find(x=>String(x.name||'').trim().toLocaleLowerCase('uk-UA')===name.toLocaleLowerCase('uk-UA'));if(person){person.birthDate=birth||person.birthDate||'';person.note=note||person.note||'';person.updatedAt=Date.now()}else{person={id:uid('pp'),name,birthDate:birth,note,createdAt:Date.now(),updatedAt:Date.now()};p.people.push(person)}if(birth){let be=p.events.find(x=>x.type==='birthday'&&x.personId===person.id);const obj={id:be?.id||uid('pe'),title:`День народження ${name}`,date:birth,endDate:'',type:'birthday',allDay:true,start:'12:00',end:'13:00',reminder:7,repeat:'yearly',note:'',personId:person.id,birthDate:birth,updatedAt:Date.now()};if(be)Object.assign(be,obj);else p.events.push(obj)}
     } else if(type==='relationship'){
       const personId=$('#qaPerson').value,startDate=$('#qaDate').value,note=$('#qaNote').value.trim(),targetValue=Math.max(0,Number($('#qaRelValue').value)||0),targetUnit=$('#qaRelUnit').value||'days';if(!personId||!startDate)return;p.relationships.push({id:uid('rr'),personId,type:'couple',startDate,targetValue,targetUnit,note,active:true,createdAt:Date.now(),updatedAt:Date.now()});
+    } else if(type==='purchase'){
+      const name=$('#qaPurchase').value.trim(),note=($('#qaPurchaseNote')?.value||'').trim(),listId=$('#qaShoppingList').value;
+      if(!name)return;
+      DB.notes=Array.isArray(DB.notes)?DB.notes:[];
+      let list=listId==='__new__'?null:DB.notes.find(n=>String(n.id)===String(listId)&&n.kind==='shopping');
+      if(!list){
+        list={id:uid('n'),kind:'shopping',t:'Список покупок',items:[],d:todayISO()};
+        DB.notes.unshift(list);
+      }
+      list.items=Array.isArray(list.items)?list.items:[];
+      list.items.push({id:uid('si'),t:note?`${name} — ${note}`:name,d:false});
+      list.d=todayISO();
     } else if(type==='note'){
-      const t=$('#qaTitle').value.trim(),b=$('#qaNote').value.trim(),d=$('#qaDate').value||todayISO();if(!t||!b)return;DB.notes=Array.isArray(DB.notes)?DB.notes:[];DB.notes.unshift({id:uid('n'),t,b,d});
+      const b=$('#qaNote').value.trim(),d=$('#qaDate').value||todayISO();
+      if(!b)return;
+      const manual=($('#qaTitle')?.value||'').trim();
+      const autoTitle=b.replace(/\s+/g,' ').trim().slice(0,55);
+      DB.notes=Array.isArray(DB.notes)?DB.notes:[];
+      DB.notes.unshift({id:uid('n'),kind:'note',t:manual||autoTitle||'Нотатка',b,d});
     } else if(type==='shift'){
       DB.rossmann=DB.rossmann&&typeof DB.rossmann==='object'?DB.rossmann:{rate:27.5,rates:{},countStatsFrom:'',entries:[]};DB.rossmann.entries=Array.isArray(DB.rossmann.entries)?DB.rossmann.entries:[];const date=$('#qaDate').value,st=$('#qaShiftType').value;if(!date)return;const obj=st==='off'?{id:uid('rs'),date,type:'off',diff:''}:{id:uid('rs'),date,type:'shift',start:$('#qaStart').value||'06:00',end:$('#qaEnd').value||'14:00',diff:''};DB.rossmann.entries=DB.rossmann.entries.filter(x=>x.date!==date);DB.rossmann.entries.push(obj);DB.rossmann.entries.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
     } else if(type==='metric'){
       const r=ensureReview(),m=r.metrics.find(x=>x.id===$('#qaMetric').value),v=num($('#qaMetricValue').value),date=$('#qaDate').value;if(!m||v==null||!date)return;m.history=Array.isArray(m.history)?m.history:[];const old=m.history.find(x=>x.date===date);if(old)old.value=v;else m.history.push({date,value:v});m.history.sort((a,b)=>a.date.localeCompare(b.date));if(m.baseline==null){m.baseline=v;m.baselineDate=date}
     }
-    await save();if(window.refreshLifePlanner)window.refreshLifePlanner();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);if(window.refreshRossmann)window.refreshRossmann();if(window.refreshWeeklyReview)window.refreshWeeklyReview();if(type==='task'&&cur===($('#qaDate')?.value||''))rToday();qaToast('Збережено');setTimeout(()=>{qaClose();renderQaType(type)},360);
+    await save();if(window.refreshLifePlanner)window.refreshLifePlanner();if(window.renderTodayPlannerAlerts)window.renderTodayPlannerAlerts(cur);if(window.refreshRossmann)window.refreshRossmann();if(window.refreshWeeklyReview)window.refreshWeeklyReview();if(type==='task'&&cur===($('#qaDate')?.value||''))rToday();qaToast(type==='purchase'?'Покупку додано':type==='note'?'Нотатку збережено':'Збережено');setTimeout(()=>{qaClose();renderQaType(type)},360);
   };
 
   /* Weekly Review */
