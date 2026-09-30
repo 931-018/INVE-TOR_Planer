@@ -3405,7 +3405,207 @@ dialog.f13-modal{position:fixed!important;inset:0!important;margin:auto!importan
 @media(max-width:370px){.finance-os .fin2-debt-figures{grid-template-columns:1fr}.finance-os .fin2-debt-figures>div{display:flex;justify-content:space-between;align-items:center;gap:12px}.finance-os .fin2-debt-figures strong{margin:0}.finance-os .fin2-debt-grand-amounts strong{font-size:27px}}
 @media(prefers-reduced-motion:reduce){.bgfx *,.shero *,.shero:before,.shero:after,.gblock:before,.goal-orbit:before,.goal-orbit:after,.premium-progress *{animation:none!important;transition:none!important}.premium-progress .spark-main-line{stroke-dashoffset:0!important}}
 html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-hidden *:after{animation-play-state:paused!important}
-</style></head>
+</style>
+<style id="stage-reminder-polish-20261001">
+/* Completed stage status replaces the deadline card. */
+#pg-sph .stage-actions .deadline-trigger.deadline-complete{
+  width:166px!important;min-height:66px!important;padding:8px 14px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;
+  border:1px solid rgba(111,184,126,.52)!important;border-radius:12px!important;
+  background:
+    radial-gradient(circle at 22% 30%,rgba(111,184,126,.16),transparent 38%),
+    linear-gradient(145deg,rgba(34,76,48,.34),rgba(15,28,22,.82))!important;
+  color:#79c88a!important;box-shadow:inset 0 0 0 1px rgba(111,184,126,.05),0 8px 22px rgba(0,0,0,.16)!important;
+}
+#pg-sph .deadline-complete .stage-done-check{
+  width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:50%;
+  border:1px solid rgba(111,184,126,.62);background:rgba(111,184,126,.14);
+  color:#82d493;font:700 24px/1 'Oswald',sans-serif;
+  box-shadow:0 0 18px rgba(111,184,126,.12)
+}
+#pg-sph .deadline-complete .stage-done-text{
+  color:#8bd39a;font:700 12px/1 'Oswald',sans-serif;letter-spacing:1.8px
+}
+#pg-sph .deadline-complete:hover{
+  border-color:rgba(111,184,126,.72)!important;background:linear-gradient(145deg,rgba(40,88,55,.40),rgba(15,30,23,.88))!important;
+}
+
+/* Reminder now occupies the former day-conclusion position under the calendar. */
+#todayStageReminderHost{margin:16px 0 4px}
+#todayStageReminderHost:empty{display:none}
+#todayStageReminderHost .today-deadline-reminder{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:58px minmax(0,1fr) auto;
+  align-items:center;gap:15px;margin:0;padding:16px 17px;
+  border:1px solid rgba(212,162,78,.30);border-radius:15px;
+  background:
+    radial-gradient(circle at 7% 0%,rgba(212,162,78,.13),transparent 32%),
+    linear-gradient(120deg,rgba(34,35,30,.90),rgba(18,24,30,.98) 55%,rgba(15,21,27,.98));
+  box-shadow:0 14px 34px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.025)
+}
+#todayStageReminderHost .today-deadline-reminder:before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#e6bb62,#92723a);opacity:.9
+}
+#todayStageReminderHost .tdr-badge{
+  width:52px;height:52px;border-radius:15px;display:grid;place-items:center;
+  border:1px solid rgba(212,162,78,.28);background:rgba(11,16,21,.55);font-size:21px;
+  box-shadow:inset 0 0 20px rgba(212,162,78,.045)
+}
+#todayStageReminderHost .tdr-body{min-width:0}
+#todayStageReminderHost .tdr-top{
+  margin:0 0 6px;color:#e5b957;font:700 10.5px/1 'Oswald',sans-serif;
+  letter-spacing:1.7px;text-transform:uppercase
+}
+#todayStageReminderHost .tdr-name{
+  color:#eee8db;font:600 17px/1.38 'Spectral',serif!important;
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important
+}
+#todayStageReminderHost .tdr-meta{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px;
+  color:#a6afb7!important;font-size:13.5px!important;line-height:1.35!important
+}
+#todayStageReminderHost .tdr-meta span{
+  display:inline-flex;align-items:center;min-height:27px;padding:4px 8px;border-radius:7px;
+  border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.025)
+}
+#todayStageReminderHost .tdr-meta-sphere{color:#b9c0c7!important}
+#todayStageReminderHost .tdr-meta-date{color:#d5bf88!important;border-color:rgba(212,162,78,.13)!important}
+#todayStageReminderHost .tdr-go{
+  min-width:105px;min-height:44px;padding:0 13px;border-radius:10px;
+  border:1px solid rgba(212,162,78,.28);background:rgba(212,162,78,.045);
+  color:#e2c77f;font:700 10px/1 'Oswald',sans-serif;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer
+}
+#todayStageReminderHost .tdr-go:hover{border-color:rgba(212,162,78,.52);background:rgba(212,162,78,.085)}
+@media(max-width:700px){
+  #pg-sph .stage-actions .deadline-trigger.deadline-complete{width:min(210px,calc(100% - 39px))!important;min-height:54px!important}
+  #pg-sph .deadline-complete .stage-done-check{width:30px;height:30px;flex-basis:30px;font-size:21px}
+  #todayStageReminderHost{margin-top:12px}
+  #todayStageReminderHost .today-deadline-reminder{
+    grid-template-columns:46px minmax(0,1fr);gap:11px;padding:13px 12px
+  }
+  #todayStageReminderHost .tdr-badge{width:44px;height:44px;border-radius:12px;font-size:18px}
+  #todayStageReminderHost .tdr-name{font-size:15.5px!important}
+  #todayStageReminderHost .tdr-meta{font-size:12.5px!important;gap:6px}
+  #todayStageReminderHost .tdr-go{grid-column:1/-1;width:100%;min-height:42px}
+}
+</style>
+
+
+<style id="stage-long-title-wrap-20261001">
+/* Long stage titles: wrap vertically inside the existing card width. */
+#pg-sph .stg.strategy-stage .stage-title-wrap{
+  display:block!important;
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:28px!important;
+  height:auto;
+  max-height:none!important;
+  margin:0!important;
+  padding:3px 2px!important;
+  border:0!important;
+  border-bottom:1px dashed transparent!important;
+  background:transparent!important;
+  color:var(--txt)!important;
+  font-family:'Spectral',serif!important;
+  font-size:17px!important;
+  font-weight:600!important;
+  line-height:1.48!important;
+  white-space:pre-wrap!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  overflow:hidden!important;
+  resize:none!important;
+  box-sizing:border-box!important;
+  field-sizing:content;
+}
+#pg-sph .stg.strategy-stage .stage-title-wrap:focus{
+  outline:none!important;
+  border-bottom-color:rgba(212,162,78,.55)!important;
+  background:rgba(212,162,78,.018)!important;
+}
+#pg-sph .stg.strategy-stage:not(.v9-stage-dragging){
+  grid-template-columns:26px 26px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  overflow:hidden!important;
+}
+#pg-sph .stg.strategy-stage .stage-actions{
+  align-self:center!important;
+  flex-shrink:0!important;
+}
+#pg-sph .stg.strategy-stage .stage-actions .deadline-trigger{
+  flex-shrink:0!important;
+}
+/* The text column is allowed to grow only downward, never underneath the deadline column. */
+#pg-sph .stg.strategy-stage .stage-title-wrap{
+  grid-column:3!important;
+  grid-row:1!important;
+}
+#pg-sph .stg.strategy-stage .stage-actions{
+  grid-column:4!important;
+  grid-row:1!important;
+}
+
+@media(max-width:700px){
+  #pg-sph .stg.strategy-stage:not(.v9-stage-dragging){
+    grid-template-columns:22px 24px minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;
+    align-items:start!important;
+    gap:8px!important;
+    padding:11px!important;
+  }
+  #pg-sph .stg.strategy-stage .n,
+  #pg-sph .stg.strategy-stage .box{
+    align-self:start!important;
+    margin-top:4px!important;
+  }
+  #pg-sph .stg.strategy-stage .stage-title-wrap{
+    grid-column:3!important;
+    grid-row:1!important;
+    font-size:16px!important;
+    line-height:1.45!important;
+    min-height:32px!important;
+    padding:2px 0 5px!important;
+  }
+  #pg-sph .stg.strategy-stage .stage-actions{
+    grid-column:3!important;
+    grid-row:2!important;
+    width:100%!important;
+    min-width:0!important;
+    justify-self:stretch!important;
+    justify-content:space-between!important;
+    align-items:center!important;
+    gap:7px!important;
+    margin-top:2px!important;
+  }
+  #pg-sph .stg.strategy-stage .stage-actions .deadline-trigger,
+  #pg-sph .stg.strategy-stage .stage-actions .deadline-trigger.deadline-complete{
+    width:calc(100% - 38px)!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  #pg-sph .stg.strategy-stage .stage-actions .stage-mini-btn{
+    flex:0 0 30px!important;
+    width:30px!important;
+    min-width:30px!important;
+    height:30px!important;
+    min-height:30px!important;
+  }
+}
+@media(max-width:390px){
+  #pg-sph .stg.strategy-stage:not(.v9-stage-dragging){
+    grid-template-columns:20px 23px minmax(0,1fr)!important;
+    gap:7px!important;
+    padding:10px 9px!important;
+  }
+  #pg-sph .stg.strategy-stage .stage-title-wrap{
+    font-size:16px!important;
+    line-height:1.42!important;
+  }
+}
+</style>
+
+</head>
 <body data-page="sph" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
 <div class="bgfx" aria-hidden="true">
@@ -3535,7 +3735,8 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
         </div>
       </div></div>
   </div></div>
-      <textarea class="dnote" id="dNote" placeholder="Один висновок дня…"></textarea>
+      <div id="todayStageReminderHost" class="today-stage-reminder-host" aria-live="polite"></div>
+      <textarea class="dnote" id="dNote" placeholder="Один висновок дня…" hidden aria-hidden="true"></textarea>
       <div class="hint ui-text-editable" data-ui-text-key="pg-today|div:0/div:7">Завдання приходять сюди зі сфер.</div>
     </div>
   </div>
@@ -3931,12 +4132,12 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
 </div>
 
 <button class="mobile-fab-handle" id="mobileFabHandle" type="button" aria-label="Показати швидкі кнопки" aria-expanded="false"></button>
-<div class="fabs" id="quickFabs">
-  <button class="fab fab-quick-add" id="qaFab" title="Швидко додати" aria-label="Швидко додати">＋</button>
-  <button class="fab" id="fbNotes" title="Нотатки" aria-label="Нотатки">✎</button>
-  <button class="fab" id="fbVision" title="Бачення" aria-label="Бачення">◈</button>
-  <button class="fab" id="fbRules" title="Правила" aria-label="Правила">⚖</button>
-  <button class="fab" id="fbData" title="Дані" aria-label="Дані">⇅</button>
+<div class="fabs" id="quickFabs" aria-label="Швидкі функції">
+  <button class="fab fab-quick-add" id="qaFab" data-label="Швидко додати" title="Швидко додати" aria-label="Швидко додати">＋</button>
+  <button class="fab" id="fbNotes" data-label="Нотатки" title="Нотатки" aria-label="Нотатки">✎</button>
+  <button class="fab" id="fbVision" data-label="Бачення" title="Бачення" aria-label="Бачення">◇</button>
+  <button class="fab" id="fbRules" data-label="Правила" title="Правила" aria-label="Правила">≡</button>
+  <button class="fab" id="fbData" data-label="Дані" title="Дані" aria-label="Дані">⇅</button>
 </div>
 
 <div class="ov" id="ovNotes"><div class="ov-in"><span class="ov-cl" data-cl="ovNotes">×</span><div class="ov-pad">
@@ -4656,6 +4857,14 @@ async function load(){let raw=null,fresh=false,recovered=false;
 
 /* акуратні оновлення для вже збережених даних */
 function migrate(){
+  /* HABITS · clean cycle from 01.10.2026 */
+  if(DB.habitCycleStart!=='2026-10-01'){
+    DB.habits=DB.habits||[];
+    DB.habitLog=DB.habitLog||{};
+    DB.habits.forEach(h=>{h.since='2026-10-01';});
+    Object.keys(DB.habitLog).forEach(k=>{if(k<'2026-10-01')delete DB.habitLog[k];});
+    DB.habitCycleStart='2026-10-01';
+  }
   // YouTube OS v3: оновлюємо лише цілі та етапи першої сфери.
   // Завдання, Workspace, нотатки, аналітика, ідеї та інші сфери не змінюються.
   if(DB.youtubeOsVersion!==3){
@@ -5333,7 +5542,7 @@ function strategyStagesHTML(sid){
       ${stageGripHTML()}
       <span class="n">${String(i+1).padStart(2,'0')}</span>
       <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
-      <input class="tin" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу">
+      <textarea class="tin stage-title-wrap" data-sstaget="${sid}|${idx}" rows="1" placeholder="Назва етапу">${esc(x.t||'')}</textarea>
       <div class="stage-actions">
         <button class="deadline-trigger ${deadlineClass(x)}" data-deadline-stage="${sid}|${x.id}" title="Дедлайн етапу">${deadlineLabel(x)}</button>
         <button class="stage-mini-btn" data-sstagedel="${sid}|${idx}" title="Видалити">×</button>
@@ -6473,12 +6682,15 @@ document.addEventListener('click',e=>{
   if(!window.confirm('Підтвердити видалення: '+label+'?\n\nДію можна повернути через Ctrl+Z.')){e.preventDefault();e.stopImmediatePropagation();}
 },true);
 
+const HAB_TRACKING_START='2026-10-01';
 let habDay=iso(new Date());
 let habMonth=habDay.slice(0,7);
 let foldS=false,foldT=false;
+function habEffectiveStart(h){return (!h?.since||h.since<HAB_TRACKING_START)?HAB_TRACKING_START:h.since;}
 function habLog(k){if(!DB.habitLog[k])DB.habitLog[k]={};return DB.habitLog[k];}
 function activeHabitsOn(k){
-  return (DB.habits||[]).filter(h=>!h.since||k>=h.since);
+  if(k<HAB_TRACKING_START)return [];
+  return (DB.habits||[]).filter(h=>k>=habEffectiveStart(h));
 }
 function habScore(k){
   const hs=activeHabitsOn(k);if(!hs.length)return 0;
@@ -6490,16 +6702,19 @@ function habCls(p){return p===0?'':p<35?'v1':p<55?'v2':p<75?'v3':p<100?'v4':'v5'
 function habMonthShift(delta){
   const [y,m]=habMonth.split('-').map(Number);
   const d=new Date(y,m-1+delta,1);
-  const current=iso(new Date()).slice(0,7);
+  const todayMonth=iso(new Date()).slice(0,7);
+  const cycleMonth=HAB_TRACKING_START.slice(0,7);
+  const current=todayMonth<cycleMonth?cycleMonth:todayMonth;
   const next=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
   habMonth=next>current?current:next;
   rHabits();
 }
 function habPeriodAverage(){
   const hs=DB.habits||[];if(!hs.length)return null;
-  const starts=hs.map(h=>h.since).filter(Boolean).sort();
+  const starts=hs.map(h=>habEffectiveStart(h)).filter(Boolean).sort();
   if(!starts.length)return null;
-  const today=iso(new Date()),start=starts[0];
+  const today=iso(new Date()),first=starts[0];
+  const start=first<HAB_TRACKING_START?HAB_TRACKING_START:first;
   if(start>today)return null;
   let d=pd(start),sum=0,n=0;
   while(d<=pd(today)){
@@ -6518,13 +6733,13 @@ function rHabits(){
   document.getElementById('habDayLbl').textContent=`${d.getDate()} ${MNS[d.getMonth()]} · ${habHasActive(habDay)?habScore(habDay)+'%':'до старту'}`;
   document.getElementById('hPick').value=habDay;
   const l=habLog(habDay);
-  const habDays=x=>{const s=x.since;if(!s)return '—';const n=dd(s,today)+1;return n<1?'ще не старт':'день '+n;};
+  const habDays=x=>{const st=habEffectiveStart(x);const n=dd(st,today)+1;return n<1?'старт 01.10':'день '+n;};
   document.getElementById('habToday').innerHTML=hs.length?hs.map(x=>{
-    const started=!x.since||habDay>=x.since,on=started&&!!l[x.id];
+    const start=habEffectiveStart(x),started=habDay>=start,on=started&&!!l[x.id];
     return `<div class="chk ${on?'on':''} ${started?'':'hab-not-started'}" style="--sc:var(--green-bright)">
       <div class="box" ${started?`data-hd="${x.id}"`:'title="Ця звичка ще не почалась"'}>${on?'✓':''}</div>
       <input class="hin" data-hbt="${x.id}" value="${esc(x.t)}" placeholder="Опиши звичку…">
-      <label class="hab-start-wrap" title="Дата, від якої починається облік цієї звички"><span>старт</span><input type="date" class="hab-start" data-hsince="${x.id}" value="${x.since||today}" max="${today}"></label>
+      <label class="hab-start-wrap" title="Дата, від якої починається облік цієї звички"><span>старт</span><input type="date" class="hab-start" data-hsince="${x.id}" value="${habEffectiveStart(x)}" min="${HAB_TRACKING_START}" max="${today<HAB_TRACKING_START?HAB_TRACKING_START:today}"></label>
       <span class="hab-since" title="Період від старту звички">${habDays(x)}</span>
       <span ${delMark("hb"+x.id)} data-hbx="${x.id}">${delIcon("hb"+x.id)}</span>
     </div>`;}).join(''):'<div class="empty">Порожньо. Додай першу звичку нижче.</div>';
@@ -6533,7 +6748,8 @@ function rHabits(){
   document.querySelectorAll('[data-hbt]').forEach(e=>e.onchange=()=>{const h=DB.habits.find(x=>x.id===e.dataset.hbt);if(h){h.t=e.value;save();}});
   document.querySelectorAll('[data-hsince]').forEach(e=>e.onchange=()=>{
     const h=DB.habits.find(x=>x.id===e.dataset.hsince);if(!h)return;
-    const old=h.since||today,newDate=e.value||today;
+    const old=habEffectiveStart(h),picked=e.value||HAB_TRACKING_START;
+    const newDate=picked<HAB_TRACKING_START?HAB_TRACKING_START:picked;
     h.since=newDate;
     // history before the new start is irrelevant for this habit
     Object.keys(DB.habitLog||{}).forEach(k=>{if(k<newDate&&DB.habitLog[k])delete DB.habitLog[k][h.id];});
@@ -6543,7 +6759,8 @@ function rHabits(){
     askDel('hb'+e.dataset.hbx,()=>{const id=e.dataset.hbx;DB.habits=DB.habits.filter(x=>x.id!==id);Object.values(DB.habitLog||{}).forEach(x=>{if(x)delete x[id];});save();rHabits();},rHabits);});
 
   // one navigable calendar month
-  const currentMonth=today.slice(0,7);
+  const todayMonth=today.slice(0,7),cycleMonth=HAB_TRACKING_START.slice(0,7);
+  const currentMonth=todayMonth<cycleMonth?cycleMonth:todayMonth;
   if(habMonth>currentMonth)habMonth=currentMonth;
   const [y,mm]=habMonth.split('-').map(Number),mo=mm-1;
   const dim=new Date(y,mo+1,0).getDate(),lead=(new Date(y,mo,1).getDay()+6)%7;
@@ -6581,7 +6798,7 @@ function rHabits(){
   hm.className='v'+(avg==null?'':(avg>=70?' green':avg<40?' red':''));
 
   let best=0,run=0;
-  const starts=hs.map(h=>h.since).filter(Boolean).sort();
+  const starts=hs.map(h=>habEffectiveStart(h)).filter(Boolean).sort();
   if(starts.length){
     let cur2=pd(starts[0]),last=pd(today);
     while(cur2<=last){
@@ -6593,7 +6810,7 @@ function rHabits(){
   }
   document.getElementById('hBest').textContent=best;
 }
-document.getElementById('addHab').onclick=()=>{DB.habits.push({id:'h'+Date.now(),t:'',since:iso(new Date())});save();rHabits();};
+document.getElementById('addHab').onclick=()=>{const now=iso(new Date());DB.habits.push({id:'h'+Date.now(),t:'',since:now<HAB_TRACKING_START?HAB_TRACKING_START:now});save();rHabits();};
 document.getElementById('hPrev').onclick=()=>{const d=pd(habDay);d.setDate(d.getDate()-1);habDay=iso(d);habMonth=habDay.slice(0,7);rHabits();};
 document.getElementById('hNext').onclick=()=>{const d=pd(habDay);d.setDate(d.getDate()+1);habDay=iso(d);habMonth=habDay.slice(0,7);rHabits();};
 document.getElementById('hToday').onclick=()=>{habDay=iso(new Date());habMonth=habDay.slice(0,7);rHabits();};
@@ -8163,9 +8380,17 @@ function initLifePlannerModule(){
       el.onpointerdown=ev=>ev.stopPropagation();
       el.onclick=ev=>ev.stopPropagation();
       el.oninput=()=>{
+        if(el.tagName==='TEXTAREA'){
+          el.style.height='auto';
+          el.style.height=Math.max(28,el.scrollHeight)+'px';
+        }
         const [s,i]=el.dataset.sstaget.split('|');
         if(DB.sph[s]&&DB.sph[s].stages[i]){DB.sph[s].stages[i].t=el.value;save();}
       };
+      if(el.tagName==='TEXTAREA'){
+        el.style.height='auto';
+        el.style.height=Math.max(28,el.scrollHeight)+'px';
+      }
     });
     document.querySelectorAll('.gb-txt[contenteditable="true"][data-f]').forEach(el=>{
       el.onpointerdown=ev=>ev.stopPropagation();
@@ -8351,9 +8576,15 @@ function initLifePlannerModule(){
   }
 
   function applyDeadlineEnhancements(){
-    const bind=(btn,item)=>{
+    const bind=(btn,item,isStage=false)=>{
       if(!btn)return;
-      btn.classList.remove('deadline-empty');
+      btn.classList.remove('deadline-empty','deadline-complete','overdue');
+      if(isStage&&item&&item.d){
+        btn.classList.add('deadline-complete');
+        btn.style.removeProperty('--dp');
+        btn.innerHTML='<span class="stage-done-check">✓</span><span class="stage-done-text">ПРОЙДЕНО</span>';
+        return;
+      }
       if(!item||!(item.deadlineStart||item.deadlineEnd)){
         btn.classList.add('deadline-empty');
         btn.innerHTML='<span class="dls-head">⌁ дедлайн</span><span class="dls-foot">Не задано</span><i class="dls-bar"><b style="width:0%"></b></i>';
@@ -8368,11 +8599,11 @@ function initLifePlannerModule(){
     document.querySelectorAll('[data-deadline-stage]').forEach(btn=>{
       const [sid,id]=btn.dataset.deadlineStage.split('|');
       const item=(((DB.sph||{})[sid]||{}).stages||[]).find(x=>String(x.id)===String(id));
-      bind(btn,item);
+      bind(btn,item,true);
     });
     document.querySelectorAll('[data-deadline-task]').forEach(btn=>{
       const item=(DB.tasks||[]).find(x=>String(x.id)===String(btn.dataset.deadlineTask));
-      bind(btn,item);
+      bind(btn,item,false);
     });
   }
   function nextStageReminder(){
@@ -8381,27 +8612,36 @@ function initLifePlannerModule(){
       ((((DB.sph||{})[s.id]||{}).stages)||[]).forEach(st=>{
         const end=st.deadlineEnd||st.deadlineStart||'';
         if(st.d||!end)return;
-        list.push({sid:s.id,sphere:s,name:st.t||'Етап',end,raw:st});
+        const days=pDaysUntil(end);
+        if(days<0)return;
+        list.push({sid:s.id,sphere:s,name:st.t||'Етап',end,days,raw:st});
       });
     });
     if(!list.length)return null;
-    const overdue=list.filter(x=>pDaysUntil(x.end)<0).sort((a,b)=>pDaysUntil(a.end)-pDaysUntil(b.end))[0];
-    return overdue||list.sort((a,b)=>String(a.end).localeCompare(String(b.end)))[0];
+    const next=list.sort((a,b)=>a.days-b.days||String(a.end).localeCompare(String(b.end)))[0];
+    return next&&next.days<=3?next:null;
   }
   function renderTodayStageReminder(){
-    const host=document.getElementById('todayList');
+    const host=document.getElementById('todayStageReminderHost');
     if(!host)return;
-    host.querySelectorAll('.today-deadline-reminder').forEach(x=>x.remove());
+    host.innerHTML='';
     const item=nextStageReminder();
     if(!item)return;
-    const days=pDaysUntil(item.end);
-    const state=days<0?('Прострочено '+Math.abs(days)+' '+pDaysWord(days)):(days===0?'Етап на сьогодні':'Найближчий етап');
+    const days=item.days;
+    const state=days===0?'ДЕДЛАЙН СЬОГОДНІ':(days===1?'ЗАЛИШИВСЯ 1 ДЕНЬ':'ЗАЛИШИЛОСЬ '+days+' '+pDaysWord(days));
     const box=document.createElement('div');
-    box.className='today-deadline-reminder';
+    box.className='today-deadline-reminder urgent-window';
     box.innerHTML=`<div class="tdr-badge">${item.sphere.ic}</div>
-      <div class="tdr-body"><div class="tdr-top">${state}</div><div class="tdr-name">${esc(item.name)}</div><div class="tdr-meta">${esc(item.sphere.nm)} · ${pDeadlineHeadline(item.raw)} · ${pDateRange(item.raw.deadlineStart,item.raw.deadlineEnd)}</div></div>
+      <div class="tdr-body">
+        <div class="tdr-top">${state}</div>
+        <div class="tdr-name">${esc(item.name)}</div>
+        <div class="tdr-meta">
+          <span class="tdr-meta-sphere">${esc(item.sphere.nm)}</span>
+          <span class="tdr-meta-date">Дедлайн · ${pDateRange(item.raw.deadlineStart,item.raw.deadlineEnd)}</span>
+        </div>
+      </div>
       <button class="tdr-go" type="button">До етапу</button>`;
-    host.prepend(box);
+    host.appendChild(box);
     box.querySelector('.tdr-go').onclick=()=>{curSph=item.sid;go('sph');requestAnimationFrame(()=>{const row=[...document.querySelectorAll('[data-stage-row]')].find(r=>String(r.dataset.stageRow)===String(item.raw.id));if(row)row.scrollIntoView({behavior:'smooth',block:'center'});});};
   }
 
@@ -12115,7 +12355,7 @@ input[type="date"].date-is-today{
       return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}" data-stage-row="${x.id}">
         <span class="n">${String(i+1).padStart(2,'0')}</span>
         <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
-        <input class="tin stage-title-v9" data-sstaget="${sid}|${idx}" value="${esc(x.t||'')}" placeholder="Назва етапу" title="Натисни, щоб редагувати етап">
+        <textarea class="tin stage-title-v9 stage-title-wrap" data-sstaget="${sid}|${idx}" rows="1" placeholder="Назва етапу" title="Натисни, щоб редагувати етап">${esc(x.t||'')}</textarea>
         <div class="stage-actions">
           <button class="deadline-trigger ${deadlineClass(x)}" data-deadline-stage="${sid}|${x.id}" title="Дедлайн етапу">${deadlineLabel(x)}</button>
           <button class="stage-mini-btn" data-sstagedel="${sid}|${idx}" title="Видалити">×</button>
@@ -12357,6 +12597,10 @@ input[type="date"].date-is-today{
       input.onclick=e=>e.stopPropagation();
       input.onfocus=()=>input.classList.add('v9-editing');
       input.oninput=()=>{
+        if(input.tagName==='TEXTAREA'){
+          input.style.height='auto';
+          input.style.height=Math.max(28,input.scrollHeight)+'px';
+        }
         const [s,i]=input.dataset.sstaget.split('|');
         if(DB.sph[s]&&DB.sph[s].stages[i]){
           DB.sph[s].stages[i].t=input.value;
@@ -12376,6 +12620,10 @@ input[type="date"].date-is-today{
           input.blur();
         }
       };
+      if(input.tagName==='TEXTAREA'){
+        input.style.height='auto';
+        input.style.height=Math.max(28,input.scrollHeight)+'px';
+      }
     });
 
     document.querySelectorAll('[data-sstageadd]').forEach(e=>e.onclick=()=>{
@@ -13382,9 +13630,10 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     const dataBtn=$('#fbData');
     if(dataBtn&&!$('#fbJournal')){
       const btn=document.createElement('button');
-      btn.className='fab';btn.id='fbJournal';btn.type='button';
-      btn.title='Щоденник';btn.setAttribute('aria-label','Щоденник');btn.textContent='◌';
-      dataBtn.insertAdjacentElement('beforebegin',btn);
+      btn.className='fab fab-journal';btn.id='fbJournal';btn.type='button';
+      btn.title='Щоденник';btn.dataset.label='Щоденник';btn.setAttribute('aria-label','Щоденник');btn.textContent='▤';
+      const notesBtn=document.getElementById('fbNotes');
+      if(notesBtn)notesBtn.insertAdjacentElement('afterend',btn);else dataBtn.insertAdjacentElement('beforebegin',btn);
     }
     document.body.insertAdjacentHTML('beforeend',`
       <div class="journal-overlay" id="journalOverlay" aria-hidden="true">
@@ -13453,7 +13702,7 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
 
   function openJournal(){
     if(!window.plannerReady){setTimeout(openJournal,120);return;}
-    closeMobileFabs?.();
+    if(typeof closeMobileFabs==='function')closeMobileFabs();
     ensureVaultField();
     const ov=$('#journalOverlay');ov.classList.add('open');ov.setAttribute('aria-hidden','false');
     lockJournal(true);
@@ -13622,6 +13871,306 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     setTimeout(()=>clearInterval(wait),30000);
   }
   start();
+})();
+</script>
+
+
+<style id="planner-quickdock-notes-20261001">
+/* QUICK DOCK · compact, consistent, unobtrusive */
+#quickFabs{
+  gap:7px!important;right:18px!important;bottom:18px!important;
+  padding:8px!important;border:1px solid rgba(212,162,78,.15)!important;border-radius:22px!important;
+  background:linear-gradient(180deg,rgba(19,25,32,.94),rgba(10,15,20,.92))!important;
+  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.025)!important
+}
+#quickFabs .fab{
+  position:relative!important;width:46px!important;height:46px!important;border-radius:14px!important;
+  border:1px solid rgba(255,255,255,.075)!important;
+  background:linear-gradient(145deg,rgba(31,40,49,.96),rgba(17,23,29,.98))!important;
+  color:#9aa4ae!important;box-shadow:none!important;font-family:'Oswald',sans-serif!important;
+  transition:transform .16s ease,border-color .16s ease,color .16s ease,background .16s ease!important;
+  overflow:visible!important
+}
+#quickFabs .fab:hover,#quickFabs .fab:focus-visible{
+  transform:translateX(-2px)!important;border-color:rgba(212,162,78,.42)!important;
+  color:#ead7a2!important;background:linear-gradient(145deg,rgba(43,52,58,.98),rgba(19,27,31,.98))!important;
+  outline:none!important
+}
+#quickFabs .fab:after{
+  content:attr(data-label);position:absolute;right:57px;top:50%;transform:translate(7px,-50%);
+  opacity:0;pointer-events:none;white-space:nowrap;padding:7px 10px;border-radius:9px;
+  border:1px solid rgba(212,162,78,.18);background:rgba(12,17,22,.96);color:#b8bec5;
+  font:500 10px/1 'Oswald',sans-serif;letter-spacing:.7px;text-transform:uppercase;
+  box-shadow:0 8px 24px rgba(0,0,0,.32);transition:.16s ease
+}
+#quickFabs .fab:hover:after,#quickFabs .fab:focus-visible:after{opacity:1;transform:translate(0,-50%)}
+#quickFabs #qaFab{
+  border-color:rgba(226,192,113,.34)!important;color:#f0d48e!important;
+  background:radial-gradient(circle at 30% 22%,rgba(238,207,131,.13),transparent 35%),linear-gradient(145deg,#273028,#11181a)!important
+}
+#quickFabs #qaFab:before{font-size:27px!important;font-weight:300!important}
+#quickFabs #fbJournal{
+  color:#c7b783!important;border-color:rgba(199,183,131,.20)!important;
+  background:linear-gradient(145deg,rgba(70,59,39,.20),rgba(18,24,29,.98))!important;
+  font-size:19px!important
+}
+#quickFabs #fbJournal:hover{color:#f0d99a!important;border-color:rgba(221,194,123,.44)!important}
+#quickFabs #fbData{font-size:17px!important}
+#quickFabs #fbRules{font-size:21px!important}
+#quickFabs #fbVision{font-size:22px!important}
+
+/* Notes modal */
+#ovNotes{background:rgba(5,8,11,.93)!important;backdrop-filter:blur(11px)!important}
+#ovNotes .ov-in{
+  max-width:880px!important;border-color:rgba(212,162,78,.22)!important;border-radius:20px!important;
+  background:radial-gradient(circle at 8% 0%,rgba(212,162,78,.07),transparent 32%),#101720!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.48)!important
+}
+#ovNotes .ov-t{margin-top:26px!important;font-size:22px!important;letter-spacing:2.2px!important;color:#e6cb88!important}
+#ovNotes .ov-pad{padding:0 28px 10px!important}
+.note-create-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0 16px}
+.note-create-btn{
+  min-height:52px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#151e28;color:#abb4be;
+  cursor:pointer;font:600 11px/1 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase
+}
+.note-create-btn:hover{border-color:rgba(212,162,78,.38);color:#ead59c}
+.note-create-btn.shopping{border-color:rgba(111,184,126,.20);background:linear-gradient(135deg,rgba(111,184,126,.08),transparent),#151e28}
+.note-card{
+  position:relative!important;padding:15px 16px!important;border:1px solid rgba(255,255,255,.065)!important;
+  border-radius:12px!important;background:#141c25!important;margin-bottom:8px!important;cursor:pointer!important;
+  transition:.16s ease!important
+}
+.note-card:hover{transform:translateY(-1px);border-color:rgba(212,162,78,.22)!important;background:#17212b!important}
+.note-card .note-t{font:600 16px/1.35 'Oswald',sans-serif!important;color:#dfe3e7!important}
+.note-card .note-p{margin-top:5px!important;color:#7e8994!important;font-size:13px!important}
+.note-card .note-d{margin-top:8px!important;color:#5f6b77!important;font:500 9px/1 'Oswald',sans-serif!important;letter-spacing:1px!important;text-transform:uppercase!important}
+.note-kind{
+  position:absolute;right:12px;top:12px;padding:4px 7px;border-radius:999px;border:1px solid rgba(111,184,126,.18);
+  background:rgba(111,184,126,.06);color:#7fa98a;font:600 8px/1 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase
+}
+.note-progress{height:4px;border-radius:5px;background:#0c1218;overflow:hidden;margin-top:9px}
+.note-progress i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#557960,#b9a262)}
+.note-editor-top{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.note-title-input{
+  width:100%;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.08);color:#ead59c;
+  font:600 22px/1.2 'Oswald',sans-serif;padding:8px 2px 11px;outline:none;margin-bottom:13px
+}
+.note-title-input:focus{border-bottom-color:rgba(212,162,78,.45)}
+.note-body-input{
+  width:100%;background:#0d141c;border:1px solid rgba(255,255,255,.07);border-radius:12px;color:#dce1e5;
+  font-size:16px;line-height:1.72;padding:16px;min-height:330px;resize:vertical;outline:none
+}
+.note-body-input:focus{border-color:rgba(212,162,78,.30)}
+.shop-add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-bottom:12px}
+.shop-add-input{
+  min-width:0;height:48px;border:1px solid rgba(255,255,255,.075);border-radius:11px;background:#0d141c;color:#e3e7ea;
+  padding:0 13px;outline:none
+}
+.shop-add-input:focus{border-color:rgba(111,184,126,.36)}
+.shop-add-btn{
+  min-width:112px;border:1px solid rgba(111,184,126,.22);border-radius:11px;background:rgba(111,184,126,.07);
+  color:#9bc3a4;font:600 10px/1 'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer
+}
+.shop-list{display:grid;gap:7px}
+.shop-row{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:9px;align-items:center;padding:9px 10px;
+  border:1px solid rgba(255,255,255,.06);border-radius:11px;background:#121a23
+}
+.shop-row.done{opacity:.62}
+.shop-check{
+  width:28px;height:28px;border:1px solid #4d5964;border-radius:8px;background:#0d141b;color:transparent;
+  display:grid;place-items:center;cursor:pointer;font-size:16px
+}
+.shop-row.done .shop-check{border-color:#6e9b79;background:rgba(111,184,126,.14);color:#8cc198}
+.shop-item-text{
+  min-width:0;border:0;background:transparent;color:#d9dfe3;outline:none;font-size:16px;padding:5px 2px
+}
+.shop-row.done .shop-item-text{text-decoration:line-through;color:#71808b}
+.shop-remove{
+  width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#56616d;cursor:pointer
+}
+.shop-remove:hover{background:rgba(200,83,58,.08);color:#bf7564}
+.shop-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.055);color:#66727e;font-size:12px
+}
+.shop-clear{
+  border:0;background:transparent;color:#8a7660;cursor:pointer;font:500 10px/1 'Oswald',sans-serif;
+  letter-spacing:.8px;text-transform:uppercase
+}
+.shop-clear:hover{color:#d6bd80}
+@media(max-width:700px){
+  #quickFabs{
+    left:10px!important;right:10px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;
+    padding:7px!important;border-radius:16px!important;gap:5px!important
+  }
+  #quickFabs .fab{width:auto!important;height:46px!important;max-width:none!important;flex:1 1 0!important;border-radius:11px!important}
+  #quickFabs .fab:hover{transform:none!important}
+  #quickFabs .fab:after{display:none!important}
+  #quickFabs #qaFab:before{font-size:25px!important}
+  #ovNotes{padding:10px 7px!important}
+  #ovNotes .ov-in{border-radius:15px!important}
+  #ovNotes .ov-pad{padding:0 13px 8px!important}
+  .note-create-grid{grid-template-columns:1fr;margin-top:15px}
+  .note-create-btn{min-height:47px}
+  .shop-add-row{grid-template-columns:minmax(0,1fr) 92px}
+  .shop-add-btn{min-width:0}
+  .shop-row{grid-template-columns:32px minmax(0,1fr) 32px;padding:8px 7px}
+}
+</style>
+
+<script id="notes-shopping-upgrade-20261001">
+(function(){
+  function noteKind(n){return n&&n.kind==='shopping'?'shopping':'note'}
+  function noteDisplayTitle(n){
+    if((n?.t||'').trim())return n.t.trim();
+    if(noteKind(n)==='shopping')return 'Список покупок';
+    const first=(n?.b||'').trim().split('\n')[0]?.trim();
+    return first||'Без назви';
+  }
+  function touch(n){n.d=iso(new Date());save();}
+  function makeId(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+  function normalizeShopping(n){
+    n.kind='shopping';
+    n.items=Array.isArray(n.items)?n.items:[];
+    n.items=n.items.map(x=>({id:String(x.id||makeId('si')),t:String(x.t||''),d:!!x.d}));
+    if(!n.t)n.t='Список покупок';
+    return n;
+  }
+
+  rNotes=function(){
+    const box=document.getElementById('notesView');
+    DB.notes=DB.notes||[];
+
+    if(openNote){
+      const n=DB.notes.find(x=>x.id===openNote);
+      if(!n){openNote=null;return rNotes();}
+      const shopping=noteKind(n)==='shopping';
+      if(shopping)normalizeShopping(n);
+
+      box.innerHTML=`
+        <div class="note-editor-top">
+          <button class="dbtn" id="nBack">‹ Усі нотатки</button>
+          <span class="mono" style="font-size:10px;color:var(--txt-faint);margin-left:auto;letter-spacing:.7px">${n.d?pd(n.d).getDate()+' '+MNS[pd(n.d).getMonth()]:''}</span>
+          <button class="dbtn danger" id="nDel">Видалити</button>
+        </div>
+        <input class="note-title-input" id="nTitle" value="${esc(n.t||'')}" placeholder="${shopping?'Назва списку':'Назва нотатки'}">
+        ${shopping?shoppingEditorHTML(n):`
+          <textarea class="note-body-input" id="nBody" placeholder="Пиши тут…">${esc(n.b||'')}</textarea>
+          <div class="ov-hint">Зберігається автоматично</div>
+        `}`;
+
+      document.getElementById('nBack').onclick=()=>{openNote=null;rNotes();};
+      document.getElementById('nDel').onclick=()=>{
+        askDel('nt'+openNote,()=>{DB.notes=DB.notes.filter(x=>x.id!==openNote);openNote=null;save();rNotes();},rNotes);
+      };
+      document.getElementById('nTitle').oninput=e=>{n.t=e.target.value;touch(n);};
+
+      if(shopping)bindShopping(n);
+      else document.getElementById('nBody').oninput=e=>{n.b=e.target.value;touch(n);};
+      return;
+    }
+
+    const list=[...DB.notes].sort((a,b)=>(b.d||'').localeCompare(a.d||''));
+    box.innerHTML=`
+      <div class="note-create-grid">
+        <button class="note-create-btn" id="nNew">✎ &nbsp; Нова нотатка</button>
+        <button class="note-create-btn shopping" id="nNewShopping">✓ &nbsp; Список покупок</button>
+      </div>
+      ${list.length?list.map(n=>{
+        const shopping=noteKind(n)==='shopping';
+        let prev='',progress='';
+        if(shopping){
+          normalizeShopping(n);
+          const total=n.items.length,done=n.items.filter(x=>x.d).length,pct=total?Math.round(done/total*100):0;
+          prev=total?`${done} із ${total} виконано`:'Порожній список';
+          progress=`<div class="note-progress"><i style="width:${pct}%"></i></div>`;
+        }else{
+          prev=(n.b||'').trim().replace(/\n/g,' ').slice(0,80)||'Порожня нотатка';
+        }
+        return `<div class="note-card" data-nopen="${esc(n.id)}">
+          ${shopping?'<span class="note-kind">Покупки</span>':''}
+          <div class="note-t" style="${shopping?'padding-right:74px':''}">${esc(noteDisplayTitle(n))}</div>
+          <div class="note-p">${esc(prev)}</div>
+          ${progress}
+          <div class="note-d">${n.d?pd(n.d).getDate()+' '+MNS_S[pd(n.d).getMonth()].toLowerCase():''}</div>
+        </div>`;
+      }).join(''):'<div class="empty">Порожньо. Створи першу нотатку або список покупок.</div>'}`;
+
+    document.getElementById('nNew').onclick=()=>{
+      const nid=makeId('n');
+      DB.notes.push({id:nid,kind:'note',t:'',b:'',d:iso(new Date())});
+      openNote=nid;save();rNotes();setTimeout(()=>document.getElementById('nTitle')?.focus(),20);
+    };
+    document.getElementById('nNewShopping').onclick=()=>{
+      const nid=makeId('n');
+      DB.notes.push({id:nid,kind:'shopping',t:'Список покупок',items:[],d:iso(new Date())});
+      openNote=nid;save();rNotes();setTimeout(()=>document.getElementById('shopAddInput')?.focus(),20);
+    };
+    document.querySelectorAll('[data-nopen]').forEach(e=>e.onclick=()=>{openNote=e.dataset.nopen;rNotes();});
+  };
+
+  function shoppingEditorHTML(n){
+    const total=n.items.length,done=n.items.filter(x=>x.d).length;
+    return `
+      <div class="shop-add-row">
+        <input class="shop-add-input" id="shopAddInput" placeholder="Додати продукт або річ…" autocomplete="off">
+        <button class="shop-add-btn" id="shopAddBtn" type="button">＋ Додати</button>
+      </div>
+      <div class="shop-list" id="shopList">
+        ${n.items.length?n.items.map(x=>`
+          <div class="shop-row ${x.d?'done':''}" data-shop-row="${esc(x.id)}">
+            <button class="shop-check" type="button" data-shop-check="${esc(x.id)}" aria-label="${x.d?'Зняти позначку':'Позначити виконаним'}">${x.d?'✓':''}</button>
+            <input class="shop-item-text" data-shop-text="${esc(x.id)}" value="${esc(x.t)}" placeholder="Назва позиції">
+            <button class="shop-remove" type="button" data-shop-remove="${esc(x.id)}" aria-label="Видалити">×</button>
+          </div>`).join(''):'<div class="empty" style="padding:28px 10px">Список поки порожній.</div>'}
+      </div>
+      <div class="shop-summary">
+        <span>${done}/${total} виконано</span>
+        ${done?'<button class="shop-clear" id="shopClearDone" type="button">Очистити виконані</button>':''}
+      </div>
+      <div class="ov-hint">Enter — швидко додати наступну позицію · усе зберігається автоматично</div>`;
+  }
+
+  function bindShopping(n){
+    const add=()=>{
+      const inp=document.getElementById('shopAddInput');
+      const t=(inp?.value||'').trim();
+      if(!t){inp?.focus();return;}
+      n.items.push({id:makeId('si'),t,d:false});
+      touch(n);rNotes();
+      setTimeout(()=>document.getElementById('shopAddInput')?.focus(),20);
+    };
+    document.getElementById('shopAddBtn').onclick=add;
+    document.getElementById('shopAddInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();add();}};
+    document.querySelectorAll('[data-shop-check]').forEach(btn=>btn.onclick=()=>{
+      const x=n.items.find(i=>i.id===btn.dataset.shopCheck);if(!x)return;
+      x.d=!x.d;touch(n);rNotes();
+    });
+    document.querySelectorAll('[data-shop-text]').forEach(inp=>{
+      inp.oninput=()=>{const x=n.items.find(i=>i.id===inp.dataset.shopText);if(!x)return;x.t=inp.value;touch(n);};
+      inp.onkeydown=e=>{
+        if(e.key==='Enter'){
+          e.preventDefault();
+          const addInp=document.getElementById('shopAddInput');addInp?.focus();
+        }
+      };
+    });
+    document.querySelectorAll('[data-shop-remove]').forEach(btn=>btn.onclick=()=>{
+      n.items=n.items.filter(i=>i.id!==btn.dataset.shopRemove);touch(n);rNotes();
+    });
+    const clear=document.getElementById('shopClearDone');
+    if(clear)clear.onclick=()=>{n.items=n.items.filter(i=>!i.d);touch(n);rNotes();};
+  }
+
+  // Decorate the side dock after the journal module has injected its button.
+  function polishDock(){
+    const labels={qaFab:'Швидко додати',fbNotes:'Нотатки',fbJournal:'Щоденник',fbVision:'Бачення',fbRules:'Правила',fbData:'Дані'};
+    Object.entries(labels).forEach(([id,label])=>{const el=document.getElementById(id);if(el){el.dataset.label=label;el.title=label;el.setAttribute('aria-label',label);}});
+  }
+  polishDock();
+  setTimeout(polishDock,0);
 })();
 </script>
 
