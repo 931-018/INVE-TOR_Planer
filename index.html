@@ -3669,6 +3669,147 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
 }
 </style>
 
+
+<style id="project-planning-rotation-polish-20261001">
+/* MINI PROJECTS · readability */
+#pg-ws .ws-v5-project-card{min-height:330px!important;padding:19px!important}
+#pg-ws .ws-v5-project-name{font-size:22px!important;line-height:1.25!important}
+#pg-ws .ws-v5-project-head small{font-size:11.5px!important}
+#pg-ws .ws-v5-project-list{gap:10px!important;margin-top:18px!important}
+#pg-ws .ws-v5-project-list>div{
+  grid-template-columns:20px minmax(0,1fr)!important;
+  gap:9px!important;font-size:15px!important;line-height:1.42!important
+}
+#pg-ws .ws-v5-project-list>div span{min-width:0}
+#pg-ws .ws-v5-project-list>div span>b{display:block;font-weight:500;color:inherit}
+#pg-ws .ws-v5-project-list>div span>small{
+  display:block;margin-top:3px;color:#75818c;font:500 10px/1.3 'Oswald',sans-serif;
+  letter-spacing:.45px;text-decoration:none!important
+}
+#pg-ws .ws-v8-project-deadline{
+  display:inline-flex;align-items:center;margin-top:8px;padding:5px 8px;border-radius:7px;
+  border:1px solid rgba(212,162,78,.18);background:rgba(212,162,78,.045);
+  color:#d2b66d;font:600 10px/1 'Oswald',sans-serif;letter-spacing:.8px
+}
+
+/* Workspace tasks on the right: larger, easier to scan. */
+#pg-ws .ws6-title{font-size:18px!important;line-height:1.35!important;font-weight:500!important}
+#pg-ws .ws6-status span{font-size:9.5px!important}
+#pg-ws .ws6-date{font-size:12px!important}
+#pg-ws .ws6-task-main{min-height:58px!important}
+
+/* Project modal deadlines */
+#pg-ws .ws-v8-project-dates{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px
+}
+#pg-ws .ws-v8-project-dates label,
+#pg-ws .ws-v8-task-plan label{
+  display:grid;gap:5px;color:#6f7a86;font:600 8.5px/1 'Oswald',sans-serif;
+  letter-spacing:1px;text-transform:uppercase
+}
+#pg-ws .ws-v8-project-dates input,
+#pg-ws .ws-v8-task-plan input{
+  width:100%;min-width:0;height:36px;border:1px solid rgba(255,255,255,.075);border-radius:8px;
+  background:#0e151c;color:#cab77f;padding:0 8px;outline:none;font:500 11px/1 'Oswald',sans-serif
+}
+#pg-ws .ws-v8-project-dates input:focus,
+#pg-ws .ws-v8-task-plan input:focus{border-color:rgba(212,162,78,.38)}
+
+/* Project task: title row + planning row. */
+#pg-ws .ws-sprint-task{
+  grid-template-columns:34px minmax(0,1fr) 34px!important;
+  align-items:start!important;gap:10px!important;padding:13px 0!important
+}
+#pg-ws .ws-v8-task-body{min-width:0;display:grid;gap:8px}
+#pg-ws .ws-v8-task-title{
+  width:100%!important;padding:4px 2px 8px!important;
+  border:0!important;border-bottom:1px dashed rgba(255,255,255,.07)!important;
+  background:transparent!important;color:var(--txt)!important;outline:none!important;
+  font-size:17px!important;line-height:1.4!important
+}
+#pg-ws .ws-v8-task-title:focus{border-bottom-color:rgba(212,162,78,.42)!important}
+#pg-ws .ws-sprint-task.done .ws-v8-task-title{text-decoration:line-through;opacity:.52}
+#pg-ws .ws-v8-task-plan{
+  display:grid;grid-template-columns:125px 125px minmax(108px,auto);gap:8px;align-items:end
+}
+#pg-ws .ws-v8-work-btn{
+  width:auto!important;min-width:108px!important;height:36px!important;padding:0 10px!important;
+  border:1px solid rgba(212,162,78,.20)!important;border-radius:8px!important;
+  background:rgba(212,162,78,.035)!important;color:#bca66f!important;
+  font:700 9px/1 'Oswald',sans-serif!important;letter-spacing:.8px!important;white-space:nowrap
+}
+#pg-ws .ws-v8-work-btn.on{
+  border-color:rgba(111,184,126,.36)!important;background:rgba(111,184,126,.08)!important;color:#86bd91!important
+}
+#pg-ws .ws-v8-task-check,#pg-ws .ws-v8-task-delete{margin-top:3px}
+#pg-ws .ws-v8-task-delete:hover{border-color:rgba(200,83,58,.35)!important;color:#c97968!important}
+
+/* Rossmann auto rotation */
+#rossmannHost .selectedTitle .ross-rotation-badge{
+  display:inline-flex;margin-left:10px;vertical-align:middle;padding:5px 8px;border-radius:7px;
+  border:1px solid rgba(212,162,78,.20);background:rgba(212,162,78,.045);
+  color:#d1b970;font:600 9px/1 'Oswald',sans-serif;letter-spacing:.8px;text-transform:uppercase
+}
+
+@media(max-width:700px){
+  #pg-ws .ws-v5-project-grid{grid-template-columns:1fr!important;gap:10px!important}
+  #pg-ws .ws-v5-project-card{min-height:0!important;padding:15px!important}
+  #pg-ws .ws-v5-project-name{font-size:20px!important}
+  #pg-ws .ws-v5-project-list>div{font-size:15px!important}
+  #pg-ws .ws-sprint-modal{padding:15px 12px!important}
+  #pg-ws .ws-sprint-modal-head{grid-template-columns:minmax(0,1fr) 68px!important;gap:9px!important;padding-right:32px!important}
+  #pg-ws .ws-v5-ring.large{width:62px!important;height:62px!important}
+  #pg-ws .ws-sprint-modal-name{font-size:21px!important}
+  #pg-ws .ws-v8-project-dates{grid-template-columns:1fr 1fr!important;gap:6px!important}
+  #pg-ws .ws-sprint-task{grid-template-columns:31px minmax(0,1fr) 31px!important;gap:7px!important}
+  #pg-ws .ws-v8-task-title{font-size:16px!important}
+  #pg-ws .ws-v8-task-plan{grid-template-columns:1fr 1fr!important;gap:7px!important}
+  #pg-ws .ws-v8-work-btn{grid-column:1/-1!important;width:100%!important;min-height:39px!important}
+  #pg-ws .ws6-title{font-size:17px!important}
+  #rossmannHost .selectedTitle .ross-rotation-badge{
+    display:flex;width:max-content;max-width:100%;margin:7px 0 0;padding:5px 7px
+  }
+}
+@media(max-width:390px){
+  #pg-ws .ws-v8-project-dates{grid-template-columns:1fr!important}
+  #pg-ws .ws-v8-task-plan{grid-template-columns:1fr!important}
+  #pg-ws .ws-v8-work-btn{grid-column:auto!important}
+}
+</style>
+
+
+<style id="stage-today-autolink-polish-20261001">
+#pg-today .stage-today-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-right:7px;padding:3px 7px;border-radius:6px;
+  border:1px solid rgba(212,162,78,.25);
+  background:rgba(212,162,78,.07);color:#dfc176;
+  font:700 8px/1 'Oswald',sans-serif;letter-spacing:1.1px;
+  vertical-align:2px
+}
+#pg-today .stage-today-range{
+  display:block;margin-top:5px;color:#7d8994;
+  font:500 10px/1.35 'Oswald',sans-serif;letter-spacing:.55px
+}
+#pg-today .today-stage-go{
+  width:32px;height:32px;flex:0 0 32px;border-radius:8px;
+  border:1px solid rgba(212,162,78,.16);background:rgba(212,162,78,.035);
+  color:#bfa76a;cursor:pointer;font:600 15px/1 'Oswald',sans-serif
+}
+#pg-today .today-stage-go:hover{
+  border-color:rgba(212,162,78,.42);color:#ead08e;background:rgba(212,162,78,.07)
+}
+/* Completed only for the selected day; keep the stage identity readable. */
+#pg-today .chk.on .stage-today-pill{
+  border-color:rgba(111,184,126,.28);background:rgba(111,184,126,.07);color:#82b98d
+}
+@media(max-width:700px){
+  #pg-today .stage-today-pill{font-size:7.5px;padding:3px 6px;margin-right:5px}
+  #pg-today .stage-today-range{font-size:9.5px;margin-top:4px}
+  #pg-today .today-stage-go{width:30px;height:30px;flex-basis:30px}
+}
+</style>
+
 </head>
 <body data-page="sph" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
@@ -5174,11 +5315,61 @@ function workScheduleCount(sid,source='sphere',itemId=''){
   return b&&Array.isArray(b.dates)?b.dates.length:0;
 }
 function scheduledTasksFor(k){const w=mon(k);
-  const normal=DB.tasks.filter(t=>!t.off&&(t.date?t.date===k:(t.days&&t.days.includes(w))));
+  const normal=DB.tasks.filter(t=>{
+    if(t.off)return false;
+    if(t.dateStart||t.dateEnd){
+      let a=t.dateStart||t.dateEnd,b=t.dateEnd||t.dateStart;
+      if(a&&b&&b<a)[a,b]=[b,a];
+      return !!a&&k>=String(a)&&k<=String(b);
+    }
+    return t.date?t.date===k:(t.days&&t.days.includes(w));
+  });
   const blocks=(DB.workBlocks||[]).filter(b=>Array.isArray(b.dates)&&b.dates.includes(k)).map(b=>({
     id:'work:'+b.id,s:b.s,t:workBlockLabel(b),isWorkBlock:true,workSource:b.source,workItemId:b.itemId||''
   }));
-  return [...normal,...blocks].sort((a,b)=>sphIdx(a.s)-sphIdx(b.s));}
+  const stageItems=[];
+  spheres().forEach(sp=>{
+    const stages=((((DB.sph||{})[sp.id]||{}).stages)||[]);
+    stages.forEach(st=>{
+      if(!st||st.d)return; // completed stages disappear from Today; only sphere can complete a stage
+      let da=st.deadlineStart||st.deadlineEnd||'',db=st.deadlineEnd||st.deadlineStart||'';
+      if(!da)return;
+      if(da&&db&&db<da)[da,db]=[db,da];
+
+      // The stage deadline remains the hard boundary.
+      // todayPlanStart/todayPlanEnd only control on which days it appears in Today.
+      let pa=st.todayPlanStart||st.todayPlanEnd||da;
+      let pb=st.todayPlanEnd||st.todayPlanStart||db;
+      if(pa&&pb&&pb<pa)[pa,pb]=[pb,pa];
+      if(pa<da)pa=da;if(pa>db)pa=db;
+      if(pb<da)pb=da;if(pb>db)pb=db;
+      if(pb<pa)pb=pa;
+
+      const stageKey='stage:'+sp.id+':'+st.id;
+      const historicalDone=!!((DB.done||{})[k]&&((DB.done||{})[k][stageKey]));
+      if(!historicalDone&&(k<String(pa)||k>String(pb)))return;
+
+      stageItems.push({
+        id:stageKey,
+        s:sp.id,
+        t:st.t||'Етап',
+        isStageDeadline:true,
+        stageId:st.id,
+        stageStart:da,
+        stageEnd:db,
+        stagePlanStart:pa,
+        stagePlanEnd:pb,
+        stageCustomPlan:!!(st.todayPlanStart||st.todayPlanEnd),
+        stageMultiDay:da!==db
+      });
+    });
+  });
+  return [...stageItems,...normal,...blocks].sort((a,b)=>{
+    const sa=sphIdx(a.s),sb=sphIdx(b.s);
+    if(sa!==sb)return sa-sb;
+    if(!!a.isStageDeadline!==!!b.isStageDeadline)return a.isStageDeadline?-1:1;
+    return String(a.t||'').localeCompare(String(b.t||''),'uk');
+  });}
 function tasksFor(k){const hidden=(DB.daySkip&&DB.daySkip[k])||{};
   return scheduledTasksFor(k).filter(t=>!hidden[t.id]);}
 function ordersDueFor(k){return (DB.orders||[]).filter(o=>o.deadline===k&&(o.stage||'active')==='active');}
@@ -5358,8 +5549,8 @@ function rToday(){
     const showBook=(t.id===bookTaskId)&&activeBook;
     return `<div class="chk ${on?'on':''}" style="--sc:${s.c};${showBook?'flex-wrap:wrap':''}">
       <div class="box" data-tk="${t.id}">${on?'✓':''}</div>
-      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span></div></div>
-      <button class="today-timer-btn" data-focus-timer="task:${t.id}" title="Запустити таймер">◴</button>
+      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isStageDeadline?'<b class="stage-today-pill">ЕТАП</b> ':''}${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span>${t.isStageDeadline?`<small class="stage-today-range">${t.stageCustomPlan?`План · ${esc(t.stagePlanStart)} → ${esc(t.stagePlanEnd)} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageStart===t.stageEnd?'Дедлайн · '+esc(t.stageEnd):'Період · '+esc(t.stageStart)+' → '+esc(t.stageEnd))}</small>`:''}</div></div>
+      ${t.isStageDeadline?`<div class="today-stage-actions">${t.stageMultiDay?`<button class="today-stage-plan ${t.stageCustomPlan?'planned':''}" data-stage-plan="${t.s}|${t.stageId}" title="Запланувати робочі дні етапу">▣</button>`:''}<button class="today-stage-go" data-stage-go="${t.s}|${t.stageId}" title="Відкрити етап у сфері">↗</button></div>`:`<button class="today-timer-btn" data-focus-timer="task:${t.id}" title="Запустити таймер">◴</button>`}
       <button class="today-skip" data-tskip="${t.id}" title="Прибрати лише на ${d.getDate()} ${MNS[d.getMonth()]}">×</button>
       ${showBook?`<div class="pgc">
         <span class="pgc-nm">${esc(activeBook.t||'Книга')}</span>
@@ -5437,7 +5628,34 @@ function rToday(){
     if(!Object.keys(hidden).length)delete DB.daySkip[k];
     save();rToday();rDash();
   });
-  document.querySelectorAll('[data-tk]').forEach(e=>e.onclick=()=>{dn[e.dataset.tk]=!dn[e.dataset.tk];save();rToday();rDash();});
+  document.querySelectorAll('[data-tk]').forEach(e=>e.onclick=()=>{
+    const id=e.dataset.tk,next=!dn[id];
+    dn[id]=next;
+    /* Sphere-stage items are synthetic daily check-ins.
+       Their Today checkbox is intentionally local to this date and NEVER changes stage.d.
+       A stage can only be completed from inside its own sphere. */
+    const isStageDay=String(id).startsWith('stage:');
+    const linked=isStageDay?null:(DB.tasks||[]).find(x=>String(x.id)===String(id));
+    if(linked&&linked.isSprintTask&&typeof window.setSprintTaskDoneFromToday==='function'){
+      window.setSprintTaskDoneFromToday(linked,next);
+    }
+    save();rToday();rDash();
+    if(linked&&linked.isSprintTask){try{rWS();}catch(_){}}
+  });
+  document.querySelectorAll('[data-stage-plan]').forEach(btn=>btn.onclick=ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const [sid,stageId]=btn.dataset.stagePlan.split('|');
+    if(typeof window.openStageTodayPlanner==='function')window.openStageTodayPlanner(sid,stageId,cur);
+  });
+  document.querySelectorAll('[data-stage-go]').forEach(btn=>btn.onclick=ev=>{
+    ev.preventDefault();ev.stopPropagation();
+    const [sid,stageId]=btn.dataset.stageGo.split('|');
+    curSph=sid;go('sph');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const row=[...document.querySelectorAll('[data-stage-row]')].find(r=>String(r.dataset.stageRow)===String(stageId));
+      if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+    }));
+  });
   document.querySelectorAll('[data-wtk]').forEach(e=>e.onclick=()=>{
     const x=DB.ws.find(z=>z.id===e.dataset.wtk);if(!x)return;
     if(x.subs&&x.subs.length){openCards['t_'+x.id]=!openCards['t_'+x.id];rToday();return;}
@@ -5599,7 +5817,18 @@ function stageGripHTML(){
   return `<span class="stage-grip" data-stagedrag title="Перетягни, щоб змінити порядок" aria-label="Змінити порядок етапу"><i></i><i></i><i></i><i></i><i></i><i></i></span>`;
 }
 function strategyStagesHTML(sid){
-  const o=(DB.sph||{})[sid]||{stages:[]},st=o.stages||[],year=st.filter(x=>x.y),long=st.filter(x=>!x.y);
+  const o=(DB.sph||{})[sid]||{stages:[]},st=o.stages||[];
+  const stageAutoSort=arr=>arr.map((x,i)=>({x,i})).sort((a,b)=>{
+    if(!!a.x.d!==!!b.x.d)return a.x.d?1:-1;
+    if(a.x.d&&b.x.d)return a.i-b.i;
+    const ad=a.x.deadlineEnd||a.x.deadlineStart||'';
+    const bd=b.x.deadlineEnd||b.x.deadlineStart||'';
+    if(ad&&bd&&ad!==bd)return ad.localeCompare(bd);
+    if(ad&&!bd)return -1;
+    if(!ad&&bd)return 1;
+    return a.i-b.i;
+  }).map(z=>z.x);
+  const year=stageAutoSort(st.filter(x=>x.y)),long=stageAutoSort(st.filter(x=>!x.y));
   const rows=(arr,offset=0)=>arr.map((x,i)=>{
     const idx=st.indexOf(x);
     const next=!x.d && !arr.slice(0,i).some(z=>!z.d);
@@ -7625,6 +7854,19 @@ function initRossmannModule(){
   const localIso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   const todayIso=()=>localIso(new Date());
   const parseDate=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+  const ROTATION_ANCHOR='2026-09-28';
+  const ROTATION=[{start:'06:00',end:'14:00',label:'06–14'},{start:'22:00',end:'06:00',label:'22–06'},{start:'14:00',end:'22:00',label:'14–22'}];
+  function weekMonday(d){
+    const x=d instanceof Date?new Date(d.getFullYear(),d.getMonth(),d.getDate()):parseDate(d);
+    const off=(x.getDay()+6)%7;x.setDate(x.getDate()-off);return x;
+  }
+  function rotationForDate(date){
+    const a=weekMonday(parseDate(ROTATION_ANCHOR)),d=weekMonday(parseDate(date));
+    const weeks=Math.round((d-a)/604800000);
+    const idx=((weeks%ROTATION.length)+ROTATION.length)%ROTATION.length;
+    return {...ROTATION[idx],index:idx,weeks};
+  }
+  window.rossmannRotationForDate=rotationForDate;
   const uid=()=>`rs_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
   const hfmt=n=>{const x=Math.round((Number(n)||0)*10)/10;return Number.isInteger(x)?String(x):x.toFixed(1).replace('.',',')};
   const money=n=>Math.round((Number(n)||0)*100)/100;
@@ -7736,9 +7978,14 @@ function initRossmannModule(){
     $('#monthSelect').innerHTML=monthOptions;$('#journalMonthSelect').innerHTML=monthOptions;$('#countStartMonth').innerHTML=monthOptions;
     const now=new Date().getFullYear();let h='';for(let y=now-5;y<=now+5;y++)h+=`<option value="${y}">${y}</option>`;$('#yearSelect').innerHTML=h;$('#journalYearSelect').innerHTML=h;$('#countStartYear').innerHTML=h;
   }
-  function setSelected(date){state.selected=date;const e=state.entries.find(x=>x.date===date);if(e&&e.type==='shift'){ $('#startTime').value=e.start||'06:00';$('#endTime').value=e.end||'14:00';state.diff=e.diff||'' }else{state.diff='';if(e&&e.type==='off'){ $('#startTime').value='06:00';$('#endTime').value='14:00' }}renderEditor();renderCalendar()}
+  function applyRotationDefaults(date){
+    const e=state.entries.find(x=>x.date===date);
+    if(e&&e.type==='shift'){ $('#startTime').value=e.start||'06:00';$('#endTime').value=e.end||'14:00';state.diff=e.diff||'';return }
+    const r=rotationForDate(date);$('#startTime').value=r.start;$('#endTime').value=r.end;state.diff='';
+  }
+  function setSelected(date){state.selected=date;applyRotationDefaults(date);renderEditor();renderCalendar()}
   function selectedEntry(){return state.entries.find(e=>e.date===state.selected)}
-  function renderEditor(){const d=parseDate(state.selected);$('#selectedTitle').textContent=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const hrs=durationNow(),shiftIncome=money(hrs*selectedRateNow());$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$('#shiftIncome').innerHTML=`${shiftIncome.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2})} <em>zł</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));const e=selectedEntry();$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
+  function renderEditor(){const d=parseDate(state.selected),r=rotationForDate(state.selected),e=selectedEntry();$('#selectedTitle').innerHTML=`${d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}<small class="ross-rotation-badge">Автозміна тижня · ${r.label}</small>`;const hrs=durationNow(),shiftIncome=money(hrs*selectedRateNow());$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$('#shiftIncome').innerHTML=`${shiftIncome.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2})} <em>zł</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
   function durationNow(){let a=mins($('#startTime').value),b=mins($('#endTime').value);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
   function selectedRateNow(){
     if(!state.selected)return currentRate();
@@ -7756,8 +8003,8 @@ function initRossmannModule(){
     }
     renderMini();
   }
-  function goMonth(delta){const d=new Date(state.year,state.month+delta,1);state.year=d.getFullYear();state.month=d.getMonth();state.selected=`${state.year}-${pad(state.month+1)}-01`;renderAll()}
-  function goToday(){const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();renderAll()}
+  function goMonth(delta){const d=new Date(state.year,state.month+delta,1);state.year=d.getFullYear();state.month=d.getMonth();state.selected=`${state.year}-${pad(state.month+1)}-01`;applyRotationDefaults(state.selected);renderAll()}
+  function goToday(){const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();applyRotationDefaults(state.selected);renderAll()}
   function saveShift(){if(!state.selected)return;const s=$('#startTime').value,e=$('#endTime').value;if(!s||!e)return toast('Оберіть час');state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'shift',date:state.selected,start:s,end:e,diff:state.diff||''});persist();renderAll();toast('Зміну збережено')}
   function saveOff(){if(!state.selected)return;state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'off',date:state.selected});persist();state.diff='';renderAll();toast('Вихідний збережено')}
   function deleteEntry(){const e=selectedEntry();if(!e)return;state.entries=state.entries.filter(x=>x.date!==state.selected);persist();state.diff='';renderAll();toast('Запис видалено')}
@@ -7827,8 +8074,8 @@ function initRossmannModule(){
   $('#openStats').addEventListener('click',()=>{$('#statsOverlay').classList.add('open');renderStats()});$('#closeStats').addEventListener('click',()=>$('#statsOverlay').classList.remove('open'));$('#statsOverlay').addEventListener('click',e=>{if(e.target===$('#statsOverlay'))$('#statsOverlay').classList.remove('open')});
   $('#rangeFrom').addEventListener('change',renderStats);$('#rangeTo').addEventListener('change',renderStats);
 
-  fillSelectors();ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();syncRateInput();syncCountStart();renderAll();
-  window.refreshRossmann=function(){ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';syncRateInput();syncCountStart();renderAll()};
+  fillSelectors();ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();applyRotationDefaults(state.selected);syncRateInput();syncCountStart();renderAll();
+  window.refreshRossmann=function(){ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';applyRotationDefaults(state.selected);syncRateInput();syncCountStart();renderAll()};
   window.rossmannCloseOverlays=function(){$('#statsOverlay').classList.remove('open');$('#journalOverlay').classList.remove('open')};
 }
 
@@ -8197,7 +8444,7 @@ function initLifePlannerModule(){
   }
   function renderQaType(type){
     $$('#qaTypes [data-qatype]').forEach(b=>b.classList.toggle('on',b.dataset.qatype===type));
-    const d=todayISO();let h='';
+    const d=todayISO(),rossRot=typeof window.rossmannRotationForDate==='function'?window.rossmannRotationForDate(d):{start:'06:00',end:'14:00',label:'06–14'};let h='';
     if(type==='task')h=`<div class="qa-form-grid"><label><span>Завдання</span><input id="qaTitle" maxlength="120" placeholder="Що потрібно зробити?" required></label><label><span>Сфера</span><select id="qaSphere">${sphereOptions()}</select></label></div><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label>`;
     if(type==='event'||type==='reminder')h=`<label><span>${type==='reminder'?'Нагадування':'Подія'}</span><input id="qaTitle" maxlength="120" placeholder="Назва" required></label><div class="qa-form-grid"><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label><label><span>Час · необов’язково</span><input id="qaTime" type="time"></label></div><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
     if(type==='birthday')h=`<label><span>ПІБ</span><input id="qaName" maxlength="100" placeholder="Ім’я людини" required></label><div class="qa-form-grid"><label><span>Дата народження</span><input id="qaBirth" type="date" required></label><label><span>Нагадати</span><select id="qaReminder"><option value="0">У день</option><option value="3">За 3 дні</option><option value="7" selected>За 7 днів</option><option value="14">За 14 днів</option></select></label></div><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
@@ -8205,10 +8452,19 @@ function initLifePlannerModule(){
     if(type==='relationship')h=`<label><span>Людина</span><select id="qaPerson" required><option value="">Оберіть людину</option>${peopleOptions()}</select></label><label><span>Разом від</span><input id="qaDate" type="date" value="${d}" required></label><div class="qa-form-grid"><label><span>Свій відлік · необов’язково</span><input id="qaRelValue" type="number" min="1" inputmode="numeric" placeholder="100"></label><label><span>Одиниця</span><select id="qaRelUnit"><option value="days">днів</option><option value="months">місяців</option><option value="years">років</option></select></label></div><label><span>Примітка</span><textarea id="qaNote" maxlength="500" placeholder="Коротко…"></textarea></label>`;
     if(type==='purchase')h=`<div class="qa-form-grid"><label><span>Покупка</span><input id="qaPurchase" maxlength="120" placeholder="Що потрібно купити?" required autofocus></label><label><span>Список</span><select id="qaShoppingList">${qaShoppingOptions()}</select></label></div><label><span>Примітка · необов’язково</span><input id="qaPurchaseNote" maxlength="120" placeholder="Наприклад: 2 шт., 1 кг, конкретний бренд"></label><div class="qa-mini-note">Позиція одразу збережеться у «Нотатки → Список покупок».</div>`;
     if(type==='note')h=`<label><span>Нотатка</span><textarea id="qaNote" maxlength="1600" placeholder="Запиши думку…" required autofocus></textarea></label><label><span>Назва · необов’язково</span><input id="qaTitle" maxlength="100" placeholder="Створиться автоматично, якщо залишити порожнім"></label><label><span>Дата</span><input id="qaDate" type="date" value="${d}"></label>`;
-    if(type==='shift')h=`<div class="qa-form-grid"><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label><label><span>Тип</span><select id="qaShiftType"><option value="shift">Зміна</option><option value="off">Вихідний</option></select></label></div><div class="qa-form-grid" id="qaShiftTimes"><label><span>З якої</span><input id="qaStart" type="time" value="06:00"></label><label><span>По яку</span><input id="qaEnd" type="time" value="14:00"></label></div><div class="qa-mini-note">Якщо на цю дату вже є запис — він буде замінений.</div>`;
+    if(type==='shift')h=`<div class="qa-form-grid"><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label><label><span>Тип</span><select id="qaShiftType"><option value="shift">Зміна</option><option value="off">Вихідний</option></select></label></div><div class="qa-form-grid" id="qaShiftTimes"><label><span>З якої</span><input id="qaStart" type="time" value="${rossRot.start}"></label><label><span>По яку</span><input id="qaEnd" type="time" value="${rossRot.end}"></label></div><div class="qa-mini-note">Автозміна цього тижня: <b>${rossRot.label}</b>. При зміні дати час оновиться за 3-тижневою ротацією.</div>`;
     if(type==='metric')h=`<label><span>Показник</span><select id="qaMetric">${metricOptions()}</select></label><div class="qa-form-grid"><label><span>Значення</span><input id="qaMetricValue" type="number" step="any" inputmode="decimal" required></label><label><span>Дата</span><input id="qaDate" type="date" value="${d}" required></label></div>`;
     qaForm.innerHTML=h+`<button type="submit" class="qa-save">Зберегти</button><div class="qa-status" aria-live="polite"></div>`;
-    if(type==='shift'){const sel=$('#qaShiftType');sel.onchange=()=>{$('#qaShiftTimes').style.display=sel.value==='off'?'none':'grid'}}
+    if(type==='shift'){
+      const sel=$('#qaShiftType'),date=$('#qaDate');
+      sel.onchange=()=>{$('#qaShiftTimes').style.display=sel.value==='off'?'none':'grid'};
+      date.onchange=()=>{
+        if(typeof window.rossmannRotationForDate!=='function')return;
+        const r=window.rossmannRotationForDate(date.value||d);
+        $('#qaStart').value=r.start;$('#qaEnd').value=r.end;
+        const note=qaForm.querySelector('.qa-mini-note');if(note)note.innerHTML=`Автозміна цього тижня: <b>${r.label}</b>. При зміні дати час оновлюється автоматично.`;
+      };
+    }
   }
 
   qaForm.onsubmit=async e=>{
@@ -10689,11 +10945,81 @@ body{
 (function(){
   function ensureV5Sprints(){
     if(!Array.isArray(DB.sprints))DB.sprints=[];
+    if(!Array.isArray(DB.tasks))DB.tasks=[];
+    DB.sprints.forEach(s=>{
+      s.tasks=Array.isArray(s.tasks)?s.tasks:[];
+      s.deadlineStart=typeof s.deadlineStart==='string'?s.deadlineStart:'';
+      s.deadlineEnd=typeof s.deadlineEnd==='string'?s.deadlineEnd:'';
+      s.tasks.forEach(t=>{
+        t.dateStart=typeof t.dateStart==='string'?t.dateStart:'';
+        t.dateEnd=typeof t.dateEnd==='string'?t.dateEnd:'';
+        t.inToday=!!t.inToday;
+      });
+    });
   }
   function v5SprintPct(s){
     const a=s.tasks||[];
     return a.length?Math.round(a.filter(t=>t.d).length/a.length*100):0;
   }
+  function todayISO(){return iso(new Date())}
+  function shortDate(k){
+    if(!k)return '';
+    const a=String(k).split('-');return a.length===3?`${a[2]}.${a[1]}`:k;
+  }
+  function dateText(a,b){
+    if(!a&&!b)return '';
+    const x=a||b,y=b||a;
+    return x===y?shortDate(x):`${shortDate(x)} — ${shortDate(y)}`;
+  }
+  function taskPlanText(t){
+    const d=dateText(t.dateStart,t.dateEnd);
+    return d?(t.inToday?`У роботі · ${d}`:d):(t.inToday?'У роботі · сьогодні':'');
+  }
+  function linkedTask(s,t){
+    return (DB.tasks||[]).find(x=>x&&x.isSprintTask&&String(x.sourceSprintId)===String(s.id)&&String(x.sourceSprintTaskId)===String(t.id));
+  }
+  function clearDoneMarks(taskId){
+    Object.values(DB.done||{}).forEach(day=>{if(day&&Object.prototype.hasOwnProperty.call(day,taskId))delete day[taskId]});
+  }
+  function normalizeTaskDates(t){
+    let a=t.dateStart||t.dateEnd||'',b=t.dateEnd||t.dateStart||'';
+    if(a&&b&&b<a)[a,b]=[b,a];
+    t.dateStart=a;t.dateEnd=b;
+    return {a,b};
+  }
+  function syncLinkedTask(s,t){
+    DB.tasks=Array.isArray(DB.tasks)?DB.tasks:[];
+    let link=linkedTask(s,t);
+    if(!t.inToday){
+      if(link)link.off=true;
+      return;
+    }
+    if(!t.dateStart&&!t.dateEnd)t.dateStart=t.dateEnd=todayISO();
+    const {a,b}=normalizeTaskDates(t);
+    if(!link){
+      link={
+        id:'spt_'+String(s.id).replace(/[^a-z0-9_-]/gi,'')+'_'+String(t.id).replace(/[^a-z0-9_-]/gi,''),
+        archived:false,off:false,s:'__globalws',t:'',date:'',dateStart:a,dateEnd:b,days:[],
+        isSprintTask:true,sourceSprintId:s.id,sourceSprintTaskId:t.id
+      };
+      DB.tasks.push(link);
+    }
+    link.t=(String(s.name||'').trim()?String(s.name).trim()+' · ':'')+(String(t.t||'').trim()||'Пункт проєкту');
+    link.s='__globalws';
+    link.date='';
+    link.dateStart=a;link.dateEnd=b;
+    link.days=[];
+    link.archived=false;
+    link.off=!!t.d;
+    if(!t.d)clearDoneMarks(link.id);
+  }
+  function removeLinkedTask(sid,tid){
+    DB.tasks=(DB.tasks||[]).filter(x=>!(x&&x.isSprintTask&&String(x.sourceSprintId)===String(sid)&&String(x.sourceSprintTaskId)===String(tid)));
+  }
+  function syncAllProjectLinks(s){
+    (s.tasks||[]).forEach(t=>syncLinkedTask(s,t));
+  }
+
   let openSprintId=null;
 
   function renderV5Projects(){
@@ -10703,16 +11029,21 @@ body{
     const arr=DB.sprints||[];
     grid.innerHTML=arr.map(s=>{
       const p=v5SprintPct(s),tasks=s.tasks||[],next=tasks.find(t=>!t.d);
+      const projectDate=dateText(s.deadlineStart,s.deadlineEnd);
       return `<article class="ws-v5-project-card" data-v5sprint="${s.id}"><span class="ws-v7-dollar-bg">$</span>
         <div class="ws-v5-project-head">
           <div>
             <div class="ws-v5-project-name">${esc(s.name||'UNTITLED')}</div>
             <small>${tasks.filter(t=>t.d).length}/${tasks.length} виконано</small>
+            ${projectDate?`<span class="ws-v8-project-deadline">⌁ ${esc(projectDate)}</span>`:''}
           </div>
           <div class="ws-v5-ring" style="--p:${p}"><b>${p}%</b></div>
         </div>
         <div class="ws-v5-project-list">
-          ${tasks.slice(0,6).map(t=>`<div class="${t.d?'done':''}"><i>${t.d?'✓':''}</i><span>${esc(t.t||'Без назви')}</span></div>`).join('')}
+          ${tasks.slice(0,6).map(t=>`<div class="${t.d?'done':''}">
+            <i>${t.d?'✓':''}</i>
+            <span><b>${esc(t.t||'Без назви')}</b>${taskPlanText(t)?`<small>${esc(taskPlanText(t))}</small>`:''}</span>
+          </div>`).join('')}
         </div>
         <div class="ws-v5-project-foot">${p===100?'Завершено':esc(next?.t||'Додай перший пункт')}</div>
       </article>`;
@@ -10722,7 +11053,7 @@ body{
     const add=document.getElementById('wsV5AddProject');
     if(add)add.onclick=()=>{
       const id='spr'+Date.now();
-      DB.sprints.push({id,name:'',tasks:[],createdAt:iso(new Date()),updatedAt:iso(new Date())});
+      DB.sprints.push({id,name:'',tasks:[],deadlineStart:'',deadlineEnd:'',createdAt:todayISO(),updatedAt:todayISO()});
       save();renderV5Projects();openV5Sprint(id);
       document.getElementById('wsSprintName')?.focus();
     };
@@ -10740,6 +11071,7 @@ body{
     if(o){o.classList.remove('open');o.setAttribute('aria-hidden','true');}
     renderV5Projects();
   }
+
   function renderV5SprintModal(){
     ensureV5Sprints();
     const box=document.getElementById('wsSprintModalBody');
@@ -10752,43 +11084,98 @@ body{
         <small class="ws-v5-modal-kicker">PROJECT SPRINT</small>
         <input class="ws-sprint-modal-name" id="wsSprintName" value="${esc(s.name||'')}" placeholder="Назва проєкту">
         <div class="ws-sprint-modal-sub">${s.tasks.filter(t=>t.d).length} з ${s.tasks.length} пунктів завершено</div>
+        <div class="ws-v8-project-dates">
+          <label><span>Старт проєкту</span><input type="date" id="wsSprintDeadlineStart" value="${esc(s.deadlineStart||'')}"></label>
+          <label><span>Дедлайн</span><input type="date" id="wsSprintDeadlineEnd" value="${esc(s.deadlineEnd||'')}"></label>
+        </div>
       </div>
       <div class="ws-v5-ring large" style="--p:${p}"><b>${p}%</b></div>
     </div>
     <div class="ws-sprint-task-list">${s.tasks.map(t=>`<div class="ws-sprint-task ${t.d?'done':''}">
-      <button type="button" data-v5toggle="${t.id}">${t.d?'✓':''}</button>
-      <input data-v5text="${t.id}" value="${esc(t.t||'')}" placeholder="Пункт проєкту…">
-      <button type="button" data-v5del="${t.id}">×</button>
+      <button type="button" class="ws-v8-task-check" data-v5toggle="${t.id}">${t.d?'✓':''}</button>
+      <div class="ws-v8-task-body">
+        <input class="ws-v8-task-title" data-v5text="${t.id}" value="${esc(t.t||'')}" placeholder="Пункт проєкту…">
+        <div class="ws-v8-task-plan">
+          <label><span>Від</span><input type="date" data-v5from="${t.id}" value="${esc(t.dateStart||'')}"></label>
+          <label><span>До</span><input type="date" data-v5to="${t.id}" value="${esc(t.dateEnd||'')}"></label>
+          <button type="button" class="ws-v8-work-btn ${t.inToday?'on':''}" data-v5work="${t.id}">${t.inToday?'✓ В РОБОТІ':'→ В РОБОТУ'}</button>
+        </div>
+      </div>
+      <button type="button" class="ws-v8-task-delete" data-v5del="${t.id}">×</button>
     </div>`).join('')}</div>
     <div class="ws-sprint-modal-actions">
       <button type="button" class="add" id="wsV5AddPoint">+ ПУНКТ</button>
       <button type="button" class="danger" id="wsV5DeleteProject">Видалити проєкт</button>
     </div>`;
 
-    document.getElementById('wsSprintName').oninput=e=>{s.name=e.target.value;s.updatedAt=iso(new Date());save();};
+    document.getElementById('wsSprintName').oninput=e=>{
+      s.name=e.target.value;s.updatedAt=todayISO();syncAllProjectLinks(s);save();
+    };
+    const pStart=document.getElementById('wsSprintDeadlineStart');
+    const pEnd=document.getElementById('wsSprintDeadlineEnd');
+    const saveProjectDates=()=>{
+      let a=pStart.value||'',b=pEnd.value||'';
+      if(a&&b&&b<a)[a,b]=[b,a];
+      s.deadlineStart=a;s.deadlineEnd=b;s.updatedAt=todayISO();save();renderV5Projects();
+    };
+    pStart.onchange=saveProjectDates;pEnd.onchange=saveProjectDates;
+
     box.querySelectorAll('[data-v5toggle]').forEach(b=>b.onclick=()=>{
       const t=s.tasks.find(x=>String(x.id)===String(b.dataset.v5toggle));
-      if(t){t.d=!t.d;s.updatedAt=iso(new Date());save();renderV5SprintModal();}
+      if(t){
+        t.d=!t.d;
+        syncLinkedTask(s,t);
+        s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
+      }
     });
     box.querySelectorAll('[data-v5text]').forEach(i=>i.oninput=()=>{
       const t=s.tasks.find(x=>String(x.id)===String(i.dataset.v5text));
-      if(t){t.t=i.value;s.updatedAt=iso(new Date());save();}
+      if(t){t.t=i.value;syncLinkedTask(s,t);s.updatedAt=todayISO();save();}
+    });
+    box.querySelectorAll('[data-v5from]').forEach(i=>i.onchange=()=>{
+      const t=s.tasks.find(x=>String(x.id)===String(i.dataset.v5from));if(!t)return;
+      t.dateStart=i.value||'';
+      normalizeTaskDates(t);syncLinkedTask(s,t);s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
+    });
+    box.querySelectorAll('[data-v5to]').forEach(i=>i.onchange=()=>{
+      const t=s.tasks.find(x=>String(x.id)===String(i.dataset.v5to));if(!t)return;
+      t.dateEnd=i.value||'';
+      normalizeTaskDates(t);syncLinkedTask(s,t);s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
+    });
+    box.querySelectorAll('[data-v5work]').forEach(b=>b.onclick=()=>{
+      const t=s.tasks.find(x=>String(x.id)===String(b.dataset.v5work));if(!t)return;
+      t.inToday=!t.inToday;
+      if(t.inToday&&!t.dateStart&&!t.dateEnd)t.dateStart=t.dateEnd=todayISO();
+      syncLinkedTask(s,t);s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
     });
     box.querySelectorAll('[data-v5del]').forEach(b=>b.onclick=()=>{
-      s.tasks=s.tasks.filter(x=>String(x.id)!==String(b.dataset.v5del));
-      s.updatedAt=iso(new Date());save();renderV5SprintModal();
+      const tid=b.dataset.v5del;
+      removeLinkedTask(s.id,tid);
+      s.tasks=s.tasks.filter(x=>String(x.id)!==String(tid));
+      s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
     });
     document.getElementById('wsV5AddPoint').onclick=()=>{
-      s.tasks.push({id:'sp'+Date.now()+Math.random().toString(36).slice(2,5),t:'',d:false});
-      s.updatedAt=iso(new Date());save();renderV5SprintModal();
+      s.tasks.push({id:'sp'+Date.now()+Math.random().toString(36).slice(2,5),t:'',d:false,dateStart:'',dateEnd:'',inToday:false});
+      s.updatedAt=todayISO();save();renderV5SprintModal();
       const ins=box.querySelectorAll('[data-v5text]');if(ins.length)ins[ins.length-1].focus();
     };
     document.getElementById('wsV5DeleteProject').onclick=()=>{
       if(!confirm('Видалити цей Project Sprint?'))return;
+      (s.tasks||[]).forEach(t=>removeLinkedTask(s.id,t.id));
       DB.sprints=DB.sprints.filter(x=>String(x.id)!==String(s.id));
-      save();closeV5Sprint();
+      save();closeV5Sprint();rToday();
     };
   }
+
+  window.setSprintTaskDoneFromToday=function(link,done){
+    if(!link||!link.isSprintTask)return;
+    const s=(DB.sprints||[]).find(x=>String(x.id)===String(link.sourceSprintId));if(!s)return;
+    const t=(s.tasks||[]).find(x=>String(x.id)===String(link.sourceSprintTaskId));if(!t)return;
+    t.d=!!done;
+    link.off=!!done;
+    if(!done){t.inToday=true;clearDoneMarks(link.id);syncLinkedTask(s,t);}
+    s.updatedAt=todayISO();
+  };
 
   const close=document.getElementById('wsSprintClose');
   if(close)close.onclick=closeV5Sprint;
@@ -10796,7 +11183,6 @@ body{
   if(overlay)overlay.addEventListener('click',e=>{if(e.target===overlay)closeV5Sprint();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay?.classList.contains('open'))closeV5Sprint();});
 
-  // Preserve the old planner task renderer and add projects beside it.
   const oldRWS=rWS;
   rWS=function(){
     oldRWS();
@@ -14260,6 +14646,286 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
   }
   polishDock();
   setTimeout(polishDock,0);
+})();
+</script>
+
+
+<style id="stage-smart-schedule-polish-20261001">
+#pg-today .today-stage-actions{
+  display:flex;align-items:center;gap:6px;flex:0 0 auto
+}
+#pg-today .today-stage-plan{
+  width:32px;height:32px;flex:0 0 32px;border-radius:8px;
+  border:1px solid rgba(90,125,147,.24);background:rgba(90,125,147,.055);
+  color:#8ca9b8;cursor:pointer;font:600 14px/1 'Oswald',sans-serif
+}
+#pg-today .today-stage-plan:hover{
+  border-color:rgba(212,162,78,.42);color:#e0c47d;background:rgba(212,162,78,.065)
+}
+#pg-today .today-stage-plan.planned{
+  border-color:rgba(111,184,126,.34);background:rgba(111,184,126,.065);color:#80bb8c
+}
+#pg-today .stage-today-range span{color:#626f7a}
+.stage-plan-overlay{
+  position:fixed;inset:0;z-index:260;display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(3,7,10,.86);backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px)
+}
+.stage-plan-overlay.open{display:flex}
+.stage-plan-modal{
+  width:min(660px,100%);max-height:90dvh;overflow:auto;position:relative;
+  border:1px solid rgba(212,162,78,.24);border-radius:19px;
+  background:radial-gradient(circle at 8% 0%,rgba(212,162,78,.08),transparent 32%),#111922;
+  box-shadow:0 28px 90px rgba(0,0,0,.58);padding:24px
+}
+.stage-plan-close{
+  position:absolute;right:13px;top:13px;width:38px;height:38px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.075);background:#151e28;color:#84909b;font-size:21px;cursor:pointer
+}
+.stage-plan-kicker{
+  color:#6e7a85;font:600 9px/1 'Oswald',sans-serif;letter-spacing:2px;text-transform:uppercase
+}
+.stage-plan-title{
+  max-width:calc(100% - 48px);margin:7px 0 5px;color:#ebdfc1;
+  font:600 21px/1.35 'Spectral',serif
+}
+.stage-plan-sphere{color:#86929d;font-size:12px}
+.stage-plan-boundary{
+  margin:16px 0 13px;padding:11px 12px;border:1px solid rgba(212,162,78,.12);border-radius:10px;
+  background:rgba(212,162,78,.028);color:#8a949d;font-size:12px;line-height:1.5
+}
+.stage-plan-boundary b{color:#cfb574;font-weight:600}
+.stage-plan-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stage-plan-fields label{display:grid;gap:6px}
+.stage-plan-fields span,.stage-plan-load-title{
+  color:#68747f;font:600 9px/1 'Oswald',sans-serif;letter-spacing:1.2px;text-transform:uppercase
+}
+.stage-plan-fields input{
+  width:100%;height:44px;border:1px solid rgba(255,255,255,.075);border-radius:10px;
+  background:#0c131a;color:#dfc985;outline:none;padding:0 11px;font:500 13px/1 'Oswald',sans-serif
+}
+.stage-plan-fields input:focus{border-color:rgba(212,162,78,.38)}
+.stage-plan-help{
+  margin:10px 0 16px;color:#75818b;font-size:12px;line-height:1.55
+}
+.stage-plan-help strong{color:#aeb6bc;font-weight:500}
+.stage-plan-load-title{margin-bottom:8px}
+.stage-plan-load{
+  display:flex;gap:6px;overflow-x:auto;padding:2px 1px 10px;scrollbar-width:thin
+}
+.stage-plan-day{
+  flex:0 0 66px;min-height:62px;padding:8px 5px;border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;background:#0d141c;text-align:center
+}
+.stage-plan-day.inplan{border-color:rgba(111,184,126,.25);background:rgba(111,184,126,.045)}
+.stage-plan-day.today{box-shadow:inset 0 0 0 1px rgba(212,162,78,.34)}
+.stage-plan-day b{display:block;color:#c9d0d5;font:600 11px/1 'Oswald',sans-serif}
+.stage-plan-day small{display:block;margin-top:6px;color:#65717c;font:500 9px/1.1 'Oswald',sans-serif}
+.stage-plan-day.load0 small{color:#77a982}
+.stage-plan-day.load1 small{color:#a9a475}
+.stage-plan-day.load2 small,.stage-plan-day.load3 small{color:#bd8667}
+.stage-plan-suggest{
+  min-height:20px;margin-top:2px;color:#72808b;font-size:11.5px
+}
+.stage-plan-suggest b{color:#83b58d;font-weight:500}
+.stage-plan-actions{
+  display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px;margin-top:17px
+}
+.stage-plan-actions button{
+  min-height:43px;border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  background:#151e28;color:#929da7;cursor:pointer;
+  font:700 9.5px/1 'Oswald',sans-serif;letter-spacing:.9px;text-transform:uppercase
+}
+.stage-plan-actions .today{border-color:rgba(90,125,147,.22);color:#9ab1bd}
+.stage-plan-actions .reset{border-color:rgba(200,83,58,.15);color:#a7796e}
+.stage-plan-actions .save{
+  border-color:rgba(111,184,126,.28);background:rgba(111,184,126,.075);color:#9bc3a4
+}
+.stage-plan-actions button:hover{border-color:rgba(212,162,78,.38);color:#dec789}
+@media(max-width:700px){
+  #pg-today .today-stage-actions{gap:5px}
+  #pg-today .today-stage-plan,#pg-today .today-stage-go{width:30px;height:30px;flex-basis:30px}
+  .stage-plan-overlay{padding:8px;align-items:flex-end}
+  .stage-plan-modal{width:100%;max-height:92dvh;border-radius:17px 17px 0 0;padding:20px 14px 16px}
+  .stage-plan-fields{grid-template-columns:1fr 1fr;gap:7px}
+  .stage-plan-actions{grid-template-columns:1fr 1fr}
+  .stage-plan-actions .save{grid-column:1/-1}
+}
+@media(max-width:390px){
+  .stage-plan-fields{grid-template-columns:1fr}
+}
+</style>
+
+<script id="stage-smart-schedule-20261001">
+(function(){
+  let ctx=null;
+
+  const pad=n=>String(n).padStart(2,'0');
+  const toDate=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)};
+  const isoLocal=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const fmt=s=>{if(!s)return '—';const d=toDate(s);return `${pad(d.getDate())}.${pad(d.getMonth()+1)}`};
+
+  function getStage(sid,id){
+    return ((((DB.sph||{})[sid]||{}).stages)||[]).find(x=>String(x.id)===String(id))||null;
+  }
+  function bounds(st){
+    let a=st.deadlineStart||st.deadlineEnd||'',b=st.deadlineEnd||st.deadlineStart||'';
+    if(a&&b&&b<a)[a,b]=[b,a];
+    return {a,b};
+  }
+  function clampPlan(st,a,b){
+    const lim=bounds(st);
+    a=a||b||lim.a;b=b||a||lim.b;
+    if(a&&b&&b<a)[a,b]=[b,a];
+    if(a<lim.a)a=lim.a;if(a>lim.b)a=lim.b;
+    if(b<lim.a)b=lim.a;if(b>lim.b)b=lim.b;
+    if(b<a)b=a;
+    return {a,b,lim};
+  }
+  function daysBetween(a,b){
+    const out=[];if(!a||!b)return out;
+    let d=toDate(a),end=toDate(b),guard=0;
+    while(d<=end&&guard<370){out.push(isoLocal(d));d.setDate(d.getDate()+1);guard++;}
+    return out;
+  }
+  function loadForDay(day,sid,stageId){
+    let count=0;
+    // normal planner tasks / project tasks
+    (DB.tasks||[]).forEach(t=>{
+      if(!t||t.off)return;
+      if(t.dateStart||t.dateEnd){
+        let a=t.dateStart||t.dateEnd,b=t.dateEnd||t.dateStart;if(a&&b&&b<a)[a,b]=[b,a];
+        if(a&&day>=a&&day<=b)count++;
+      }else if(t.date===day)count++;
+      else if(t.days&&t.days.includes(mon(day)))count++;
+    });
+    // work blocks
+    count+=(DB.workBlocks||[]).filter(x=>Array.isArray(x.dates)&&x.dates.includes(day)).length;
+    // dated workspace cards
+    count+=(DB.ws||[]).filter(x=>x.date===day&&!x.d).length;
+    // other sphere stages using their effective Today plan
+    spheres().forEach(sp=>{
+      ((((DB.sph||{})[sp.id]||{}).stages)||[]).forEach(st=>{
+        if(!st||st.d||(String(sp.id)===String(sid)&&String(st.id)===String(stageId)))return;
+        const lim=bounds(st);if(!lim.a)return;
+        const p=clampPlan(st,st.todayPlanStart||lim.a,st.todayPlanEnd||lim.b);
+        if(day>=p.a&&day<=p.b)count++;
+      });
+    });
+    return count;
+  }
+  function ensureUI(){
+    if(document.getElementById('stagePlanOverlay'))return;
+    document.body.insertAdjacentHTML('beforeend',`
+      <div class="stage-plan-overlay" id="stagePlanOverlay" aria-hidden="true">
+        <div class="stage-plan-modal" role="dialog" aria-modal="true" aria-label="Планування етапу">
+          <button class="stage-plan-close" id="stagePlanClose" type="button">×</button>
+          <div class="stage-plan-kicker">ПЛАН ЕТАПУ · СЬОГОДНІ</div>
+          <div class="stage-plan-title" id="stagePlanTitle"></div>
+          <div class="stage-plan-sphere" id="stagePlanSphere"></div>
+          <div class="stage-plan-boundary" id="stagePlanBoundary"></div>
+          <div class="stage-plan-fields">
+            <label><span>Показувати від</span><input type="date" id="stagePlanFrom"></label>
+            <label><span>Показувати до</span><input type="date" id="stagePlanTo"></label>
+          </div>
+          <div class="stage-plan-help">Це <strong>не змінює дедлайн</strong>. Ти лише визначаєш, у які дні етап реально має бути у вкладці «Сьогодні».</div>
+          <div class="stage-plan-load-title">Навантаження у межах дедлайну</div>
+          <div class="stage-plan-load" id="stagePlanLoad"></div>
+          <div class="stage-plan-suggest" id="stagePlanSuggest"></div>
+          <div class="stage-plan-actions">
+            <button class="today" id="stagePlanToday" type="button">На вибраний день</button>
+            <button class="reset" id="stagePlanReset" type="button">Весь період</button>
+            <button class="save" id="stagePlanSave" type="button">Зберегти план</button>
+          </div>
+        </div>
+      </div>`);
+    document.getElementById('stagePlanClose').onclick=close;
+    document.getElementById('stagePlanOverlay').onclick=e=>{if(e.target.id==='stagePlanOverlay')close()};
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('stagePlanOverlay')?.classList.contains('open'))close()});
+    document.getElementById('stagePlanFrom').onchange=normalizeAndRender;
+    document.getElementById('stagePlanTo').onchange=normalizeAndRender;
+    document.getElementById('stagePlanToday').onclick=()=>{
+      if(!ctx)return;
+      const st=getStage(ctx.sid,ctx.id);if(!st)return;
+      const lim=bounds(st);
+      let d=ctx.day||iso(new Date());
+      if(d<lim.a)d=lim.a;if(d>lim.b)d=lim.b;
+      document.getElementById('stagePlanFrom').value=d;
+      document.getElementById('stagePlanTo').value=d;
+      renderLoad();
+    };
+    document.getElementById('stagePlanReset').onclick=()=>{
+      if(!ctx)return;const st=getStage(ctx.sid,ctx.id);if(!st)return;
+      const lim=bounds(st);
+      document.getElementById('stagePlanFrom').value=lim.a;
+      document.getElementById('stagePlanTo').value=lim.b;
+      renderLoad();
+    };
+    document.getElementById('stagePlanSave').onclick=savePlan;
+  }
+  function close(){
+    const o=document.getElementById('stagePlanOverlay');
+    if(o){o.classList.remove('open');o.setAttribute('aria-hidden','true');}
+    ctx=null;
+  }
+  function normalizeAndRender(){
+    if(!ctx)return;
+    const st=getStage(ctx.sid,ctx.id);if(!st)return;
+    const from=document.getElementById('stagePlanFrom'),to=document.getElementById('stagePlanTo');
+    const p=clampPlan(st,from.value,to.value);
+    from.value=p.a;to.value=p.b;renderLoad();
+  }
+  function renderLoad(){
+    if(!ctx)return;
+    const st=getStage(ctx.sid,ctx.id);if(!st)return;
+    const lim=bounds(st);
+    const from=document.getElementById('stagePlanFrom').value||lim.a;
+    const to=document.getElementById('stagePlanTo').value||from;
+    const p=clampPlan(st,from,to);
+    const today=iso(new Date());
+    const rows=daysBetween(lim.a,lim.b);
+    const loads=rows.map(day=>({day,n:loadForDay(day,ctx.sid,ctx.id)}));
+    document.getElementById('stagePlanLoad').innerHTML=loads.map(x=>`
+      <div class="stage-plan-day load${Math.min(3,x.n)} ${x.day>=p.a&&x.day<=p.b?'inplan':''} ${x.day===today?'today':''}">
+        <b>${fmt(x.day)}</b><small>${x.n===0?'вільно':x.n===1?'1 пункт':x.n+' пункти'}</small>
+      </div>`).join('');
+    if(loads.length){
+      const best=[...loads].sort((a,b)=>a.n-b.n||a.day.localeCompare(b.day)).slice(0,Math.min(3,loads.length));
+      document.getElementById('stagePlanSuggest').innerHTML=`Найменше навантаження: <b>${best.map(x=>fmt(x.day)).join(' · ')}</b>`;
+    }else document.getElementById('stagePlanSuggest').textContent='';
+  }
+  function savePlan(){
+    if(!ctx)return;
+    const sid=ctx.sid,id=ctx.id;
+    const st=getStage(sid,id);if(!st)return;
+    const lim=bounds(st);
+    const p=clampPlan(st,document.getElementById('stagePlanFrom').value,document.getElementById('stagePlanTo').value);
+    const full=(p.a===lim.a&&p.b===lim.b);
+    st.todayPlanStart=full?'':p.a;
+    st.todayPlanEnd=full?'':p.b;
+    save();
+    close();
+    rToday();
+    if(curSph===sid)try{rSph()}catch(_){}
+  }
+
+  window.openStageTodayPlanner=function(sid,id,day){
+    ensureUI();
+    const st=getStage(sid,id);if(!st)return;
+    const lim=bounds(st);if(!lim.a||lim.a===lim.b)return;
+    const p=clampPlan(st,st.todayPlanStart||lim.a,st.todayPlanEnd||lim.b);
+    ctx={sid,id,day};
+    const sp=SCf(sid);
+    document.getElementById('stagePlanTitle').textContent=st.t||'Етап';
+    document.getElementById('stagePlanSphere').textContent=(sp.ic?sp.ic+' ':'')+(sp.nm||'Сфера');
+    document.getElementById('stagePlanBoundary').innerHTML=`Дедлайн етапу: <b>${fmt(lim.a)} → ${fmt(lim.b)}</b>. Робочий план можна ставити тільки всередині цієї рамки.`;
+    const from=document.getElementById('stagePlanFrom'),to=document.getElementById('stagePlanTo');
+    from.min=to.min=lim.a;from.max=to.max=lim.b;
+    from.value=p.a;to.value=p.b;
+    renderLoad();
+    const o=document.getElementById('stagePlanOverlay');
+    o.classList.add('open');o.setAttribute('aria-hidden','false');
+  };
+  ensureUI();
 })();
 </script>
 
