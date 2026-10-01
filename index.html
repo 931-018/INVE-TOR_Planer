@@ -3810,8 +3810,96 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
 }
 </style>
 
+
+<style id="finance-stability-polish-20261001">
+#fin3TotalBalance .fin3-total-side,
+#fin3TotalBalance [data-fin2="balancemulti"]{display:none!important}
+#fin3TotalBalance{will-change:auto!important}
+#fin3TotalBalance:before,#fin3TotalBalance:after{pointer-events:none}
+@media(max-width:700px){
+  #fin3TotalBalance:after{display:none!important}
+  #fin3TotalBalance:before{opacity:.65}
+  .fin3-currency-card:after{animation-duration:8s!important}
+}
+</style>
+
+
+<style id="stage-discrete-days-polish-20261001">
+.stage-plan-fields{display:none!important}
+.stage-plan-help.discrete{
+  margin:13px 0 16px!important;
+  padding:10px 11px;
+  border:1px solid rgba(111,184,126,.10);
+  border-radius:9px;
+  background:rgba(111,184,126,.025)
+}
+.stage-plan-load{
+  display:flex!important;
+  gap:7px!important;
+  overflow-x:auto!important;
+  padding:2px 1px 10px!important;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch
+}
+.stage-plan-day{
+  position:relative!important;
+  appearance:none!important;
+  flex:0 0 66px!important;
+  min-height:66px!important;
+  padding:8px 5px!important;
+  scroll-snap-align:start;
+  transition:border-color .14s ease,background .14s ease,transform .14s ease,color .14s ease!important
+}
+.stage-plan-day:hover{transform:translateY(-1px)}
+.stage-plan-day.selected{
+  border-color:rgba(111,184,126,.62)!important;
+  background:linear-gradient(145deg,rgba(60,116,75,.34),rgba(28,62,40,.34))!important;
+  box-shadow:inset 0 0 0 1px rgba(111,184,126,.10),0 7px 18px rgba(0,0,0,.16)!important
+}
+.stage-plan-day.selected:after{
+  content:'✓';
+  position:absolute;right:5px;top:4px;
+  color:#83d092;
+  font:700 10px/1 'Oswald',sans-serif
+}
+.stage-plan-day.selected b{color:#edf4ee!important}
+.stage-plan-day.selected small{color:#9bc0a2!important}
+.stage-plan-selection{
+  display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;
+  min-height:26px;margin:1px 0 5px;
+  color:#73808a;font-size:11px;line-height:1.45
+}
+.stage-plan-selection span{
+  font:600 9px/1.45 'Oswald',sans-serif;
+  letter-spacing:.8px;text-transform:uppercase;color:#67737e
+}
+.stage-plan-selection b{
+  color:#95bb9d;font-weight:500
+}
+.stage-plan-selection b.empty{color:#9a776d}
+.stage-plan-actions.discrete-actions{
+  grid-template-columns:1fr 1fr!important;
+}
+.stage-plan-actions.discrete-actions .save{
+  grid-column:1/-1!important;
+  min-height:46px!important
+}
+.stage-plan-actions .clear{
+  border-color:rgba(200,83,58,.14)!important;
+  color:#a7786d!important
+}
+.stage-plan-actions .clear:hover{
+  border-color:rgba(200,83,58,.32)!important;
+  color:#ce8a79!important
+}
+@media(max-width:700px){
+  .stage-plan-day{flex-basis:62px!important;min-height:63px!important}
+  .stage-plan-actions.discrete-actions{grid-template-columns:1fr 1fr!important}
+}
+</style>
+
 </head>
-<body data-page="sph" class="">
+<body data-page="today" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
 <div class="bgfx" aria-hidden="true">
   <span class="fx f1" data-v10-motion="1" style="--v10x: 12px; --v10y: -14px; --v10dur: 31s; --v10delay: -5s; --v10op: 0.100; --v10r1: -4deg; --v10r2: 1deg; --v11op: 0.170;"><b>$</b><i>INVESTOR</i></span>
@@ -3860,15 +3948,15 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
   </div>
 
   <div class="tabs">
-    <button class="tab" data-pg="today">Сьогодні</button>
-    <button class="tab active" data-pg="sph">Сфери</button>
+    <button class="tab active" data-pg="today">Сьогодні</button>
+    <button class="tab" data-pg="sph">Сфери</button>
     <button class="tab" data-pg="habits">Звички</button>
     <button class="tab" data-pg="rossmann">Rossmann</button>
     <button class="tab" data-pg="ws">Workspace</button>
   </div>
 
   <!-- СЬОГОДНІ -->
-  <div class="page" id="pg-today">
+  <div class="page active" id="pg-today">
     <div class="card">
 
 
@@ -4155,7 +4243,7 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
   </div>
 
   <!-- СФЕРИ -->
-  <div class="page active" id="pg-sph">
+  <div class="page" id="pg-sph">
     <div class="sph-page-head sph-page-head-only-toggle">
       <button class="sph-toggle" id="sphNavToggle" type="button" aria-expanded="true" title="Закрити сфери">
         <span class="arr" id="sphNavToggleLbl">⌃</span>
@@ -5336,18 +5424,31 @@ function scheduledTasksFor(k){const w=mon(k);
       if(!da)return;
       if(da&&db&&db<da)[da,db]=[db,da];
 
-      // The stage deadline remains the hard boundary.
-      // todayPlanStart/todayPlanEnd only control on which days it appears in Today.
+      // Deadline = hard boundary. Today plan can be exact non-contiguous days.
+      const hasExactDays=Array.isArray(st.todayPlanDays);
+      const exactDays=hasExactDays?[...new Set(st.todayPlanDays.filter(day=>day>=da&&day<=db))].sort():null;
+
+      // Backward compatibility for plans saved by the previous range-based version.
       let pa=st.todayPlanStart||st.todayPlanEnd||da;
       let pb=st.todayPlanEnd||st.todayPlanStart||db;
       if(pa&&pb&&pb<pa)[pa,pb]=[pb,pa];
       if(pa<da)pa=da;if(pa>db)pa=db;
       if(pb<da)pb=da;if(pb>db)pb=db;
       if(pb<pa)pb=pa;
+      const hasLegacyRange=!hasExactDays&&!!(st.todayPlanStart||st.todayPlanEnd);
 
       const stageKey='stage:'+sp.id+':'+st.id;
       const historicalDone=!!((DB.done||{})[k]&&((DB.done||{})[k][stageKey]));
-      if(!historicalDone&&(k<String(pa)||k>String(pb)))return;
+
+      if(!historicalDone){
+        if(hasExactDays){
+          if(!exactDays.includes(k))return;
+        }else if(hasLegacyRange){
+          if(k<String(pa)||k>String(pb))return;
+        }else if(k<String(da)||k>String(db)){
+          return;
+        }
+      }
 
       stageItems.push({
         id:stageKey,
@@ -5359,7 +5460,9 @@ function scheduledTasksFor(k){const w=mon(k);
         stageEnd:db,
         stagePlanStart:pa,
         stagePlanEnd:pb,
-        stageCustomPlan:!!(st.todayPlanStart||st.todayPlanEnd),
+        stagePlanDays:exactDays,
+        stageExactPlan:hasExactDays,
+        stageCustomPlan:hasExactDays||hasLegacyRange,
         stageMultiDay:da!==db
       });
     });
@@ -5549,7 +5652,7 @@ function rToday(){
     const showBook=(t.id===bookTaskId)&&activeBook;
     return `<div class="chk ${on?'on':''}" style="--sc:${s.c};${showBook?'flex-wrap:wrap':''}">
       <div class="box" data-tk="${t.id}">${on?'✓':''}</div>
-      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isStageDeadline?'<b class="stage-today-pill">ЕТАП</b> ':''}${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span>${t.isStageDeadline?`<small class="stage-today-range">${t.stageCustomPlan?`План · ${esc(t.stagePlanStart)} → ${esc(t.stagePlanEnd)} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageStart===t.stageEnd?'Дедлайн · '+esc(t.stageEnd):'Період · '+esc(t.stageStart)+' → '+esc(t.stageEnd))}</small>`:''}</div></div>
+      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isStageDeadline?'<b class="stage-today-pill">ЕТАП</b> ':''}${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span>${t.isStageDeadline?`<small class="stage-today-range">${t.stageExactPlan?`План · ${t.stagePlanDays.length?t.stagePlanDays.map(d=>esc(d.slice(8)+'.'+d.slice(5,7))).join(' · '):'дні не вибрані'} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageCustomPlan?`План · ${esc(t.stagePlanStart)} → ${esc(t.stagePlanEnd)} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageStart===t.stageEnd?'Дедлайн · '+esc(t.stageEnd):'Період · '+esc(t.stageStart)+' → '+esc(t.stageEnd)))}</small>`:''}</div></div>
       ${t.isStageDeadline?`<div class="today-stage-actions">${t.stageMultiDay?`<button class="today-stage-plan ${t.stageCustomPlan?'planned':''}" data-stage-plan="${t.s}|${t.stageId}" title="Запланувати робочі дні етапу">▣</button>`:''}<button class="today-stage-go" data-stage-go="${t.s}|${t.stageId}" title="Відкрити етап у сфері">↗</button></div>`:`<button class="today-timer-btn" data-focus-timer="task:${t.id}" title="Запустити таймер">◴</button>`}
       <button class="today-skip" data-tskip="${t.id}" title="Прибрати лише на ${d.getDate()} ${MNS[d.getMonth()]}">×</button>
       ${showBook?`<div class="pgc">
@@ -14758,6 +14861,7 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
 <script id="stage-smart-schedule-20261001">
 (function(){
   let ctx=null;
+  let selectedDays=new Set();
 
   const pad=n=>String(n).padStart(2,'0');
   const toDate=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)};
@@ -14772,24 +14876,40 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     if(a&&b&&b<a)[a,b]=[b,a];
     return {a,b};
   }
-  function clampPlan(st,a,b){
-    const lim=bounds(st);
-    a=a||b||lim.a;b=b||a||lim.b;
-    if(a&&b&&b<a)[a,b]=[b,a];
-    if(a<lim.a)a=lim.a;if(a>lim.b)a=lim.b;
-    if(b<lim.a)b=lim.a;if(b>lim.b)b=lim.b;
-    if(b<a)b=a;
-    return {a,b,lim};
-  }
   function daysBetween(a,b){
     const out=[];if(!a||!b)return out;
     let d=toDate(a),end=toDate(b),guard=0;
     while(d<=end&&guard<370){out.push(isoLocal(d));d.setDate(d.getDate()+1);guard++;}
     return out;
   }
+  function legacyPlanDays(st,lim){
+    if(Array.isArray(st.todayPlanDays)){
+      return [...new Set(st.todayPlanDays.filter(d=>d>=lim.a&&d<=lim.b))].sort();
+    }
+    if(st.todayPlanStart||st.todayPlanEnd){
+      let a=st.todayPlanStart||st.todayPlanEnd||lim.a,b=st.todayPlanEnd||st.todayPlanStart||lim.b;
+      if(a&&b&&b<a)[a,b]=[b,a];
+      if(a<lim.a)a=lim.a;if(b>lim.b)b=lim.b;
+      return daysBetween(a,b);
+    }
+    return daysBetween(lim.a,lim.b);
+  }
+
+  function stageActiveOnDay(st,day){
+    const lim=bounds(st);if(!lim.a||day<lim.a||day>lim.b)return false;
+    if(Array.isArray(st.todayPlanDays))return st.todayPlanDays.includes(day);
+    if(st.todayPlanStart||st.todayPlanEnd){
+      let a=st.todayPlanStart||st.todayPlanEnd||lim.a,b=st.todayPlanEnd||st.todayPlanStart||lim.b;
+      if(a&&b&&b<a)[a,b]=[b,a];
+      return day>=a&&day<=b;
+    }
+    return true;
+  }
+
   function loadForDay(day,sid,stageId){
     let count=0;
-    // normal planner tasks / project tasks
+
+    // Normal planner tasks and linked mini-project tasks.
     (DB.tasks||[]).forEach(t=>{
       if(!t||t.off)return;
       if(t.dateStart||t.dateEnd){
@@ -14798,21 +14918,20 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
       }else if(t.date===day)count++;
       else if(t.days&&t.days.includes(mon(day)))count++;
     });
-    // work blocks
+
     count+=(DB.workBlocks||[]).filter(x=>Array.isArray(x.dates)&&x.dates.includes(day)).length;
-    // dated workspace cards
     count+=(DB.ws||[]).filter(x=>x.date===day&&!x.d).length;
-    // other sphere stages using their effective Today plan
+
+    // Other sphere stages, respecting their exact Today-day plans.
     spheres().forEach(sp=>{
       ((((DB.sph||{})[sp.id]||{}).stages)||[]).forEach(st=>{
         if(!st||st.d||(String(sp.id)===String(sid)&&String(st.id)===String(stageId)))return;
-        const lim=bounds(st);if(!lim.a)return;
-        const p=clampPlan(st,st.todayPlanStart||lim.a,st.todayPlanEnd||lim.b);
-        if(day>=p.a&&day<=p.b)count++;
+        if(stageActiveOnDay(st,day))count++;
       });
     });
     return count;
   }
+
   function ensureUI(){
     if(document.getElementById('stagePlanOverlay'))return;
     document.body.insertAdjacentHTML('beforeend',`
@@ -14823,85 +14942,121 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
           <div class="stage-plan-title" id="stagePlanTitle"></div>
           <div class="stage-plan-sphere" id="stagePlanSphere"></div>
           <div class="stage-plan-boundary" id="stagePlanBoundary"></div>
-          <div class="stage-plan-fields">
-            <label><span>Показувати від</span><input type="date" id="stagePlanFrom"></label>
-            <label><span>Показувати до</span><input type="date" id="stagePlanTo"></label>
+
+          <div class="stage-plan-help discrete">
+            <strong>Обирай конкретні дні окремо.</strong> Натисни на дату — день додасться у «Сьогодні». Натисни ще раз — забереться. Дні між вибраними датами автоматично не додаються.
           </div>
-          <div class="stage-plan-help">Це <strong>не змінює дедлайн</strong>. Ти лише визначаєш, у які дні етап реально має бути у вкладці «Сьогодні».</div>
-          <div class="stage-plan-load-title">Навантаження у межах дедлайну</div>
+
+          <div class="stage-plan-load-title">РОБОЧІ ДНІ · НАВАНТАЖЕННЯ</div>
           <div class="stage-plan-load" id="stagePlanLoad"></div>
+          <div class="stage-plan-selection" id="stagePlanSelection"></div>
           <div class="stage-plan-suggest" id="stagePlanSuggest"></div>
-          <div class="stage-plan-actions">
-            <button class="today" id="stagePlanToday" type="button">На вибраний день</button>
-            <button class="reset" id="stagePlanReset" type="button">Весь період</button>
+
+          <div class="stage-plan-actions discrete-actions">
+            <button class="today" id="stagePlanToday" type="button">Тільки цей день</button>
+            <button class="clear" id="stagePlanClear" type="button">Очистити</button>
+            <button class="reset" id="stagePlanReset" type="button">Увесь період</button>
             <button class="save" id="stagePlanSave" type="button">Зберегти план</button>
           </div>
         </div>
       </div>`);
+
     document.getElementById('stagePlanClose').onclick=close;
     document.getElementById('stagePlanOverlay').onclick=e=>{if(e.target.id==='stagePlanOverlay')close()};
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('stagePlanOverlay')?.classList.contains('open'))close()});
-    document.getElementById('stagePlanFrom').onchange=normalizeAndRender;
-    document.getElementById('stagePlanTo').onchange=normalizeAndRender;
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&document.getElementById('stagePlanOverlay')?.classList.contains('open'))close();
+    });
+
     document.getElementById('stagePlanToday').onclick=()=>{
       if(!ctx)return;
       const st=getStage(ctx.sid,ctx.id);if(!st)return;
       const lim=bounds(st);
       let d=ctx.day||iso(new Date());
       if(d<lim.a)d=lim.a;if(d>lim.b)d=lim.b;
-      document.getElementById('stagePlanFrom').value=d;
-      document.getElementById('stagePlanTo').value=d;
+      selectedDays=new Set([d]);
+      renderLoad();
+    };
+    document.getElementById('stagePlanClear').onclick=()=>{
+      selectedDays.clear();
       renderLoad();
     };
     document.getElementById('stagePlanReset').onclick=()=>{
-      if(!ctx)return;const st=getStage(ctx.sid,ctx.id);if(!st)return;
+      if(!ctx)return;
+      const st=getStage(ctx.sid,ctx.id);if(!st)return;
       const lim=bounds(st);
-      document.getElementById('stagePlanFrom').value=lim.a;
-      document.getElementById('stagePlanTo').value=lim.b;
+      selectedDays=new Set(daysBetween(lim.a,lim.b));
       renderLoad();
     };
     document.getElementById('stagePlanSave').onclick=savePlan;
   }
+
   function close(){
     const o=document.getElementById('stagePlanOverlay');
     if(o){o.classList.remove('open');o.setAttribute('aria-hidden','true');}
     ctx=null;
+    selectedDays.clear();
   }
-  function normalizeAndRender(){
-    if(!ctx)return;
-    const st=getStage(ctx.sid,ctx.id);if(!st)return;
-    const from=document.getElementById('stagePlanFrom'),to=document.getElementById('stagePlanTo');
-    const p=clampPlan(st,from.value,to.value);
-    from.value=p.a;to.value=p.b;renderLoad();
+
+  function toggleDay(day){
+    if(selectedDays.has(day))selectedDays.delete(day);
+    else selectedDays.add(day);
+    renderLoad();
   }
+
   function renderLoad(){
     if(!ctx)return;
     const st=getStage(ctx.sid,ctx.id);if(!st)return;
-    const lim=bounds(st);
-    const from=document.getElementById('stagePlanFrom').value||lim.a;
-    const to=document.getElementById('stagePlanTo').value||from;
-    const p=clampPlan(st,from,to);
-    const today=iso(new Date());
+    const lim=bounds(st),today=iso(new Date());
     const rows=daysBetween(lim.a,lim.b);
-    const loads=rows.map(day=>({day,n:loadForDay(day,ctx.sid,ctx.id)}));
-    document.getElementById('stagePlanLoad').innerHTML=loads.map(x=>`
-      <div class="stage-plan-day load${Math.min(3,x.n)} ${x.day>=p.a&&x.day<=p.b?'inplan':''} ${x.day===today?'today':''}">
-        <b>${fmt(x.day)}</b><small>${x.n===0?'вільно':x.n===1?'1 пункт':x.n+' пункти'}</small>
-      </div>`).join('');
+    const loads=rows.map(day=>({day,n:loadForDay(day,ctx.sid,ctx.id),selected:selectedDays.has(day)}));
+
+    const host=document.getElementById('stagePlanLoad');
+    host.innerHTML=loads.map(x=>`
+      <button type="button"
+        class="stage-plan-day load${Math.min(3,x.n)} ${x.selected?'inplan selected':''} ${x.day===today?'today':''}"
+        data-stage-plan-day="${x.day}" aria-pressed="${x.selected?'true':'false'}">
+        <b>${fmt(x.day)}</b>
+        <small>${x.n===0?'вільно':x.n===1?'1 пункт':x.n+' пункти'}</small>
+      </button>`).join('');
+
+    host.querySelectorAll('[data-stage-plan-day]').forEach(btn=>{
+      btn.onclick=()=>toggleDay(btn.dataset.stagePlanDay);
+    });
+
+    const chosen=[...selectedDays].sort();
+    const selection=document.getElementById('stagePlanSelection');
+    selection.innerHTML=chosen.length
+      ? `<span>Обрано:</span><b>${chosen.map(fmt).join(' · ')}</b>`
+      : `<span>Обрано:</span><b class="empty">жодного дня</b>`;
+
     if(loads.length){
       const best=[...loads].sort((a,b)=>a.n-b.n||a.day.localeCompare(b.day)).slice(0,Math.min(3,loads.length));
       document.getElementById('stagePlanSuggest').innerHTML=`Найменше навантаження: <b>${best.map(x=>fmt(x.day)).join(' · ')}</b>`;
-    }else document.getElementById('stagePlanSuggest').textContent='';
+    }else{
+      document.getElementById('stagePlanSuggest').textContent='';
+    }
   }
+
   function savePlan(){
     if(!ctx)return;
     const sid=ctx.sid,id=ctx.id;
     const st=getStage(sid,id);if(!st)return;
     const lim=bounds(st);
-    const p=clampPlan(st,document.getElementById('stagePlanFrom').value,document.getElementById('stagePlanTo').value);
-    const full=(p.a===lim.a&&p.b===lim.b);
-    st.todayPlanStart=full?'':p.a;
-    st.todayPlanEnd=full?'':p.b;
+    const allDays=daysBetween(lim.a,lim.b);
+    const chosen=[...selectedDays].filter(d=>d>=lim.a&&d<=lim.b).sort();
+
+    // If every deadline day is selected, keep the default lightweight state.
+    if(chosen.length===allDays.length&&chosen.every((d,i)=>d===allDays[i])){
+      delete st.todayPlanDays;
+    }else{
+      // [] is intentional: stage is hidden from Today until days are selected again.
+      st.todayPlanDays=chosen;
+    }
+
+    // Retire the old continuous-range fields after the first save in the new planner.
+    st.todayPlanStart='';
+    st.todayPlanEnd='';
+
     save();
     close();
     rToday();
@@ -14912,20 +15067,1417 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     ensureUI();
     const st=getStage(sid,id);if(!st)return;
     const lim=bounds(st);if(!lim.a||lim.a===lim.b)return;
-    const p=clampPlan(st,st.todayPlanStart||lim.a,st.todayPlanEnd||lim.b);
+
     ctx={sid,id,day};
+    selectedDays=new Set(legacyPlanDays(st,lim));
+
     const sp=SCf(sid);
     document.getElementById('stagePlanTitle').textContent=st.t||'Етап';
     document.getElementById('stagePlanSphere').textContent=(sp.ic?sp.ic+' ':'')+(sp.nm||'Сфера');
-    document.getElementById('stagePlanBoundary').innerHTML=`Дедлайн етапу: <b>${fmt(lim.a)} → ${fmt(lim.b)}</b>. Робочий план можна ставити тільки всередині цієї рамки.`;
-    const from=document.getElementById('stagePlanFrom'),to=document.getElementById('stagePlanTo');
-    from.min=to.min=lim.a;from.max=to.max=lim.b;
-    from.value=p.a;to.value=p.b;
+    document.getElementById('stagePlanBoundary').innerHTML=`Дедлайн етапу: <b>${fmt(lim.a)} → ${fmt(lim.b)}</b>. Дедлайн не змінюється — нижче обираються лише конкретні робочі дні для «Сьогодні».`;
+
     renderLoad();
     const o=document.getElementById('stagePlanOverlay');
-    o.classList.add('open');o.setAttribute('aria-hidden','false');
+    o.classList.add('open');
+    o.setAttribute('aria-hidden','false');
   };
+
   ensureUI();
+})();
+</script>
+
+
+<style id="finance-system-v3-20261001">
+/* ───────────────── FINANCE V3 · groups, FX, forecast, neutral returns ───────────────── */
+.fin3-total{position:relative;cursor:default;user-select:none}
+.fin3-total-main{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.fin3-total-values{display:grid;gap:3px;margin-top:7px}
+.fin3-total-values strong{display:block!important;margin:0!important}
+.fin3-total-hint{margin-top:7px;color:var(--txt-faint);font:500 9px/1.35 'Oswald',sans-serif;letter-spacing:.45px}
+.fin3-total-side{
+  flex:0 0 34px;width:34px;height:34px;border:1px solid rgba(212,162,78,.18);
+  border-radius:9px;background:rgba(212,162,78,.035);color:#a99562;cursor:pointer;
+  display:grid;place-items:center;font:700 14px/1 'Oswald',sans-serif
+}
+.fin3-total-side:hover{border-color:rgba(212,162,78,.42);color:#e2c97f}
+.fin3-fx-warning{margin-top:7px;color:#c18a6f;font-size:10px}
+.fin3-toolbar-fx{min-height:38px!important;padding:0 10px!important;white-space:nowrap}
+.fin3-group-total{display:grid;gap:2px}
+.fin3-group-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.fin3-group-row small{color:var(--txt-faint);font-size:10px}
+.fin3-holding-currency{color:#8c9aa5;font:600 10px/1 'Oswald',sans-serif;margin-left:6px}
+.fin3-history-tools{display:flex;justify-content:flex-end;margin:0 0 10px}
+.fin3-history-tools select{
+  min-width:190px;max-width:100%;height:38px;border:1px solid var(--line);border-radius:9px;
+  background:var(--panel);color:var(--txt-dim);padding:0 10px;font:600 10px 'Oswald',sans-serif
+}
+.fin3-return-chip{
+  display:inline-flex;align-items:center;margin-left:6px;padding:3px 6px;border:1px solid rgba(212,162,78,.18);
+  border-radius:99px;background:rgba(212,162,78,.045);color:#b8a46d;font:600 8px/1 'Oswald',sans-serif;
+  letter-spacing:.7px;text-transform:uppercase
+}
+.fin3-return-action{white-space:nowrap}
+.fin3-plan-toggle{opacity:.82}
+.fin3-plan-panel{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.055)}
+.fin3-plan-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+.fin3-plan-head h4{margin:0;color:var(--gold-soft);font:700 15px/1 'Oswald',sans-serif}
+.fin3-plan-actions{display:flex;gap:7px;flex-wrap:wrap}
+.fin3-plan-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.fin3-plan-summary>div{padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:11px;background:rgba(4,11,10,.18)}
+.fin3-plan-summary small{display:block;color:var(--txt-faint);font-size:9px;margin-bottom:6px}
+.fin3-plan-summary strong{display:block;color:var(--gold-soft);font:700 16px/1.4 'Oswald',sans-serif}
+.fin3-plan-list{display:grid;gap:7px}
+.fin3-plan-row{
+  display:grid;grid-template-columns:74px minmax(0,1fr) auto 32px;align-items:center;gap:9px;
+  padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:10px;background:rgba(3,10,9,.16)
+}
+.fin3-plan-row .kind{font:700 9px/1 'Oswald',sans-serif;letter-spacing:.7px;text-transform:uppercase}
+.fin3-plan-row.income .kind{color:#7fb98c}.fin3-plan-row.expense .kind{color:#c78274}
+.fin3-plan-row b{display:block;font-size:11px}.fin3-plan-row small{display:block;color:var(--txt-faint);font-size:9px;margin-top:3px}
+.fin3-plan-row .amount{text-align:right;font:700 12px/1.35 'Oswald',sans-serif;white-space:nowrap}
+.fin3-plan-row .amount span{display:block;color:#72808a;font-size:9px;font-weight:500}
+.fin3-plan-row.warn{border-color:rgba(200,83,58,.25)}
+.fin3-delete-account-choice{display:grid;gap:10px;margin-top:13px}
+.fin3-delete-account-choice button{min-height:45px}
+.fin3-delete-note{color:#8d989f;font-size:12px;line-height:1.55}
+.fin3-debt-summary-head{
+  width:100%;border:0;background:transparent;color:inherit;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:0;cursor:pointer;text-align:left
+}
+.fin3-debt-summary-head i{font-style:normal;color:#a78f59}
+.fin3-debt-collapsed-total{margin-top:8px;color:var(--gold-soft);font:700 20px/1.2 'Oswald',sans-serif}
+.fin3-pay-preview{
+  margin-top:10px;padding:11px;border:1px solid rgba(212,162,78,.12);border-radius:9px;
+  background:rgba(212,162,78,.025);color:#9da8af;font-size:12px;line-height:1.55
+}
+.fin3-pay-preview b{color:#dac484}
+.fin3-pay-error{color:#d28975!important;border-color:rgba(200,83,58,.18)!important}
+.fin3-modal-sub{margin:-4px 0 12px;color:#84909a;font-size:11px;line-height:1.5}
+
+/* custom date field */
+input.planner-date-enhanced[type=date]{
+  cursor:pointer!important;color-scheme:dark
+}
+input.planner-date-enhanced[type=date]::-webkit-calendar-picker-indicator{opacity:.22;pointer-events:none}
+.planner-date-popover{
+  position:fixed;z-index:18050;display:none;width:min(342px,calc(100vw - 16px));max-height:calc(100dvh - 16px);
+  overflow:auto;padding:13px;border:1px solid rgba(212,162,78,.23);border-radius:16px;
+  background:linear-gradient(160deg,rgba(19,26,34,.995),rgba(9,14,20,.995));
+  box-shadow:0 22px 70px rgba(0,0,0,.62);color:var(--txt);backdrop-filter:blur(16px)
+}
+.planner-date-popover.open{display:block}
+.pdc-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pdc-head b{font:700 15px/1 'Oswald',sans-serif;color:var(--gold-soft);letter-spacing:.4px}
+.pdc-close,.pdc-nav button,.pdc-title{
+  border:1px solid rgba(255,255,255,.075);border-radius:9px;background:#151e28;color:#8e9aa5;cursor:pointer
+}
+.pdc-close{width:34px;height:34px;font-size:18px}
+.pdc-selected{margin:10px 0;padding:9px 11px;border:1px solid rgba(111,184,126,.18);border-radius:9px;background:rgba(111,184,126,.05);color:#82bd8d;font-size:12px}
+.pdc-nav{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:7px;align-items:center;margin:9px 0}
+.pdc-nav button{height:36px}
+.pdc-title{height:36px;color:#e0ddd4;font:700 13px/1 'Oswald',sans-serif}
+.pdc-week,.pdc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.pdc-week span{text-align:center;color:#65717c;font:600 8px/1 'Oswald',sans-serif;padding:6px 0}
+.pdc-day{
+  aspect-ratio:1;border:1px solid transparent;border-radius:8px;background:transparent;color:#9da7b1;
+  cursor:pointer;font:600 11px/1 'Oswald',sans-serif
+}
+.pdc-day:hover{border-color:rgba(212,162,78,.24);color:#e4d19b}
+.pdc-day.today{border-color:rgba(212,162,78,.30);color:#e6c97e}
+.pdc-day.selected{border-color:#70b57e;background:rgba(74,133,89,.32);color:#eef5ef}
+.pdc-day:disabled{opacity:.2;cursor:not-allowed}
+.pdc-footer{display:flex;justify-content:space-between;gap:7px;margin-top:10px}
+.pdc-footer button{
+  flex:1;min-height:37px;border:1px solid rgba(255,255,255,.075);border-radius:9px;background:#151e28;color:#909aa4;
+  font:600 9px/1 'Oswald',sans-serif;letter-spacing:.6px;text-transform:uppercase;cursor:pointer
+}
+.pdc-footer button.primary{border-color:rgba(111,184,126,.24);color:#90bc99;background:rgba(111,184,126,.055)}
+.pdc-wheels{
+  display:none;grid-template-columns:1fr 1fr;gap:8px;height:170px;margin:6px 0 10px;padding:7px;
+  border:1px solid rgba(255,255,255,.06);border-radius:11px;background:#0c131a
+}
+.pdc-wheels.open{display:grid}
+.pdc-wheel{overflow:auto;scrollbar-width:thin;scroll-snap-type:y proximity}
+.pdc-wheel button{
+  width:100%;min-height:36px;border:0;border-radius:7px;background:transparent;color:#788591;
+  font:600 11px/1 'Oswald',sans-serif;cursor:pointer;scroll-snap-align:center
+}
+.pdc-wheel button.on{background:rgba(212,162,78,.085);color:#e1c77e}
+@media(max-width:700px){
+  .planner-date-popover{width:min(360px,calc(100vw - 12px));border-radius:15px;padding:12px}
+}
+
+/* existing deadline picker: anchor to control instead of forcing bottom sheet */
+.deadline-picker{max-height:calc(100dvh - 16px)!important;overflow:auto!important}
+#dlMonthTitle{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 9px;border-radius:8px}
+#dlMonthTitle:hover{background:rgba(212,162,78,.055)}
+.dl-wheel-panel{
+  display:none;grid-template-columns:1fr 1fr;gap:8px;height:165px;margin:6px 0 10px;padding:7px;
+  border:1px solid rgba(255,255,255,.06);border-radius:10px;background:#0c131a
+}
+.dl-wheel-panel.open{display:grid}
+.dl-wheel-col{overflow:auto;scrollbar-width:thin;scroll-snap-type:y proximity}
+.dl-wheel-col button{
+  width:100%;min-height:35px;border:0;border-radius:7px;background:transparent;color:#77838e;
+  font:600 11px/1 'Oswald',sans-serif;cursor:pointer;scroll-snap-align:center
+}
+.dl-wheel-col button.on{background:rgba(212,162,78,.09);color:#e2c97f}
+@media(max-width:620px){
+  .deadline-picker{
+    right:auto!important;bottom:auto!important;width:min(342px,calc(100vw - 12px))!important;
+    border-radius:15px!important
+  }
+}
+
+/* mobile finance */
+@media(max-width:600px){
+  .fin3-plan-summary{grid-template-columns:1fr}
+  .fin3-plan-row{grid-template-columns:62px minmax(0,1fr) 30px}
+  .fin3-plan-row .amount{grid-column:2;text-align:left}
+  .fin3-plan-row>button{grid-column:3;grid-row:1/3}
+  .fin3-history-tools{justify-content:stretch}.fin3-history-tools select{width:100%;max-width:none}
+  .fin3-total-main{gap:7px}
+  .fin3-toolbar-fx{min-height:42px!important}
+}
+</style>
+
+<script id="finance-system-v3-js">
+(function(){
+  'use strict';
+  if(typeof fin2!=='function')return;
+
+  const RETURN_CAT='Повернення';
+  const GROUP_LABELS={work:'Робочий баланс',capital:'Особистий капітал',reserve:'Reserve Capital',other:'Без групи'};
+  const round2=n=>Math.round((Number(n)||0)*100)/100;
+
+  /* ── migration / model ── */
+  const baseFin=fin2;
+  fin2=function(){
+    const f=baseFin();
+    if(!Array.isArray(f.planned))f.planned=[];
+    if(typeof f.plannedOpen!=='boolean')f.plannedOpen=false;
+    if(!f.historyCategoryFilter)f.historyCategoryFilter='';
+    if(!f.overviewBalanceMode)f.overviewBalanceMode='multi';
+    if(typeof f.debtSummaryOpen!=='boolean')f.debtSummaryOpen=true;
+    f.categories=f.categories||{income:[],expense:[]};
+    f.categories.income=Array.isArray(f.categories.income)?f.categories.income:[];
+    f.categories.expense=Array.isArray(f.categories.expense)?f.categories.expense:[];
+    if(!f.categories.income.includes(RETURN_CAT))f.categories.income.push(RETURN_CAT);
+    if(!f.categories.expense.includes(RETURN_CAT))f.categories.expense.push(RETURN_CAT);
+    if(!f.groupModelV3){
+      const legacyIds=new Set(['work','capital','reserve']);
+      f.accounts=(f.accounts||[]).filter(a=>{
+        if(!legacyIds.has(a.id))return true;
+        const used=(f.transactions||[]).some(t=>t.from===a.id||t.to===a.id);
+        return used; // remove only untouched empty legacy placeholders
+      });
+      f.groupModelV3=true;
+    }
+    (f.accounts||[]).forEach(a=>{
+      a.group=a.type||a.group||'other'; // keeps edits made through the legacy-compatible "type" field
+      a.type=a.group; // compatibility with older parts of the planner
+      if(a.id==='reserve'&&a.name==='Резервний капітал')a.name='Reserve Capital';
+    });
+    if(!f.financeFx&&f.debtFx)f.financeFx=JSON.parse(JSON.stringify(f.debtFx));
+    return f;
+  };
+
+  function fin3Currencies(){
+    const f=fin2();
+    return [...new Set([
+      ...fin2Currencies().map(x=>x.value),
+      ...(f.accounts||[]).map(x=>x.currency),
+      ...(f.budgets||[]).map(x=>x.currency),
+      ...(f.goals||[]).map(x=>x.currency),
+      ...(f.investments||[]).map(x=>x.currency),
+      ...(f.debts||[]).map(x=>x.currency)
+    ].filter(Boolean))];
+  }
+  function fin3FxRate(source,target){
+    if(!source||!target)return null;
+    if(source===target)return 1;
+    const f=fin2(),fx=f.financeFx||f.debtFx;
+    if(!fx||!fx.base||!fx.rates)return null;
+    const sr=source===fx.base?1:Number(fx.rates[source]);
+    const tr=target===fx.base?1:Number(fx.rates[target]);
+    if(!Number.isFinite(sr)||sr<=0||!Number.isFinite(tr)||tr<=0)return null;
+    const rate=sr/tr;
+    return Number.isFinite(rate)&&rate>0?rate:null;
+  }
+  function fin3Converted(byCurrency,base=fin2().currency){
+    let total=0;const missing=[];
+    for(const [c,n] of Object.entries(byCurrency)){
+      if(!n)continue;
+      const r=fin3FxRate(c,base);
+      if(r===null){missing.push(c);continue}
+      total+=Number(n)*r;
+    }
+    return {total,missing};
+  }
+  function fin3CurrencyLines(map,main=fin2().currency){
+    const keys=Object.keys(map).filter(c=>Math.abs(Number(map[c])||0)>=0.005)
+      .sort((a,b)=>a===main?-1:b===main?1:a.localeCompare(b));
+    return keys.length?keys.map(c=>`<strong>${fin2Fmt(map[c],c)}</strong>`).join(''):`<strong>${fin2Fmt(0,main)}</strong>`;
+  }
+  function fin3AllBalanceByCurrency(){
+    const out={};
+    for(const b of fin2Buckets()){
+      const c=b.currency||fin2Currency(b.id)||'PLN';
+      out[c]=(out[c]||0)+fin2Balance(b.id);
+    }
+    return out;
+  }
+  function fin3GroupRows(key){
+    const f=fin2();
+    if(key==='budget')return f.budgets.map(b=>({name:b.name,value:fin2BudgetBalance(b.id),currency:b.currency,kind:'budget'}));
+    return f.accounts.filter(a=>(a.group||a.type||'other')===key)
+      .map(a=>({name:a.name,value:fin2Balance(a.id),currency:a.currency,kind:fin2Kind(a),id:a.id}));
+  }
+  function fin3GroupTotals(key){
+    const out={};
+    for(const r of fin3GroupRows(key))out[r.currency]=(out[r.currency]||0)+r.value;
+    return out;
+  }
+
+  /* ── general FX settings shared by Overview + Debts ── */
+  function fin3OpenFxRates(){
+    const f=fin2(),base=f.currency||'PLN',currencies=fin3Currencies().filter(c=>c!==base);
+    const fields=currencies.map((c,i)=>({
+      name:'rate'+i,label:`1 ${c} = … ${base}`,type:'number',min:'0.00000001',step:'any',
+      required:false,value:fin3FxRate(c,base)===null?'':String(fin3FxRate(c,base)),
+      placeholder:'Введи поточний курс',wide:true
+    }));
+    if(!fields.length){fin2Toast('Інших валют поки немає');return}
+    fin2Modal('Курси валют · основна '+base,fields,'Зберегти курси',d=>{
+      const rates={[base]:1};
+      for(let i=0;i<currencies.length;i++){
+        const c=currencies[i],raw=String(d['rate'+i]??'').trim();
+        if(!raw)continue;
+        const n=Number(raw.replace(',','.'));
+        if(!Number.isFinite(n)||n<=0){fin2Toast('Перевір курс '+c);return false}
+        rates[c]=n;
+      }
+      f.financeFx={base,rates,updatedAt:new Date().toISOString()};
+      f.debtFx=JSON.parse(JSON.stringify(f.financeFx));
+      f.debtBaseCurrency=base;
+      save();fin2Render();fin2Toast('Курси збережено');
+    });
+  }
+
+  /* ── accounts are objects; work/capital/reserve are only groups ── */
+  fin2AccountFields=function(){
+    return [
+      {name:'name',label:'Назва рахунку'},
+      {name:'kind',label:'Тип рахунку',options:[
+        {value:'card',label:'Картка / банківський рахунок'},
+        {value:'cash',label:'Готівка'}
+      ]},
+      {name:'type',label:'Група рахунку',options:[
+        {value:'work',label:'Робочий баланс'},
+        {value:'capital',label:'Особистий капітал'},
+        {value:'reserve',label:'Reserve Capital'},
+        {value:'other',label:'Без групи'}
+      ]},
+      {name:'currency',label:'Валюта',options:fin2Currencies()}
+    ];
+  };
+  const baseAddAccount=fin2AddAccount;
+  fin2AddAccount=function(){return baseAddAccount()};
+
+  fin2PartRows=function(key){return fin3GroupRows(key)};
+
+  fin2AccountCards=function(){
+    const f=fin2();
+    return `<div class="fin2-accounts">${f.accounts.map(a=>`<article class="fin2-account">
+      <div class="fin2-account-top"><div>
+        <div class="fin2-account-name">${fin2Icon(fin2Kind(a))}${fin2Esc(a.name)}</div>
+        <div class="fin2-account-type">${fin2Kind(a)==='cash'?'Готівка':'Картка'} · Група: ${fin2Esc(GROUP_LABELS[a.group||a.type||'other']||'Без групи')} · ${fin2Esc(a.currency)}</div>
+      </div><div class="fin2-account-actions">
+        <button class="fin2-btn small" data-fin2="editacc" data-id="${fin2Esc(a.id)}" title="Налаштування рахунку" aria-label="Налаштування рахунку">⚙</button>
+      </div></div>
+      <div class="fin2-account-balance">${fin2Fmt(fin2Balance(a.id),a.currency)}</div>
+      <div class="fin2-account-foot"><span class="fin2-muted">Доступний баланс</span><button class="fin2-btn small" data-fin2="transfer">⇄ Переказ</button></div>
+    </article>`).join('')}</div>`;
+  };
+
+  fin2Capital=function(){
+    const groups=[['work','Робочий баланс'],['capital','Особистий капітал'],['reserve','Reserve Capital']];
+    return `<div class="fin2-capital">${groups.map(([key,label])=>`<div class="fin2-card">
+      <div class="fin2-label">${label}</div>
+      <div class="fin2-value fin3-group-total">${fin3CurrencyLines(fin3GroupTotals(key))}</div>
+      <div class="fin2-note">Група рахунків · не окремий рахунок</div>
+    </div>`).join('')}</div>`;
+  };
+
+  fin2BalanceHTML=function(){
+    const f=fin2(),all=fin3AllBalanceByCurrency(),converted=fin3Converted(all,f.currency),mode=f.overviewBalanceMode||'multi';
+    const totalHTML=mode==='converted'
+      ? `<strong>${converted.missing.length?'—':fin2Fmt(converted.total,f.currency)}</strong>${converted.missing.length?`<div class="fin3-fx-warning">Немає курсу: ${converted.missing.map(fin2Esc).join(', ')}</div>`:''}`
+      : fin3CurrencyLines(all,f.currency);
+    const parts=[['work','Робочий баланс'],['budget','Бюджети'],['capital','Особистий капітал'],['reserve','Reserve Capital']];
+    const as=f.accounts;
+    return `<section class="f14-balance">
+      <div class="f14-balance-top">
+        <div class="f14-total fin3-total" id="fin3TotalBalance" tabindex="0">
+          <div class="fin3-total-main"><div><span>Загальний баланс</span><div class="fin3-total-values">${totalHTML}</div></div>
+            <button type="button" class="fin3-total-side" data-fin2="balancemulti" title="Показати всі валюти" aria-label="Показати всі валюти">≡</button>
+          </div>
+          <div class="fin3-total-hint">${mode==='converted'?'Еквівалент у '+fin2Esc(f.currency)+' · натисни ≡ для всіх валют':'Подвійний тап — показати еквівалент у '+fin2Esc(f.currency)}</div>
+        </div>
+        <div class="f14-account-list">
+          ${as.map(a=>`<div><span>${fin2Icon(fin2Kind(a))}${fin2Esc(a.name)}</span><b>${fin2Fmt(fin2Balance(a.id),a.currency)}</b>${fin2IconButton('editacc','gear','Налаштування рахунку '+a.name,a.id)}</div>`).join('')}
+          <div class="f14-account-actions">${fin2Button('addacc','＋ Рахунок')}${fin2Button('transfer','⇄ Переказ / обмін')}</div>
+        </div>
+      </div>
+      <div class="f14-balance-parts">${parts.map(([key,name])=>{
+        const vals=fin3GroupTotals(key);
+        return `<div class="f15-balance-part ${f.expandedPart===key?'expanded':''}">
+          ${fin2Button('holdings',`<span>${name}</span><strong class="fin3-group-total">${fin3CurrencyLines(vals)}</strong><i>${f.expandedPart===key?'⌃':'⌄'}</i>`,key,'f15-balance-trigger')}
+        </div>`;
+      }).join('')}</div>
+      ${f.expandedPart?`<div class="f15-holdings">${fin3GroupRows(f.expandedPart).map(r=>`<div class="f15-holding-row"><span>${fin2Esc(r.name)} <em class="fin3-holding-currency">${fin2Esc(r.currency)}</em></span><b>${fin2Fmt(r.value,r.currency)}</b></div>`).join('')||'<p>У цій групі рахунків поки немає</p>'}${f.expandedPart==='budget'?fin2Button('transfer','⇄ Розподілити кошти'):''}</div>`:''}
+    </section>`;
+  };
+
+  /* two explicit account deletion paths */
+  fin2DeleteAccount=function(id,oldBack){
+    const f=fin2(),a=f.accounts.find(x=>x.id===id);if(!a)return;
+    oldBack?.remove();
+    const balance=round2(fin2Balance(id)),targets=f.accounts.filter(x=>x.id!==id&&x.currency===a.currency);
+    const back=document.createElement('div');back.className='fin2-modal-back';
+    back.innerHTML=`<section class="fin2-modal" role="dialog" aria-modal="true">
+      <h3>Видалити рахунок · ${fin2Esc(a.name)}</h3>
+      <p class="fin3-delete-note">Поточний залишок: <b>${fin2Fmt(balance,a.currency)}</b>. Історія операцій у будь-якому випадку залишиться.</p>
+      ${targets.length&&balance>0?`<label class="fin2-field wide">Перенести залишок на
+        <select id="fin3DeleteTarget">${targets.map(t=>`<option value="${fin2Esc(t.id)}">${fin2Esc(t.name)} · ${fin2Fmt(fin2Balance(t.id),t.currency)}</option>`).join('')}</select>
+      </label>`:''}
+      <div class="fin3-delete-account-choice">
+        ${targets.length&&balance>0?'<button type="button" class="fin2-btn primary" data-transfer-delete>Перенести кошти й видалити</button>':''}
+        <button type="button" class="fin2-btn danger" data-plain-delete>Видалити без перенесення</button>
+        <button type="button" class="fin2-btn" data-cancel-delete>Скасувати</button>
+      </div>
+    </section>`;
+    document.body.appendChild(back);
+    const close=()=>back.remove();
+    back.onclick=e=>{if(e.target===back)close()};
+    back.querySelector('[data-cancel-delete]').onclick=close;
+    const plain=back.querySelector('[data-plain-delete]');
+    plain.onclick=()=>{
+      if(!confirm(`Видалити «${a.name}» без перенесення ${fin2Fmt(balance,a.currency)}? Ця сума перестане входити в поточний баланс.`))return;
+      a.closingBalance=balance;a.closedMode='without_transfer';a.closedAt=Date.now();
+      close();fin2ArchiveAccount(id);
+    };
+    const transfer=back.querySelector('[data-transfer-delete]');
+    if(transfer)transfer.onclick=()=>{
+      const toId=back.querySelector('#fin3DeleteTarget').value,to=f.accounts.find(x=>x.id===toId);
+      const now=round2(fin2Balance(id));
+      if(!to||to.currency!==a.currency){fin2Toast('Обери рахунок у тій самій валюті');return}
+      if(now!==balance){fin2Toast('Баланс змінився. Відкрий видалення повторно');return}
+      if(!confirm(`Перенести ${fin2Fmt(now,a.currency)} на «${to.name}» і видалити рахунок?`))return;
+      fin2Tx('transfer',now,id,to.id,{category:'Закриття рахунку',note:a.name});
+      a.closingBalance=0;a.closedMode='transfer';a.closedAt=Date.now();
+      close();fin2ArchiveAccount(id);
+    };
+  };
+
+  /* ── neutral Return category ── */
+  const baseTx=fin2Tx;
+  fin2Tx=function(type,amount,from,to,extra={}){
+    const f=fin2();
+    f.transactions.unshift({
+      id:fin2Id('tx'),type,amount:Number(amount),from:from||'',to:to||'',
+      currency:extra.currency||fin2Currency(from)||fin2Currency(to)||'PLN',
+      toCurrency:extra.toCurrency||fin2Currency(to)||fin2Currency(from)||'PLN',
+      toAmount:extra.toAmount==null?Number(amount):Number(extra.toAmount),
+      debtId:extra.debtId||'',debtAmount:extra.debtAmount==null?null:Number(extra.debtAmount),
+      debtCurrency:extra.debtCurrency||'',budgetId:extra.budgetId||'',
+      date:extra.date||fin2Date(),category:extra.category||'',note:extra.note||'',
+      statNeutral:extra.statNeutral===true||extra.category===RETURN_CAT,
+      created:Date.now()
+    });
+    save();
+  };
+
+  fin2Totals=function(){
+    const c=fin2().currency,out={income:0,expense:0,transfer:0};
+    for(const t of fin2PeriodTransactions()){
+      const neutral=t.statNeutral===true||t.category===RETURN_CAT;
+      if(t.currency===c){
+        if(t.type==='income'&&!neutral)out.income+=Number(t.amount)||0;
+        if(t.type==='expense'&&!neutral)out.expense+=Number(t.amount)||0;
+        if(t.type==='transfer')out.transfer+=Number(t.amount)||0;
+      }else if(t.type==='transfer'&&t.toCurrency===c)out.transfer+=Number(t.toAmount??t.amount)||0;
+    }
+    return out;
+  };
+  fin2Monthly=function(){
+    const p=fin2Period(),start=fin2ParseDate(p.start),end=fin2ParseDate(p.end),
+      days=Math.round((Date.UTC(end.getFullYear(),end.getMonth(),end.getDate())-Date.UTC(start.getFullYear(),start.getMonth(),start.getDate()))/86400000)+1,
+      buckets=[],size=Math.max(1,Math.ceil(days/12));
+    for(let i=0;i<days;i+=size){
+      const a=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i),
+        b=new Date(start.getFullYear(),start.getMonth(),start.getDate()+Math.min(days-1,i+size-1)),
+        key=fin2ISO(a),last=fin2ISO(b);
+      buckets.push({key,last,label:key.slice(8)+'.'+key.slice(5,7),income:0,expense:0});
+    }
+    for(const t of fin2PeriodTransactions()){
+      if(t.currency!==fin2().currency||t.statNeutral===true||t.category===RETURN_CAT)continue;
+      const b=buckets.find(x=>t.date>=x.key&&t.date<=x.last);if(!b)continue;
+      if(t.type==='income')b.income+=Number(t.amount)||0;
+      if(t.type==='expense')b.expense+=Number(t.amount)||0;
+    }
+    return buckets;
+  };
+
+  function fin3HistoryCategories(){
+    return [...new Set(fin2().transactions.filter(t=>t.type!=='debt_payment').map(t=>t.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'uk'));
+  }
+  fin2TransactionsHTML=function(limit=12){
+    const f=fin2(),filter=f.historyCategoryFilter||'';
+    let arr=f.transactions.filter(t=>t.type!=='debt_payment');
+    if(filter)arr=arr.filter(t=>t.category===filter);
+    const tools=`<div class="fin3-history-tools"><select id="fin2TxCategoryFilter" aria-label="Фільтр категорії"><option value="">Усі категорії</option>${fin3HistoryCategories().map(c=>`<option value="${fin2Esc(c)}" ${filter===c?'selected':''}>${fin2Esc(c)}</option>`).join('')}</select></div>`;
+    if(!arr.length)return tools+'<div class="fin2-empty">Операцій за цим фільтром немає.</div>';
+    return tools+`<div class="fin2-list">${arr.slice(0,limit).map(t=>{
+      const incoming=t.type==='income',isExp=t.type==='expense',neutral=t.statNeutral===true||t.category===RETURN_CAT,
+        adjustment=['opening_balance','balance_adjustment'].includes(t.type),
+        symbol=adjustment?'＝':neutral?'↩':incoming?'＋':isExp?'−':'⇄',
+        amount=t.type==='transfer'&&t.currency!==t.toCurrency?`${fin2Fmt(t.amount,t.currency)} → ${fin2Fmt(t.toAmount,t.toCurrency)}`:fin2Fmt(t.amount,t.currency||'PLN'),
+        meta=[t.date,t.category,t.from?fin2Name(t.from):'',t.to?fin2Name(t.to):'',t.note].filter(Boolean).join(' · ');
+      return `<div class="fin2-row">
+        <span class="fin2-ico">${symbol}</span>
+        <div><div class="fin2-row-title">${fin2Esc(t.category||(incoming?'Дохід':isExp?'Витрата':'Переказ'))}${neutral?'<span class="fin3-return-chip">не в статистиці</span>':''}</div><div class="fin2-row-meta">${fin2Esc(meta)}</div></div>
+        <div class="fin2-row-amount ${neutral?'neutral':incoming?'in':isExp?'out':'neutral'}">${adjustment?(t.from?'−':'+'):incoming?'+':isExp?'−':''}${fin2Esc(amount)}</div>
+        <div class="fin2-account-actions">${neutral&&isExp?`<button class="fin2-btn small fin3-return-action" data-fin2="returnexpense" data-id="${fin2Esc(t.id)}">Витратою</button>`:''}<button class="fin2-btn small fin2-remove" data-fin2="deltx" data-id="${fin2Esc(t.id)}" title="Видалити">×</button></div>
+      </div>`;
+    }).join('')}</div>`;
+  };
+  function fin3ReturnToExpense(id){
+    const t=fin2().transactions.find(x=>x.id===id&&x.type==='expense'&&(x.category===RETURN_CAT||x.statNeutral));if(!t)return;
+    const cats=fin2().categories.expense.filter(x=>x!==RETURN_CAT);
+    if(!cats.length){fin2Toast('Спочатку додай звичайну категорію витрат');return}
+    fin2Modal('Позначити повернення як витрату',[
+      {name:'category',label:'Категорія витрати',options:cats.map(x=>({value:x,label:x}))},
+      {name:'note',label:'Примітка',type:'textarea',value:t.note||'',required:false,wide:true}
+    ],'Зарахувати як витрату',d=>{
+      t.category=d.category;t.note=d.note||t.note;t.statNeutral=false;
+      save();fin2Render();fin2Toast('Операція тепер враховується як витрата');
+    });
+  }
+
+  /* ── Planned income / expenses ── */
+  function fin3Projection(){
+    const f=fin2(),balances=new Map(f.accounts.map(a=>[a.id,fin2Balance(a.id)])),
+      rows=[...f.planned].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||(Number(a.created)||0)-(Number(b.created)||0));
+    const result=[];
+    for(const p of rows){
+      const a=f.accounts.find(x=>x.id===p.accountId);if(!a)continue;
+      const before=balances.get(a.id)||0,delta=(p.type==='income'?1:-1)*(Number(p.amount)||0),after=before+delta;
+      balances.set(a.id,after);result.push({...p,account:a,before,after,insufficient:p.type==='expense'&&after<0});
+    }
+    const beforeBy={},afterBy={};
+    for(const a of f.accounts){
+      beforeBy[a.currency]=(beforeBy[a.currency]||0)+fin2Balance(a.id);
+      afterBy[a.currency]=(afterBy[a.currency]||0)+(balances.get(a.id)||0);
+    }
+    return {rows,beforeBy,afterBy};
+  }
+  function fin3AddPlanned(type){
+    const f=fin2();if(!f.accounts.length){fin2Toast('Спершу створи рахунок');return}
+    const cats=(type==='income'?f.categories.income:f.categories.expense);
+    fin2Modal(type==='income'?'Запланований дохід':'Запланована витрата',[
+      {name:'amount',label:'Сума',type:'number',min:'0.01',step:'0.01'},
+      {name:'account',label:type==='income'?'На який рахунок':'З якого рахунку',options:f.accounts.map(a=>({value:a.id,label:`${a.name} · ${fin2Fmt(fin2Balance(a.id),a.currency)}`}))},
+      {name:'category',label:'Категорія',options:cats.map(x=>({value:x,label:x}))},
+      {name:'date',label:'Планова дата',type:'date',value:fin2Date()},
+      {name:'note',label:'Опис',type:'textarea',required:false,wide:true}
+    ],type==='income'?'Додати дохід у план':'Додати витрату у план',d=>{
+      const a=f.accounts.find(x=>x.id===d.account),amount=fin2N(d.amount);if(!a||!amount)return false;
+      f.planned.push({id:fin2Id('plan'),type,amount,accountId:a.id,currency:a.currency,category:d.category,date:d.date||fin2Date(),note:d.note||'',created:Date.now()});
+      save();fin2Render();
+    });
+  }
+  function fin3PlannedHTML(){
+    const f=fin2(),p=fin3Projection(),bConv=fin3Converted(p.beforeBy,f.currency),aConv=fin3Converted(p.afterBy,f.currency);
+    return `<div class="fin3-plan-panel">
+      <div class="fin3-plan-head"><h4>Заплановані доходи та витрати</h4><div class="fin3-plan-actions">
+        <button class="fin2-btn small" data-fin2="planincome">＋ Дохід</button>
+        <button class="fin2-btn small" data-fin2="planexpense">− Витрата</button>
+      </div></div>
+      <div class="fin3-plan-summary">
+        <div><small>Фактично зараз</small><strong>${fin3CurrencyLines(p.beforeBy)}</strong>${!bConv.missing.length&&Object.keys(p.beforeBy).length>1?`<span class="fin2-muted">≈ ${fin2Fmt(bConv.total,f.currency)}</span>`:''}</div>
+        <div><small>Після всього плану</small><strong>${fin3CurrencyLines(p.afterBy)}</strong>${!aConv.missing.length&&Object.keys(p.afterBy).length>1?`<span class="fin2-muted">≈ ${fin2Fmt(aConv.total,f.currency)}</span>`:''}</div>
+      </div>
+      ${p.rows.length?`<div class="fin3-plan-list">${p.rows.map(r=>`<div class="fin3-plan-row ${r.type} ${r.insufficient?'warn':''}">
+        <span class="kind">${r.type==='income'?'Дохід':'Витрата'}</span>
+        <div><b>${fin2Esc(r.note||r.category||'Без опису')}</b><small>${fin2Esc(r.date)} · ${fin2Esc(r.account.name)} · ${fin2Esc(r.category||'')}</small></div>
+        <div class="amount">${r.type==='income'?'+':'−'}${fin2Fmt(r.amount,r.currency)}<span>${fin2Fmt(r.before,r.currency)} → ${fin2Fmt(r.after,r.currency)}${r.insufficient?' · не вистачає':''}</span></div>
+        <button class="fin2-btn small fin2-remove" data-fin2="delplan" data-id="${fin2Esc(r.id)}">×</button>
+      </div>`).join('')}</div>`:'<div class="fin2-empty">Планових рухів ще немає.</div>'}
+    </div>`;
+  }
+  fin2StatisticsHTML=function(){
+    const f=fin2(),t=fin2Totals();
+    return `<section class="fin2-section">
+      <div class="fin2-section-head"><h3>Статистика</h3><div class="fin2-actions">
+        <button class="fin2-btn small fin3-plan-toggle" data-fin2="toggleplans">${f.plannedOpen?'▴ Сховати план':'▦ План'}</button>
+        ${fin2Button('period',fin2Icon('calendar')+fin2PeriodLabel(),'','fin2-period-button','Обрати період статистики')}
+      </div></div>
+      <div class="fin2-grid">${[['Доходи',t.income],['Витрати',t.expense],['Чистий потік',t.income-t.expense],['Перекази',t.transfer]].map(([name,n])=>`<div class="fin2-card"><div class="fin2-label">${name} · ${fin2Esc(f.currency)}</div><div class="fin2-value">${fin2Fmt(n,f.currency)}</div></div>`).join('')}</div>
+      <div class="fin2-stat-chart-head"><h3>Рух коштів за обраний період</h3><span>${fin2PeriodTransactions().filter(t=>t.currency===f.currency||t.toCurrency===f.currency).length} операцій</span></div>
+      ${fin2Chart()}
+      ${f.plannedOpen?fin3PlannedHTML():''}
+    </section>`;
+  };
+
+  /* ── debt: collapsible total + pay from any account with FX ── */
+  fin2DebtBase=function(){return fin2().currency||'PLN'};
+  fin2DebtFxRate=function(currency,base=fin2DebtBase()){return fin3FxRate(currency,base)};
+  fin2OpenDebtRates=fin3OpenFxRates;
+
+  fin2DebtPaid=function(d){
+    if(fin2RenderCache)return (Number(d.initialPaid)||0)+(fin2RenderCache.paid.get(d.id)||0);
+    return (Number(d.initialPaid)||0)+fin2().transactions.filter(t=>t.type==='debt_payment'&&t.debtId===d.id)
+      .reduce((n,t)=>n+(Number(t.debtAmount??t.amount)||0),0);
+  };
+  fin2BuildRenderCache=function(){
+    const balances=new Map(),paid=new Map();
+    for(const t of fin2().transactions){
+      if(t.to)balances.set(t.to,(balances.get(t.to)||0)+(Number(t.toAmount??t.amount)||0));
+      if(t.from)balances.set(t.from,(balances.get(t.from)||0)-(Number(t.amount)||0));
+      if(t.type==='debt_payment')paid.set(t.debtId,(paid.get(t.debtId)||0)+(Number(t.debtAmount??t.amount)||0));
+    }
+    return {balances,paid};
+  };
+  fin2DebtConvertedHTML=function(groups){
+    const f=fin2(),base=fin2DebtBase(),v=fin2DebtConverted(groups,base),ready=!v.missing.length,
+      pct=ready&&v.total?Math.min(100,Math.max(0,v.paid/v.total*100)):0,open=f.debtSummaryOpen!==false;
+    return `<section class="fin2-debt-fx ${open?'':'collapsed'}">
+      <button type="button" class="fin3-debt-summary-head" data-fin2="toggledebtsummary">
+        <div><small>УСІ БОРГИ · ЕКВІВАЛЕНТ У ${fin2Esc(base)}</small><h4>Загальний залишок</h4></div><i>${open?'⌃':'⌄'}</i>
+      </button>
+      ${!open?`<div class="fin3-debt-collapsed-total">${ready?fin2Fmt(v.left,base):'—'}</div>`:`<div class="fin2-debt-fx-total">${ready?fin2Fmt(v.left,base):'—'}</div>
+      ${ready?`<div class="fin2-debt-fx-metrics"><div><span>Початкова сума всіх боргів</span><strong>${fin2Fmt(v.total,base)}</strong></div><div><span>Вже сплачено</span><strong>${fin2Fmt(v.paid,base)}</strong></div></div>
+      <div class="fin2-debt-fx-progress"><i style="width:${pct}%"></i></div><div class="fin2-debt-fx-caption"><span>${Math.round(pct)}% погашено</span><span>За ручними курсами</span></div>`:`<p class="fin2-debt-fx-warning">Додай курс: ${v.missing.map(fin2Esc).join(', ')} → ${fin2Esc(base)}.</p>`}
+      <div style="margin-top:12px">${fin2Button('fxrates','⇄ Курси валют')}</div>`}
+    </section>`;
+  };
+
+  fin2PayDebt=function(id){
+    const f=fin2(),d=f.debts.find(x=>x.id===id);if(!d)return;
+    const left=Math.max(0,(Number(d.amount)||0)-fin2DebtPaid(d));if(left<=0){fin2Toast('Борг уже погашено');return}
+    if(!f.accounts.length){fin2Toast('Немає рахунків для платежу');return}
+    const back=document.createElement('div');back.className='fin2-modal-back';
+    back.innerHTML=`<form class="fin2-modal" autocomplete="off">
+      <h3>Погасити · ${fin2Esc(d.name)}</h3>
+      <p class="fin3-modal-sub">Залишилось ${fin2Fmt(left,d.currency)}. Можна платити з рахунку в іншій валюті — сума списання рахується за твоїм курсом.</p>
+      <div class="fin2-form">
+        <label class="fin2-field wide">З якого рахунку<select name="from">${f.accounts.map(a=>`<option value="${fin2Esc(a.id)}">${fin2Esc(a.name)} · ${fin2Fmt(fin2Balance(a.id),a.currency)}</option>`).join('')}</select></label>
+        <label class="fin2-field">Погасити · ${fin2Esc(d.currency)}<input name="debtAmount" type="number" min="0.01" step="0.01" value="${fin2Esc(String(round2(left)))}"></label>
+        <label class="fin2-field">Дата<input name="date" type="date" value="${fin2Date()}"></label>
+      </div>
+      <div class="fin3-pay-preview" data-pay-preview></div>
+      <div class="fin2-modal-actions"><button type="button" class="fin2-btn" data-cancel>Скасувати</button><button class="fin2-btn primary" data-submit>Погасити</button></div>
+    </form>`;
+    document.body.appendChild(back);
+    const form=back.querySelector('form'),from=form.elements.from,amt=form.elements.debtAmount,submit=back.querySelector('[data-submit]'),preview=back.querySelector('[data-pay-preview]');
+    const calc=()=>{
+      const a=f.accounts.find(x=>x.id===from.value),pay=Math.min(left,fin2N(amt.value));if(!a||!pay){submit.disabled=true;preview.textContent='Вкажи суму платежу.';return null}
+      const rate=fin3FxRate(a.currency,d.currency);
+      if(rate===null){submit.disabled=true;preview.classList.add('fin3-pay-error');preview.innerHTML=`Немає курсу <b>${fin2Esc(a.currency)} → ${fin2Esc(d.currency)}</b>. Спочатку додай його у «Курси валют».`;return null}
+      const source=round2(pay/rate),bal=round2(fin2Balance(a.id)),ok=source>0&&source<=bal+0.0001;
+      submit.disabled=!ok;preview.classList.toggle('fin3-pay-error',!ok);
+      preview.innerHTML=`Погашення боргу: <b>${fin2Fmt(pay,d.currency)}</b><br>Буде списано: <b>${fin2Fmt(source,a.currency)}</b> з «${fin2Esc(a.name)}» · доступно ${fin2Fmt(bal,a.currency)}${ok?'':' · недостатньо коштів'}`;
+      return ok?{a,pay,source}:null;
+    };
+    from.onchange=calc;amt.oninput=calc;calc();
+    const close=()=>back.remove();back.onclick=e=>{if(e.target===back)close()};back.querySelector('[data-cancel]').onclick=close;
+    form.onsubmit=e=>e.preventDefault();submit.onclick=()=>{
+      const x=calc();if(!x)return;
+      fin2Tx('debt_payment',x.source,x.a.id,'',{currency:x.a.currency,debtId:d.id,debtAmount:x.pay,debtCurrency:d.currency,category:'Погашення боргу',note:d.name,date:form.elements.date.value||fin2Date()});
+      close();fin2Render();fin2Toast('Платіж записано');
+    };
+  };
+  fin2DebtHistoryHTML=function(){
+    const arr=fin2().transactions.filter(t=>t.type==='debt_payment').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||(Number(b.created)||0)-(Number(a.created)||0));
+    if(!arr.length)return '';
+    const limit=Number(fin2().debtHistoryLimit)||20;
+    return `<section class="fin2-section fin2-debt-payment-history"><div class="fin2-section-head"><h3>Історія погашень</h3><span class="fin2-muted">${arr.length} платежів</span></div><div class="fin2-list">${arr.slice(0,limit).map(t=>{
+      const d=fin2().debts.find(x=>x.id===t.debtId),debtAmount=Number(t.debtAmount??t.amount)||0,debtCur=t.debtCurrency||d?.currency||t.currency;
+      const display=t.currency!==debtCur?`${fin2Fmt(t.amount,t.currency)} → ${fin2Fmt(debtAmount,debtCur)}`:fin2Fmt(debtAmount,debtCur);
+      return `<div class="fin2-row"><span class="fin2-ico">↘</span><div><div class="fin2-row-title">${fin2Esc(d?.name||t.note||'Погашення боргу')}</div><div class="fin2-row-meta">${fin2Esc([t.date,fin2Name(t.from),t.note!==d?.name?t.note:''].filter(Boolean).join(' · '))}</div></div><div class="fin2-row-amount out">−${fin2Esc(display)}</div><button type="button" class="fin2-btn small fin2-remove" data-fin2="deltx" data-id="${fin2Esc(t.id)}">×</button></div>`;
+    }).join('')}</div>${arr.length>limit?`<button type="button" class="fin2-btn fin2-history-more" data-fin2="moredebtpayments">Показати ще</button>`:''}</section>`;
+  };
+  fin2Debts=function(){
+    const f=fin2();
+    if(!f.debts.length)return `<div class="fin2-section fin2-debt-overview"><div class="fin2-section-head"><h3>Борги та погашення</h3><button class="fin2-btn small" data-fin2="adddebt">＋ Додати борг</button></div>${fin2DebtSummary()}</div>${fin2DebtHistoryHTML()}`;
+    return `<section class="fin2-section fin2-debt-overview"><div class="fin2-section-head"><div><div class="fin2-kicker">ЗАГАЛЬНЕ ЗВЕДЕННЯ</div><h3>Борги та погашення</h3></div><button class="fin2-btn primary" data-fin2="adddebt">＋ Додати борг</button></div>${fin2DebtSummary()}</section>
+      <div class="fin2-debt-cards">${f.debts.map(d=>{const paid=Math.min(Number(d.amount)||0,fin2DebtPaid(d)),left=Math.max(0,(Number(d.amount)||0)-paid),pct=d.amount?Math.min(100,paid/d.amount*100):0;return `<article class="fin2-debt-card">
+        <header class="fin2-debt-card-head"><div><div class="fin2-kicker">БОРГ · ${fin2Esc(d.currency)}</div><h4>${fin2Esc(d.name)}</h4>${d.due?`<span class="fin2-muted">Термін: ${fin2Esc(d.due)}</span>`:''}</div>
+        <div class="fin2-debt-tools"><button type="button" class="fin2-btn small" data-fin2="editdebt" data-id="${fin2Esc(d.id)}">✎ Редагувати</button><button type="button" class="fin2-btn small danger" data-fin2="deldebt" data-id="${fin2Esc(d.id)}">×</button></div></header>
+        <div class="fin2-debt-main"><div class="fin2-ring" style="--pct:${pct}%"><span>${Math.round(pct)}%<small>СПЛАЧЕНО</small></span></div><div class="fin2-debt-figures"><div><small>Початково</small><strong>${fin2Fmt(d.amount,d.currency)}</strong></div><div><small>Внесено</small><strong>${fin2Fmt(paid,d.currency)}</strong></div><div class="remain"><small>Залишилось</small><strong>${fin2Fmt(left,d.currency)}</strong></div></div></div>
+        <textarea class="fin2-debt-note" maxlength="2000" data-fin2-note="${fin2Esc(d.id)}" placeholder="Твоя примітка до боргу…">${fin2Esc(d.note||'')}</textarea>
+        <div class="fin2-debt-actions"><span class="fin2-muted">${left===0?'Борг закрито':`Погашено ${Math.round(pct)}%`}</span>${left?`<button class="fin2-btn small primary" data-fin2="paydebt" data-id="${fin2Esc(d.id)}">Погасити</button>`:''}</div>
+      </article>`}).join('')}</div>${fin2DebtHistoryHTML()}`;
+  };
+
+  /* ── action extensions ── */
+  const actionBase=fin2Action;
+  fin2Action=function(action,id,kind){
+    const f=fin2();
+    if(action==='fxrates'){fin3OpenFxRates();return}
+    if(action==='balancemulti'){f.overviewBalanceMode='multi';save();fin2Render();return}
+    if(action==='toggleplans'){f.plannedOpen=!f.plannedOpen;save();fin2Render();return}
+    if(action==='planincome'){fin3AddPlanned('income');return}
+    if(action==='planexpense'){fin3AddPlanned('expense');return}
+    if(action==='delplan'){f.planned=f.planned.filter(x=>x.id!==id);save();fin2Render();return}
+    if(action==='returnexpense'){fin3ReturnToExpense(id);return}
+    if(action==='toggledebtsummary'){f.debtSummaryOpen=!f.debtSummaryOpen;save();fin2Render();return}
+    return actionBase.apply(this,arguments);
+  };
+
+  /* ── post-render bindings ── */
+  const renderBase=fin2Render;
+  fin2Render=function(){
+    const r=renderBase.apply(this,arguments);
+    try{
+      const host=document.getElementById('sphDetail');
+      if(!host||curSph!==FIN_ID)return r;
+
+      const toolbar=host.querySelector('.f13-toolbar');
+      if(toolbar&&!host.querySelector('#fin3FxButton')){
+        const b=document.createElement('button');b.id='fin3FxButton';b.type='button';b.className='fin2-btn small fin3-toolbar-fx';b.dataset.fin2='fxrates';b.textContent='⇄ Курси';
+        toolbar.appendChild(b);b.onclick=()=>fin2Action('fxrates');
+      }
+
+      const filter=host.querySelector('#fin2TxCategoryFilter');
+      if(filter)filter.onchange=e=>{fin2().historyCategoryFilter=e.target.value;save();fin2Render()};
+
+      /* Balance switching is handled by one stable delegated handler below. */
+      fin3DisableAutofill(host);
+      fin3EnhanceDateInputs(host);
+    }catch(e){console.error('Finance V3 post-render',e)}
+    return r;
+  };
+
+  /* ───────────────── Global custom calendars + no autofill ───────────────── */
+  function fin3DisableAutofill(root=document){
+    const scope=root&&root.querySelectorAll?root:document;
+    scope.querySelectorAll('form').forEach(f=>f.setAttribute('autocomplete','off'));
+    scope.querySelectorAll('input,textarea').forEach(el=>{
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('data-lpignore','true');
+      el.setAttribute('data-1p-ignore','true');
+      if(el.type==='search'||/search|пошук/i.test(el.placeholder||'')){el.setAttribute('autocorrect','off');el.setAttribute('spellcheck','false')}
+    });
+  }
+
+  let dateTarget=null,dateMonth=null,wheelsOpen=false;
+  const MN=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  function dParse(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return null;const [y,m,d]=s.split('-').map(Number),x=new Date(y,m-1,d);return x.getFullYear()===y&&x.getMonth()===m-1&&x.getDate()===d?x:null}
+  function dIso(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+  function dLong(s){const d=dParse(s);return d?`${d.getDate()} ${MN[d.getMonth()].toLowerCase()} ${d.getFullYear()}`:'Оберіть дату'}
+  function ensureDatePopover(){
+    let p=document.getElementById('plannerDatePopover');if(p)return p;
+    p=document.createElement('div');p.id='plannerDatePopover';p.className='planner-date-popover';p.innerHTML=`
+      <div class="pdc-head"><b>ДАТА</b><button type="button" class="pdc-close">×</button></div>
+      <div class="pdc-selected"></div>
+      <div class="pdc-nav"><button type="button" data-pdc-move="-1">‹</button><button type="button" class="pdc-title"></button><button type="button" data-pdc-move="1">›</button></div>
+      <div class="pdc-wheels"><div class="pdc-wheel" data-pdc-months></div><div class="pdc-wheel" data-pdc-years></div></div>
+      <div class="pdc-week">${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="pdc-grid"></div>
+      <div class="pdc-footer"><button type="button" data-pdc-clear>Очистити</button><button type="button" class="primary" data-pdc-today>Сьогодні</button></div>`;
+    document.body.appendChild(p);
+    p.querySelector('.pdc-close').onclick=closeDatePopover;
+    p.querySelector('.pdc-title').onclick=()=>{wheelsOpen=!wheelsOpen;renderDatePopover(true)};
+    p.querySelectorAll('[data-pdc-move]').forEach(b=>b.onclick=()=>{dateMonth=new Date(dateMonth.getFullYear(),dateMonth.getMonth()+Number(b.dataset.pdcMove),1);renderDatePopover()});
+    p.querySelector('[data-pdc-clear]').onclick=()=>{if(!dateTarget||dateTarget.required)return;setDateTarget('');closeDatePopover()};
+    p.querySelector('[data-pdc-today]').onclick=()=>{if(!dateTarget)return;const v=dIso(new Date());if(dateAllowed(v,dateTarget)){setDateTarget(v);closeDatePopover()}};
+    return p;
+  }
+  function dateAllowed(v,el){if(!v)return !el.required;return (!el.min||v>=el.min)&&(!el.max||v<=el.max)}
+  function setDateTarget(v){
+    if(!dateTarget)return;dateTarget.value=v;
+    dateTarget.dispatchEvent(new Event('input',{bubbles:true}));
+    dateTarget.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  function renderDatePopover(scroll=false){
+    const p=ensureDatePopover();if(!dateTarget||!dateMonth)return;
+    const y=dateMonth.getFullYear(),m=dateMonth.getMonth(),sel=dateTarget.value;
+    p.querySelector('.pdc-selected').textContent=dLong(sel);
+    p.querySelector('.pdc-title').textContent=`${MN[m]} ${y}`;
+    p.querySelector('[data-pdc-clear]').style.visibility=dateTarget.required?'hidden':'visible';
+    const lead=(new Date(y,m,1).getDay()+6)%7,days=new Date(y,m+1,0).getDate(),today=dIso(new Date());
+    p.querySelector('.pdc-grid').innerHTML=Array.from({length:42},(_,i)=>{
+      const n=i-lead+1;if(n<1||n>days)return '<span></span>';
+      const v=`${y}-${String(m+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`,ok=dateAllowed(v,dateTarget);
+      return `<button type="button" class="pdc-day ${v===today?'today ':''}${v===sel?'selected':''}" data-pdc-day="${v}" ${ok?'':'disabled'}>${n}</button>`;
+    }).join('');
+    p.querySelectorAll('[data-pdc-day]').forEach(b=>b.onclick=()=>{setDateTarget(b.dataset.pdcDay);closeDatePopover()});
+    const wheels=p.querySelector('.pdc-wheels');wheels.classList.toggle('open',wheelsOpen);
+    if(wheelsOpen){
+      p.querySelector('[data-pdc-months]').innerHTML=MN.map((n,i)=>`<button type="button" data-pdc-month="${i}" class="${i===m?'on':''}">${n}</button>`).join('');
+      const minY=dParse(dateTarget.min)?.getFullYear()||Math.max(1990,y-30),maxY=dParse(dateTarget.max)?.getFullYear()||Math.min(2100,y+30);
+      let yh='';for(let yy=minY;yy<=maxY;yy++)yh+=`<button type="button" data-pdc-year="${yy}" class="${yy===y?'on':''}">${yy}</button>`;
+      p.querySelector('[data-pdc-years]').innerHTML=yh;
+      p.querySelectorAll('[data-pdc-month]').forEach(b=>b.onclick=()=>{dateMonth=new Date(y,Number(b.dataset.pdcMonth),1);renderDatePopover()});
+      p.querySelectorAll('[data-pdc-year]').forEach(b=>b.onclick=()=>{dateMonth=new Date(Number(b.dataset.pdcYear),m,1);renderDatePopover()});
+      if(scroll)requestAnimationFrame(()=>p.querySelectorAll('.pdc-wheel .on').forEach(x=>x.scrollIntoView({block:'center'})));
+    }
+    requestAnimationFrame(positionDatePopover);
+  }
+  function positionDatePopover(){
+    const p=document.getElementById('plannerDatePopover');if(!p||!dateTarget||!p.classList.contains('open'))return;
+    const r=dateTarget.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight;
+    const w=Math.min(342,vw-12);p.style.width=w+'px';p.style.maxHeight=Math.max(280,vh-16)+'px';
+    const h=Math.min(p.scrollHeight,vh-16),below=vh-r.bottom-8,above=r.top-8;
+    let top=below>=h?r.bottom+6:(above>=h?r.top-h-6:Math.max(8,Math.min(r.top,vh-h-8)));
+    let left=Math.max(6,Math.min(vw-w-6,r.left+(r.width-w)/2));
+    p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';
+  }
+  function openDatePopover(el){
+    dateTarget=el;const d=dParse(el.value)||new Date();dateMonth=new Date(d.getFullYear(),d.getMonth(),1);wheelsOpen=false;
+    const p=ensureDatePopover();p.classList.add('open');renderDatePopover();positionDatePopover();
+  }
+  function closeDatePopover(){document.getElementById('plannerDatePopover')?.classList.remove('open');dateTarget=null;wheelsOpen=false}
+  function fin3EnhanceDateInputs(root=document){
+    const list=(root.matches?.('input[type=date]')?[root]:[...root.querySelectorAll?.('input[type=date]')||[]]);
+    list.forEach(el=>{
+      if(el.closest('.fin2-calendar,.planner-date-popover')||el.dataset.customDateBound)return;
+      el.dataset.customDateBound='1';el.classList.add('planner-date-enhanced');el.readOnly=true;el.autocomplete='off';
+      el.addEventListener('pointerdown',e=>{e.preventDefault();openDatePopover(el)});
+      el.addEventListener('click',e=>{e.preventDefault();openDatePopover(el)});
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDatePopover(el)}});
+    });
+  }
+  document.addEventListener('pointerdown',e=>{
+    const p=document.getElementById('plannerDatePopover');
+    if(p?.classList.contains('open')&&!p.contains(e.target)&&e.target!==dateTarget)closeDatePopover();
+  });
+  window.addEventListener('resize',()=>{positionDatePopover();if(window.__fin3DlAnchor&&document.getElementById('deadlinePicker')?.classList.contains('on'))positionDeadlinePicker(window.__fin3DlAnchor)});
+
+  /* improve the existing deadline range picker */
+  const oldPosDeadline=positionDeadlinePicker;
+  positionDeadlinePicker=function(anchorEl){
+    const p=document.getElementById('deadlinePicker');if(!p||!anchorEl)return;
+    window.__fin3DlAnchor=anchorEl;
+    p.style.display='block';
+    const r=anchorEl.getBoundingClientRect(),vw=window.innerWidth,vh=window.innerHeight,w=Math.min(342,vw-12);
+    p.style.width=w+'px';p.style.maxHeight=Math.max(280,vh-16)+'px';
+    const h=Math.min(p.scrollHeight||430,vh-16),below=vh-r.bottom-8,above=r.top-8;
+    let top=below>=h?r.bottom+6:(above>=h?r.top-h-6:Math.max(8,Math.min(r.top,vh-h-8)));
+    let left=Math.max(6,Math.min(vw-w-6,r.left+(r.width-w)/2));
+    p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';
+  };
+  const oldOpenDeadline=openDeadlinePicker;
+  openDeadlinePicker=function(kind,ref,anchorEl){window.__fin3DlAnchor=anchorEl;const r=oldOpenDeadline.apply(this,arguments);requestAnimationFrame(()=>positionDeadlinePicker(anchorEl));return r};
+  function ensureDeadlineWheels(){
+    const p=document.getElementById('deadlinePicker'),title=document.getElementById('dlMonthTitle');if(!p||!title)return;
+    let panel=document.getElementById('dlWheelPanel');
+    if(!panel){panel=document.createElement('div');panel.id='dlWheelPanel';panel.className='dl-wheel-panel';panel.innerHTML='<div class="dl-wheel-col" data-dlw-month></div><div class="dl-wheel-col" data-dlw-year></div>';p.querySelector('.dl-month')?.insertAdjacentElement('afterend',panel)}
+    title.tabIndex=0;title.setAttribute('role','button');title.title='Обрати місяць або рік';
+    title.onclick=()=>{panel.classList.toggle('open');renderDeadlineWheels(true);requestAnimationFrame(()=>positionDeadlinePicker(window.__fin3DlAnchor))};
+    title.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();title.click()}};
+    renderDeadlineWheels(false);
+  }
+  function renderDeadlineWheels(scroll){
+    const panel=document.getElementById('dlWheelPanel');if(!panel||!deadlineMonth)return;
+    const m=deadlineMonth.getMonth(),y=deadlineMonth.getFullYear();
+    panel.querySelector('[data-dlw-month]').innerHTML=MN.map((n,i)=>`<button type="button" data-dlw-m="${i}" class="${i===m?'on':''}">${n}</button>`).join('');
+    let years='';for(let yy=Math.max(1990,y-30);yy<=Math.min(2100,y+30);yy++)years+=`<button type="button" data-dlw-y="${yy}" class="${yy===y?'on':''}">${yy}</button>`;
+    panel.querySelector('[data-dlw-year]').innerHTML=years;
+    panel.querySelectorAll('[data-dlw-m]').forEach(b=>b.onclick=()=>{deadlineMonth=new Date(y,Number(b.dataset.dlwM),1);renderDeadlinePicker()});
+    panel.querySelectorAll('[data-dlw-y]').forEach(b=>b.onclick=()=>{deadlineMonth=new Date(Number(b.dataset.dlwY),m,1);renderDeadlinePicker()});
+    if(scroll)requestAnimationFrame(()=>panel.querySelectorAll('.on').forEach(x=>x.scrollIntoView({block:'center'})));
+  }
+  const oldRenderDeadline=renderDeadlinePicker;
+  renderDeadlinePicker=function(){const r=oldRenderDeadline.apply(this,arguments);ensureDeadlineWheels();if(window.__fin3DlAnchor)requestAnimationFrame(()=>positionDeadlinePicker(window.__fin3DlAnchor));return r};
+
+  /* apply no-autofill + custom date picker to current and future UI */
+  fin3DisableAutofill(document);fin3EnhanceDateInputs(document);
+  /* Lightweight lazy enhancement instead of scanning every DOM mutation. */
+  document.addEventListener('focusin',e=>{
+    const el=e.target;
+    if(!el||!el.matches)return;
+    if(el.matches('input,textarea')){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('data-lpignore','true');
+      el.setAttribute('data-1p-ignore','true');
+    }
+    if(el.matches('input[type=date]')&&!el.dataset.customDateBound){
+      fin3EnhanceDateInputs(el);
+    }
+  },true);
+  document.addEventListener('pointerdown',e=>{
+    const el=e.target?.closest?.('input[type=date]');
+    if(el&&!el.dataset.customDateBound&&!el.closest('.fin2-calendar,.planner-date-popover')){
+      fin3EnhanceDateInputs(el);
+    }
+  },true);
+
+  /* rerender finance once this patch is active */
+  setTimeout(()=>{try{if(window.plannerReady&&curSph===FIN_ID)fin2Render()}catch(e){console.error(e)}},80);
+})();
+</script>
+
+
+<style id="finance-v3-fixes-20261001">
+/* Collapsed debt total: deliberately compact */
+.fin2-debt-fx.collapsed{
+  padding:9px 12px!important;
+  min-height:0!important;
+  border-width:1px!important;
+  border-color:rgba(212,162,78,.12)!important;
+  border-radius:10px!important;
+  background:rgba(17,24,31,.48)!important;
+  box-shadow:none!important
+}
+.fin2-debt-fx.collapsed .fin3-debt-summary-head{
+  min-height:28px!important
+}
+.fin2-debt-fx.collapsed .fin3-debt-summary-head>div{
+  display:flex!important;align-items:center!important;gap:9px!important;min-width:0
+}
+.fin2-debt-fx.collapsed .fin3-debt-summary-head small{
+  display:none!important
+}
+.fin2-debt-fx.collapsed .fin3-debt-summary-head h4{
+  margin:0!important;font-size:11px!important;letter-spacing:.7px!important;color:#a99b77!important
+}
+.fin2-debt-fx.collapsed .fin3-debt-summary-head i{
+  font-size:11px!important
+}
+.fin2-debt-fx.collapsed .fin3-debt-collapsed-total{
+  margin:3px 0 0!important;
+  font-size:15px!important;line-height:1.1!important;color:#d5c187!important
+}
+
+/* Planned finance rows: edit + delete stay compact */
+.fin3-plan-row .fin3-plan-row-actions{
+  display:flex;gap:5px;align-items:center
+}
+.fin3-plan-row .fin3-plan-edit{
+  color:#9aaaaf!important
+}
+@media(max-width:600px){
+  .fin3-plan-row{
+    grid-template-columns:58px minmax(0,1fr) auto!important
+  }
+  .fin3-plan-row .fin3-plan-row-actions{
+    grid-column:3;grid-row:1/3;flex-direction:column
+  }
+}
+</style>
+
+<script id="finance-v3-fixes-js">
+(function(){
+  'use strict';
+
+  /* ── Hard-close every planner calendar ── */
+  function forceClosePlannerCalendars(){
+    try{
+      const dl=document.getElementById('deadlinePicker');
+      if(dl){
+        dl.classList.remove('on');
+        dl.style.display='none';
+      }
+      if(typeof deadlineCtx!=='undefined')deadlineCtx=null;
+      window.__fin3DlAnchor=null;
+
+      const p=document.getElementById('plannerDatePopover');
+      if(p){
+        p.classList.remove('open');
+        p.style.display='none';
+      }
+    }catch(e){console.error('Calendar close',e)}
+  }
+  window.forceClosePlannerCalendars=forceClosePlannerCalendars;
+
+  /* Re-enable display just before opening either custom calendar. */
+  document.addEventListener('pointerdown',e=>{
+    const dlTrigger=e.target.closest?.('[data-deadline-stage],[data-deadline-task]');
+    if(dlTrigger){
+      const dl=document.getElementById('deadlinePicker');
+      if(dl)dl.style.removeProperty('display');
+    }
+    const dateInput=e.target.closest?.('input.planner-date-enhanced[type="date"]');
+    if(dateInput){
+      const p=document.getElementById('plannerDatePopover');
+      if(p)p.style.removeProperty('display');
+    }
+  },true);
+
+  /* The X must always close, even if another handler or overlay interferes. */
+  document.addEventListener('pointerdown',e=>{
+    if(e.target.closest?.('#dlClose,.dl-close')){
+      e.preventDefault();e.stopPropagation();
+      forceClosePlannerCalendars();
+    }
+    if(e.target.closest?.('#plannerDatePopover .pdc-close')){
+      e.preventDefault();e.stopPropagation();
+      forceClosePlannerCalendars();
+    }
+  },true);
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('#dlClose,.dl-close,#plannerDatePopover .pdc-close')){
+      e.preventDefault();e.stopPropagation();
+      forceClosePlannerCalendars();
+    }
+  },true);
+
+  /* Switching page/sphere must never leave a fixed calendar behind. */
+  document.addEventListener('pointerdown',e=>{
+    if(e.target.closest?.('.tab,[data-sn],[data-tpg],[data-pg]'))forceClosePlannerCalendars();
+  },true);
+
+  /* Also wrap go() so programmatic navigation closes them. */
+  if(typeof go==='function'&&!go.__finCalendarWrapped){
+    const oldGo=go;
+    const wrapped=function(){forceClosePlannerCalendars();return oldGo.apply(this,arguments)};
+    wrapped.__finCalendarWrapped=true;
+    go=wrapped;
+  }
+
+  /* Clicking outside any open custom calendar closes it. */
+  document.addEventListener('pointerdown',e=>{
+    const dl=document.getElementById('deadlinePicker');
+    if(dl?.classList.contains('on')&&!dl.contains(e.target)&&!e.target.closest?.('[data-deadline-stage],[data-deadline-task]')){
+      try{if(typeof closeDeadlinePicker==='function')closeDeadlinePicker()}catch(_){}
+      dl.style.display='none';
+      window.__fin3DlAnchor=null;
+    }
+    const p=document.getElementById('plannerDatePopover');
+    if(p?.classList.contains('open')&&!p.contains(e.target)&&!e.target.closest?.('input.planner-date-enhanced[type="date"]')){
+      p.classList.remove('open');p.style.display='none';
+    }
+  },true);
+
+  /* ── Planned income / expense: complete CRUD ── */
+  function fin3EditPlanned(id){
+    const f=fin2(),p=(f.planned||[]).find(x=>String(x.id)===String(id));
+    if(!p)return;
+    const type=p.type==='income'?'income':'expense';
+    const cats=(type==='income'?f.categories.income:f.categories.expense)||[];
+    fin2Modal(type==='income'?'Редагувати запланований дохід':'Редагувати заплановану витрату',[
+      {name:'amount',label:'Сума',type:'number',min:'0.01',step:'0.01',value:String(p.amount||'')},
+      {name:'account',label:type==='income'?'На який рахунок':'З якого рахунку',
+        value:p.accountId,options:f.accounts.map(a=>({value:a.id,label:`${a.name} · ${fin2Fmt(fin2Balance(a.id),a.currency)}`}))},
+      {name:'category',label:'Категорія',value:p.category||'',options:cats.map(x=>({value:x,label:x}))},
+      {name:'date',label:'Планова дата',type:'date',value:p.date||fin2Date()},
+      {name:'note',label:'Опис',type:'textarea',required:false,wide:true,value:p.note||''}
+    ],'Зберегти зміни',d=>{
+      const a=f.accounts.find(x=>x.id===d.account),amount=fin2N(d.amount);
+      if(!a||!amount){fin2Toast('Перевір суму та рахунок');return false}
+      p.amount=amount;p.accountId=a.id;p.currency=a.currency;p.category=d.category||'';p.date=d.date||fin2Date();p.note=d.note||'';
+      save();fin2Render();fin2Toast('План оновлено');
+    });
+  }
+  window.fin3EditPlanned=fin3EditPlanned;
+
+  /* Upgrade planned rows with an edit button without changing the finance layout. */
+  if(typeof fin3PlannedHTML==='function'){
+    const oldPlannedHTML=fin3PlannedHTML;
+    fin3PlannedHTML=function(){
+      const html=oldPlannedHTML.apply(this,arguments);
+      return html.replace(
+        /<button class="fin2-btn small fin2-remove" data-fin2="delplan" data-id="([^"]+)">×<\/button>/g,
+        '<div class="fin3-plan-row-actions"><button class="fin2-btn small fin3-plan-edit" data-fin2="editplan" data-id="$1" title="Редагувати">✎</button><button class="fin2-btn small fin2-remove" data-fin2="delplan" data-id="$1" title="Видалити">×</button></div>'
+      );
+    };
+  }
+
+  /* Extend finance action dispatcher with editplan.
+     It remains compatible with existing add/delete/toggle functions. */
+  if(typeof fin2Action==='function'&&!fin2Action.__finPlanCrudWrapped){
+    const oldAction=fin2Action;
+    const wrapped=function(action,id,kind){
+      if(action==='editplan'){fin3EditPlanned(id);return}
+      return oldAction.apply(this,arguments);
+    };
+    wrapped.__finPlanCrudWrapped=true;
+    fin2Action=wrapped;
+  }
+
+  /* Runtime integrity check for the Statistics > Plan system.
+     Non-destructive: only verifies model/functions and calculations. */
+  window.fin3PlanHealthCheck=function(){
+    const f=fin2();
+    const problems=[];
+    if(!Array.isArray(f.planned))problems.push('planned is not an array');
+    if(!Array.isArray(f.accounts))problems.push('accounts is not an array');
+    if(typeof fin3Projection!=='function')problems.push('projection unavailable');
+    if(typeof fin3AddPlanned!=='function')problems.push('add unavailable');
+    if(typeof fin3PlannedHTML!=='function')problems.push('render unavailable');
+
+    let projection=null;
+    try{
+      projection=fin3Projection();
+      if(!projection||!Array.isArray(projection.rows)||typeof projection.beforeBy!=='object'||typeof projection.afterBy!=='object'){
+        problems.push('projection result invalid');
+      }
+    }catch(e){problems.push('projection threw: '+e.message)}
+
+    return {
+      ok:problems.length===0,
+      problems,
+      plannedCount:Array.isArray(f.planned)?f.planned.length:0,
+      accountCount:Array.isArray(f.accounts)?f.accounts.length:0,
+      projectionRows:projection?.rows?.length||0
+    };
+  };
+
+  /* Ensure current stale calendar is closed immediately after loading this build. */
+  forceClosePlannerCalendars();
+})();
+</script>
+
+
+<style id="finance-balance-premium-20261001">
+/* ───────── Premium total balance switch ───────── */
+#fin3TotalBalance{
+  position:relative;
+  overflow:hidden;
+  min-height:138px;
+  padding:18px 19px!important;
+  border:1px solid rgba(212,162,78,.16)!important;
+  border-radius:16px!important;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(212,162,78,.08),transparent 31%),
+    radial-gradient(circle at 94% 100%,rgba(91,143,103,.08),transparent 34%),
+    linear-gradient(145deg,rgba(19,27,35,.98),rgba(12,18,24,.98))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 16px 40px rgba(0,0,0,.16)!important;
+  cursor:pointer!important;
+}
+#fin3TotalBalance:before{
+  content:'';
+  position:absolute;
+  width:190px;height:190px;border-radius:50%;
+  left:-85px;bottom:-125px;
+  background:radial-gradient(circle,rgba(212,162,78,.09),transparent 68%);
+  animation:fin3BalanceAura 8s ease-in-out infinite;
+  pointer-events:none;
+}
+#fin3TotalBalance:after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.018) 45%,transparent 60%);
+  transform:translateX(-120%);
+  animation:fin3BalanceSheen 9s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes fin3BalanceAura{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(18px,-8px,0) scale(1.08)}
+}
+@keyframes fin3BalanceSheen{
+  0%,78%,100%{transform:translateX(-120%)}
+  88%{transform:translateX(120%)}
+}
+.fin3-total-shell{
+  position:relative;z-index:2;display:grid;gap:12px
+}
+.fin3-balance-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.fin3-balance-header-left{min-width:0}
+.fin3-balance-label{
+  display:block;color:#77838d;
+  font:600 9px/1 'Oswald',sans-serif;
+  letter-spacing:1.8px;text-transform:uppercase
+}
+.fin3-balance-mode{
+  display:inline-flex;align-items:center;gap:6px;margin-top:7px;
+  color:#8d989f;font:500 10px/1 'Oswald',sans-serif;letter-spacing:.4px
+}
+.fin3-balance-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#8fbd98;box-shadow:0 0 12px rgba(111,184,126,.38)
+}
+.fin3-balance-switch-hint{
+  flex:0 0 auto;padding:6px 8px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.055);
+  background:rgba(255,255,255,.018);
+  color:#66727d;font:500 8px/1 'Oswald',sans-serif;
+  letter-spacing:.7px;text-transform:uppercase
+}
+
+/* MULTI-CURRENCY */
+.fin3-currency-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+  gap:8px
+}
+.fin3-currency-card{
+  position:relative;overflow:hidden;
+  min-width:0;padding:12px 12px 11px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:11px;
+  background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,.008));
+}
+.fin3-currency-card:after{
+  content:'';
+  position:absolute;left:10px;right:10px;bottom:0;height:2px;
+  border-radius:3px;
+  background:linear-gradient(90deg,transparent,rgba(212,162,78,.42),transparent);
+  transform:scaleX(.2);opacity:.45;
+  animation:fin3CurrencyPulse 5.5s ease-in-out infinite;
+}
+.fin3-currency-card:nth-child(2n):after{animation-delay:-1.3s}
+.fin3-currency-card:nth-child(3n):after{animation-delay:-2.7s}
+@keyframes fin3CurrencyPulse{
+  0%,100%{transform:scaleX(.18);opacity:.18}
+  50%{transform:scaleX(1);opacity:.72}
+}
+.fin3-currency-code{
+  display:block;color:#71808a;
+  font:700 9px/1 'Oswald',sans-serif;
+  letter-spacing:1.4px;text-transform:uppercase
+}
+.fin3-currency-amount{
+  display:block;margin-top:7px;
+  color:#e8dcc0;
+  font:700 19px/1.12 'Oswald',sans-serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.fin3-currency-card.main{
+  border-color:rgba(212,162,78,.16);
+  background:linear-gradient(145deg,rgba(212,162,78,.055),rgba(255,255,255,.009))
+}
+.fin3-currency-card.main .fin3-currency-code{color:#b49a5f}
+.fin3-currency-card.main .fin3-currency-amount{color:#efd99c}
+
+/* CONVERTED */
+.fin3-converted-view{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+  padding:8px 1px 3px
+}
+.fin3-converted-value-wrap{min-width:0}
+.fin3-converted-caption{
+  display:block;color:#6f7b85;
+  font:600 9px/1 'Oswald',sans-serif;
+  letter-spacing:1.2px;text-transform:uppercase
+}
+.fin3-converted-amount{
+  display:block;margin-top:8px;
+  color:#f0dda7;
+  font:700 clamp(28px,4vw,38px)/1 'Oswald',sans-serif;
+  white-space:nowrap
+}
+.fin3-converted-currency{
+  color:#9f8a58;font-size:.44em;letter-spacing:1px;margin-left:5px
+}
+.fin3-converted-orbit{
+  position:relative;flex:0 0 58px;width:58px;height:58px;border-radius:50%;
+  border:1px solid rgba(212,162,78,.20);
+  display:grid;place-items:center;
+  color:#c9ad6c;font:700 12px/1 'Oswald',sans-serif;
+  background:radial-gradient(circle,rgba(212,162,78,.07),transparent 70%)
+}
+.fin3-converted-orbit:before,.fin3-converted-orbit:after{
+  content:'';position:absolute;border-radius:50%;
+  border:1px solid rgba(111,184,126,.16)
+}
+.fin3-converted-orbit:before{inset:6px;animation:fin3Spin 8s linear infinite}
+.fin3-converted-orbit:after{inset:14px;border-color:rgba(212,162,78,.16);animation:fin3Spin 5s linear infinite reverse}
+@keyframes fin3Spin{to{transform:rotate(360deg)}}
+.fin3-balance-warning{
+  padding:8px 10px;border-radius:9px;
+  border:1px solid rgba(200,83,58,.18);
+  background:rgba(200,83,58,.045);
+  color:#bd806f;font-size:11px;line-height:1.45
+}
+.fin3-balance-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  color:#5f6b75;font:500 9px/1.35 'Oswald',sans-serif;
+  letter-spacing:.3px
+}
+.fin3-balance-foot b{color:#85785b;font-weight:600}
+
+@media(max-width:700px){
+  #fin3TotalBalance{min-height:126px;padding:15px!important}
+  .fin3-currency-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .fin3-currency-card{padding:11px 10px}
+  .fin3-currency-amount{font-size:17px}
+  .fin3-converted-amount{font-size:29px}
+  .fin3-converted-orbit{width:52px;height:52px;flex-basis:52px}
+  .fin3-balance-switch-hint{font-size:7px;padding:5px 6px}
+}
+@media(prefers-reduced-motion:reduce){
+  #fin3TotalBalance:before,#fin3TotalBalance:after,.fin3-currency-card:after,.fin3-converted-orbit:before,.fin3-converted-orbit:after{animation:none!important}
+}
+</style>
+
+<script id="finance-balance-premium-js">
+(function(){
+  'use strict';
+  if(typeof fin2!=='function'||typeof fin2BalanceHTML!=='function')return;
+
+  function balanceByCurrency(){
+    const out={};
+    const f=fin2();
+    for(const b of fin2Buckets()){
+      const c=b.currency||fin2Currency(b.id)||f.currency||'PLN';
+      out[c]=(out[c]||0)+Number(fin2Balance(b.id)||0);
+    }
+    return out;
+  }
+  function fxRate(source,target){
+    if(!source||!target)return null;
+    if(source===target)return 1;
+    const f=fin2(),fx=f.financeFx||f.debtFx;
+    if(!fx||!fx.base||!fx.rates)return null;
+    const sr=source===fx.base?1:Number(fx.rates[source]);
+    const tr=target===fx.base?1:Number(fx.rates[target]);
+    if(!Number.isFinite(sr)||sr<=0||!Number.isFinite(tr)||tr<=0)return null;
+    const r=sr/tr;
+    return Number.isFinite(r)&&r>0?r:null;
+  }
+  function convertedTotal(map,base){
+    let total=0;const missing=[];
+    for(const [c,v] of Object.entries(map)){
+      const n=Number(v)||0;if(Math.abs(n)<0.005)continue;
+      const r=fxRate(c,base);
+      if(r===null){missing.push(c);continue}
+      total+=n*r;
+    }
+    return {total,missing};
+  }
+  function currencyLines(map,main){
+    const keys=Object.keys(map).filter(c=>Math.abs(Number(map[c])||0)>=0.005)
+      .sort((a,b)=>a===main?-1:b===main?1:a.localeCompare(b));
+    return keys.length?keys.map(c=>`<strong>${fin2Fmt(map[c],c)}</strong>`).join(''):`<strong>${fin2Fmt(0,main)}</strong>`;
+  }
+  function groupRows(key){
+    const f=fin2();
+    if(key==='budget'){
+      return (f.budgets||[]).map(b=>({name:b.name,value:fin2BudgetBalance(b.id),currency:b.currency,kind:'budget'}));
+    }
+    return (f.accounts||[]).filter(a=>(a.group||a.type||'other')===key)
+      .map(a=>({name:a.name,value:fin2Balance(a.id),currency:a.currency,kind:fin2Kind(a),id:a.id}));
+  }
+  function groupTotals(key){
+    const out={};
+    for(const r of groupRows(key))out[r.currency]=(out[r.currency]||0)+(Number(r.value)||0);
+    return out;
+  }
+  function premiumCurrencyCards(map,main){
+    const entries=Object.entries(map)
+      .filter(([,v])=>Math.abs(Number(v)||0)>=0.005)
+      .sort(([a],[b])=>a===main?-1:b===main?1:a.localeCompare(b));
+    if(!entries.length)entries.push([main,0]);
+    return `<div class="fin3-currency-grid">${entries.map(([c,v])=>`
+      <div class="fin3-currency-card ${c===main?'main':''}">
+        <span class="fin3-currency-code">${fin2Esc(c)}</span>
+        <span class="fin3-currency-amount">${fin2Fmt(v,c)}</span>
+      </div>`).join('')}</div>`;
+  }
+
+  /* Self-contained balance renderer: no dependency on private helpers from another IIFE. */
+  fin2BalanceHTML=function(){
+    const f=fin2();
+    const all=balanceByCurrency();
+    const converted=convertedTotal(all,f.currency);
+    const mode=f.overviewBalanceMode==='converted'?'converted':'multi';
+    const fxUpdated=f.financeFx?.updatedAt||f.debtFx?.updatedAt||'';
+
+    let center='';
+    if(mode==='converted'){
+      center=converted.missing.length
+        ? `<div class="fin3-balance-warning">Не вистачає курсу для: <b>${converted.missing.map(fin2Esc).join(', ')}</b>. Додай його через «⇄ Курси».</div>`
+        : `<div class="fin3-converted-view">
+            <div class="fin3-converted-value-wrap">
+              <span class="fin3-converted-caption">Сумарний еквівалент</span>
+              <span class="fin3-converted-amount">${fin2Fmt(converted.total,f.currency)}</span>
+            </div>
+            <div class="fin3-converted-orbit">${fin2Esc(f.currency)}</div>
+          </div>`;
+    }else{
+      center=premiumCurrencyCards(all,f.currency);
+    }
+
+    const parts=[['work','Робочий баланс'],['budget','Бюджети'],['capital','Особистий капітал'],['reserve','Reserve Capital']];
+    const as=f.accounts||[];
+
+    return `<section class="f14-balance">
+      <div class="f14-balance-top">
+        <div class="f14-total fin3-total ${mode==='converted'?'converted-mode':'multi-mode'}" id="fin3TotalBalance" tabindex="0" role="button" aria-label="Подвійний тап перемикає режим загального балансу">
+          <div class="fin3-total-shell">
+            <div class="fin3-balance-header">
+              <div class="fin3-balance-header-left">
+                <span class="fin3-balance-label">Загальний баланс</span>
+                <span class="fin3-balance-mode"><i class="fin3-balance-dot"></i>${mode==='converted'?'Конвертовано в основну валюту':'Усі валюти окремо'}</span>
+              </div>
+              <span class="fin3-balance-switch-hint">2× тап</span>
+            </div>
+            ${center}
+            <div class="fin3-balance-foot">
+              <span>${mode==='converted'?'Одна підсумкова сума':'Кожна валюта окремо'}</span>
+              ${fxUpdated?`<b>Курси активні</b>`:''}
+            </div>
+          </div>
+        </div>
+
+        <div class="f14-account-list">
+          ${as.map(a=>`<div><span>${fin2Icon(fin2Kind(a))}${fin2Esc(a.name)}</span><b>${fin2Fmt(fin2Balance(a.id),a.currency)}</b>${fin2IconButton('editacc','gear','Налаштування рахунку '+a.name,a.id)}</div>`).join('')}
+          <div class="f14-account-actions">${fin2Button('addacc','＋ Рахунок')}${fin2Button('transfer','⇄ Переказ / обмін')}</div>
+        </div>
+      </div>
+
+      <div class="f14-balance-parts">${parts.map(([key,name])=>{
+        const vals=groupTotals(key);
+        return `<div class="f15-balance-part ${f.expandedPart===key?'expanded':''}">
+          ${fin2Button('holdings',`<span>${name}</span><strong class="fin3-group-total">${currencyLines(vals,f.currency)}</strong><i>${f.expandedPart===key?'⌃':'⌄'}</i>`,key,'f15-balance-trigger')}
+        </div>`;
+      }).join('')}</div>
+
+      ${f.expandedPart?`<div class="f15-holdings">${groupRows(f.expandedPart).map(r=>`<div class="f15-holding-row"><span>${fin2Esc(r.name)} <em class="fin3-holding-currency">${fin2Esc(r.currency)}</em></span><b>${fin2Fmt(r.value,r.currency)}</b></div>`).join('')||'<p>У цій групі рахунків поки немає</p>'}${f.expandedPart==='budget'?fin2Button('transfer','⇄ Розподілити кошти'):''}</div>`:''}
+    </section>`;
+  };
+
+  function toggleBalance(){
+    const f=fin2();
+    f.overviewBalanceMode=f.overviewBalanceMode==='converted'?'multi':'converted';
+    save();
+    fin2Render();
+  }
+  window.togglePremiumBalanceMode=toggleBalance;
+
+  /* One global handler only. Mouse uses native dblclick; touch/pen uses manual double tap. */
+  let lastTouchAt=0,lastTouchId='';
+  document.addEventListener('pointerup',e=>{
+    if(e.pointerType==='mouse')return;
+    const total=e.target.closest?.('#fin3TotalBalance');
+    if(!total||e.target.closest('button,a,input,select,textarea'))return;
+    const now=Date.now(),id='balance';
+    if(lastTouchId===id&&now-lastTouchAt>60&&now-lastTouchAt<430){
+      e.preventDefault();
+      lastTouchAt=0;lastTouchId='';
+      toggleBalance();
+    }else{
+      lastTouchAt=now;lastTouchId=id;
+    }
+  },{passive:false});
+
+  document.addEventListener('dblclick',e=>{
+    const total=e.target.closest?.('#fin3TotalBalance');
+    if(!total||e.target.closest('button,a,input,select,textarea'))return;
+    e.preventDefault();
+    toggleBalance();
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const total=e.target.closest?.('#fin3TotalBalance');
+    if(!total)return;
+    e.preventDefault();toggleBalance();
+  });
+
+  /* Ensure obsolete "show all" side controls are gone even if an older fragment renders briefly. */
+  const hideOldSide=()=>{
+    document.querySelectorAll('#fin3TotalBalance .fin3-total-side,[data-fin2="balancemulti"]').forEach(x=>x.remove());
+  };
+  hideOldSide();
+  setTimeout(()=>{try{if(window.plannerReady&&curSph===FIN_ID){fin2Render();hideOldSide()}}catch(e){console.error('Finance balance init',e)}},60);
 })();
 </script>
 
