@@ -4078,6 +4078,268 @@ html.planner-page-hidden *,html.planner-page-hidden *:before,html.planner-page-h
 }
 </style>
 
+
+<style id="workspace-compact-fix-20261001">
+/* ───────── Workspace width: keep it useful on large monitors ───────── */
+body[data-page="ws"] .wrap{
+  max-width:1620px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  padding-left:clamp(12px,1.6vw,26px)!important;
+  padding-right:clamp(12px,1.6vw,26px)!important;
+}
+#pg-ws .ws-v5-layout{
+  width:100%!important;
+  max-width:1560px!important;
+  margin:0 auto!important;
+  grid-template-columns:minmax(560px,1fr) minmax(500px,720px)!important;
+  gap:18px!important;
+  align-items:start!important;
+}
+#pg-ws .ws-v5-tasks.ws-legacy{
+  width:100%!important;
+  max-width:720px!important;
+  justify-self:end!important;
+}
+
+/* ───────── Project cards: footer is part of normal flow, never overlaps ───────── */
+#pg-ws .ws-v5-project-card{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:310px!important;
+  height:auto!important;
+  padding:16px!important;
+}
+#pg-ws .ws-v5-project-card:after{
+  height:18%!important;
+  opacity:.52!important;
+}
+#pg-ws .ws-v5-project-head{
+  flex:0 0 auto!important;
+}
+#pg-ws .ws-v5-project-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  margin-top:13px!important;
+  padding-bottom:9px!important;
+}
+#pg-ws .ws-v5-project-foot{
+  position:relative!important;
+  left:auto!important;right:auto!important;bottom:auto!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  margin-top:auto!important;
+  padding-top:9px!important;
+  min-height:25px!important;
+  border-top:1px solid rgba(255,255,255,.055)!important;
+  color:#9ca39e!important;
+  font-size:10.5px!important;
+  line-height:1.35!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+}
+#pg-ws .ws-v5-project-list>div{
+  line-height:1.38!important;
+}
+#pg-ws .ws-v5-project-list>div span>b{
+  line-height:1.35!important;
+  overflow-wrap:anywhere!important;
+}
+#pg-ws .ws-v5-project-list>div span>small{
+  line-height:1.28!important;
+}
+
+/* ───────── Automatic compact mode as the project collection grows ───────── */
+#pg-ws .ws-v5-project-grid.many-projects{
+  gap:11px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-card,
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-add{
+  min-height:275px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-card{
+  padding:14px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-name{
+  font-size:19px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-ring{
+  width:58px!important;height:58px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-ring b{
+  font-size:12px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-head{
+  grid-template-columns:minmax(0,1fr) 58px!important;
+  gap:9px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-list{
+  gap:7px!important;
+  margin-top:11px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-list>div{
+  font-size:13.5px!important;
+}
+#pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-foot{
+  font-size:10px!important;
+}
+
+/* 6+ projects: slightly denser, but still readable */
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-card,
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-add{
+  min-height:255px!important;
+}
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-card{
+  padding:13px!important;
+}
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-name{
+  font-size:18px!important;
+}
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-list{
+  gap:6px!important;
+}
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-list>div{
+  font-size:13px!important;
+}
+#pg-ws .ws-v5-project-grid.dense-projects .ws-v7-dollar-bg{
+  font-size:96px!important;
+}
+
+/* ───────── Right-side task list: smaller, cleaner, more premium ───────── */
+#pg-ws .ws-v5-tasks.ws-legacy{
+  padding:12px!important;
+  border-radius:15px!important;
+  background:
+    radial-gradient(circle at 94% 0%,rgba(212,162,78,.045),transparent 26%),
+    linear-gradient(145deg,rgba(255,255,255,.038),rgba(255,255,255,.010)),
+    rgba(8,20,16,.48)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 34px rgba(0,0,0,.18)!important;
+}
+#pg-ws .ws6-task{
+  margin-bottom:7px!important;
+  border-radius:10px!important;
+}
+#pg-ws .ws6-task-main{
+  grid-template-columns:auto minmax(0,1fr) 120px 31px!important;
+  gap:7px!important;
+  min-height:48px!important;
+  padding:7px 8px!important;
+}
+#pg-ws .ws6-status{
+  min-width:82px!important;
+  height:30px!important;
+  gap:6px!important;
+  font-size:8px!important;
+}
+#pg-ws .ws6-title{
+  font-size:15.5px!important;
+  line-height:1.32!important;
+  padding:4px 2px!important;
+}
+#pg-ws .ws6-date{
+  width:120px!important;
+  height:30px!important;
+  padding:0 7px!important;
+  border-radius:8px!important;
+  font-size:9px!important;
+}
+#pg-ws .ws6-trash{
+  width:30px!important;height:30px!important;
+  border-radius:8px!important;
+}
+#pg-ws .ws6-trash svg{
+  width:13px!important;height:13px!important;
+}
+#pg-ws .ws6-progress{
+  height:2px!important;
+  margin:0 8px!important;
+}
+#pg-ws .ws6-details{
+  padding:8px 10px 10px 98px!important;
+}
+#pg-ws #wsList:before,
+#pg-ws #bankList:before{
+  margin:7px 2px 8px!important;
+  font-size:8px!important;
+  letter-spacing:1.5px!important;
+}
+#pg-ws .ws-v5-separator{
+  margin:12px 0 10px!important;
+}
+
+/* Smaller desktop: preserve usability before stacking */
+@media(max-width:1280px){
+  #pg-ws .ws-v5-layout{
+    grid-template-columns:minmax(440px,.95fr) minmax(460px,1.05fr)!important;
+    max-width:1180px!important;
+  }
+  #pg-ws .ws-v5-tasks.ws-legacy{
+    max-width:620px!important;
+  }
+}
+
+/* Tablet/mobile keep existing stacking, with cleaner card flow */
+@media(max-width:980px){
+  #pg-ws .ws-v5-layout{
+    grid-template-columns:minmax(300px,.72fr) minmax(450px,1.28fr)!important;
+    max-width:none!important;
+  }
+  #pg-ws .ws-v5-tasks.ws-legacy{max-width:none!important}
+  #pg-ws .ws-v5-project-card{min-height:285px!important}
+}
+@media(max-width:760px){
+  body[data-page="ws"] .wrap{max-width:none!important}
+  #pg-ws .ws-v5-layout{
+    grid-template-columns:1fr!important;
+    max-width:none!important;
+  }
+  #pg-ws .ws-v5-tasks.ws-legacy{
+    width:100%!important;
+    max-width:none!important;
+    padding:10px!important;
+  }
+  #pg-ws .ws-v5-project-card,
+  #pg-ws .ws-v5-project-add{
+    min-height:270px!important;
+  }
+  #pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-card,
+  #pg-ws .ws-v5-project-grid.many-projects .ws-v5-project-add,
+  #pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-card,
+  #pg-ws .ws-v5-project-grid.dense-projects .ws-v5-project-add{
+    min-height:255px!important;
+  }
+  #pg-ws .ws6-task-main{
+    grid-template-columns:40px minmax(0,1fr) 30px!important;
+    min-height:46px!important;
+    gap:6px!important;
+    padding:7px!important;
+  }
+  #pg-ws .ws6-status{
+    width:40px!important;min-width:40px!important;height:29px!important;
+  }
+  #pg-ws .ws6-title{
+    font-size:15px!important;
+  }
+  #pg-ws .ws6-date{
+    grid-column:2/4!important;
+    grid-row:2!important;
+    width:100%!important;
+    height:29px!important;
+  }
+  #pg-ws .ws6-details{
+    padding-left:9px!important;
+    padding-right:9px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  #pg-ws .ws-v5-project-card,
+  #pg-ws .ws6-task{transition:none!important}
+}
+</style>
+
 </head>
 <body data-page="today" class="">
 <!-- SIMPLIFIED LIFE OS · AUGUST START · BOOKS BLOCK FIXED · 2026-08-02 -->
@@ -11325,6 +11587,9 @@ body{
     const grid=document.getElementById('wsV5ProjectGrid');
     if(!grid)return;
     const arr=DB.sprints||[];
+    grid.classList.toggle('many-projects',arr.length>=4);
+    grid.classList.toggle('dense-projects',arr.length>=6);
+    grid.dataset.projectCount=String(arr.length);
     grid.innerHTML=arr.map(s=>{
       const p=v5SprintPct(s),tasks=s.tasks||[],next=tasks.find(t=>!t.d);
       const projectDate=dateText(s.deadlineStart,s.deadlineEnd);
