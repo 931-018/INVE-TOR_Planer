@@ -18694,6 +18694,8 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 }
 @media(max-width:380px){html#investorV8#investorV8#investorV8 body .v8-sphere-card{padding:17px 15px 12px!important}html#investorV8#investorV8#investorV8 body .f9-panel{padding:18px 14px!important}html#investorV8#investorV8#investorV8 body .f9-balance{padding:21px 17px!important}html#investorV8#investorV8#investorV8 body .v9-ross-logo{width:205px!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}html#investorV8#investorV8#investorV8 body #iv2Sidebar .iv2-navitem{transition:none!important}}
+/* Keep the browser autofill/search field out of the rendered page from first paint. */
+html#investorV8#investorV8#investorV8 body .iv2-search-wrap,html#investorV8#investorV8#investorV8 body .iv2-search-results{display:none!important}
 
 </style><script id="investor-premium-v9-runtime">
 /* INVESTOR V9 · Local, compatible presentation and finance layer. */
@@ -18855,6 +18857,8 @@ function init(){
  const hintObserver=new MutationObserver(()=>removeHints());hintObserver.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title']});removeHints();
  sphereDisclosure();
  document.querySelectorAll('.journal-close,.ov-cl,[data-cl]').forEach(x=>x.classList.add('v9-close-icon'));
+ // Remove the global search field from the UI (it can trigger browser autofill).
+ document.querySelector('.iv2-search-wrap')?.remove();
  document.body.classList.add('investor-v9');document.documentElement.dataset.investorInterface='9';
  sidebar();rossmann();model();save();rSph();
 }
