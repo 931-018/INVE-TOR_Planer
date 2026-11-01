@@ -15991,6 +15991,7 @@ input.planner-date-enhanced[type=date]::-webkit-calendar-picker-indicator{opacit
       toCurrency:extra.toCurrency||fin2Currency(to)||fin2Currency(from)||'PLN',
       toAmount:extra.toAmount==null?Number(amount):Number(extra.toAmount),
       debtId:extra.debtId||'',debtAmount:extra.debtAmount==null?null:Number(extra.debtAmount),
+      ...(extra.debtPlanId?{debtPlanId:String(extra.debtPlanId),debtPlanMonth:String(extra.debtPlanMonth||'')} : {}),
       debtCurrency:extra.debtCurrency||'',budgetId:extra.budgetId||'',
       date:extra.date||fin2Date(),category:extra.category||'',note:extra.note||'',
       statNeutral:extra.statNeutral===true||extra.category===RETURN_CAT,
@@ -18697,7 +18698,7 @@ function transferForm(){const f=model();if(f.accounts.length<2){fin2Toast('До�
 function budgetForm(id=''){const f=model(),b=f.budgets.find(x=>x.id===id);fin2Modal(b?'Налаштувати бюджет':'Новий бюджет',[{name:'name',label:'Назва',value:b?.name||''},{name:'limit',label:'Ліміт витрат',value:b?.limit?String(b.limit):'',type:'number',min:'.01',step:'.01'},{name:'currency',label:'Валюта',value:b?.currency||'UAH',options:b?[{value:b.currency,label:b.currency}]:currencies().map(c=>({value:c,label:c}))}],'Зберегти',d=>{const n=fin2Money(d.limit);if(!d.name.trim()||n===null||n<=0)return false;if(b){b.name=d.name.trim();b.limit=n}else f.budgets.push({id:fin2Id('budget'),name:d.name.trim(),limit:n,currency:d.currency,limitOnlyV9:true});save();render();});}
 function budgetsHTML(){const f=model();return `<details class="f9-budgets" ${f.budgetsOpenV9?'open':''}><summary><span>Бюджети <small>${f.budgets.length||''}</small></span><span>⌄</span></summary><div class="f9-budget-body"><div class="f9-section-head"><small>Ліміти витрат · прив’язуй операції до бюджету</small>${btn('addbudget','+ Бюджет')}</div>${f.budgets.map(b=>{const used=fin2BudgetSpent(b.id),pct=b.limit?Math.min(100,used/b.limit*100):0;return `<div class="f9-budget-row"><div><strong>${E(b.name)}</strong><small>${fmt(used,b.currency)} / ${fmt(b.limit,b.currency)}</small><div class="f9-meter ${used>b.limit?'over':''}"><i style="width:${pct}%"></i></div></div>${btn('expense','−',b.id,'','Витрата з бюджету')}${btn('editbudget','⋯',b.id,'','Налаштувати бюджет')}${btn('delbudget','×',b.id,'','Видалити бюджет')}</div>`}).join('')||empty('Створи бюджет, коли захочеш встановити ліміт.')}</div></details>`;}
 function overviewHTML(){const f=model(),map=totals();return `<div class="f9-overview"><section class="f9-balance"><div class="f9-balance-top"><span>Загальний баланс</span><span class="f9-chip">UAH · основна</span></div><div class="f9-total">${equivalent(map)}</div><div class="f9-currency-list">${Object.entries(map).map(([c,n])=>`<div><span>${E(c)}</span><b>${fmt(n,c)}</b></div>`).join('')||'<span class="f9-balance-hint">Додай перший рахунок</span>'}</div><footer><span>${f.accounts.length} рахунків</span>${btn('rates','⇄ Мої курси','','f9-on-dark')}</footer><div class="f9-balance-deco" aria-hidden="true">◇</div></section><section class="f9-panel f9-accounts"><div class="f9-section-head"><h3>Мої рахунки</h3>${btn('addaccount','+ Рахунок')}</div><div class="f9-account-list">${f.accounts.map(a=>`<div class="f9-account-row"><span class="f9-symbol">${symbol(a.kind)}</span><div><strong>${E(a.name)}</strong><small>${E(kindName(a))} · ${E(a.currency)}</small></div><b>${fmt(fin2Balance(a.id),a.currency)}</b>${btn('editaccount','⋯',a.id,'f9-icon-btn','Налаштувати '+a.name)}</div>`).join('')||empty('Картка, готівка чи власний тип — усі рахунки будуть тут.')}</div>${f.accounts.length>1?`<div class="f9-account-foot">${btn('transfer','⇄ Переказ / обмін')}</div>`:''}</section></div>${budgetsHTML()}`;}
-function txRows(arr){return arr.map(t=>{const out=['expense','debt_payment'].includes(t.type),income=t.type==='income',type=income?'Дохід':out?'Витрата':t.type==='transfer'?'Переказ':t.type==='opening_balance'?'Початковий баланс':'Коригування',debt=model().debts.find(d=>d.id===t.debtId),title=fin2IsDebtPaymentV18(t)?debtTitle(t,tab!=='debts'):t.category||type;return `<div class="f9-tx-row"><span class="f9-symbol ${income?'in':out?'out':''}">${income?'↙':out?'↗':'⇄'}</span><div class="f9-tx-title"><strong>${E(title)}</strong><small>${E(t.date||'')} · ${E(t.from?fin2Name(t.from):fin2Name(t.to))}${t.type==='transfer'?' → '+E(fin2Name(t.to)):''}${t.note&&!fin2IsDebtPaymentV18(t)?' · '+E(t.note):''}</small></div><div class="f9-tx-amount ${income?'in':out?'out':''}"><b>${out?'−':income?'+':''}${fmt(t.amount,t.currency)}</b>${t.type==='transfer'&&t.toCurrency!==t.currency?`<small>→ ${fmt(t.toAmount,t.toCurrency)}</small>`:''}<small>${type}</small></div>${btn('deltx','×',t.id,'f9-icon-btn','Видалити операцію')}</div>`}).join('');}
+
 function historyHTML(){const f=model(),p=fin2Period(),type=f.historyTypeV9||'',cat=f.historyCategoryFilter||'';const arr=f.transactions.filter(t=>t.date>=p.start&&t.date<=p.end&&(!type||(type==='expense'?['expense','debt_payment'].includes(t.type):t.type===type))&&(!cat||historyCategory(t)===cat)).sort((a,b)=>String(b.date).localeCompare(String(a.date))||(b.created||0)-(a.created||0));return `<section class="f9-panel"><div class="f9-section-head"><h3>Історія операцій</h3>${btn('period',fin2PeriodLabel())}</div><div class="f9-filters"><select id="f9Type" aria-label="Тип операцій"><option value="">Усі операції</option>${[['income','Доходи'],['expense','Витрати'],['transfer','Перекази']].map(([v,n])=>`<option value="${v}" ${type===v?'selected':''}>${n}</option>`).join('')}</select><select id="f9Category" aria-label="Категорія"><option value="">Усі категорії</option>${[...new Set(f.transactions.map(t=>historyCategory(t)).filter(Boolean))].map(c=>`<option value="${E(c)}" ${cat===c?'selected':''}>${E(c)}</option>`).join('')}</select>${btn('category','+ Категорія')}</div><div>${txRows(arr.slice(0,f.historyLimitV9||80))||empty('За цей період операцій немає.')}</div>${arr.length>(f.historyLimitV9||80)?btn('morehistory','Показати ще'):''}</section>`;}
 function periodTx(){return fin2StatsTransactionsV18();}
 function statsData(){const arr=periodTx(),income={},expense={},cats={income:Object.create(null),expense:Object.create(null)};for(const t of arr){const k=t.type==='income'?'income':'expense',map=k==='income'?income:expense;map[t.currency]=(map[t.currency]||0)+Number(t.amount||0);const name=fin2IsDebtPaymentV18(t)?debtTitle(t):t.category||'Інше',m=cats[k][name]||(cats[k][name]={});m[t.currency]=(m[t.currency]||0)+Number(t.amount||0);}return {arr,income,expense,cats};}
@@ -18724,18 +18725,7 @@ function debtPlansV18(d,month=debtMonth()){
  const legacy=d.paymentPlansV16?.[month];return Number(legacy?.amount)>0?[{id:'legacy_'+month,amount:Number(legacy.amount),due:legacy.due||'',note:''}]:[];
 }
 function saveDebtPlansV18(d,month,plans){d.paymentPlansV18=d.paymentPlansV18||{};d.paymentPlansV18[month]=plans;}
-function monthlyDebtData(){
- const f=model(),month=debtMonth(),planned={},remaining={},paid={};
- const rows=f.debts.map(d=>{
-  const plans=debtPlansV18(d,month),amount=round(plans.reduce((sum,p)=>sum+p.amount,0));
-  const payments=round(fin2LedgerV18().filter(t=>fin2IsDebtPaymentV18(t)&&t.debtId===d.id&&String(t.date||'').slice(0,7)===month&&t.date<=fin2Date()).reduce((sum,t)=>sum+(Number(t.debtAmount??t.amount)||0),0));
-  let pool=payments,available=Math.max(0,round(Number(d.amount)-fin2DebtPaid(d)));
-  const allocated=plans.map((p,index)=>({...p,index})).sort((a,b)=>(a.due||month+'-99').localeCompare(b.due||month+'-99')||a.index-b.index).map(p=>{const covered=Math.min(p.amount,pool);pool=Math.max(0,round(pool-covered));const left=Math.min(Math.max(0,round(p.amount-covered)),available);available=Math.max(0,round(available-left));return {...p,covered,left};});
-  const left=round(allocated.reduce((sum,p)=>sum+p.left,0));
-  if(amount){planned[d.currency]=round((planned[d.currency]||0)+amount);remaining[d.currency]=round((remaining[d.currency]||0)+left);paid[d.currency]=round((paid[d.currency]||0)+Math.min(amount,payments));}
-  return {debt:d,plan:allocated[0]||null,plans:allocated,amount,paid:payments,left};
- });return {month,rows,planned,remaining,paid};
-}
+
 function debtPlanForm(id,planId=''){
  const d=model().debts.find(d=>d.id===id);if(!d)return;
  const month=debtMonth(),plan=debtPlansV18(d,month).find(p=>p.id===planId);
@@ -18751,30 +18741,84 @@ function debtPlanForm(id,planId=''){
   const plans=debtPlansV18(d,month),item={id:plan?.id||fin2Id('plan'),amount,due:data.due||'',note:data.note.trim()};
   saveDebtPlansV18(d,month,plan?plans.map(p=>p.id===plan.id?item:p):[...plans,item]);save();render();
  });
- const form=$('.fin2-modal-back:last-child form');if(form){const note=document.createElement('p');note.className='f9-form-note';note.textContent='План на '+new Date(month+'-01T12:00:00').toLocaleDateString('uk-UA',{month:'long',year:'numeric'})+'. Фактичну оплату записуй кнопкою «+ Платіж».';$('.fin2-form',form).after(note);}
+ const form=$('.fin2-modal-back:last-child form');if(form){const note=document.createElement('p');note.className='f9-form-note';note.textContent='План на '+new Date(month+'-01T12:00:00').toLocaleDateString('uk-UA',{month:'long',year:'numeric'})+'. Фактичну оплату прив’язуй кнопкою «Сплатити» біля цього плану.';$('.fin2-form',form).after(note);}
 }
-function deleteDebtPlanV18(id,planId){
- const d=model().debts.find(d=>d.id===id);if(!d)return;
- const month=debtMonth(),plans=debtPlansV18(d,month);if(!plans.some(p=>p.id===planId))return;
- saveDebtPlansV18(d,month,plans.filter(p=>p.id!==planId));save();render();
-}
+
 function monthlyDebtHTML(data=monthlyDebtData()){
  const label=new Date(data.month+'-01T12:00:00').toLocaleDateString('uk-UA',{month:'long',year:'numeric'}),count=data.rows.reduce((sum,r)=>sum+r.plans.length,0);
  return `<section class="f9-panel v16-month-plan"><div class="f9-section-head"><div><span class="f9-kicker">ПЛАН ПЛАТЕЖІВ</span><h3>${E(label)}</h3></div><span class="v16-plan-count">${count} ${count%10===1&&count%100!==11?'платіж':count%10>=2&&count%10<=4&&(count%100<12||count%100>14)?'платежі':'платежів'}</span></div><div class="v16-month-metrics"><div><small>Заплановано на місяць</small><strong>${equivalent(data.planned)}</strong></div><div><small>Залишилось сплатити</small><strong>${equivalent(data.remaining)}</strong></div></div>${!count?'<p class="f9-form-note">Додай очікувані платежі у картках боргів.</p>':''}</section>`;
 }
-function debtPlanHTML(d,row=monthlyDebtData().rows.find(r=>r.debt.id===d.id)){
- const plans=row?.plans||[];
- return `<section class="v18-debt-plans"><div class="v18-plans-heading"><small>План платежів цього місяця</small>${btn('debtplan','+ Запланувати',d.id,'','Додати ще один платіж на місяць')}</div>${plans.length?`<div class="v18-plans-list">${plans.map(p=>`<div class="v18-plan-row" data-debt-plan="${E(p.id)}"><div class="v18-plan-copy"><span>${p.due?'до '+E(p.due.split('-').reverse().join('.')):'Без окремої дати'}${p.note?' · '+E(p.note):''}</span><strong>${fmt(p.amount,d.currency)}</strong><small>${p.left?'Залишилось '+fmt(p.left,d.currency):'Покрито платежами'}</small></div><div class="v18-plan-tools"><button type="button" class="f9-btn f9-icon-btn" data-f9="editdebtplan" data-id="${E(d.id)}" data-plan-id="${E(p.id)}" aria-label="Змінити запланований платіж">✎</button><button type="button" class="f9-btn f9-icon-btn" data-f9="deldebtplan" data-id="${E(d.id)}" data-plan-id="${E(p.id)}" aria-label="Видалити запланований платіж">×</button></div></div>`).join('')}</div>`:'<p class="v18-plans-empty">Немає запланованих платежів</p>'}</section>`;
-}
+
 function debtActualHTMLV18(d){
  const entries=fin2LedgerV18().filter(t=>fin2IsDebtPaymentV18(t)&&t.debtId===d.id).sort((a,b)=>String(b.date).localeCompare(String(a.date))||(b.created||0)-(a.created||0));
  return entries.length?`<details class="v18-actual-payments"><summary>Сплачені платежі <span>${entries.length} ⌄</span></summary><div>${txRows(entries)}</div></details>`:'';
 }
 
+function allDebtPlansV19(d){
+ const months=[...new Set([...Object.keys(d.paymentPlansV16||{}),...Object.keys(d.paymentPlansV18||{})])].filter(m=>/^\d{4}-\d{2}$/.test(m)).sort().reverse();
+ return months.flatMap(month=>debtPlansV18(d,month).map(plan=>({month,plan})));
+}
+function planPaidV19(d,plan,month,ledger=fin2LedgerV18()){
+ return Math.max(0,round(ledger.filter(t=>fin2IsDebtPaymentV18(t)&&t.debtId===d.id&&t.debtPlanId===plan.id&&t.debtPlanMonth===month&&fin2ValidDate(t.date)&&t.date<=fin2Date()).reduce((sum,t)=>sum+(Number(t.debtAmount??t.amount)||0),0)));
+}
+function monthlyDebtData(){
+ const f=model(),month=debtMonth(),planned={},remaining={},paid={},ledger=fin2LedgerV18();
+ const rows=f.debts.map(d=>{
+  const plans=debtPlansV18(d,month).map((p,index)=>{const linkedPaid=planPaidV19(d,p,month,ledger),covered=Math.min(p.amount,linkedPaid);return {...p,index,linkedPaid,covered,left:Math.max(0,round(p.amount-covered))};}).sort((a,b)=>(a.due||month+'-99').localeCompare(b.due||month+'-99')||a.index-b.index);
+  const amount=round(plans.reduce((sum,p)=>sum+p.amount,0)),left=round(plans.reduce((sum,p)=>sum+p.left,0)),covered=round(plans.reduce((sum,p)=>sum+p.covered,0));
+  const actual=round(ledger.filter(t=>fin2IsDebtPaymentV18(t)&&t.debtId===d.id&&String(t.date||'').slice(0,7)===month&&t.date<=fin2Date()).reduce((sum,t)=>sum+(Number(t.debtAmount??t.amount)||0),0));
+  if(amount){planned[d.currency]=round((planned[d.currency]||0)+amount);remaining[d.currency]=round((remaining[d.currency]||0)+left);paid[d.currency]=round((paid[d.currency]||0)+covered);}
+  return {debt:d,plan:plans[0]||null,plans,amount,paid:covered,actual,left};
+ });return {month,rows,planned,remaining,paid};
+}
+function deleteDebtPlanV18(id,planId){
+ const f=model(),d=f.debts.find(d=>d.id===id);if(!d)return;
+ const month=debtMonth(),plans=debtPlansV18(d,month);if(!plans.some(p=>p.id===planId))return;
+ const linked=f.transactions.filter(t=>fin2IsDebtPaymentV18(t)&&t.debtId===id&&t.debtPlanId===planId&&t.debtPlanMonth===month);
+ if(linked.length&&!confirm('Видалити план разом із його оплатами? Вони зникнуть з історії та статистики. Баланс рахунку буде перераховано.'))return;
+ const ids=new Set(linked.map(t=>t.id));f.transactions=f.transactions.filter(t=>!ids.has(t.id));
+ saveDebtPlansV18(d,month,plans.filter(p=>p.id!==planId));fin2RenderCache=null;save();render();
+}
+function debtPlanHTML(d,row=monthlyDebtData().rows.find(r=>r.debt.id===d.id)){
+ const plans=row?.plans||[];
+ return `<section class="v18-debt-plans"><div class="v18-plans-heading"><small>План платежів цього місяця</small>${btn('debtplan','+ Запланувати',d.id,'','Додати окремий платіж на місяць')}</div>${plans.length?`<div class="v18-plans-list">${plans.map(p=>`<div class="v18-plan-row" data-debt-plan="${E(p.id)}"><div class="v18-plan-copy"><span>${p.due?'до '+E(p.due.split('-').reverse().join('.')):'Без окремої дати'}${p.note?' · '+E(p.note):''}</span><strong>${fmt(p.amount,d.currency)}</strong><small>${p.left?'До оплати '+fmt(p.left,d.currency):'Сплачено'}</small></div><div class="v18-plan-tools">${p.left&&fin2DebtPaid(d)<d.amount?`<button type="button" class="f9-btn v19-plan-pay" data-f9="paydebtplan" data-id="${E(d.id)}" data-plan-id="${E(p.id)}">Сплатити</button>`:''}<button type="button" class="f9-btn f9-icon-btn" data-f9="editdebtplan" data-id="${E(d.id)}" data-plan-id="${E(p.id)}" aria-label="Змінити запланований платіж">✎</button><button type="button" class="f9-btn f9-icon-btn" data-f9="deldebtplan" data-id="${E(d.id)}" data-plan-id="${E(p.id)}" aria-label="Видалити запланований платіж">×</button></div></div>`).join('')}</div>`:'<p class="v18-plans-empty">Немає запланованих платежів</p>'}</section>`;
+}
+function selectedPlanV19(d,value){
+ if(!value)return null;try{const [month,id]=JSON.parse(value);return allDebtPlansV19(d).find(x=>x.month===month&&x.plan.id===id)||null;}catch{return null;}
+}
+function planOptionsV19(d){return allDebtPlansV19(d).map(x=>({value:JSON.stringify([x.month,x.plan.id]),label:x.month.slice(5)+'.'+x.month.slice(0,4)+' · '+fmt(x.plan.amount,d.currency)+(x.plan.due?' · до '+x.plan.due.split('-').reverse().join('.'):'')+(x.plan.note?' · '+x.plan.note:'')}));}
+function debtFxRateV19(source,target){
+ if(source===target)return 1;const fx=model().financeFx||model().debtFx;if(!fx?.base||!fx.rates)return null;
+ const from=source===fx.base?1:Number(fx.rates[source]),to=target===fx.base?1:Number(fx.rates[target]);
+ return Number.isFinite(from)&&from>0&&Number.isFinite(to)&&to>0?from/to:null;
+}
+function payDebtV19(id,planId='',month=debtMonth()){
+ const f=model(),d=f.debts.find(x=>x.id===id);if(!d)return;
+ const left=Math.max(0,round(Number(d.amount)-fin2DebtPaid(d)));if(!left){fin2Toast('Борг уже погашено');return;}if(!f.accounts.length){fin2Toast('Немає рахунків для платежу');return;}
+ const selected=planId?allDebtPlansV19(d).find(x=>x.month===month&&x.plan.id===planId):null;if(planId&&!selected)return;
+ const selectedValue=selected?JSON.stringify([month,planId]):'',initial=selected?Math.max(0,round(selected.plan.amount-planPaidV19(d,selected.plan,month))):left,options=[{value:'',label:'Загальне погашення · без прив’язки'},...planOptionsV19(d)];
+ const back=document.createElement('div');back.className='fin2-modal-back';back.innerHTML=`<form class="fin2-modal v19-payment-modal" autocomplete="off"><h3>Платіж · ${E(d.name)}</h3><div class="fin2-form"><label class="fin2-field wide">Для якого платежу<select name="plan">${options.map(o=>`<option value="${E(o.value)}" ${o.value===selectedValue?'selected':''}>${E(o.label)}</option>`).join('')}</select></label><label class="fin2-field wide">З якого рахунку<select name="from" required>${f.accounts.map(a=>`<option value="${E(a.id)}">${E(a.name)} · ${fin2Fmt(fin2Balance(a.id),a.currency)}</option>`).join('')}</select></label><label class="fin2-field">Погасити · ${E(d.currency)}<input name="debtAmount" type="number" min="0.01" step="0.01" required value="${E(String(initial))}"></label><label class="fin2-field">Дата<input name="date" type="date" required value="${fin2Date()}"></label></div><p class="f9-form-note">Оплата зменшує тільки вибраний план. Без прив’язки — лише загальний борг.</p><div class="fin3-pay-preview" data-pay-preview></div><div class="fin2-modal-actions"><button type="button" class="fin2-btn" data-cancel>Скасувати</button><button type="submit" class="fin2-btn primary" data-submit>Записати платіж</button></div></form>`;document.body.append(back);
+ const form=back.querySelector('form'),from=form.elements.from,amount=form.elements.debtAmount,choice=form.elements.plan,submit=form.querySelector('[data-submit]'),preview=form.querySelector('[data-pay-preview]');
+ const calc=()=>{const a=f.accounts.find(a=>a.id===from.value),value=fin2Money(amount.value),pay=value===null?0:value;if(!a||pay<=0){submit.disabled=true;preview.textContent='Вкажи суму платежу.';return null;}if(pay>left){submit.disabled=true;preview.textContent='Сума перевищує залишок боргу: '+fin2Fmt(left,d.currency);return null;}const fx=debtFxRateV19(a.currency,d.currency);if(fx===null){submit.disabled=true;preview.innerHTML=`Вкажи курс ${E(a.currency)} → ${E(d.currency)} у «Курсах валют».`;return null;}const source=round(pay/fx),balance=round(fin2Balance(a.id)),ok=source>0&&source<=balance+.0001;submit.disabled=!ok;preview.innerHTML=`Погашення: <b>${fin2Fmt(pay,d.currency)}</b><br>Списання: <b>${fin2Fmt(source,a.currency)}</b> · ${E(a.name)}${ok?'':' · недостатньо коштів'}`;return ok?{a,pay,source}:null;};
+ choice.onchange=()=>{const target=selectedPlanV19(d,choice.value);if(target)amount.value=String(Math.max(0,round(target.plan.amount-planPaidV19(d,target.plan,target.month))));calc();};from.onchange=calc;amount.oninput=calc;
+ const close=()=>back.remove();back.onclick=e=>{if(e.target===back)close()};form.querySelector('[data-cancel]').onclick=close;
+ form.onsubmit=e=>{e.preventDefault();const x=calc();if(!x)return;if(!fin2ValidDate(form.elements.date.value)){fin2Toast('Обери коректну дату');return;}const target=selectedPlanV19(d,choice.value);if(choice.value&&!target){fin2Toast('Цей план уже видалено');return;}fin2Tx('debt_payment',x.source,x.a.id,'',{currency:x.a.currency,debtId:d.id,debtAmount:x.pay,debtCurrency:d.currency,category:'Погашення боргу',note:d.name,date:form.elements.date.value,...(target?{debtPlanId:target.plan.id,debtPlanMonth:target.month}:{})});fin2RenderCache=null;close();render();fin2Toast('Платіж записано');};calc();
+}
+function linkDebtPaymentV19(id){
+ const f=model(),t=f.transactions.find(t=>t.id===id),d=t&&f.debts.find(d=>d.id===t.debtId);if(!t||!d||!fin2IsDebtPaymentV18(t))return;
+ const current=t.debtPlanId&&t.debtPlanMonth?JSON.stringify([t.debtPlanMonth,t.debtPlanId]):'';
+ fin2Modal('Прив’язка оплати · '+d.name,[{name:'plan',label:'Зарахувати оплату в план',value:current,required:false,options:[{value:'',label:'Без прив’язки · тільки загальний борг'},...planOptionsV19(d)],wide:true}],'Зберегти',data=>{const target=selectedPlanV19(d,data.plan);if(data.plan&&!target){fin2Toast('Цей план уже видалено');return false;}if(target){t.debtPlanId=target.plan.id;t.debtPlanMonth=target.month;}else{delete t.debtPlanId;delete t.debtPlanMonth;}fin2RenderCache=null;save();render();});
+}
+function txRows(arr){return arr.map(t=>{const out=fin2IsExpenseV18(t),income=t.type==='income',isDebt=fin2IsDebtPaymentV18(t),type=income?'Дохід':out?'Витрата':t.type==='transfer'?'Переказ':t.type==='opening_balance'?'Початковий баланс':'Коригування',d=model().debts.find(d=>d.id===t.debtId),title=isDebt?debtTitle(t,tab!=='debts'):t.category||type,target=d&&allDebtPlansV19(d).find(x=>x.plan.id===t.debtPlanId&&x.month===t.debtPlanMonth);return `<div class="f9-tx-row"><span class="f9-symbol ${income?'in':out?'out':''}">${income?'↙':out?'↗':'⇄'}</span><div class="f9-tx-title"><strong>${E(title)}</strong><small>${E(t.date||'')} · ${E(t.from?fin2Name(t.from):fin2Name(t.to))}${t.type==='transfer'?' → '+E(fin2Name(t.to)):''}${t.note&&!isDebt?' · '+E(t.note):''}</small>${isDebt&&d&&tab==='debts'?`<button type="button" class="v19-payment-link" data-f9="linkdebtpayment" data-id="${E(t.id)}">${target?'План · '+fmt(target.plan.amount,d.currency)+(target.plan.due?' · до '+E(target.plan.due.split('-').reverse().join('.')):''):'Прив’язати до плану'}</button>`:''}</div><div class="f9-tx-amount ${income?'in':out?'out':''}"><b>${out?'−':income?'+':''}${fmt(t.amount,t.currency)}</b>${isDebt&&t.debtCurrency&&t.debtCurrency!==t.currency?`<small>Погашено ${fmt(t.debtAmount,t.debtCurrency)}</small>`:''}${t.type==='transfer'&&t.toCurrency!==t.currency?`<small>→ ${fmt(t.toAmount,t.toCurrency)}</small>`:''}<small>${type}</small></div>${btn('deltx','×',t.id,'f9-icon-btn','Видалити операцію')}</div>`;}).join('');}
+function orderedDebtsV19(f){
+ const order=f.debtOrderV19;if(!Array.isArray(order))return f.debts.slice().sort((a,b)=>Number(fin2DebtPaid(a)>=a.amount)-Number(fin2DebtPaid(b)>=b.amount));
+ const ranks=new Map(order.map((id,i)=>[String(id),i]));return f.debts.map((d,i)=>({d,i})).sort((a,b)=>(ranks.get(String(a.d.id))??1e9)-(ranks.get(String(b.d.id))??1e9)||a.i-b.i).map(x=>x.d);
+}
+
 function debtsHTML(){
  const f=model(),monthData=monthlyDebtData(),all={},paid={},left={};for(const d of f.debts){const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d));all[d.currency]=(all[d.currency]||0)+Number(d.amount||0);paid[d.currency]=(paid[d.currency]||0)+p;left[d.currency]=(left[d.currency]||0)+Math.max(0,d.amount-p);}
  const a=converted(all),p=converted(paid),one=Object.keys(all).length===1?Object.keys(all)[0]:'',pct=!a.missing.length&&!p.missing.length&&a.value?Math.min(100,p.value/a.value*100):one&&all[one]?paid[one]/all[one]*100:null;
- return `<section class="f9-debt-summary"><div class="f9-section-head"><div><span class="f9-kicker">БОРГИ ТА ПОГАШЕННЯ</span><h3>Крок за кроком до свободи</h3></div><div class="v16-debt-head-actions">${btn('debtprivacy',f.debtNamesHiddenV16?'🔒 Назви приховано':'🔓 Назви відкрито','','f9-on-dark','Приховати або показати назви боргів у фінансовій історії та статистиці')}${btn('adddebt','+ Борг','','f9-on-dark')}</div></div><div class="f9-debt-metrics"><div><small>Усього</small><strong>${equivalent(all)}</strong></div><div><small>Вже сплачено</small><strong>${equivalent(paid)}</strong></div><div><small>Залишилось</small><strong>${equivalent(left)}</strong></div></div><div class="f9-debt-progress"><span>${pct===null?'Вкажи курси для загального прогресу':Math.round(pct)+'% погашено'}</span><span>${f.debts.filter(d=>fin2DebtPaid(d)>=d.amount).length} / ${f.debts.length} закрито</span></div><div class="f9-meter" role="progressbar" aria-label="Погашення боргів" aria-valuemin="0" aria-valuemax="100" ${pct!==null?`aria-valuenow="${Math.round(pct)}"`:''}><i style="width:${pct??0}%"></i></div></section>${monthlyDebtHTML(monthData)}<div class="f9-debt-list">${f.debts.slice().sort((a,b)=>Number(fin2DebtPaid(a)>=a.amount)-Number(fin2DebtPaid(b)>=b.amount)).map(d=>{const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d)),l=Math.max(0,d.amount-p),pct=d.amount?p/d.amount*100:0;return `<article class="f9-panel f9-debt-card"><div class="f9-section-head"><div><h3>${E(d.name)}</h3><small>${d.due?'До '+E(d.due):E(d.currency)}${l===0?' · Закрито':''}</small></div><div class="f9-debt-tools">${btn('editdebt','⋯',d.id,'f9-icon-btn','Редагувати борг')}${btn('deldebt','×',d.id,'f9-icon-btn','Видалити борг')}</div></div><div class="f9-debt-values"><div><small>Початково</small><b>${fmt(d.amount,d.currency)}</b></div><div><small>Сплачено</small><b>${fmt(p,d.currency)}</b></div><div><small>Залишок</small><b>${fmt(l,d.currency)}</b></div></div><div class="f9-meter"><i style="width:${pct}%"></i></div><div class="f9-debt-foot"><span>${Math.round(pct)}% погашено</span>${l?btn('paydebt','+ Платіж',d.id,'primary'):''}</div>${debtPlanHTML(d,monthData.rows.find(r=>r.debt.id===d.id))}${debtActualHTMLV18(d)}<textarea class="f9-debt-note" data-f9-note="${E(d.id)}" placeholder="Примітка до боргу…" aria-label="Примітка до ${E(d.name)}">${E(d.note||'')}</textarea></article>`}).join('')||empty('Додай борг, щоб відстежувати погашення.')}</div>${f.transactions.some(fin2IsDebtPaymentV18)?`<details class="f9-budgets"><summary>Історія погашень <span>⌄</span></summary><div class="f9-budget-body">${txRows(fin2LedgerV18().filter(fin2IsDebtPaymentV18).sort((a,b)=>String(b.date).localeCompare(String(a.date))))}</div></details>`:''}`;
+ return `<section class="f9-debt-summary"><div class="f9-section-head"><div><span class="f9-kicker">БОРГИ ТА ПОГАШЕННЯ</span><h3>Крок за кроком до свободи</h3></div><div class="v16-debt-head-actions">${btn('debtprivacy',f.debtNamesHiddenV16?'🔒 Назви приховано':'🔓 Назви відкрито','','f9-on-dark','Приховати або показати назви боргів у фінансовій історії та статистиці')}${btn('adddebt','+ Борг','','f9-on-dark')}</div></div><div class="f9-debt-metrics"><div><small>Усього</small><strong>${equivalent(all)}</strong></div><div><small>Вже сплачено</small><strong>${equivalent(paid)}</strong></div><div><small>Залишилось</small><strong>${equivalent(left)}</strong></div></div><div class="f9-debt-progress"><span>${pct===null?'Вкажи курси для загального прогресу':Math.round(pct)+'% погашено'}</span><span>${f.debts.filter(d=>fin2DebtPaid(d)>=d.amount).length} / ${f.debts.length} закрито</span></div><div class="f9-meter" role="progressbar" aria-label="Погашення боргів" aria-valuemin="0" aria-valuemax="100" ${pct!==null?`aria-valuenow="${Math.round(pct)}"`:''}><i style="width:${pct??0}%"></i></div></section>${monthlyDebtHTML(monthData)}<div class="f9-debt-list">${orderedDebtsV19(f).map(d=>{const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d)),l=Math.max(0,d.amount-p),pct=d.amount?p/d.amount*100:0;return `<article class="f9-panel f9-debt-card" data-debt-id="${E(d.id)}"><div class="f9-section-head"><div><h3>${E(d.name)}</h3><small>${d.due?'До '+E(d.due):E(d.currency)}${l===0?' · Закрито':''}</small></div><div class="f9-debt-tools"><button type="button" class="f9-btn f9-icon-btn" data-debt-drag aria-label="Затиснути й перемістити борг" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg></button>${btn('editdebt','⋯',d.id,'f9-icon-btn','Редагувати борг')}${btn('deldebt','×',d.id,'f9-icon-btn','Видалити борг')}</div></div><div class="f9-debt-values"><div><small>Початково</small><b>${fmt(d.amount,d.currency)}</b></div><div><small>Сплачено</small><b>${fmt(p,d.currency)}</b></div><div><small>Залишок</small><b>${fmt(l,d.currency)}</b></div></div><div class="f9-meter"><i style="width:${pct}%"></i></div><div class="f9-debt-foot"><span>${Math.round(pct)}% погашено</span>${l?btn('paydebt','+ Платіж',d.id,'primary'):''}</div>${debtPlanHTML(d,monthData.rows.find(r=>r.debt.id===d.id))}${debtActualHTMLV18(d)}<details class="v19-debt-note"><summary>Примітка${d.note?'<i>●</i>':''}<span>⌄</span></summary><textarea class="f9-debt-note" data-f9-note="${E(d.id)}" placeholder="Примітка до боргу…" aria-label="Примітка до ${E(d.name)}">${E(d.note||'')}</textarea></details></article>`}).join('')||empty('Додай борг, щоб відстежувати погашення.')}</div>${f.transactions.some(fin2IsDebtPaymentV18)?`<details class="f9-budgets"><summary>Історія погашень <span>⌄</span></summary><div class="f9-budget-body">${txRows(fin2LedgerV18().filter(fin2IsDebtPaymentV18).sort((a,b)=>String(b.date).localeCompare(String(a.date))))}</div></details>`:''}`;
 }
 function render(){
  const root=$('#sphDetail');if(!root)return;fin2RenderCache=null;if(tab==='statistics')fin2EnsureDebtPeriodV18();const f=model(),sp=DB.spheres.find(x=>x.id===FIN_ID)||{id:FIN_ID,nm:'Фінанси'};f.activeTab=tab;root.classList.add('finance-sphere','v9-finance');root.classList.remove('v8-sphere-overview');
@@ -18789,7 +18833,7 @@ function render(){
 function action(a,id,planId=''){const f=model();if(a==='debtplan')return debtPlanForm(id);if(a==='editdebtplan')return debtPlanForm(id,planId);if(a==='deldebtplan')return deleteDebtPlanV18(id,planId);if(a==='debtprivacy'){f.debtNamesHiddenV16=!f.debtNamesHiddenV16;f.historyCategoryFilter='';save();render();return;}if(a==='tab'){tab=['overview','transactions','statistics','debts'].includes(id)?id:'overview';render();save();return;}
  if(a==='income')return transactionForm('income');if(a==='expense')return transactionForm('expense',id);if(a==='transfer')return transferForm();if(a==='rates')return openRates();if(a==='addaccount')return accountForm();if(a==='editaccount')return accountForm(id);if(a==='category')return categoriesForm();if(a==='period')return fin2OpenCalendar();if(a==='addbudget')return budgetForm();if(a==='editbudget')return budgetForm(id);
  if(a==='delbudget'){if(Math.abs(fin2BudgetBalance(id))>=.005){fin2Toast('Спершу перенеси залишок із рахунку цього бюджету');return}if(confirm('Видалити бюджет? Операції залишаться в історії.')){f.budgets=f.budgets.filter(b=>b.id!==id);save();render()}return;}
- if(a==='deltx')return fin2DelTx(id);if(a==='adddebt')return fin2AddDebt();if(a==='editdebt')return fin2EditDebt(id);if(a==='paydebt')return fin2PayDebt(id);if(a==='deldebt')return fin2DeleteDebtV18(id);if(a==='morehistory'){f.historyLimitV9=(f.historyLimitV9||80)+80;render();}
+ if(a==='deltx')return fin2DelTx(id);if(a==='adddebt')return fin2AddDebt();if(a==='editdebt')return fin2EditDebt(id);if(a==='paydebt')return payDebtV19(id);if(a==='paydebtplan')return payDebtV19(id,planId);if(a==='linkdebtpayment')return linkDebtPaymentV19(id);if(a==='deldebt')return fin2DeleteDebtV18(id);if(a==='morehistory'){f.historyLimitV9=(f.historyLimitV9||80)+80;render();}
 }
 
 const rossCSS=`
@@ -18805,13 +18849,13 @@ function init(){
  // migration calls save(). Otherwise a slow network response could mistake
  // that migration for a local edit and skip pulling the user's remote data.
  if(typeof syncInitializing!=='undefined'&&syncInitializing){setTimeout(init,70);return;}
- window.INVESTOR_V9={debtPlansV18,monthlyDebtData,debtTitle,statsData,progressChart,sparkline:id=>progressChart(id,'big',true),renderFinance:render};
+ window.INVESTOR_V9={planPaidV19,allDebtPlansV19,debtPlansV18,monthlyDebtData,debtTitle,statsData,progressChart,sparkline:id=>progressChart(id,'big',true),renderFinance:render};
  sphereHero=hero;fin2Banner=()=>hero(SCf(FIN_ID));
  const oldRSph=rSph;rSph=function(...args){const result=oldRSph.apply(this,args);decorateSphere();return result;};
  baseAction=fin2Action;fin2Render=render;fin2Action=function(a,id,k){if(a==='tab')return action('tab',id);if(['overview','accounts','transactions','statistics','debts'].includes(a))return action('tab',a==='accounts'?'overview':a);return baseAction(a,id,k)};
  const oldCurrency=fin2Currency,oldName=fin2Name;fin2Currency=function(id){return fin2Acc(id)?.currency||oldCurrency(id)};fin2Name=function(id){return fin2Acc(id)?.name||oldName(id||'')};
  const oldModal=fin2Modal;fin2Modal=function(...args){const focus=document.activeElement,result=oldModal.apply(this,args),back=$('.fin2-modal-back:last-child'),form=back?.querySelector('form');if(form){form.setAttribute('role','dialog');form.setAttribute('aria-modal','true');form.setAttribute('aria-label',args[0]);back.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();back.remove();focus?.focus();}if(e.key==='Tab'){const nodes=$$('button,input,select,textarea',form).filter(x=>!x.disabled&&x.getClientRects().length),first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});}return result;};
- fin2AddAccount=()=>accountForm();fin2EditAccount=id=>accountForm(id);fin2AddIncome=()=>transactionForm('income');fin2Expense=id=>transactionForm('expense',id);fin2Transfer=transferForm;fin2AddBudget=()=>budgetForm();fin2EditBudget=id=>budgetForm(id);fin2AddCategory=categoriesForm;
+ fin2PayDebt=payDebtV19;fin2AddAccount=()=>accountForm();fin2EditAccount=id=>accountForm(id);fin2AddIncome=()=>transactionForm('income');fin2Expense=id=>transactionForm('expense',id);fin2Transfer=transferForm;fin2AddBudget=()=>budgetForm();fin2EditBudget=id=>budgetForm(id);fin2AddCategory=categoriesForm;
  const oldGo=go;go=function(...args){const out=oldGo.apply(this,args);rossmann();window.scrollTo({top:0,behavior:'instant'});return out};
  const closeOldOverlays=()=>{document.querySelectorAll('.ov.on').forEach(x=>x.classList.remove('on'));document.querySelector('#journalClose')?.click()};
  document.addEventListener('click',e=>{if(e.target.closest('#iv2Sidebar [data-iv2-page],#iv2Sidebar [data-iv2-action]'))closeOldOverlays()},true);
@@ -20128,4 +20172,166 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 }
 
 </style>
+<style id="finance-compact-independent-v19">
+/* Finance-only typography. Other spheres retain their existing styles. */
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9),html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) *{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8 body :is(.fin2-modal,.fin2-calendar,#v8Dialog.v19-finance-dialog),html#investorV8#investorV8#investorV8#investorV8#investorV8 body :is(.fin2-modal,.fin2-calendar,#v8Dialog.v19-finance-dialog) *{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) :is(.f9-total,.f9-debt-metrics strong,.f9-debt-values b,.v16-month-metrics strong,.v18-plan-copy strong,.f9-stat-metrics strong,.sp-pct){font-variant-numeric:tabular-nums lining-nums!important;letter-spacing:-.025em!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .shero-t{font-size:clamp(28px,2.6vw,40px)!important;font-weight:650!important;letter-spacing:-.035em!important;line-height:1.15!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v14-goal-short{font-size:15px!important;font-weight:600!important;line-height:1.4!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) :is(.f9-section-head h3,.f9-panel h3,.stage-head b){font-weight:650!important;letter-spacing:-.025em!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-summary{padding:23px 25px!important;border-radius:18px!important;min-height:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-summary h3{font-size:23px!important;line-height:1.25!important;font-weight:600!important;margin:7px 0 0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics{margin-top:20px!important;gap:18px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics>div{padding:4px 0!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics strong{font-size:clamp(22px,1.9vw,29px)!important;line-height:1.25!important;font-weight:600!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics .f9-unconverted{display:flex!important;flex-direction:column!important;gap:4px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics .f9-unconverted small{font-size:10px!important;line-height:1.4!important;font-weight:400!important;letter-spacing:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-progress{margin-top:19px!important;font-size:10px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-plan{padding:17px 20px!important;margin:14px 0 17px!important;border-radius:15px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-plan h3{font-size:21px!important;line-height:1.25!important;font-weight:650!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-metrics strong{font-size:25px!important;line-height:1.25!important;font-weight:600!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-metrics small{font-size:10px!important;margin-bottom:5px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-plan-count{font-size:10px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:13px!important;align-items:start!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card{padding:16px!important;border-radius:14px!important;min-height:0!important;min-width:0!important;container-type:inline-size;box-shadow:0 5px 18px #4c5a2a05!important;box-sizing:border-box!important;scroll-margin-top:78px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card>.f9-section-head{margin:0 0 15px!important;gap:8px!important;align-items:flex-start!important;cursor:grab;touch-action:none}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card>.f9-section-head>div:first-child{min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card h3{font-size:19px!important;font-weight:650!important;line-height:1.25!important;letter-spacing:-.025em!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card .f9-section-head small{font-size:10px!important;margin-top:4px!important;line-height:1.4!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-tools{display:flex!important;flex-wrap:nowrap!important;gap:4px!important;flex-shrink:0!important;align-items:center!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-tools .f9-btn{height:27px!important;min-height:27px!important;width:27px!important;min-width:27px!important;padding:0!important;font-size:14px!important;border-radius:7px!important;cursor:pointer}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-tools [data-debt-drag]{cursor:grab!important;touch-action:none!important;color:#a48b52!important;background:#f6f1e6!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) [data-debt-drag] svg{display:block;width:14px;height:14px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin:0 0 13px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values>div{display:block!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values small{font-size:10px!important;line-height:1.3!important;margin-bottom:5px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values b{font-size:16px!important;font-weight:600!important;line-height:1.3!important;white-space:nowrap!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card>.f9-meter{height:4px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-foot{margin:11px 0 0!important;gap:10px!important;min-height:29px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-foot>span{font-size:10px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-foot>.f9-btn{min-height:30px!important;padding:6px 10px!important;font-size:10px!important;border-radius:8px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-debt-plans{padding:12px 0 8px!important;margin-top:10px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plans-heading{margin-bottom:8px!important;gap:7px!important;flex-wrap:wrap!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plans-heading>small{font-size:10px!important;line-height:1.4!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plans-heading>.f9-btn{min-height:27px!important;padding:4px 7px!important;font-size:10px!important;border-radius:7px!important;margin-left:auto!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plans-list{gap:6px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-row{gap:6px!important;padding:8px!important;border-radius:9px!important;grid-template-columns:minmax(0,1fr) auto!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-copy{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-copy>span{font-size:10px!important;line-height:1.35!important;flex-basis:auto!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-copy>strong{font-size:16px!important;font-weight:600!important;line-height:1.25!important;white-space:nowrap!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-copy>small{font-size:10px!important;line-height:1.4!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-tools{gap:4px!important;flex-wrap:wrap!important;justify-content:flex-end!important;max-width:99px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-tools>.f9-btn{width:25px!important;min-width:25px!important;height:28px!important;min-height:28px!important;padding:0!important;border-radius:6px!important;font-size:12px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-tools>.v19-plan-pay{width:auto!important;min-width:58px!important;flex-basis:100%!important;padding:5px 7px!important;font-size:10px!important;font-weight:600!important;color:#27654a!important;background:#edf4eb!important;border-color:#cbdcc6!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plans-empty{font-size:10px!important;margin:5px 0 0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-actual-payments{margin-top:3px!important;padding-top:7px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-actual-payments>summary{font-size:10px!important;padding:5px 0 9px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-note{margin-top:3px;border-top:1px solid #e5dcc8;padding-top:7px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-note>summary{display:flex;align-items:center;justify-content:space-between;list-style:none;cursor:pointer;font-size:10px;color:#879078;padding:5px 0 3px;gap:8px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-note>summary::-webkit-details-marker{display:none}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-note>summary i{font-style:normal;font-size:7px;color:#b99b58;margin-right:auto}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-note .f9-debt-note{border-top:0!important;margin:7px 0 0!important;padding:7px 0!important;min-height:55px!important;max-height:140px!important;font-size:12px!important;line-height:1.5!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-payment-link{border:0;border-bottom:1px dotted #b79b5d;padding:2px 0;margin-top:3px;background:none;color:#9d8045;font-size:10px;line-height:1.4;text-align:left;cursor:pointer;max-width:100%;overflow-wrap:anywhere}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-tx-title{min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-tx-title strong{font-weight:600!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-tx-row{gap:7px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-actual-payments .f9-tx-row{grid-template-columns:22px minmax(0,1fr) 25px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-actual-payments .f9-tx-amount{grid-column:2!important;grid-row:2!important;text-align:left!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-actual-payments .f9-tx-row>.f9-icon-btn{grid-column:3!important;grid-row:1 / span 2!important;align-self:start!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-placeholder{border:1px dashed #b8a264;background:#e9eddf99;border-radius:14px;box-sizing:border-box;min-width:0;pointer-events:none}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-dragging{position:fixed!important;z-index:2147482000!important;margin:0!important;pointer-events:none!important;opacity:.96!important;box-shadow:0 20px 55px #183e2933!important;transition:none!important;transform:rotate(-1deg)!important;cursor:grabbing!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card.v19-debt-dragging *{pointer-events:none!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) [data-debt-drag]:focus-visible{outline:2px solid #b69a56!important;outline-offset:2px!important}
+@container(max-width:330px){
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values{grid-template-columns:1fr!important;gap:6px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values>div{display:flex!important;justify-content:space-between!important;align-items:baseline!important;gap:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values small{margin:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-values b{font-size:16px!important}
+}
+@media(min-width:1500px){html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-list{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:760px){
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-list{grid-template-columns:1fr!important;gap:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card{padding:14px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-summary{padding:19px 17px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-summary h3{font-size:21px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics strong{font-size:23px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics>div{padding:10px 0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-metrics .f9-unconverted small{font-size:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-card h3{font-size:19px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-tools .f9-btn{height:32px!important;min-height:32px!important;width:32px!important;min-width:32px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) :is(.f9-debt-card .f9-section-head small,.f9-debt-values small,.f9-debt-foot>span,.v18-plans-heading>small,.v18-plans-heading>.f9-btn,.v18-plan-copy>span,.v18-plan-copy>small,.v18-plans-empty,.v18-actual-payments>summary,.v19-debt-note>summary,.v19-payment-link){font-size:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-plan{padding:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-metrics strong{font-size:23px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v16-month-plan h3{font-size:20px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-tools>.f9-btn{width:27px!important;min-width:27px!important;height:30px!important;min-height:30px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v18-plan-tools>.v19-plan-pay{width:auto!important;min-width:62px!important;font-size:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .f9-debt-foot>.f9-btn{min-height:32px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8 body :is(.fin2-modal,.fin2-calendar,#v8Dialog.v19-finance-dialog) :is(input,textarea,select){font-size:16px!important}
+}
+@media(prefers-reduced-motion:reduce){html#investorV8#investorV8#investorV8#investorV8 body #pg-sph #sphDetail:has(> .finance-v9) .v19-debt-dragging{transform:none!important}}
+
+</style>
+<script id="finance-debt-layout-v19">
+(()=>{
+'use strict';
+let suppressUntil=0;
+function saveOrder(list){
+ const ids=Array.from(list.querySelectorAll(':scope > [data-debt-id]')).map(card=>card.dataset.debtId),f=fin2();f.debtOrderV19=ids;
+ const ranks=new Map(ids.map((id,i)=>[id,i]));f.debts.sort((a,b)=>(ranks.get(String(a.id))??1e9)-(ranks.get(String(b.id))??1e9));save();
+}
+function installDrag(list){
+ if(list.dataset.v19Drag)return;list.dataset.v19Drag='1';let state=null,hold=0,scrollFrame=0;
+ const cards=()=>Array.from(list.querySelectorAll(':scope > [data-debt-id]'));
+ function cleanup(){cancelAnimationFrame(scrollFrame);scrollFrame=0;document.body.classList.remove('v19-debt-sorting');}
+ function movePlaceholder(x,y){
+  const s=state;if(!s?.drag)return;const others=cards().filter(card=>card!==s.card);if(!others.length)return;
+  let hit=document.elementFromPoint(x,y)?.closest('[data-debt-id]');if(!hit||hit===s.card||hit.parentElement!==list)hit=null;
+  if(!hit)hit=others.reduce((best,card)=>{const r=card.getBoundingClientRect(),distance=Math.hypot(x-(r.left+r.width/2),y-(r.top+r.height/2));return !best||distance<best.distance?{card,distance}:best},null)?.card;
+  if(!hit)return;const r=hit.getBoundingClientRect(),sameRow=Math.abs(y-(r.top+r.height/2))<Math.min(95,r.height*.45),before=sameRow?x<r.left+r.width/2:y<r.top+r.height/2;
+  const sibling=before?hit:hit.nextSibling;if(sibling!==s.placeholder&&sibling!==s.card&&s.placeholder.nextSibling!==sibling)list.insertBefore(s.placeholder,sibling);
+ }
+ function position(){const s=state;if(!s?.drag)return;s.card.style.setProperty('left',Math.max(4,Math.min(innerWidth-s.rect.width-4,s.x-s.offsetX))+'px','important');s.card.style.setProperty('top',s.y-s.offsetY+'px','important');movePlaceholder(s.x,s.y);}
+ function autoScroll(){const s=state;if(!s?.drag)return;const edge=62,delta=s.y>innerHeight-edge?14:s.y<70+edge?-14:0;if(delta){window.scrollBy(0,delta);position();}scrollFrame=requestAnimationFrame(autoScroll);}
+ function start(){const s=state;if(!s||s.scrolling)return;s.drag=true;s.rect=s.card.getBoundingClientRect();s.offsetX=s.startX-s.rect.left;s.offsetY=s.startY-s.rect.top;s.originalStyle=s.card.getAttribute('style');
+  s.placeholder=document.createElement('div');s.placeholder.className='v19-debt-placeholder';s.placeholder.style.height=s.rect.height+'px';s.card.before(s.placeholder);s.card.classList.add('v19-debt-dragging');s.card.style.setProperty('width',s.rect.width+'px','important');s.card.style.setProperty('height',s.rect.height+'px','important');
+  document.body.classList.add('v19-debt-sorting');try{s.card.setPointerCapture(s.id)}catch(_){}navigator.vibrate?.(15);position();scrollFrame=requestAnimationFrame(autoScroll);
+ }
+ function finish(event,cancel=false){const s=state;if(!s||event&&event.pointerId!==s.id)return;clearTimeout(hold);cleanup();state=null;
+  if(!s.drag)return;
+  if(cancel)s.placeholder.remove();else s.placeholder.replaceWith(s.card);
+  s.card.classList.remove('v19-debt-dragging');if(s.originalStyle===null)s.card.removeAttribute('style');else s.card.setAttribute('style',s.originalStyle);try{s.card.releasePointerCapture(s.id)}catch(_){}
+  suppressUntil=Date.now()+650;if(!cancel)saveOrder(list);
+ }
+ list.addEventListener('pointerdown',e=>{
+  if(e.button!==0||e.isPrimary===false)return;const card=e.target.closest('[data-debt-id]');if(!card||card.parentElement!==list)return;
+  const handle=e.target.closest('[data-debt-drag]');if(!handle&&e.target.closest('button,input,textarea,select,a,summary,[contenteditable]'))return;
+  state={card,id:e.pointerId,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,lastY:e.clientY,drag:false,scrolling:false,touch:e.pointerType!=='mouse',manualTouch:!!e.target.closest('.f9-section-head')};
+  if(handle||e.pointerType==='mouse')e.preventDefault();hold=setTimeout(start,320);
+ });
+ list.addEventListener('pointermove',e=>{const s=state;if(!s||e.pointerId!==s.id)return;
+  if(!s.drag){if(Math.hypot(e.clientX-s.startX,e.clientY-s.startY)>8){clearTimeout(hold);s.scrolling=true;if(s.touch&&s.manualTouch){e.preventDefault();window.scrollBy(0,s.lastY-e.clientY);s.lastY=e.clientY;}}return;}
+  e.preventDefault();s.x=e.clientX;s.y=e.clientY;position();
+ });
+ list.addEventListener('pointerup',e=>finish(e));list.addEventListener('pointercancel',e=>finish(e,true));
+ list.addEventListener('touchmove',e=>{if(state?.drag||state?.manualTouch)e.preventDefault();},{passive:false});
+ list.addEventListener('contextmenu',e=>{if(e.target.closest('[data-debt-id]')&&!e.target.closest('input,textarea'))e.preventDefault();});
+ list.addEventListener('click',e=>{if(Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation();}},true);
+ list.addEventListener('keydown',e=>{const handle=e.target.closest('[data-debt-drag]');if(!handle||!e.altKey||!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;
+  const all=cards(),card=handle.closest('[data-debt-id]'),index=all.indexOf(card),next=index+(['ArrowUp','ArrowLeft'].includes(e.key)?-1:1);if(next<0||next>=all.length)return;e.preventDefault();if(next<index)list.insertBefore(card,all[next]);else list.insertBefore(card,all[next].nextSibling);saveOrder(list);handle.focus();
+ });
+}
+function enhance(){
+ document.querySelectorAll('#sphDetail .f9-debt-list').forEach(installDrag);
+ if(curSph===FIN_ID&&document.body.dataset.page==='sph')document.querySelectorAll('#v8Dialog[open]').forEach(dialog=>dialog.classList.add('v19-finance-dialog'));
+}
+function init(){
+ if(!window.INVESTOR_V9?.planPaidV19||!window.plannerMobileV17){setTimeout(init,60);return;}
+ let queued=0;const schedule=()=>{if(queued)return;queued=requestAnimationFrame(()=>{queued=0;enhance();});};
+ new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});enhance();window.plannerDebtV19={enhance};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 </body></html>
