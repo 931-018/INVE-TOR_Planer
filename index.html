@@ -5909,11 +5909,35 @@ function workScheduleCount(sid,source='sphere',itemId=''){
   const b=(DB.workBlocks||[]).find(x=>x.s===sid&&x.source===source&&(x.itemId||'')===(itemId||''));
   return b&&Array.isArray(b.dates)?b.dates.length:0;
 }
-function plannerStageAvailable(sid,id){
- const stages=DB.sph?.[sid]?.stages||[],stage=stages.find(x=>String(x.id)===String(id));
- if(!stage||stage.d)return false;if(stage.parallelV16)return true;
- const ordered=[...stages.filter(x=>x.y),...stages.filter(x=>!x.y)],next=ordered.find(x=>!x.d&&!x.parallelV16);
- return !!next&&String(next.id)===String(id);
+function plannerStageSchedule(stage){
+ let a=stage?.deadlineStart||stage?.deadlineEnd||'',b=stage?.deadlineEnd||stage?.deadlineStart||'';
+ if(a>b)[a,b]=[b,a];
+ const valid=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&iso(pd(d))===d;
+ if(!valid(a)||!valid(b))return null;
+ // Date periods are automatic. Only a deliberately saved, current plan may narrow them.
+ const saved=stage.todayScheduleV17,custom=saved?.kind==='selected'&&saved.start===a&&saved.end===b;
+ const days=custom?[...new Set((stage.todayPlanDays||[]).filter(day=>valid(day)&&day>=a&&day<=b))].sort():null;
+ return {a,b,days,custom};
+}
+function plannerStageOnDay(stage,day){
+ if(!stage||stage.d||stage.archived||stage.deleted||stage.off)return false;
+ const plan=plannerStageSchedule(stage);
+ return !!plan&&day>=plan.a&&day<=plan.b&&(!plan.custom||plan.days.includes(day));
+}
+function plannerStageAvailable(sid,id,day=cur||iso(new Date())){
+ const stages=(DB.sph?.[sid]?.stages||[]).filter(Boolean),stage=stages.find(x=>String(x.id)===String(id));
+ if(!plannerStageOnDay(stage,day))return false;
+ if(stage.parallelV16)return true;
+ const first=stages.map((item,index)=>({item,index,plan:plannerStageSchedule(item)})).filter(x=>!x.item.parallelV16&&plannerStageOnDay(x.item,day)).sort((x,y)=>x.plan.a.localeCompare(y.plan.a)||x.index-y.index)[0];
+ return !!first&&String(first.item.id)===String(id);
+}
+function plannerTodayStageTextHTML(text){
+ const lines=String(text||'Етап').replace(/\r\n?/g,'\n').split('\n');
+ return `<span class="v17-today-stage-title">${esc(lines.shift())}</span>${lines.length?`<span class="v17-today-stage-description">${lines.map(esc).join('<br>')}</span>`:''}`;
+}
+function plannerTodayStageRangeHTML(t){
+ const f=value=>String(value||'').slice(8,10)+'.'+String(value||'').slice(5,7),range=t.stageStart===t.stageEnd?f(t.stageStart):f(t.stageStart)+' — '+f(t.stageEnd);
+ return `${range}${t.stageExactPlan?' · робочі дні: '+t.stagePlanDays.map(f).join(', '):''}`;
 }
 function scheduledTasksFor(k){const w=mon(k);
   const normal=DB.tasks.filter(t=>{
@@ -5928,58 +5952,17 @@ function scheduledTasksFor(k){const w=mon(k);
   const blocks=(DB.workBlocks||[]).filter(b=>Array.isArray(b.dates)&&b.dates.includes(k)).map(b=>({
     id:'work:'+b.id,s:b.s,t:workBlockLabel(b),isWorkBlock:true,workSource:b.source,workItemId:b.itemId||''
   }));
-  const stageItems=[];
+  const stageItems=[],seenStageKeys=new Set();
   spheres().forEach(sp=>{
-    const stages=((((DB.sph||{})[sp.id]||{}).stages)||[]);
-    stages.forEach(st=>{
-      if(!st||st.d)return; // completed stages disappear from Today; only sphere can complete a stage
-      let da=st.deadlineStart||st.deadlineEnd||'',db=st.deadlineEnd||st.deadlineStart||'';
-      if(!da)return;
-      if(da&&db&&db<da)[da,db]=[db,da];
-
-      // Deadline = hard boundary. Today plan can be exact non-contiguous days.
-      const hasExactDays=Array.isArray(st.todayPlanDays);
-      const exactDays=hasExactDays?[...new Set(st.todayPlanDays.filter(day=>day>=da&&day<=db))].sort():null;
-
-      // Backward compatibility for plans saved by the previous range-based version.
-      let pa=st.todayPlanStart||st.todayPlanEnd||da;
-      let pb=st.todayPlanEnd||st.todayPlanStart||db;
-      if(pa&&pb&&pb<pa)[pa,pb]=[pb,pa];
-      if(pa<da)pa=da;if(pa>db)pa=db;
-      if(pb<da)pb=da;if(pb>db)pb=db;
-      if(pb<pa)pb=pa;
-      const hasLegacyRange=!hasExactDays&&!!(st.todayPlanStart||st.todayPlanEnd);
-
-      const stageKey='stage:'+sp.id+':'+st.id;
-      const historicalDone=!!((DB.done||{})[k]&&((DB.done||{})[k][stageKey]));
-
-      if(!historicalDone){
-        if(!plannerStageAvailable(sp.id,st.id))return;
-        if(hasExactDays){
-          if(!exactDays.includes(k))return;
-        }else if(hasLegacyRange){
-          if(k<String(pa)||k>String(pb))return;
-        }else if(k<String(da)||k>String(db)){
-          return;
-        }
-      }
-
-      stageItems.push({
-        id:stageKey,
-        s:sp.id,
-        t:st.t||'Етап',
-        isStageDeadline:true,
-        stageId:st.id,
-        stageStart:da,
-        stageEnd:db,
-        stagePlanStart:pa,
-        stagePlanEnd:pb,
-        stagePlanDays:exactDays,
-        stageExactPlan:hasExactDays,
-        stageCustomPlan:hasExactDays||hasLegacyRange,
-        stageMultiDay:da!==db
-      });
-    });
+    for(const st of DB.sph?.[sp.id]?.stages||[]){
+      if(!st||!plannerStageAvailable(sp.id,st.id,k))continue;
+      const plan=plannerStageSchedule(st),stageKey='stage:'+sp.id+':'+st.id;
+      if(seenStageKeys.has(stageKey))continue;seenStageKeys.add(stageKey);
+      stageItems.push({id:stageKey,s:sp.id,t:st.t||'Етап',isStageDeadline:true,stageId:st.id,
+        stageStart:plan.a,stageEnd:plan.b,stagePlanStart:plan.custom?plan.days[0]||plan.a:plan.a,
+        stagePlanEnd:plan.custom?plan.days.at(-1)||plan.b:plan.b,stagePlanDays:plan.days,
+        stageExactPlan:plan.custom,stageCustomPlan:plan.custom,stageMultiDay:plan.a!==plan.b});
+    }
   });
   return [...stageItems,...normal,...blocks].sort((a,b)=>{
     const sa=sphIdx(a.s),sb=sphIdx(b.s);
@@ -6192,7 +6175,7 @@ function rToday(){
     const showBook=(t.id===bookTaskId)&&activeBook;
     return `<div class="chk ${on?'on':''}" style="--sc:${s.c};${showBook?'flex-wrap:wrap':''}">
       <div class="box" data-tk="${t.id}">${on?'✓':''}</div>
-      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isStageDeadline?'<b class="stage-today-pill">ЕТАП</b> ':''}${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):esc(t.t)}</span>${t.isStageDeadline?`<small class="stage-today-range">${t.stageExactPlan?`План · ${t.stagePlanDays.length?t.stagePlanDays.map(d=>esc(d.slice(8)+'.'+d.slice(5,7))).join(' · '):'дні не вибрані'} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageCustomPlan?`План · ${esc(t.stagePlanStart)} → ${esc(t.stagePlanEnd)} <span>· дедлайн ${esc(t.stageStart)} → ${esc(t.stageEnd)}</span>`:(t.stageStart===t.stageEnd?'Дедлайн · '+esc(t.stageEnd):'Період · '+esc(t.stageStart)+' → '+esc(t.stageEnd)))}</small>`:''}</div></div>
+      <div class="lbl" data-tk="${t.id}"><div class="tk-wrap"><span class="sph-tag" style="--tc:${s.c}" title="${esc(s.nm)}"><span class="ic">${s.ic}</span><span class="nm">${esc(s.nm)}</span></span><span class="tk-name ${t.isWorkBlock?'work-block-today':''}">${t.isStageDeadline?'<b class="stage-today-pill">ЕТАП</b> ':''}${t.isWorkBlock?'<b class="block-pill">BLOCK</b> '+esc(String(t.t||'').replace(/^BLOCK\s*/i,'')):t.isStageDeadline?plannerTodayStageTextHTML(t.t):esc(t.t)}</span>${t.isStageDeadline?`<small class="stage-today-range">${plannerTodayStageRangeHTML(t)}</small>`:''}</div></div>
       ${t.isStageDeadline?`<div class="today-stage-actions">${t.stageMultiDay?`<button class="today-stage-plan ${t.stageCustomPlan?'planned':''}" data-stage-plan="${t.s}|${t.stageId}" title="Запланувати робочі дні етапу">▣</button>`:''}<button class="today-stage-go" data-stage-go="${t.s}|${t.stageId}" title="Відкрити етап у сфері">↗</button></div>`:`<button class="today-timer-btn" data-focus-timer="task:${t.id}" title="Запустити таймер">◴</button>`}
       <button class="today-skip" data-tskip="${t.id}" title="Прибрати лише на ${d.getDate()} ${MNS[d.getMonth()]}">×</button>
       ${showBook?`<div class="pgc">
@@ -6474,7 +6457,7 @@ function strategyStagesHTML(sid){
   const year=stageAutoSort(st.filter(x=>x.y)),long=stageAutoSort(st.filter(x=>!x.y));
   const rows=(arr,offset=0)=>arr.map((x,i)=>{
     const idx=st.indexOf(x);
-    const next=!x.d && !arr.slice(0,i).some(z=>!z.d);
+    const next=plannerStageAvailable(sid,x.id,iso(new Date()));
     return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}" data-stage-row="${x.id}">
       ${stageGripHTML()}
       <span class="n">${String(i+1).padStart(2,'0')}</span>
@@ -13399,7 +13382,7 @@ input[type="date"].date-is-today{
 
     const rows=(arr)=>arr.map((x,i)=>{
       const idx=st.indexOf(x);
-      const next=!x.d && !arr.slice(0,i).some(z=>!z.d);
+      const next=plannerStageAvailable(sid,x.id,iso(new Date()));
       return `<div class="stg strategy-stage ${x.d?'done':''} ${next?'next':''}" style="--sc:${SCf(sid).c}" data-stage-row="${x.id}">
         <span class="n">${String(i+1).padStart(2,'0')}</span>
         <span class="box" data-sstage="${sid}|${idx}">${x.d?'✓':''}</span>
@@ -15393,28 +15376,10 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     return out;
   }
   function legacyPlanDays(st,lim){
-    if(Array.isArray(st.todayPlanDays)){
-      return [...new Set(st.todayPlanDays.filter(d=>d>=lim.a&&d<=lim.b))].sort();
-    }
-    if(st.todayPlanStart||st.todayPlanEnd){
-      let a=st.todayPlanStart||st.todayPlanEnd||lim.a,b=st.todayPlanEnd||st.todayPlanStart||lim.b;
-      if(a&&b&&b<a)[a,b]=[b,a];
-      if(a<lim.a)a=lim.a;if(b>lim.b)b=lim.b;
-      return daysBetween(a,b);
-    }
-    return daysBetween(lim.a,lim.b);
+    const plan=plannerStageSchedule(st);
+    return plan?.custom?plan.days:daysBetween(lim.a,lim.b);
   }
-
-  function stageActiveOnDay(st,day){
-    const lim=bounds(st);if(!lim.a||day<lim.a||day>lim.b)return false;
-    if(Array.isArray(st.todayPlanDays))return st.todayPlanDays.includes(day);
-    if(st.todayPlanStart||st.todayPlanEnd){
-      let a=st.todayPlanStart||st.todayPlanEnd||lim.a,b=st.todayPlanEnd||st.todayPlanStart||lim.b;
-      if(a&&b&&b<a)[a,b]=[b,a];
-      return day>=a&&day<=b;
-    }
-    return true;
-  }
+  function stageActiveOnDay(st,day){return plannerStageOnDay(st,day);}
 
   function loadForDay(day,sid,stageId){
     let count=0;
@@ -15436,7 +15401,7 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     spheres().forEach(sp=>{
       ((((DB.sph||{})[sp.id]||{}).stages)||[]).forEach(st=>{
         if(!st||st.d||(String(sp.id)===String(sid)&&String(st.id)===String(stageId)))return;
-        if(stageActiveOnDay(st,day))count++;
+        if(plannerStageAvailable(sp.id,st.id,day))count++;
       });
     });
     return count;
@@ -15555,6 +15520,7 @@ input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=button]
     const allDays=daysBetween(lim.a,lim.b);
     const chosen=[...selectedDays].filter(d=>d>=lim.a&&d<=lim.b).sort();
 
+    st.todayScheduleV17=chosen.length===allDays.length&&chosen.every((d,i)=>d===allDays[i])?null:{kind:'selected',start:lim.a,end:lim.b};
     // If every deadline day is selected, keep the default lightweight state.
     if(chosen.length===allDays.length&&chosen.every((d,i)=>d===allDays[i])){
       delete st.todayPlanDays;
@@ -19839,4 +19805,233 @@ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage.do
 }
 
 </style>
+<style id="mobile-unified-layout-20261101">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:76px}
+.v17-today-stage-title{display:block;font-weight:700;line-height:1.4}
+.v17-today-stage-description{display:block;margin-top:4px;font-weight:400;font-size:.91em;line-height:1.5;color:#5b705d}
+.v17-interface-icon{display:block;width:16px;height:16px;flex:0 0 auto}
+.v17-habit-week{display:none}
+@media(max-width:700px){
+ html#investorV8#investorV8#investorV8#investorV8 body .page{min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body :is(.page,.card,.sp-card,.f9-panel,.v8-notebook,.ws-v5-project-card,.v13-panel){scroll-margin-top:74px}
+ html#investorV8#investorV8#investorV8#investorV8 body :is(input,textarea,select){max-width:100%;box-sizing:border-box}
+ html#investorV8#investorV8#investorV8#investorV8 body input:is([type=date],[type=time]){min-width:0!important;font-size:16px!important;-webkit-appearance:none;appearance:none}
+ html#investorV8#investorV8#investorV8#investorV8 body input::-webkit-date-and-time-value{min-height:1.3em;text-align:center}
+ html#investorV8#investorV8#investorV8#investorV8 body :is(.card,.f9-panel,.v8-notebook){border-radius:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .iv2-mobile-top{gap:10px!important}
+ /* Stage copy gets the full readable width; controls form a compact footer. */
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stages>.card{padding:14px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage{grid-template-columns:21px minmax(0,1fr)!important;padding:12px 11px 15px!important;column-gap:9px!important;row-gap:7px!important;margin:7px 0!important;min-height:0!important;border-radius:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage>.n{display:none!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage>.box{grid-column:1!important;grid-row:1!important;width:21px!important;height:21px!important;margin-top:1px!important;border-radius:6px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage>.v14-stage-editor{grid-column:2!important;grid-row:1!important;min-height:22px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-stage-editor>.v14-stage-heading{font-size:14.5px!important;line-height:1.4!important;min-height:1.4em!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-stage-editor>.v14-stage-description{font-size:13px!important;line-height:1.5!important;min-height:1.5em!important;margin-top:4px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage>.stage-actions{grid-column:2!important;grid-row:2!important;justify-self:stretch!important;justify-content:flex-end!important;align-items:center!important;gap:7px!important;width:auto!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .deadline-trigger{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;padding:6px 9px!important;min-height:32px!important;min-width:0!important;max-width:calc(100% - 36px)!important;width:auto!important;border-radius:8px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .deadline-trigger .dls-head{font:600 10px/1.3 'Segoe UI',Arial,sans-serif!important;letter-spacing:.025em!important;text-transform:none!important;white-space:normal!important;margin:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .deadline-trigger :is(.dls-foot,.dls-bar){display:none!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .stage-mini-btn{width:29px!important;min-width:29px!important;height:32px!important;min-height:32px!important;flex-basis:29px!important;font-size:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v16-stage-meta{grid-column:1/-1!important;grid-row:3!important;justify-content:space-between!important;gap:5px 8px!important;margin:1px 0 0!important;font:500 9px/1.5 'Segoe UI',Arial,sans-serif!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v16-stage-engraving{letter-spacing:.02em!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v16-stage-mode{font:500 9px/1.3 'Segoe UI',Arial,sans-serif!important;min-height:29px!important;padding:4px 7px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-stage-time{left:11px!important;right:11px!important;height:3.5px!important;bottom:3px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .stage-head{gap:9px!important;margin-bottom:12px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v9-stage-title{gap:7px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .stage-head b{font-size:20px!important;line-height:1.2!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v9-stage-fold{width:27px!important;min-width:27px!important;height:29px!important;min-height:29px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v9-stage-work{padding:6px 8px!important;min-height:30px!important;font-size:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .stage-divider{font-size:9px!important;letter-spacing:.12em!important;margin:15px 0 9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .stage-adds .addbtn{font-size:10px!important;min-height:35px!important;padding:8px 9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .sp-card{padding:17px 17px 12px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .sp-lbl{font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .sp-pct{font-size:31px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .sp-meta-line{font-size:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v8-progress-chart svg{max-height:195px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-goal-short{font-size:14.5px!important;line-height:1.35!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v8-goal-trigger{padding:10px 11px!important;gap:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-goal-arrow svg{width:13px;height:13px}
+ /* Today: full-width task copy with all actions in one footer. */
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-workgrid{gap:14px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel{padding:15px 13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-top{gap:7px!important;align-items:flex-start!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-title{font-size:20px!important;line-height:1.25!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-open{font:500 10px/1.4 'Segoe UI',Arial,sans-serif!important;white-space:nowrap}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-row{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:9px!important;padding:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-big{font-size:15px!important;line-height:1.3!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-big small{font-size:9px!important;margin-left:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-nav{display:grid!important;grid-template-columns:30px minmax(0,1fr) auto 30px!important;gap:5px!important;align-items:stretch!important;width:100%!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-nav button{min-width:0!important;min-height:36px!important;padding:5px 7px!important;font:600 10px/1.3 'Segoe UI',Arial,sans-serif!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .date-pick{width:100%!important;min-width:0!important;min-height:36px!important;padding:5px!important;font-size:14px!important;text-align:center!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList :is(.chk,.wsblock){grid-template-columns:21px minmax(0,1fr)!important;padding:12px 0!important;gap:6px 9px!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .chk>.box{grid-column:1!important;grid-row:1!important;width:21px!important;height:21px!important;margin-top:1px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .chk>.lbl{grid-column:2!important;grid-row:1!important;min-width:0!important;width:auto!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .tk-wrap{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .tk-name{font:600 14px/1.45 'Segoe UI',Arial,sans-serif!important;display:block!important;width:100%!important;overflow-wrap:anywhere!important;margin:0!important;padding:0!important;white-space:normal!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .stage-today-pill{display:none!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .sph-tag{font:600 8px/1.3 'Segoe UI',Arial,sans-serif!important;letter-spacing:.08em!important;padding:3px 7px!important;max-width:100%!important;white-space:normal!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .stage-today-range{font:500 10px/1.4 'Segoe UI',Arial,sans-serif!important;letter-spacing:0!important;color:#95825e!important;order:2!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList :is(.today-stage-actions,.today-timer-btn){grid-column:2!important;grid-row:2!important;justify-self:start!important;align-self:center!important;margin:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList :is(.today-skip,.today-hide-local){grid-column:2!important;grid-row:2!important;justify-self:end!important;align-self:center!important;margin:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList :is(.today-stage-plan,.today-stage-go,.today-timer-btn,.today-skip,.today-hide-local){width:31px!important;height:31px!important;min-height:31px!important;border-radius:8px!important;padding:0!important;font-size:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .pgc{grid-column:2!important;grid-row:3!important;margin:2px 0!important;padding:9px!important;gap:6px!important;display:flex!important;flex-wrap:wrap!important;min-width:0!important;width:100%!important;box-sizing:border-box!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .pgc-nm{flex-basis:100%!important;max-width:100%!important;width:100%!important;font-size:11px!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .pgc input{width:56px!important;min-width:0!important;font-size:16px!important;padding:4px 6px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .pgc :is(.pgc-l,.pgc-p){font-size:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-cal-head{gap:10px!important;align-items:center!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-cal-head h3{font-size:23px!important;line-height:1.2!important;white-space:nowrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-cal-nav{gap:5px!important;flex-shrink:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-cal-nav button{width:30px!important;min-width:30px!important;height:32px!important;min-height:32px!important;font-size:18px!important}
+ /* Finance totals keep labels and amounts legible, including several currencies. */
+ html#investorV8#investorV8#investorV8#investorV8 body .finance-v9{min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-panel{padding:18px 16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-command{gap:9px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body :is(.f9-main-actions,.f9-finance-tools){gap:6px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-btn{min-height:35px!important;padding:7px 10px!important;font:600 10px/1.4 'Segoe UI',Arial,sans-serif!important;white-space:normal!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr)) 44px!important;gap:5px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tabs .f9-btn{padding:8px 5px!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-summary{padding:22px 18px!important;border-radius:17px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-summary>.f9-section-head{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-summary .f9-section-head>div{width:100%!important;max-width:100%!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-summary h3{font-size:24px!important;line-height:1.15!important;max-width:100%!important;letter-spacing:-.015em!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v16-debt-head-actions{width:100%!important;justify-content:flex-start!important;gap:7px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics{display:grid!important;grid-template-columns:1fr!important;margin-top:17px!important;gap:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics>div{display:grid!important;grid-template-columns:85px minmax(0,1fr)!important;align-items:start!important;gap:12px!important;padding:13px 0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics small{font:400 10px/1.4 'Segoe UI',Arial,sans-serif!important;align-self:center!important;margin:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics strong{font:600 clamp(21px,6vw,25px)/1.25 Georgia,serif!important;min-width:0!important;text-align:right!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics .f9-unconverted{display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:4px!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics .f9-unconverted small{font-size:9px!important;align-self:flex-end!important;text-align:right!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-progress{margin-top:10px!important;gap:12px!important;font-size:9px!important;line-height:1.5!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v16-month-plan{padding:18px 16px!important;margin:14px 0 17px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v16-month-plan h3{font-size:22px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v16-month-metrics strong{font-size:21px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-list{gap:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-card h3{font-size:23px!important;line-height:1.2!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-account-row{grid-template-columns:28px minmax(0,1fr) auto!important;gap:9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-account-row>b{grid-column:2!important;grid-row:2!important;font-size:18px!important;justify-self:start!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-account-row>.f9-icon-btn{grid-column:3!important;grid-row:1 / span 2!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-row{grid-template-columns:25px minmax(0,1fr) 25px!important;gap:8px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-row .f9-tx-title{min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-title strong{font-size:12px!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-title small{font-size:10px!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-row .f9-tx-amount{grid-column:2!important;grid-row:2!important;text-align:left!important;font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-tx-row>.f9-icon-btn{grid-column:3!important;grid-row:1 / span 2!important;align-self:start!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-category-label{gap:10px!important;flex-wrap:wrap!important;font-size:12px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-category-label strong{min-width:0!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-category-label b{font-size:13px!important}
+ /* Workspace, analytics and the event planner share a calmer mobile spacing. */
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .ws-v5-project-card{padding:17px 15px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .ws-v5-project-name{font-size:17px!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .ws-v5-project-list li{font-size:12px!important;line-height:1.5!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-notebook{padding:18px 15px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-notebook-head{gap:10px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-row{grid-template-columns:21px minmax(0,1fr) auto!important;gap:8px!important;padding:12px 0!important;min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-title{font-size:14px!important;line-height:1.5!important;min-width:0!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-date{max-width:100%!important;font-size:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-add{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-add>input{width:100%!important;min-width:0!important;font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws .v8-note-add>.v8-btn{margin-left:auto!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-ws :is(.v12-note-subs,.ws6-subs){margin-left:0!important;padding-left:12px!important;max-width:100%!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .v13-toolbar{gap:13px!important;margin-bottom:18px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .v13-toolbar h2{font-size:26px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .v13-panel{padding:18px 16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .v13-panel h3{font-size:21px!important;line-height:1.2!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .planner-stat-kpi{padding:16px 13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review .planner-stat-kpi>strong{font-size:30px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-planner .lp-shell{min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-planner .lp-toolbar{gap:7px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-planner :is(.lp-month,.lp-year){min-width:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-planner .lp-selected-title{font-size:21px!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-planner .lp-day{min-height:64px!important}
+ /* Seven-day habit window uses the existing month data and existing buttons. */
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-habit-week{display:grid;grid-template-columns:31px minmax(0,1fr) 31px;gap:8px;align-items:center;padding:9px 14px;border-top:1px solid #ece4d5;background:#fffdf7}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-habit-week button{height:30px;min-height:30px;width:30px;border:1px solid #e2d6bb;border-radius:8px;background:#fffaf0;color:#9f7d3d;font:500 18px/1 'Segoe UI',Arial,sans-serif}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-habit-week button:disabled{opacity:.3}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-habit-week span{text-align:center;font:500 11px/1.4 'Segoe UI',Arial,sans-serif;color:#727e65}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week]{min-width:0!important;width:100%!important;table-layout:fixed!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] tr>:not(.v17-habit-cell){display:none!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] .v8-habit-name-col{width:28%!important;min-width:0!important;max-width:none!important;padding:10px 9px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] tr>:not(.v8-habit-name-col){width:auto!important;min-width:0!important;padding:8px 1px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] .v8-habit-name{font-size:11px!important;line-height:1.4!important;gap:5px!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-name svg{width:12px!important;height:12px!important;flex-shrink:0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] .v8-habit-dot{width:25px!important;height:25px!important;min-width:0!important;min-height:25px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-tracker-scroll{max-width:100%!important;overflow-x:auto!important;overscroll-behavior-x:contain}
+ /* Dialog controls stay usable without forcing Safari to zoom into inputs. */
+ html#investorV8#investorV8#investorV8#investorV8 body :is(.fin2-modal,.v8-dialog,.ws-sprint-modal,.stage-plan-modal){max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 28px)!important;overflow-y:auto!important;box-sizing:border-box!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .fin2-form{grid-template-columns:minmax(0,1fr)!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .fin2-field :is(input,textarea,select){min-width:0!important;width:100%!important;font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .fin2-modal-actions{gap:8px!important;flex-wrap:wrap!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .planner-date-popover{max-width:calc(100vw - 16px)!important;box-sizing:border-box!important}
+}
+@media(max-width:360px){
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v14-stage-editor>.v14-stage-heading{font-size:14px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .v16-stage-meta{font-size:8.5px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics>div{grid-template-columns:70px minmax(0,1fr)!important;gap:8px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-debt-metrics strong{font-size:20px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] .v8-habit-dot{width:23px!important;height:25px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v8-habit-table[data-v17-week] .v8-habit-name{font-size:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-cal-head h3{font-size:20px!important}
+}
+@media(max-width:700px){
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .deadline-trigger .dls-head{color:#8c703d!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-sph .strategy-stage .deadline-trigger.overdue .dls-head{color:#ae5d4d!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .wsblock>.wsrow-t{grid-column:1/-1!important;display:grid!important;grid-template-columns:21px minmax(0,1fr)!important}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel #todayList .wsblock>.subs{grid-column:2!important;min-width:0!important}
+}
+@media(max-width:700px){
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-account-row{row-gap:4px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .f9-account-row>b{width:auto!important;max-width:100%!important;min-width:0!important;margin:0!important;white-space:nowrap!important;text-align:left!important;line-height:1.3!important}
+}
+@media(max-width:700px){
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-date-field{position:relative;min-width:0;width:100%;display:grid}
+ html#investorV8#investorV8#investorV8#investorV8 body[data-page=today] .iv3-task-panel .v17-date-field .date-pick{color:transparent!important;caret-color:transparent!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-date-field .date-pick::-webkit-datetime-edit{color:transparent!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-date-field .date-pick::-webkit-calendar-picker-indicator{opacity:0;display:none}
+ html#investorV8#investorV8#investorV8#investorV8 body .v17-date-value{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;user-select:none;font:600 14px/1.3 'Segoe UI',Arial,sans-serif;color:#8b733f;letter-spacing:.025em}
+}
+
+</style>
+<script id="planner-mobile-consistency-20261101">
+(()=>{
+'use strict';
+const icon=kind=>`<svg class="v17-interface-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${kind==='calendar'?'<rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 11h16m-10 4h4"/>':'<path d="M7 17 18 6M7 6h11v11"/>'}</svg>`;
+const weeks=new Map();
+function enhanceHabits(){
+ const table=document.querySelector('#pg-habits .v8-habit-table'),dates=table?[...table.querySelectorAll('tbody tr:first-child [data-date]')].map(button=>button.dataset.date):[];
+ if(!table||!dates.length)return;
+ const key=dates[0].slice(0,7),today=iso(new Date()),max=Math.max(0,Math.ceil(dates.length/7)-1);
+ let index=weeks.get(key);if(index===undefined){index=today.slice(0,7)===key?Math.floor((Number(today.slice(8))-1)/7):0;weeks.set(key,index);}
+ index=Math.min(max,Math.max(0,index));const start=Math.min(index*7,Math.max(0,dates.length-7)),end=Math.min(dates.length,start+7);
+ table.dataset.v17Week=String(index);
+ for(const row of table.rows)Array.from(row.children).forEach((cell,i)=>cell.classList.toggle('v17-habit-cell',i===0||i>start&&i<=end));
+ let nav=table.parentElement.previousElementSibling;
+ if(!nav?.classList.contains('v17-habit-week')){nav=document.createElement('div');nav.className='v17-habit-week';nav.innerHTML='<button type="button" data-week-prev aria-label="Попередні сім днів">‹</button><span aria-live="polite"></span><button type="button" data-week-next aria-label="Наступні сім днів">›</button>';table.parentElement.before(nav);}
+ const label=Number(dates[start].slice(8))+' — '+Number(dates[end-1].slice(8))+' '+pd(dates[start]).toLocaleDateString('uk-UA',{month:'short'}),span=nav.querySelector('span');if(span.textContent!==label)span.textContent=label;
+ const previous=nav.querySelector('[data-week-prev]'),next=nav.querySelector('[data-week-next]');previous.disabled=index<=0;next.disabled=index>=max;
+ previous.onclick=()=>{weeks.set(key,Math.max(0,index-1));enhanceHabits()};next.onclick=()=>{weeks.set(key,Math.min(max,index+1));enhanceHabits()};
+}
+function enhance(){
+ const dateInput=document.getElementById('dPick');
+ if(dateInput&&matchMedia('(max-width:700px)').matches){
+  let field=dateInput.closest('.v17-date-field');if(!field){field=document.createElement('div');field.className='v17-date-field';dateInput.before(field);field.append(dateInput);const label=document.createElement('span');label.className='v17-date-value';label.setAttribute('aria-hidden','true');field.append(label);}
+  const label=field.querySelector('.v17-date-value'),value=/^\d{4}-\d{2}-\d{2}$/.test(dateInput.value)?dateInput.value.split('-').reverse().join('.'):'';if(label.textContent!==value)label.textContent=value;
+ }else if(dateInput?.closest('.v17-date-field'))dateInput.closest('.v17-date-field').replaceWith(dateInput);
+ for(const [selector,kind] of [['.today-stage-go','arrow'],['.today-stage-plan','calendar'],['.v14-goal-arrow','arrow']])for(const node of document.querySelectorAll(selector))if(!node.dataset.v17Icon){node.dataset.v17Icon='1';node.innerHTML=icon(kind);}
+ if(document.body.dataset.page==='habits')enhanceHabits();
+ const host=document.querySelector('#rossmannHost')?.shadowRoot;
+ if(host&&!host.querySelector('#v17RossMobile')){const style=document.createElement('style');style.id='v17RossMobile';style.textContent='@media(max-width:700px){.rs{gap:13px!important}.editor{padding:17px!important}.selectedTitle{font-size:19px!important}.timeGrid{gap:9px!important}.timeGrid input{font-size:16px!important;min-width:0!important;width:100%!important;box-sizing:border-box!important}.stat{padding:14px!important}.stat strong{font-size:23px!important}.miniStats{gap:9px!important}.day{min-height:68px!important}.toolbar{gap:8px!important}.toolbar select{min-width:0!important;max-width:100%!important;font-size:14px!important}.modal{max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 28px)!important;overflow:auto!important}.topActions{gap:8px!important}.topActions .btn{min-height:34px!important}}';host.append(style);}
+}
+function init(){
+ if(!window.plannerSequenceV16||!window.plannerRepairs){setTimeout(init,60);return;}
+ let frame=0;const schedule=()=>{if(frame)return;frame=requestAnimationFrame(()=>{frame=0;enhance()});};
+ const observer=new MutationObserver(schedule);observer.observe(document.body,{childList:true,subtree:true});
+ window.addEventListener('resize',schedule);
+ const oldGo=go;go=function(...args){const result=oldGo.apply(this,args);enhance();return result;};
+ const old=rToday;rToday=function(...args){const result=old.apply(this,args);enhance();return result;};
+ window.plannerMobileV17={enhance,stageOnDay:plannerStageOnDay,stageSchedule:plannerStageSchedule};enhance();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
 </body></html>
