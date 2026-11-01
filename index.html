@@ -19386,34 +19386,83 @@ function analyticsGrid(W,H,max,format){
   const grid=values.map(value=>`<path d="M${L} ${y(value)}H${R}" stroke="#e8e2d4" stroke-width=".8"/><text x="${L-9}" y="${y(value)+4}" text-anchor="end" fill="#8e9884" font-size="10">${format(value)}</text>`).join('');
   return {L,R,T,B,x,y,grid};
 }
-let statsRange='all',visibleSeries={task:true,habit:true},statsMarkupKey='',dailyExpanded=false;
-function statsChart(rows){
-  const W=innerWidth<=600?360:880,H=255,{L,R,B,x,y,grid}=analyticsGrid(W,H,120,value=>value+'%');
-  let paths='';
-  for(const [key,prop,color,label,doneProp]of [['task','pct','#327051','Завдання','done'],['habit','habitPct','#b79950','Звички','habits']]){
-    if(!visibleSeries[key])continue;
-    const hasCompletion=rows.some(row=>key==='habit'?row.habits.done>0:row.done>0);
-    const startX=L+(key==='habit'&&visibleSeries.task?7:0);
-    paths+=`<circle data-v13-daily-start="${key}" cx="${startX}" cy="${B}" r="3.6" fill="${color}" stroke="#fffdf7" stroke-width="1.6"><title>${label} · початок · 0%</title></circle>`;
-    if(!hasCompletion)continue;
-    let segment=[{x:L,y:B}],segments=[];
-    rows.forEach((row,i)=>{if(row[prop]==null){if(segment.length)segments.push(segment);segment=[];return;}segment.push({x:x((i+1)/Math.max(1,rows.length)),y:y(row[prop]),row,value:row[prop]});});
-    if(segment.length)segments.push(segment);
-    for(const segment of segments){const line=segment.map((point,i)=>(i?'L':'M')+point.x.toFixed(2)+' '+point.y.toFixed(2)).join(' ');
-      if(segment.length>1)paths+=`<path data-v13-daily-line="${key}" class="v13-chart-line" pathLength="1" d="${line}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="round"/>`;
-      paths+=segment.filter(point=>point.row).map(point=>`<circle data-v13-daily-point="${key}" cx="${point.x}" cy="${point.y}" r="${rows.length>45?2.3:3.4}" fill="${color}" stroke="#fffdf7" stroke-width="1.4"><title>${point.row.day} · ${label}: ${point.value}%</title></circle>`).join('');
-    }
-  }
-  const labels=rows.length?[...new Set([0,Math.floor((rows.length-1)/2),rows.length-1])].map(i=>`<text x="${x((i+1)/rows.length)}" y="${H-9}" text-anchor="${i===rows.length-1?'end':'middle'}" fill="#8e9884" font-size="10">${dateLabel(rows[i].day)}</text>`).join(''):'';
-  return `<svg class="planner-stat-chart v13-daily-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Фактичний відсоток виконання по днях від 1 листопада 2026">${grid}${paths}${labels}</svg>`;
+let statsRange='all',customStatsRange=null,visibleSeries={task:true,habit:true},statsMarkupKey='',dailyExpanded=false;
+function analyticsPeriodV20(){
+ const today=nowDay();let end=today,start=statsRange==='all'?START:dayAdd(end,1-Number(statsRange));
+ if(statsRange==='custom'&&customStatsRange){start=customStatsRange.start;end=customStatsRange.end>today?today:customStatsRange.end;}
+ if(start<START)start=START;if(start>end&&end>=START)start=end;
+ return {start,end};
 }
+function analyticsPeriodLabelV20(start,end){
+ if(start===end)return dateLabel(start)+'.'+start.slice(0,4);
+ return (start.slice(0,4)===end.slice(0,4)?dateLabel(start):dateLabel(start)+'.'+start.slice(0,4))+' — '+dateLabel(end)+'.'+end.slice(0,4);
+}
+function setAnalyticsPeriodV20(preset,start='',end=''){
+ if(!['7','30','90','all','custom'].includes(preset))return false;
+ if(preset==='custom'){
+  if(!fin2ValidDate(start)||!fin2ValidDate(end))return false;
+  if(start>end)[start,end]=[end,start];if(start<START)start=START;if(end>nowDay())end=nowDay();if(start>end)return false;
+  customStatsRange={start,end};
+ }else customStatsRange=null;
+ statsRange=preset;DB.analyticsViewV20={preset,...(customStatsRange||{})};dailyExpanded=false;statsMarkupKey='';save();renderStats();return true;
+}
+function analyticsPeriodControlV20(start,end){
+ return `<button type="button" class="v20-period-button" data-stat-period data-date-range="notebook" data-range-start="${E(start)}" data-range-end="${E(end)}" value="${E(start)}" aria-label="Обрати день або період аналітики" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 2v6m10-6v6M3 11h18m-12 4h3"/></svg><span><small>День або період</small><strong data-date-label>${E(analyticsPeriodLabelV20(start,end))}</strong></span><svg class="v20-period-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button>`;
+}
+function bindAnalyticsPeriodV20(box){
+ const button=$('[data-stat-period]',box);if(!button)return;
+ button.min=START;button.max=nowDay();button.required=true;
+ button.onclick=()=>{window.plannerOpenDatePopover?.(button);requestAnimationFrame(()=>$('#plannerDatePopover.open .pdc-day.selected:not(:disabled)')?.focus({preventScroll:true}));};
+ button.onchange=()=>{if(setAnalyticsPeriodV20('custom',button.dataset.rangeStart,button.dataset.rangeEnd||button.dataset.rangeStart))requestAnimationFrame(()=>$('[data-stat-period]')?.focus({preventScroll:true}));};
+}
+// Horizontal control handles keep every interpolation inside its two real values.
+// Flat sections remain straight; the turning points remain the recorded daily values.
+function analyticsCurveV20(points){
+ return points.map((p,i)=>{if(!i)return `M${p.x.toFixed(2)} ${p.y.toFixed(2)}`;const a=points[i-1],dx=(p.x-a.x)*.29;return Math.abs(p.y-a.y)<.01?`L${p.x.toFixed(2)} ${p.y.toFixed(2)}`:`C${(a.x+dx).toFixed(2)} ${a.y.toFixed(2)} ${(p.x-dx).toFixed(2)} ${p.y.toFixed(2)} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`;}).join(' ');
+}
+function statsChart(rows){
+ const W=innerWidth<=600?360:960,H=innerWidth<=600?255:240,{L,R,T,B,x,y,grid}=analyticsGrid(W,H,100,value=>value+'%');
+ let paths='';
+ for(const [key,prop,color,label]of [['task','pct','#2e7356','Завдання'],['habit','habitPct','#bd9545','Звички']]){
+  if(!visibleSeries[key])continue;
+  const task=key==='task',hasCompletion=rows.some(row=>task?row.done>0:row.habits.done>0);
+  let series=`<circle data-v13-daily-start="${key}" cx="${L}" cy="${B}" r="${task?5.5:3}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.3:1}" vector-effect="non-scaling-stroke"><title>${label} · початок · 0%</title></circle>`;
+  if(hasCompletion){
+   let segment=[{x:L,y:B}],segments=[];
+   rows.forEach((row,i)=>{if(row[prop]==null){if(segment.length)segments.push(segment);segment=[];return;}segment.push({x:x((i+1)/Math.max(1,rows.length)),y:y(row[prop]),row,value:row[prop]});});if(segment.length)segments.push(segment);
+   for(const segment of segments){
+    const line=analyticsCurveV20(segment);
+    if(segment.length>1)series+=`<path data-v13-daily-line="${key}" class="v20-trend-line" d="${line}" fill="none" stroke="${color}" stroke-width="${task?4.8:2.8}" ${task?'':'stroke-dasharray="7 7"'} stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    series+=segment.filter(point=>point.row).map(point=>`<circle data-v13-daily-point="${key}" data-day="${point.row.day}" data-value="${point.value}" cx="${point.x}" cy="${point.y}" r="${task?5.3:2.9}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.1:1}" vector-effect="non-scaling-stroke"><title>${point.row.day} · ${label}: ${point.value}%</title></circle>`).join('');
+   }
+  }
+  paths+=`<g class="v20-series-reveal" data-v20-series="${key}">${series}</g>`;
+ }
+ const labels=rows.length?[...new Set([0,Math.floor((rows.length-1)/2),rows.length-1])].map(i=>`<text x="${x((i+1)/rows.length)}" y="${H-9}" text-anchor="${i===rows.length-1?'end':'middle'}" fill="#82917b" font-size="10">${dateLabel(rows[i].day)}</text>`).join(''):'';
+ const hits=rows.map((row,i)=>{const center=x((i+1)/rows.length),left=i?x((i+.5)/rows.length):L,right=i===rows.length-1?R:x((i+1.5)/rows.length);return `<rect class="v20-chart-hit" data-v20-chart-day="${row.day}" data-x="${center}" data-task="${row.done}" data-task-total="${row.total}" data-habit="${row.habits.done}" data-habit-total="${row.habits.total}" x="${left}" y="${T-8}" width="${right-left}" height="${B-T+16}" fill="transparent" tabindex="0" role="button" aria-label="${row.day}: завдання ${row.done} з ${row.total}; звички ${row.habits.done} з ${row.habits.total}"/>`;}).join('');
+ return `<div class="v20-chart-frame"><svg class="planner-stat-chart v13-daily-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Виконання по днях. Зелена суцільна лінія — завдання, золота пунктирна — звички."><title>Кожна точка — фактичний результат дня. За однакових значень видно обидва кольори.</title>${grid}<line class="v20-chart-cursor" x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="#a9b39d" stroke-dasharray="3 5" opacity="0"/>${paths}${labels}${hits}</svg><div class="v20-chart-tooltip" hidden role="status" aria-live="polite"></div></div>`;
+}
+function bindAnalyticsTooltipV20(box){
+ const frame=$('.v20-chart-frame',box);if(!frame)return;const chart=$('svg',frame),tip=$('.v20-chart-tooltip',frame),cursor=$('.v20-chart-cursor',chart);
+ const hide=()=>{tip.hidden=true;cursor.style.opacity='0';};
+ const show=hit=>{
+  if(!hit)return;const d=hit.dataset,part=(done,total)=>Number(total)?`${done} / ${total} · ${Math.round(Number(done)/Number(total)*100)}%`:'Немає плану';
+  tip.innerHTML=`<time datetime="${d.v20ChartDay}">${analyticsPeriodLabelV20(d.v20ChartDay,d.v20ChartDay)}</time><span><i></i>Завдання <b>${part(d.task,d.taskTotal)}</b></span><span class="gold"><i></i>Звички <b>${part(d.habit,d.habitTotal)}</b></span>`;tip.hidden=false;
+  cursor.setAttribute('x1',d.x);cursor.setAttribute('x2',d.x);cursor.style.opacity='1';
+  const center=Number(d.x)/chart.viewBox.baseVal.width*frame.clientWidth,left=Math.max(0,Math.min(frame.clientWidth-tip.offsetWidth,center-tip.offsetWidth/2));tip.style.left=left+'px';
+ };
+ chart.onpointermove=e=>{if(e.pointerType==='mouse')show(e.target.closest('[data-v20-chart-day]'));};chart.onpointerleave=e=>{if(e.pointerType==='mouse')hide();};chart.onfocusin=e=>show(e.target.closest('[data-v20-chart-day]'));chart.onfocusout=e=>{if(!chart.contains(e.relatedTarget))hide();};
+ chart.onclick=e=>show(e.target.closest('[data-v20-chart-day]'));chart.onkeydown=e=>{if(e.key==='Escape')hide();if(e.key==='Enter'||e.key===' '){e.preventDefault();show(e.target.closest('[data-v20-chart-day]'));}};
+ box.onpointerdown=e=>{if(!frame.contains(e.target))hide();};
+}
+
 function incomeChart(data){
   if(data.total.missing.length)return `<div class="v13-chart-empty"><span class="v13-empty-symbol">↗</span><strong>Об’єднаємо дохід після додавання курсів</strong><p>Суми збережені у своїх валютах. Потрібні курси: ${data.total.missing.map(E).join(', ')}.</p><button type="button" class="v13-text-button" data-stat-rates>Додати курси →</button></div>`;
   const W=innerWidth<=600?360:650,H=255,maxValue=Math.max(4,data.total.value*1.2),{L,R,B,x,y,grid}=analyticsGrid(W,H,maxValue,value=>value>=1000?(value/1000).toLocaleString('uk-UA',{maximumFractionDigits:1})+' тис.':value.toLocaleString('uk-UA',{maximumFractionDigits:maxValue<20?1:0}));
   const byDay={};data.entries.forEach(entry=>{byDay[entry.day]=(byDay[entry.day]||0)+1;});
   const count=Math.max(1,Math.round((pd(data.end)-pd(data.start))/86400000)+1),indexes={},points=[{x:L,y:B,value:0}];let running=0;
   data.entries.forEach(entry=>{running+=entry.amount*analyticsRate(entry.currency);indexes[entry.day]=(indexes[entry.day]||0)+1;const dayIndex=Math.round((pd(entry.day)-pd(data.start))/86400000),within=.2+.6*indexes[entry.day]/(byDay[entry.day]+1);points.push({x:x((dayIndex+within)/count),y:y(running),value:running,entry});});
-  const line=points.map((point,i)=>(i?'L':'M')+point.x.toFixed(2)+' '+point.y.toFixed(2)).join(' '),last=points.at(-1);
+  const line=analyticsCurveV20(points),last=points.at(-1);
   return `<svg class="v13-income-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Накопичений дохід за період: ${E(analyticsMoney(data.map))}"><defs><linearGradient id="v13IncomeFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b99450" stop-opacity=".13"/><stop offset="1" stop-color="#b99450" stop-opacity="0"/></linearGradient></defs>${grid}${data.entries.length?`<path d="${line} L${last.x} ${B} L${L} ${B}Z" fill="url(#v13IncomeFill)"/><path data-v13-income-line class="v13-chart-line" pathLength="1" d="${line}" fill="none" stroke="#b38c45" stroke-width="2.6" stroke-linejoin="miter" stroke-linecap="round"/>`:''}${points.map(point=>`<circle ${point.entry?'data-v13-income-point="'+E(point.entry.id)+'"':'data-v13-income-start'} cx="${point.x}" cy="${point.y}" r="3.4" fill="#b38c45" stroke="#fffdf7" stroke-width="1.7"><title>${point.entry?point.entry.day+' · '+E(point.entry.source)+' · '+E(moneyText(point.entry.amount,point.entry.currency)):'Початок · 0 ₴'}</title></circle>`).join('')}<text x="${L}" y="${H-9}" fill="#8e9884" font-size="10">${dateLabel(data.start)}</text><text x="${R}" y="${H-9}" text-anchor="end" fill="#8e9884" font-size="10">${dateLabel(data.end)}</text></svg>`;
 }
 function incomeSummary(data){
@@ -19425,21 +19474,22 @@ function renderStats(){
   if(!initialized||!$('#pg-review'))return;
   plannerStageSync();const shell=$('#pg-review .review-shell');let box=$('#plannerDailyStats');
   if(!box){box=document.createElement('section');box.id='plannerDailyStats';box.className='planner-stat-card v13-analytics';$('.review-head',shell).insertAdjacentElement('afterend',box);}
-  const end=nowDay(),rawStart=statsRange==='all'?START:dayAdd(end,1-Number(statsRange)),start=rawStart<START?START:rawStart,started=end>=START,dayCount=started?Math.round((pd(end)-pd(start))/86400000)+1:0;
-  const rows=Array.from({length:dayCount},(_,i)=>rowFor(dayAdd(start,i))),active=rows.filter(row=>row.total),total=rows.reduce((sum,row)=>sum+row.total,0),done=rows.reduce((sum,row)=>sum+row.done,0),avg=active.length?Math.round(active.reduce((sum,row)=>sum+row.pct,0)/active.length):0,ht=rows.reduce((sum,row)=>sum+row.habits.total,0),hd=rows.reduce((sum,row)=>sum+row.habits.done,0),late=overdue(),income=incomeData(start,end),stages=stageStats(start,end),stageDone=stages.reduce((sum,sphere)=>sum+sphere.done,0),habitPct=ht?Math.round(hd/ht*100):null;
+  const {start,end}=analyticsPeriodV20(),started=end>=START,dayCount=started?Math.round((pd(end)-pd(start))/86400000)+1:0;
+  const rows=Array.from({length:dayCount},(_,i)=>rowFor(dayAdd(start,i))),active=rows.filter(row=>row.total),total=rows.reduce((sum,row)=>sum+row.total,0),done=rows.reduce((sum,row)=>sum+row.done,0),avg=active.length?Math.round(active.reduce((sum,row)=>sum+row.pct,0)/active.length):0,ht=rows.reduce((sum,row)=>sum+row.habits.total,0),hd=rows.reduce((sum,row)=>sum+row.habits.done,0),late=overdue().filter(item=>item.due>=start&&item.due<=end),income=incomeData(start,end),stages=stageStats(start,end),stageDone=stages.reduce((sum,sphere)=>sum+sphere.done,0),habitPct=ht?Math.round(hd/ht*100):null;
   $('.review-head h2',shell).textContent='Аналітичний центр';$('.review-kicker',shell).textContent='МІЙ ПРОГРЕС';$('#reviewWeekLabel').textContent=started?dateLabel(start)+' — '+dateLabel(end)+' · '+end.slice(0,4)+' · облік від 01.11.2026':'Облік від 01.11.2026';
   box.classList.add('v13-analytics');box.classList.toggle('v12-stats-not-started',!started);
   const key=JSON.stringify([start,end,statsRange,rows,late,income,stages.map(sphere=>[sphere.id,sphere.name,sphere.total,sphere.rows.map(row=>[row.stage.id,row.day])]),visibleSeries,dailyExpanded,innerWidth<=600]);
   if(key===statsMarkupKey&&box.children.length)return;statsMarkupKey=key;
   const recent=rows.slice(-7),tableRows=(dailyExpanded?rows:rows.slice(-14)).slice().reverse();
-  box.innerHTML=`<div class="v13-toolbar"><span class="v13-cycle"><i></i> Відлік із 1 листопада 2026</span><div class="planner-stat-ranges" role="group" aria-label="Період аналітики">${[['7','7 днів'],['30','30 днів'],['90','90 днів'],['all','Від старту']].map(([value,label])=>`<button type="button" data-stat-range="${value}" class="${value===statsRange?'active':''}" aria-pressed="${value===statsRange}">${label}</button>`).join('')}</div></div>
+  box.innerHTML=`<div class="v13-toolbar"><span class="v13-cycle"><i></i> Відлік із 1 листопада 2026</span><div class="v20-period-controls">${analyticsPeriodControlV20(start,end)}<div class="planner-stat-ranges" role="group" aria-label="Період аналітики">${[['7','7 днів'],['30','30 днів'],['90','90 днів'],['all','Від старту']].map(([value,label])=>`<button type="button" data-stat-range="${value}" class="${value===statsRange?'active':''}" aria-pressed="${value===statsRange}">${label}</button>`).join('')}</div></div></div>
   <div class="planner-stat-kpis v13-kpis"><article class="planner-stat-kpi"><span>Виконано завдань</span><strong data-stat-done>${done}<em> / ${total}</em></strong><small>із запланованих за період</small><div class="v13-kpi-meter"><i style="width:${total?done/total*100:0}%"></i></div></article><article class="planner-stat-kpi"><span>Середнє за день</span><strong data-stat-average>${avg}%</strong><small>${active.length} ${analyticsNoun(active.length,['день','дні','днів'])} із завданнями</small><div class="v13-kpi-meter"><i style="width:${avg}%"></i></div></article><article class="planner-stat-kpi gold"><span>Дотримання звичок</span><strong data-stat-habits>${habitPct===null?'—':habitPct+'%'}</strong><small>${hd} із ${ht} виконань</small><div class="v13-kpi-meter"><i style="width:${habitPct||0}%"></i></div></article><article class="planner-stat-kpi"><span>Завершено етапів</span><strong data-stat-stages>${stageDone}</strong><small>у сферах за цей період</small><span class="v13-kpi-status ${late.length?'late':''}"><i></i><span data-stat-overdue>${late.length}</span> прострочених</span></article></div>
-  <section class="v13-panel v13-rhythm"><div class="v13-panel-head"><div><span class="v13-eyebrow">Завдання та звички</span><h3>Ритм виконання</h3></div><div class="v13-series" role="group" aria-label="Лінії графіка">${[['task','Завдання'],['habit','Звички']].map(([key,label])=>`<button type="button" data-stat-series="${key}" aria-pressed="${visibleSeries[key]}" class="${key==='habit'?'gold ':''}${visibleSeries[key]?'active':''}"><i></i>${label}</button>`).join('')}</div></div>${statsChart(rows)}<p class="v13-note">Лише фактичні відмітки. Дні без плану не знижують середнє; до першого виконання — стартова точка.</p></section>
+  <section class="v13-panel v13-rhythm"><div class="v13-panel-head"><div><span class="v13-eyebrow">Завдання та звички</span><h3>Ритм виконання</h3></div><div class="v13-series" role="group" aria-label="Лінії графіка">${[['task','Завдання'],['habit','Звички']].map(([key,label])=>`<button type="button" data-stat-series="${key}" aria-pressed="${visibleSeries[key]}" class="${key==='habit'?'gold ':''}${visibleSeries[key]?'active':''}"><i></i>${label}</button>`).join('')}</div></div>${statsChart(rows)}<div class="v20-rhythm-key"><span><i></i>Завдання <b>${done} / ${total}</b></span><span class="gold"><i></i>Звички <b>${hd} / ${ht}</b></span></div><p class="v13-note">Точки показують фактичний результат дня. Пунктир дає змогу бачити обидві лінії за однакових значень. Дні без плану не знижують середнє.</p></section>
   <div class="v13-finance-grid">${incomeSummary(income)}<section class="v13-panel v13-income-trend"><div class="v13-panel-head"><div><span class="v13-eyebrow">Накопичення за період</span><h3>Як зростає дохід</h3></div><span class="v13-unit">UAH</span></div>${incomeChart(income)}<p class="v13-note">Кожна точка — записаний дохід. Суми в інших валютах перераховуються за твоїми курсами у фінансах.</p></section></div>
   <div class="v13-detail-grid"><section class="v13-panel v13-spheres"><div class="v13-panel-head"><div><span class="v13-eyebrow">Крок за кроком</span><h3>Поступ у сферах</h3></div><span class="v13-count">${stageDone} ${analyticsNoun(stageDone,['етап','етапи','етапів'])}</span></div><div class="v13-sphere-list">${stages.map(sphere=>`<button type="button" class="v13-sphere-row" data-stat-sphere="${E(sphere.id)}"><span class="v13-sphere-name"><i style="--source-color:${sourceColor(sphere.name)}"></i><span>${E(sphere.name)}</span></span><span class="v13-sphere-meter"><i style="width:${sphere.total?sphere.done/sphere.total*100:0}%"></i></span><b>${sphere.done}<small> / ${sphere.total}</small></b><span aria-hidden="true">↗</span></button>`).join('')||'<div class="v13-soft-empty">Додай етапи у сферах — тут з’явиться поступ.</div>'}</div><p class="v13-note">Один виконаний етап — одна точка на графіку сфери. Скасування відмітки прибирає її.</p></section>
   <section class="v13-panel v13-habits"><div class="v13-panel-head"><div><span class="v13-eyebrow">Щоденна послідовність</span><h3>Ритм звичок</h3></div><button type="button" class="v13-text-button" data-stat-habits-open>Трекер ↗</button></div><div class="v13-habit-score"><strong>${habitPct===null?'—':habitPct+'%'}</strong><span>${hd} виконань<br>за вибраний період</span></div><div class="v13-habit-days">${recent.map(row=>`<div class="v13-habit-day"><span>${dateLabel(row.day)}</span><i class="${row.habits.done?'has-completion':''}" style="--habit-fill:${row.habits.total?row.habits.done/row.habits.total:0}" title="${row.habits.done} з ${row.habits.total}">${row.habits.total?row.habits.done:'·'}</i><small>${row.habits.total?row.habitPct+'%':'—'}</small></div>`).join('')}</div><p class="v13-note">${recent.length===1?'Останній':'Останні'} ${recent.length} ${analyticsNoun(recent.length,['день','дні','днів'])} періоду. Кожна відмітка одразу змінює результат.</p></section></div>
-  <div class="v13-bottom-grid"><section class="v13-panel"><div class="v13-panel-head"><div><span class="v13-eyebrow">Результат кожного дня</span><h3>Денний зріз</h3></div>${rows.length>14?`<button type="button" class="v13-text-button" data-stat-expand>${dailyExpanded?'Останні 14':'Усі дні'}</button>`:''}</div><div class="v13-table-scroll"><table class="planner-stat-table"><thead><tr><th>Дата</th><th>Завдання</th><th>Звички</th><th>Виконано</th></tr></thead><tbody>${tableRows.map(row=>`<tr data-stat-day="${row.day}"><td>${dateLabel(row.day)}</td><td>${row.done}<span> / ${row.total}</span></td><td>${row.habits.total?row.habits.done+' / '+row.habits.total:'—'}</td><td><b>${row.pct==null?'—':row.pct+'%'}</b></td></tr>`).join('')||'<tr><td colspan="4">Облік почнеться 01.11.2026</td></tr>'}</tbody></table></div></section><section class="v13-panel v13-deadlines"><div class="v13-panel-head"><div><span class="v13-eyebrow">Поточний стан</span><h3>Контроль дедлайнів</h3></div><span class="v13-status-dot ${late.length?'late':''}"></span></div>${late.length?`<strong class="v13-deadline-number">${late.length}</strong><p class="v13-muted">Незавершені завдання з простроченим терміном</p>`+late.slice(0,8).map(item=>`<button type="button" class="v13-late-row" data-stat-late="${E(item.key)}"><b>${E(item.name)}</b><span>${dateLabel(item.due)} ↗</span></button>`).join(''):'<div class="v13-deadline-clear"><span>✓</span><strong>Усе під контролем</strong><p>Прострочених дедлайнів від 1 листопада немає.</p></div>'}</section></div>`;
-  $$('[data-stat-range]',box).forEach(button=>button.onclick=()=>{statsRange=button.dataset.statRange;dailyExpanded=false;renderStats();});
+  <div class="v13-bottom-grid"><section class="v13-panel"><div class="v13-panel-head"><div><span class="v13-eyebrow">Результат кожного дня</span><h3>Денний зріз</h3></div>${rows.length>14?`<button type="button" class="v13-text-button" data-stat-expand>${dailyExpanded?'Останні 14':'Усі дні'}</button>`:''}</div><div class="v13-table-scroll"><table class="planner-stat-table"><thead><tr><th>Дата</th><th>Завдання</th><th>Звички</th><th>Виконано</th></tr></thead><tbody>${tableRows.map(row=>`<tr data-stat-day="${row.day}"><td>${dateLabel(row.day)}</td><td>${row.done}<span> / ${row.total}</span></td><td>${row.habits.total?row.habits.done+' / '+row.habits.total:'—'}</td><td><b>${row.pct==null?'—':row.pct+'%'}</b></td></tr>`).join('')||'<tr><td colspan="4">Облік почнеться 01.11.2026</td></tr>'}</tbody></table></div></section><section class="v13-panel v13-deadlines"><div class="v13-panel-head"><div><span class="v13-eyebrow">Вибраний період</span><h3>Контроль дедлайнів</h3></div><span class="v13-status-dot ${late.length?'late':''}"></span></div>${late.length?`<strong class="v13-deadline-number">${late.length}</strong><p class="v13-muted">Незавершені завдання, термін яких минув у вибраному періоді</p>`+late.slice(0,8).map(item=>`<button type="button" class="v13-late-row" data-stat-late="${E(item.key)}"><b>${E(item.name)}</b><span>${dateLabel(item.due)} ↗</span></button>`).join(''):'<div class="v13-deadline-clear"><span>✓</span><strong>Усе під контролем</strong><p>Незавершених прострочених завдань у цьому періоді немає.</p></div>'}</section></div>`;
+  bindAnalyticsPeriodV20(box);bindAnalyticsTooltipV20(box);
+  $$('[data-stat-range]',box).forEach(button=>button.onclick=()=>{setAnalyticsPeriodV20(button.dataset.statRange);});
   $$('[data-stat-series]',box).forEach(button=>button.onclick=()=>{const key=button.dataset.statSeries;if(visibleSeries[key]&&Object.values(visibleSeries).filter(Boolean).length===1)return;visibleSeries[key]=!visibleSeries[key];renderStats();});
   $$('[data-stat-sphere]',box).forEach(button=>button.onclick=()=>INVESTOR_V8.openSphere(button.dataset.statSphere));
   $('[data-stat-expand]',box)?.addEventListener('click',()=>{dailyExpanded=!dailyExpanded;renderStats();});
@@ -19459,7 +19509,12 @@ function progressChart(sid,scope,mini=false){return plannerStageChart(sid,scope,
 
 function init(){
  if(!window.plannerReady||!window.INVESTOR_V9||!window.INVESTOR_V8){setTimeout(init,70);return;}
- if(initialized)return;initialized=true;purgeUnwanted();reconcileSources();
+ if(initialized)return;initialized=true;
+ const view=DB.analyticsViewV20;if(view&&['7','30','90','all','custom'].includes(view.preset)){
+  if(view.preset!=='custom')statsRange=view.preset;
+  else if(fin2ValidDate(view.start)&&fin2ValidDate(view.end)&&view.start<=view.end){statsRange='custom';customStatsRange={start:view.start,end:view.end};}
+ }
+ purgeUnwanted();reconcileSources();
  const history=statsStore(),today=nowDay();for(let n=90;n>0;n--){const day=dayAdd(today,-n);if(day>=HAB_TRACKING_START&&!history[day])history[day]={items:dayItems(day),habits:habitDay(day)};}
  const scheduled=scheduledTasksFor;scheduledTasksFor=function(day){return scheduled(day).filter(t=>!t.archived&&sourceValid(t))};
  const oldToday=rToday;rToday=function(...a){const out=oldToday.apply(this,a);decorateToday();return out};
@@ -19474,7 +19529,7 @@ function init(){
  });observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pagehide',()=>{captureStats();try{localStorage.setItem('inv_v19',JSON.stringify(DB))}catch(_){}});
  window.addEventListener('focus',()=>{updateFocusTimerUI();if(document.body.dataset.page==='review')renderStats()});
- window.plannerRepairs={dayItems,rowFor,overdue,kinds,routeToday,progressChart,captureStats};window.plannerAnalytics={start:START,incomeData,stagePoints:plannerStagePoints,stageRows:plannerStageRows,stageSync:plannerStageSync};
+ window.plannerRepairs={dayItems,rowFor,overdue,kinds,routeToday,progressChart,captureStats};window.plannerAnalytics={period:analyticsPeriodV20,selectPeriod:setAnalyticsPeriodV20,curve:analyticsCurveV20,start:START,incomeData,stagePoints:plannerStagePoints,stageRows:plannerStageRows,stageSync:plannerStageSync};
  let analyticsWidth=innerWidth<=600,lastAnalyticsDay=nowDay();window.addEventListener('resize',()=>{const narrow=innerWidth<=600;if(narrow!==analyticsWidth){analyticsWidth=narrow;statsMarkupKey='';if(document.body.dataset.page==='review')renderStats();}});setInterval(()=>{const day=nowDay();if(day!==lastAnalyticsDay){lastAnalyticsDay=day;plannerStageSync();captureStats();rToday();if(document.body.dataset.page==='review')renderStats();}},30000);
  save();rToday();rSph();if(document.body.dataset.page==='review')renderStats();
 }
@@ -20334,4 +20389,60 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+<style id="analytics-period-and-trends-v20">
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-toolbar{align-items:center!important;gap:16px!important;margin-bottom:22px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-controls{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;min-width:0}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button{display:flex;align-items:center;gap:12px;min-width:225px;min-height:50px;padding:8px 13px;border:1px solid #dacfaf!important;border-radius:12px!important;background:linear-gradient(125deg,#fffdf8,#faf6e9)!important;box-shadow:0 3px 10px #56614305;cursor:pointer;text-align:left;color:#365c45!important;letter-spacing:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button>svg{width:21px;height:21px;flex:0 0 21px;color:#aa8946}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button>span{min-width:0;display:grid;gap:3px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button small{font:400 10px/1.2 'Segoe UI',Arial,sans-serif!important;color:#8c927b!important;text-transform:none!important;letter-spacing:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button strong{font:600 12px/1.4 'Segoe UI',Arial,sans-serif!important;color:#365c45!important;letter-spacing:.01em!important;white-space:nowrap}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button>.v20-period-chevron{width:14px;height:14px;flex-basis:14px;margin-left:auto;color:#9c8d62}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button:hover,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button[aria-expanded=true]{border-color:#ba9d58!important;background:#fffdf7!important;box-shadow:0 3px 13px #8c773411}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button:focus-visible{outline:2px solid #b2995e!important;outline-offset:3px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-panel-head{align-items:center!important;margin-bottom:15px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series{gap:7px!important;flex-wrap:wrap}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button{color:#86917c!important;background:transparent!important;font:500 11px/1.4 'Segoe UI',Arial,sans-serif!important;min-height:35px!important;padding:6px 10px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.active{background:#f0f4eaff!important;border-color:#e1e8d8!important;color:#2e7356!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.gold.active{color:#a37c31!important;background:#fbf5e6!important;border-color:#eee1c0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button i{width:23px!important;height:3px!important;border-radius:3px!important;background:#2e7356!important;opacity:.35!important;box-shadow:none!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.active i{opacity:1!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.gold i{height:0!important;background:none!important;border-top:2px dashed #bd9545!important;border-radius:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-frame{position:relative;min-width:0;padding-top:7px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-series-reveal{animation:v20SeriesReveal .48s cubic-bezier(.2,.65,.3,1) both}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-hit{cursor:crosshair;outline:none}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-hit:focus-visible{fill:#aabb970a;stroke:#aabb9766;stroke-width:1;rx:3}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip{position:absolute;top:8px;z-index:3;min-width:194px;max-width:100%;padding:12px 14px;border:1px solid #d9cbaa;border-radius:12px;background:#fffdf8f5;box-shadow:0 8px 28px #344b2820;backdrop-filter:blur(9px);pointer-events:none;box-sizing:border-box}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip[hidden]{display:none!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip time{display:block;font:600 12px/1.4 'Segoe UI',Arial,sans-serif;color:#365c45;margin-bottom:9px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip>span{display:flex;align-items:center;gap:6px;font:400 11px/1.5 'Segoe UI',Arial,sans-serif;color:#78866f;margin-top:5px;white-space:nowrap}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip i{height:6px;width:6px;border-radius:50%;background:#2e7356;flex-shrink:0}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip b{margin-left:auto;padding-left:14px;font-weight:600;color:#2e7356}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip .gold i{background:#bd9545}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip .gold b{color:#ab8436}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 0;font:400 11px/1.5 'Segoe UI',Arial,sans-serif;color:#7b886f}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key>span{display:inline-flex;align-items:center;gap:7px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key i{display:block;width:21px;height:3px;background:#2e7356;border-radius:3px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key .gold i{height:0;border-top:2px dashed #bd9545;background:none;border-radius:0}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key b{color:#2e7356;font-weight:600}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key .gold b{color:#ab8436}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-note{margin-top:9px!important}
+@keyframes v20SeriesReveal{from{opacity:.15;clip-path:inset(-8px 100% -8px -8px)}to{opacity:1;clip-path:inset(-8px -8px -8px -8px)}}
+@media(max-width:1050px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-controls{gap:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-toolbar{align-items:flex-start!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button{min-width:218px}}
+@media(max-width:600px){
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-toolbar{gap:12px!important;margin-bottom:17px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-controls{display:grid;grid-template-columns:1fr;gap:9px;width:100%}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button{width:100%;min-width:0;min-height:51px;padding:9px 12px;gap:11px}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-period-button strong{font-size:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-panel-head{align-items:flex-start!important;gap:11px!important;margin-bottom:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series{margin:0!important;gap:6px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button{padding:6px 9px!important;font-size:11px!important;min-height:35px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-frame{padding-top:5px}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip{padding:10px 11px;min-width:188px}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key{gap:12px;font-size:10px;margin-top:9px}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-note{font-size:10px!important;line-height:1.6!important}
+}
+@media(prefers-reduced-motion:reduce){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-series-reveal{animation:none!important;clip-path:none!important}}
+
+</style>
 </body></html>
