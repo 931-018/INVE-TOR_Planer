@@ -11602,16 +11602,22 @@ body{
     Object.values(DB.done||{}).forEach(day=>{if(day&&Object.prototype.hasOwnProperty.call(day,taskId))delete day[taskId]});
   }
   function normalizeTaskDates(t){
-    let a=t.dateStart||t.dateEnd||'',b=t.dateEnd||t.dateStart||'';
-    if(a&&b&&b<a)[a,b]=[b,a];
-    t.dateStart=a;t.dateEnd=b;
-    return {a,b};
+    let start=t.dateStart||'',end=t.dateEnd||'';
+    if(start&&end&&end<start)[start,end]=[end,start];
+    t.dateStart=start;t.dateEnd=end;
+    // A single dated endpoint schedules one day without filling the other field.
+    return {a:start||end,b:end||start};
   }
-  function syncLinkedTask(s,t){
+  function syncLinkedTask(s,t,{clearEmptyDates=false}={}){
     DB.tasks=Array.isArray(DB.tasks)?DB.tasks:[];
     let link=linkedTask(s,t);
+    const undated=!t.dateStart&&!t.dateEnd;
+    if(clearEmptyDates&&undated)t.inToday=false;
     if(!t.inToday){
-      if(link)link.off=true;
+      if(link){
+        link.off=true;
+        if(clearEmptyDates&&undated){link.date='';link.dateStart='';link.dateEnd='';link.days=[];}
+      }
       return;
     }
     if(!t.dateStart&&!t.dateEnd)t.dateStart=t.dateEnd=todayISO();
@@ -11739,7 +11745,7 @@ body{
     const saveProjectDates=()=>{
       let a=pStart.value||'',b=pEnd.value||'';
       if(a&&b&&b<a)[a,b]=[b,a];
-      s.deadlineStart=a;s.deadlineEnd=b;s.updatedAt=todayISO();save();renderV5Projects();
+      s.deadlineStart=a;s.deadlineEnd=b;pStart.value=a;pEnd.value=b;s.updatedAt=todayISO();save();renderV5Projects();
     };
     pStart.onchange=saveProjectDates;pEnd.onchange=saveProjectDates;
 
@@ -11758,12 +11764,12 @@ body{
     box.querySelectorAll('[data-v5from]').forEach(i=>i.onchange=()=>{
       const t=s.tasks.find(x=>String(x.id)===String(i.dataset.v5from));if(!t)return;
       t.dateStart=i.value||'';
-      normalizeTaskDates(t);syncLinkedTask(s,t);s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
+      normalizeTaskDates(t);syncLinkedTask(s,t,{clearEmptyDates:true});s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
     });
     box.querySelectorAll('[data-v5to]').forEach(i=>i.onchange=()=>{
       const t=s.tasks.find(x=>String(x.id)===String(i.dataset.v5to));if(!t)return;
       t.dateEnd=i.value||'';
-      normalizeTaskDates(t);syncLinkedTask(s,t);s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
+      normalizeTaskDates(t);syncLinkedTask(s,t,{clearEmptyDates:true});s.updatedAt=todayISO();save();renderV5SprintModal();renderV5Projects();rToday();
     });
     box.querySelectorAll('[data-v5work]').forEach(b=>b.onclick=()=>{
       const t=s.tasks.find(x=>String(x.id)===String(b.dataset.v5work));if(!t)return;
