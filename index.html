@@ -8336,17 +8336,66 @@ function initRossmannModule(){
       }
       @media(max-width:380px){.miniStats{grid-template-columns:1fr 1fr}.timeGrid{grid-template-columns:1fr}.day{min-height:56px}.entry{font-size:7px}.stat strong{font-size:18px}.rangeBar{grid-template-columns:repeat(2,minmax(0,1fr))}.rangeBtn[data-range="custom"]{grid-column:auto}.customRange.on{grid-template-columns:1fr}.customRangeSep{display:none}.customRangeMeta{grid-column:auto}.statsGrid{grid-template-columns:1fr 1fr}.sk strong{font-size:20px}}
     </style>
+    <style id="rossmann-compact-frames-v22">/* Only Rossmann mobile frames change; existing font sizes and line heights stay intact. */
+:host dialog.overlay{inset:0!important;margin:0!important;width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;border:0!important;box-sizing:border-box!important;color:inherit}
+:host dialog.overlay::backdrop{background:transparent}
+@media(max-width:700px){
+ :host .rs .editor{padding:13px 14px!important}
+ :host .rs .editor>.eyebrow{margin-bottom:5px!important}
+ :host .rs .editor .selectedTitle{gap:3px!important;margin-bottom:13px!important}
+ :host .rs .editor .timeGrid{gap:8px!important;margin:0 0 8px!important}
+ :host .rs .editor .timeGrid label{margin-bottom:5px!important}
+ :host .rs .editor .timeGrid input{height:42px!important;min-height:42px!important;padding:5px 9px!important;border-radius:10px!important}
+ :host .rs .editor .presets{gap:6px!important;margin-bottom:10px!important}
+ :host .rs .editor .presets button{min-height:32px!important;height:32px!important;padding:4px 5px!important;border-radius:9px!important}
+ :host .rs .editor .duration{gap:9px!important;margin:9px 0 10px!important;padding:0!important}
+ :host .rs .editor .ross-duration-stat{padding:9px 11px!important;border-radius:11px!important;min-height:0!important}
+ :host .rs .editor .ross-duration-stat>span{margin-bottom:3px!important}
+ :host .rs .editor .duration strong{margin:0!important}
+ :host .rs .editor .diffRow{margin:11px 0!important;padding:0!important}
+ :host .rs .editor .diffs{gap:7px!important}
+ :host .rs .editor .diff{width:34px!important;min-width:34px!important;height:34px!important;padding:5px!important;border-radius:10px!important}
+ :host .rs .editor .save{min-height:41px!important;padding:9px 10px!important;border-radius:10px!important}
+ :host .rs .editor .editorActions{gap:8px!important;margin-top:8px!important}
+ :host .rs .editor .editorActions button{min-height:35px!important;padding:7px!important;border-radius:9px!important}
+ :host .rs .miniStats{gap:8px!important}
+ :host .rs .miniStats .stat{padding:10px 11px!important;border-radius:11px!important}
+ :host .rs .countScope{padding:9px 11px!important;min-height:0!important;gap:9px!important;border-radius:11px!important}
+ :host .rs .countScopeInfo{width:auto!important;flex:1!important}
+ :host .rs .allHoursTag{height:auto!important;min-height:24px!important;padding:4px 7px!important;grid-column:auto!important}
+ :host .rs .toolbar{padding:8px!important;gap:6px!important}
+ :host .rs .toolbar :is(.nav,select){height:38px!important;min-height:38px!important}
+ :host .rs .toolbar .nav{width:38px!important}
+ :host .rs .toolbar .todayBtn{height:33px!important;min-height:33px!important}
+ :host .overlay .modalBody{padding:11px!important}
+ :host .overlay .rangeBar{gap:6px!important}
+ :host .overlay .rangeBtn{min-height:36px!important;padding:5px!important}
+ :host .overlay .rangeBtn[data-range=custom]{grid-column:auto!important}
+ :host .overlay .customRange input{height:40px!important;min-height:40px!important;padding:6px 8px!important}
+ :host .overlay .customRangeSep{height:40px!important}
+ :host .overlay .customRangeMeta{min-height:29px!important;padding:5px 8px!important}
+ :host .overlay .statsScopeNote{padding:8px 9px!important;margin:9px 0!important}
+ :host .overlay .statsGrid{gap:7px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ :host .overlay .statsGrid .sk{padding:9px 10px!important;border-radius:10px!important}
+ :host .overlay .chartCard{padding:9px!important;border-radius:11px!important}
+ :host .overlay .chartCard svg{min-height:0!important}
+ :host .overlay .bookToolbar{gap:6px!important}
+ :host .overlay .bookToolbar :is(select,.bookNav){min-height:38px!important;height:38px!important}
+ :host .overlay .bookNav{width:38px!important}
+ :host .overlay .ledgerRow{min-height:39px!important;padding:8px 9px!important}
+}
+</style>
     <div class="rs">
       <div class="top"><div class="brand"><div class="mark">R</div><b>Rossmann · Зміни</b></div><div class="topActions"><button class="btn journalBtn" id="openJournal" title="Записник змін"><span class="emoji">📓</span><span>Записник</span></button><button class="btn" id="openStats">Статистика</button></div></div>
       <div class="miniStats">
         <div class="stat"><small>Години · місяць</small><strong id="mHours">0</strong><em>год</em></div>
         <div class="stat"><small>Дохід · місяць</small><strong id="mIncome">0</strong><em>zł</em></div>
         <div class="stat"><small>Змін · місяць</small><strong id="mShifts">0</strong></div>
-        <div class="stat"><small id="rateLabel">Ставка</small><div class="rateWrap"><input id="rateInput" type="number" min="0" step="0.5"><em>zł/год</em></div></div>
+        <div class="stat"><small id="rateLabel">Ставка</small><div class="rateWrap"><input id="rateInput" type="number" min="0" step="0.01"><em>zł/год</em></div></div>
       </div>
       <div class="countScope">
-        <div class="countScopeInfo"><span class="countScopeDot"></span><div class="countScopeText"><small>Повна статистика</small><b>Зміни + вихідні</b></div></div>
-        <div class="countScopeControls"><span>від</span><select class="countScopeMonth" id="countStartMonth" aria-label="Місяць початку повної статистики"></select><select class="countScopeYear" id="countStartYear" aria-label="Рік початку повної статистики"></select><span class="allHoursTag">Години · весь період</span></div>
+        <div class="countScopeInfo"><span class="countScopeDot"></span><div class="countScopeText"><small>Історія змін</small><b id="rossHistoryLabel">Усі збережені записи</b></div></div>
+        <div class="countScopeControls" hidden style="display:none!important"><span>від</span><select class="countScopeMonth" id="countStartMonth" aria-label="Місяць початку повної статистики"></select><select class="countScopeYear" id="countStartYear" aria-label="Рік початку повної статистики"></select><span class="allHoursTag">Години · весь період</span></div>
       </div>
       <div class="shell">
         <div class="toolbar">
@@ -8383,7 +8432,7 @@ function initRossmannModule(){
       <div class="ledger" id="journalBook"></div>
     </div></div></div>
     <div class="overlay" id="statsOverlay"><div class="modal"><div class="modalHead"><b>Статистика · Rossmann</b><button class="close" id="closeStats">×</button></div><div class="modalBody">
-      <div class="rangeBar"><button class="rangeBtn" data-range="month">Місяць</button><button class="rangeBtn" data-range="2m">2 місяці</button><button class="rangeBtn on" data-range="6m">6 місяців</button><button class="rangeBtn" data-range="year">Рік</button><button class="rangeBtn" data-range="custom">Період</button></div>
+      <div class="rangeBar"><button class="rangeBtn on" data-range="all">Уся історія</button><button class="rangeBtn" data-range="month">Місяць</button><button class="rangeBtn" data-range="2m">2 місяці</button><button class="rangeBtn" data-range="6m">6 місяців</button><button class="rangeBtn" data-range="year">Рік</button><button class="rangeBtn" data-range="custom">Період</button></div>
       <div class="customRange" id="customRange">
         <label class="customRangeField"><span>Від</span><input id="rangeFrom" type="date" aria-label="Період від"></label>
         <span class="customRangeSep">→</span>
@@ -8399,9 +8448,19 @@ function initRossmannModule(){
   `;
 
   const $=s=>root.querySelector(s), $$=s=>[...root.querySelectorAll(s)];
+  // Native top-layer dialogs stay above the planner sidebar while retaining the existing UI.
+  for(const id of ['statsOverlay','journalOverlay']){
+    const old=root.querySelector('#'+id),dialog=document.createElement('dialog');
+    dialog.id=old.id;dialog.className=old.className;dialog.setAttribute('aria-label',id==='statsOverlay'?'Статистика Rossmann':'Записник змін Rossmann');
+    dialog.append(...old.childNodes);old.replaceWith(dialog);
+    const sync=()=>{if(dialog.classList.contains('open')){if(!dialog.open)dialog.showModal();}else if(dialog.open)dialog.close();};
+    new MutationObserver(sync).observe(dialog,{attributes:true,attributeFilter:['class']});
+    dialog.addEventListener('close',()=>{if(dialog.classList.contains('open'))dialog.classList.remove('open');});
+  }
+
   const months=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
   const monthsShort=['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
-  const state={year:0,month:0,selected:'',diff:'',statsRange:'6m',entries:[],journalYear:0,journalMonth:0};
+  const state={year:0,month:0,selected:'',diff:'',statsRange:'all',entries:[],journalYear:0,journalMonth:0};
   const pad=n=>String(n).padStart(2,'0');
   const localIso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   const todayIso=()=>localIso(new Date());
@@ -8420,41 +8479,33 @@ function initRossmannModule(){
   }
   window.rossmannRotationForDate=rotationForDate;
   const uid=()=>`rs_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-  const hfmt=n=>{const x=Math.round((Number(n)||0)*10)/10;return Number.isInteger(x)?String(x):x.toFixed(1).replace('.',',')};
-  const money=n=>Math.round((Number(n)||0)*100)/100;
+  const hfmt=n=>(Math.round((Number(n)||0)*100)/100).toLocaleString('uk-UA',{maximumFractionDigits:2});
+  const money=n=>Math.round(((Number(n)||0)+Number.EPSILON)*100)/100;
   const monthKey=(y,m)=>`${y}-${pad(m+1)}`;
-  const defaultRate=()=>Math.max(0,Number(DB.rossmann&&DB.rossmann.rate)||27.5);
-  const rateFor=(y,m)=>{
-    const k=monthKey(y,m),v=DB.rossmann&&DB.rossmann.rates?Number(DB.rossmann.rates[k]):NaN;
-    return Number.isFinite(v)&&v>=0?v:defaultRate();
-  };
+  const parseRate=value=>{if(value==null||String(value).trim()==='')return null;const n=Number(String(value).trim().replace(',','.'));return Number.isFinite(n)&&n>=0?n:null;};
+  const defaultRate=()=>parseRate(DB.rossmann?.rate)??27.5;
+  const rateFor=(y,m)=>parseRate(DB.rossmann?.rates?.[monthKey(y,m)])??defaultRate();
   const currentRate=()=>rateFor(state.year,state.month);
   const entryRate=e=>{
     if(!e||!e.date)return defaultRate();
     const [y,m]=e.date.split('-').map(Number);
     return rateFor(y,m-1);
   };
-  function syncRateInput(){
-    const v=currentRate();
-    if(document.activeElement!==$('#rateInput'))$('#rateInput').value=String(v);
-    const lbl=$('#rateLabel');if(lbl)lbl.textContent=`Ставка · ${months[state.month]}`;
+  function syncRateInput(force=false){
+    const input=$('#rateInput'),key=monthKey(state.year,state.month),changed=input.dataset.rateMonth!==key;
+    if(force||changed||root.activeElement!==input)input.value=String(currentRate());input.dataset.rateMonth=key;
+    const label=$('#rateLabel');if(label)label.textContent='Ставка · '+months[state.month];
   }
   function saveCurrentRate(){
-    const v=Math.max(0,Number($('#rateInput').value)||0),k=monthKey(state.year,state.month);
-    if(!DB.rossmann.rates||typeof DB.rossmann.rates!=='object')DB.rossmann.rates={};
-    DB.rossmann.rates[k]=v;
-    save();
+    const value=parseRate($('#rateInput').value);if(value===null)return false;
+    DB.rossmann.rates=DB.rossmann.rates||{};DB.rossmann.rates[monthKey(state.year,state.month)]=value;save();return true;
   }
-  function firstRecordedMonth(){
-    const keys=(DB.rossmann&&Array.isArray(DB.rossmann.entries)?DB.rossmann.entries:[]).filter(e=>e&&e.date).map(e=>e.date.slice(0,7)).sort();
-    return keys[0]||monthKey(new Date().getFullYear(),new Date().getMonth());
-  }
-  function countStatsFrom(){
-    const v=DB.rossmann&&typeof DB.rossmann.countStatsFrom==='string'?DB.rossmann.countStatsFrom:'';
-    const floor=START.slice(0,7);return /^\d{4}-\d{2}$/.test(v)&&v>floor?v:floor;
-  }
-  function countEligible(e){return !!(e&&e.date&&e.date>=START&&e.date<=todayIso()&&e.date.slice(0,7)>=countStatsFrom())}
-  function countCalc(es){const clean=(es||[]).filter(countEligible);return{shifts:clean.filter(e=>e.type==='shift'),offs:clean.filter(e=>e.type==='off')}}
+  function recordedDates(){return (Array.isArray(DB.rossmann?.entries)?DB.rossmann.entries:[]).map(e=>e?.date).filter(validDay).sort();}
+  function firstRecordedMonth(){return (recordedDates()[0]||todayIso()).slice(0,7);}
+  function countStatsFrom(){return firstRecordedMonth();}
+  function countEligible(e){return validDay(e?.date)&&(e.type==='off'||e.type==='shift'&&shiftMinutes(e)>0);}
+  function countCalc(es){const s=calc(es);return {shifts:s.shifts,offs:s.offs};}
+
   function ensureCountYearOption(y){
     const sel=$('#countStartYear');if(!sel||[...sel.options].some(o=>Number(o.value)===Number(y)))return;
     const o=document.createElement('option');o.value=String(y);o.textContent=String(y);sel.appendChild(o);
@@ -8463,12 +8514,9 @@ function initRossmannModule(){
   function syncCountStart(){
     const k=countStatsFrom(),[y,m]=k.split('-').map(Number);ensureCountYearOption(y);
     if($('#countStartMonth'))$('#countStartMonth').value=String(Math.max(0,m-1));
-    if($('#countStartYear'))$('#countStartYear').value=String(y);
+    if($('#countStartYear'))$('#countStartYear').value=String(y);const dates=recordedDates(),label=$('#rossHistoryLabel');if(label)label.textContent=dates.length?'Усі записи від '+dates[0].split('-').reverse().join('.'): 'Ще немає збережених записів';
   }
-  function saveCountStart(){
-    const y=Number($('#countStartYear').value),m=Number($('#countStartMonth').value);if(!Number.isFinite(y)||!Number.isFinite(m))return;
-    DB.rossmann.countStatsFrom=monthKey(y,m)<START.slice(0,7)?START.slice(0,7):monthKey(y,m);save();syncCountStart();renderMini();if($('#statsOverlay').classList.contains('open'))renderStats();toast(`Повна статистика від ${months[m]} ${y}`);
-  }
+  function saveCountStart(){syncCountStart();renderAll();}
   const NOTION_AUG_2026_ENTRIES=[
     {id:'rs_notion_20260801',date:'2026-08-01',type:'shift',start:'06:00',end:'14:00',diff:'',source:'notion'},
     {id:'rs_notion_20260802',date:'2026-08-02',type:'shift',start:'22:00',end:'06:00',diff:'',source:'notion'},
@@ -8503,9 +8551,8 @@ function initRossmannModule(){
     if(!DB.rossmann.rates||typeof DB.rossmann.rates!=='object'||Array.isArray(DB.rossmann.rates))DB.rossmann.rates={};
     if(typeof DB.rossmann.countStatsFrom!=='string')DB.rossmann.countStatsFrom='';
     if(!DB.rossmann.notionAug2026ImportedV1){
-      const importedDates=new Set(NOTION_AUG_2026_ENTRIES.map(e=>e.date));
-      DB.rossmann.entries=DB.rossmann.entries.filter(e=>!importedDates.has(e&&e.date));
-      DB.rossmann.entries.push(...NOTION_AUG_2026_ENTRIES.map(e=>({...e})));
+      const existingDates=new Set(DB.rossmann.entries.map(e=>e&&e.date));
+      DB.rossmann.entries.push(...NOTION_AUG_2026_ENTRIES.filter(e=>!existingDates.has(e.date)).map(e=>({...e})));
       DB.rossmann.entries.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
       DB.rossmann.notionAug2026ImportedV1=true;
       save();
@@ -8520,10 +8567,27 @@ function initRossmannModule(){
     DB.rossmann.entries=state.entries;
     save();
   }
-  function mins(t){if(!/^\d{2}:\d{2}$/.test(t||''))return 0;const[h,m]=t.split(':').map(Number);return h*60+m}
-  function hoursOf(e){if(!e||e.type!=='shift')return 0;let a=mins(e.start),b=mins(e.end);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
-  function monthEntries(y,m){const p=`${y}-${pad(m+1)}-`;return state.entries.filter(e=>e.date&&e.date.startsWith(p)).sort((a,b)=>a.date.localeCompare(b.date))}
-  function calc(es){es=es.filter(e=>e.date>=START&&e.date<=todayIso());const shifts=es.filter(e=>e.type==='shift'),offs=es.filter(e=>e.type==='off'),hours=shifts.reduce((a,e)=>a+hoursOf(e),0),income=shifts.reduce((a,e)=>a+hoursOf(e)*entryRate(e),0);return{shifts,offs,hours,income,avg:shifts.length?hours/shifts.length:0,max:shifts.length?Math.max(...shifts.map(hoursOf)):0}}
+  function validDay(value){
+    if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+    const [y,m,d]=value.split('-').map(Number),date=new Date(y,m-1,d);
+    return y>=1900&&date.getFullYear()===y&&date.getMonth()===m-1&&date.getDate()===d;
+  }
+  function mins(value){if(!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value||''))return null;const [h,m]=value.split(':').map(Number);return h*60+m;}
+  function shiftMinutes(entry){
+    if(!entry||entry.type!=='shift')return 0;
+    const a=mins(entry.start),b=mins(entry.end);if(a===null||b===null||a===b)return 0;
+    return b>a?b-a:1440-a+b;
+  }
+  function hoursOf(entry){return shiftMinutes(entry)/60;}
+  function durationMarkup(hours){const minutes=Math.round(hours*60),h=Math.floor(minutes/60),m=minutes%60;return m?(h?h+' <em>год</em> ':'')+m+' <em>хв</em>':h+' <em>год</em>';}
+  function entryPay(entry){return money(shiftMinutes(entry)*entryRate(entry)/60);}
+  function monthEntries(y,m){const prefix=monthKey(y,m)+'-';return state.entries.filter(e=>validDay(e?.date)&&e.date.startsWith(prefix)).slice().sort((a,b)=>a.date.localeCompare(b.date));}
+  function calc(entries){
+    const clean=(entries||[]).filter(e=>validDay(e?.date)),shifts=clean.filter(e=>e.type==='shift'&&shiftMinutes(e)>0),offs=clean.filter(e=>e.type==='off');
+    const minutes=shifts.reduce((sum,e)=>sum+shiftMinutes(e),0),incomeCents=shifts.reduce((sum,e)=>sum+Math.round(entryPay(e)*100),0),hours=minutes/60;
+    return {shifts,offs,hours,income:incomeCents/100,avg:shifts.length?hours/shifts.length:0,max:shifts.length?Math.max(...shifts.map(hoursOf)):0};
+  }
+
   function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
   function fillSelectors(){
     const monthOptions=months.map((m,i)=>`<option value="${i}">${m}</option>`).join('');
@@ -8537,14 +8601,15 @@ function initRossmannModule(){
   }
   function setSelected(date){state.selected=date;applyRotationDefaults(date);renderEditor();renderCalendar()}
   function selectedEntry(){return state.entries.find(e=>e.date===state.selected)}
-  function renderEditor(){const d=parseDate(state.selected),r=rotationForDate(state.selected),e=selectedEntry();$('#selectedTitle').innerHTML=`<span class="ross-editor-weekday">${d.toLocaleDateString('uk-UA',{weekday:'long'})}</span><span class="ross-editor-date"><b>${d.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}</b><small>${d.getFullYear()}</small></span>`;const hrs=durationNow(),shiftIncome=money(hrs*selectedRateNow());$('#duration').innerHTML=`${hfmt(hrs)} <em>год</em>`;$('#shiftIncome').innerHTML=`${shiftIncome.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2})} <em>zł</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
-  function durationNow(){let a=mins($('#startTime').value),b=mins($('#endTime').value);if(b<=a)b+=1440;return Math.max(0,(b-a)/60)}
+  function renderEditor(){const d=parseDate(state.selected),r=rotationForDate(state.selected),e=selectedEntry();$('#selectedTitle').innerHTML=`<span class="ross-editor-weekday">${d.toLocaleDateString('uk-UA',{weekday:'long'})}</span><span class="ross-editor-date"><b>${d.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}</b><small>${d.getFullYear()}</small></span>`;const hrs=durationNow(),shiftIncome=entryPay({type:'shift',date:state.selected,start:$('#startTime').value,end:$('#endTime').value});$('#duration').innerHTML=durationMarkup(hrs);$('#shiftIncome').innerHTML=`${shiftIncome.toLocaleString('pl-PL',{minimumFractionDigits:0,maximumFractionDigits:2})} <em>zł</em>`;$$('.diff').forEach(b=>b.classList.toggle('on',b.dataset.d===state.diff));$('#deleteEntry').disabled=!e;$('#saveShift').textContent=e&&e.type==='shift'?'Оновити зміну':'Зберегти зміну'}
+  function durationNow(){return hoursOf({type:'shift',start:$('#startTime').value,end:$('#endTime').value});}
   function selectedRateNow(){
     if(!state.selected)return currentRate();
     const [y,m]=state.selected.split('-').map(Number);
     return rateFor(y,m-1);
   }
-  function renderMini(){syncRateInput();syncCountStart();const es=monthEntries(state.year,state.month),s=calc(es),cs=countCalc(es),eligible=monthKey(state.year,state.month)>=countStatsFrom();$('#mHours').textContent=hfmt(s.hours);$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});$('#mShifts').textContent=eligible?cs.shifts.length:'—';$('#mShifts').title=eligible?'Повна статистика місяця':`Не враховується у кількості змін до ${countStatsFrom()}` }
+  function renderMini(){syncRateInput();syncCountStart();const s=calc(monthEntries(state.year,state.month));$('#mHours').textContent=hfmt(s.hours);$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});$('#mShifts').textContent=String(s.shifts.length);$('#mShifts').title='Збережені зміни за обраний місяць';}
+
   function renderCalendar(){
     $('#monthSelect').value=String(state.month);$('#yearSelect').value=String(state.year);
     const first=new Date(state.year,state.month,1),offset=(first.getDay()+6)%7,start=new Date(state.year,state.month,1-offset),box=$('#days');box.innerHTML='';
@@ -8557,11 +8622,11 @@ function initRossmannModule(){
   }
   function goMonth(delta){const d=new Date(state.year,state.month+delta,1);state.year=d.getFullYear();state.month=d.getMonth();state.selected=`${state.year}-${pad(state.month+1)}-01`;applyRotationDefaults(state.selected);renderAll()}
   function goToday(){const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();applyRotationDefaults(state.selected);renderAll()}
-  function saveShift(){if(!state.selected)return;const s=$('#startTime').value,e=$('#endTime').value;if(!s||!e)return toast('Оберіть час');state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'shift',date:state.selected,start:s,end:e,diff:state.diff||''});persist();renderAll();toast('Зміну збережено')}
+  function saveShift(){if(!state.selected)return;const s=$('#startTime').value,e=$('#endTime').value;if(!s||!e||mins(s)===null||mins(e)===null)return toast('Оберіть коректний час');if(s===e)return toast('Початок і завершення мають відрізнятися');state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'shift',date:state.selected,start:s,end:e,diff:state.diff||''});persist();renderAll();toast('Зміну збережено')}
   function saveOff(){if(!state.selected)return;state.entries=state.entries.filter(x=>x.date!==state.selected);state.entries.push({id:uid(),type:'off',date:state.selected});persist();state.diff='';renderAll();toast('Вихідний збережено')}
   function deleteEntry(){const e=selectedEntry();if(!e)return;state.entries=state.entries.filter(x=>x.date!==state.selected);persist();state.diff='';renderAll();toast('Запис видалено')}
-  function renderAll(){renderCalendar();renderEditor()}
-  window.refreshRossmannFromDB=()=>{state.entries=Array.isArray(DB.rossmann?.entries)?DB.rossmann.entries:(DB.rossmann.entries=[]);renderAll()}
+  function renderAll(){renderCalendar();renderEditor();if($('#statsOverlay').classList.contains('open'))renderStats();if($('#journalOverlay').classList.contains('open'))renderJournalBook();}
+  window.refreshRossmannFromDB=()=>{ensureData();if(![$('#startTime'),$('#endTime')].includes(root.activeElement))applyRotationDefaults(state.selected);renderAll()}
 
   function renderJournalBook(){
     $('#journalMonthSelect').value=String(state.journalMonth);$('#journalYearSelect').value=String(state.journalYear);
@@ -8579,19 +8644,20 @@ function initRossmannModule(){
   function openJournal(){state.journalYear=state.year;state.journalMonth=state.month;renderJournalBook();$('#journalOverlay').classList.add('open')}
 
   function statsDates(){
-    let a,b;
-    if(state.statsRange==='month'){a=localIso(new Date(state.year,state.month,1));b=localIso(new Date(state.year,state.month+1,0));}
+    let a,b;const dates=recordedDates();
+    if(state.statsRange==='all'){a=dates[0]||todayIso();b=dates.at(-1)||todayIso();}
+    else if(state.statsRange==='month'){a=localIso(new Date(state.year,state.month,1));b=localIso(new Date(state.year,state.month+1,0));}
     else if(state.statsRange==='2m'||state.statsRange==='6m'){a=localIso(new Date(state.year,state.month-(state.statsRange==='2m'?1:5),1));b=localIso(new Date(state.year,state.month+1,0));}
-    else if(state.statsRange==='year'){a=`${state.year}-01-01`;b=`${state.year}-12-31`;}
-    else{a=$('#rangeFrom').value||START;b=$('#rangeTo').value||todayIso();if(a>b)[a,b]=[b,a];}
-    return[a<START?START:a,b>todayIso()?todayIso():b];
+    else if(state.statsRange==='year'){a=state.year+'-01-01';b=state.year+'-12-31';}
+    else{a=validDay($('#rangeFrom').value)?$('#rangeFrom').value:dates[0]||todayIso();b=validDay($('#rangeTo').value)?$('#rangeTo').value:dates.at(-1)||todayIso();}
+    if(a>b)[a,b]=[b,a];return [a,b];
   }
 
-  function rangeEntries(a,b){return state.entries.filter(e=>e.date>=a&&e.date<=b).sort((x,y)=>x.date.localeCompare(y.date))}
+  function rangeEntries(a,b){return state.entries.filter(e=>validDay(e?.date)&&e.date>=a&&e.date<=b).sort((x,y)=>x.date.localeCompare(y.date))}
   function monthSeries(a,b){const s=parseDate(a),end=parseDate(b),arr=[];let d=new Date(s.getFullYear(),s.getMonth(),1),last=new Date(end.getFullYear(),end.getMonth(),1);while(d<=last){const y=d.getFullYear(),m=d.getMonth(),ms=`${y}-${pad(m+1)}-01`,me=`${y}-${pad(m+1)}-${pad(new Date(y,m+1,0).getDate())}`,aa=ms<a?a:ms,bb=me>b?b:me,st=calc(rangeEntries(aa,bb));arr.push({label:`${monthsShort[m]} ${String(y).slice(2)}`,hours:st.hours,income:st.income});d=new Date(y,m+1,1)}return arr}
-  function drawLine(svg,data,key,kind){const W=620,H=220,p={l:40,r:15,t:16,b:30};svg.innerHTML='';data=data.filter(x=>Number(x[key])>0);const vals=data.map(x=>Number(x[key])||0),max=Math.max(1,...vals)*1.12;for(let i=0;i<5;i++){const y=p.t+(H-p.t-p.b)*i/4;svg.insertAdjacentHTML('beforeend',`<line class="gridLine" x1="${p.l}" y1="${y}" x2="${W-p.r}" y2="${y}"/><text class="axis" x="${p.l-7}" y="${y+3}" text-anchor="end">${hfmt(max*(1-i/4))}</text>`)}const pts=data.map((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1),yy=p.t+(H-p.t-p.b)*(1-(Number(x[key])||0)/max);return[xx,yy]});if(pts.length>1)svg.insertAdjacentHTML('beforeend',`<polyline class="${kind==='income'?'lineI':'lineH'}" points="${pts.map(q=>q.join(',')).join(' ')}"/>`);pts.forEach((q,i)=>svg.insertAdjacentHTML('beforeend',`<circle class="${kind==='income'?'ptI':'ptH'}" cx="${q[0]}" cy="${q[1]}" r="4"><title>${data[i].label}: ${hfmt(data[i][key])}</title></circle>`));data.forEach((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1);svg.insertAdjacentHTML('beforeend',`<text class="axis" x="${xx}" y="${H-8}" text-anchor="middle">${x.label}</text>`)});if(!data.length)svg.insertAdjacentHTML('beforeend',`<circle data-v13-rossmann-start class="${kind==='income'?'ptI':'ptH'}" cx="${p.l}" cy="${H-p.b}" r="4"><title>Початок · 01.11.2026 · 0</title></circle>`)}
+  function drawLine(svg,data,key,kind){const W=620,H=220,p={l:40,r:15,t:16,b:30};svg.innerHTML='';data=data.filter(x=>Number(x[key])>0);const vals=data.map(x=>Number(x[key])||0),max=Math.max(1,...vals)*1.12;for(let i=0;i<5;i++){const y=p.t+(H-p.t-p.b)*i/4;svg.insertAdjacentHTML('beforeend',`<line class="gridLine" x1="${p.l}" y1="${y}" x2="${W-p.r}" y2="${y}"/><text class="axis" x="${p.l-7}" y="${y+3}" text-anchor="end">${hfmt(max*(1-i/4))}</text>`)}const pts=data.map((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1),yy=p.t+(H-p.t-p.b)*(1-(Number(x[key])||0)/max);return[xx,yy]});if(pts.length>1)svg.insertAdjacentHTML('beforeend',`<polyline class="${kind==='income'?'lineI':'lineH'}" points="${pts.map(q=>q.join(',')).join(' ')}"/>`);pts.forEach((q,i)=>svg.insertAdjacentHTML('beforeend',`<circle class="${kind==='income'?'ptI':'ptH'}" cx="${q[0]}" cy="${q[1]}" r="4"><title>${data[i].label}: ${hfmt(data[i][key])}</title></circle>`));data.forEach((x,i)=>{const xx=data.length===1?(p.l+W-p.r)/2:p.l+(W-p.l-p.r)*i/Math.max(1,data.length-1);svg.insertAdjacentHTML('beforeend',`<text class="axis" x="${xx}" y="${H-8}" text-anchor="middle">${x.label}</text>`)});if(!data.length)svg.insertAdjacentHTML('beforeend',`<circle data-v13-rossmann-start class="${kind==='income'?'ptI':'ptH'}" cx="${p.l}" cy="${H-p.b}" r="4"><title>Початок періоду · 0</title></circle>`)}
   function renderStats(){
-    const[a,b]=statsDates(),es=rangeEntries(a,b),s=calc(es),from=countStatsFrom(),countFloor=`${from}-01`,countEs=es.filter(e=>e.date>=countFloor),cs=countCalc(countEs),hasCountCoverage=b>=countFloor;
+    const[a,b]=statsDates(),es=rangeEntries(a,b),s=calc(es),cs=countCalc(es),from=countStatsFrom(),hasCountCoverage=true;
     $('#sHours').textContent=`${hfmt(s.hours)} год`;
     $('#sIncome').textContent=`${money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2})} zł`;
     $('#sShifts').textContent=hasCountCoverage?cs.shifts.length:'—';
@@ -8599,7 +8665,7 @@ function initRossmannModule(){
     $('#sAvg').textContent=`${hfmt(s.avg)} год`;
     $('#sMax').textContent=`${hfmt(s.max)} год`;
     const[fy,fm]=from.split('-').map(Number),scope=$('#statsScopeNote');
-    if(scope)scope.innerHTML=`<i></i><span>Усі показники — від <b>1 листопада 2026</b> до сьогодні. Попередні записи збережені у журналі.</span>`;
+    if(scope)scope.innerHTML=`<i></i><span>Усі збережені зміни за обраний період. Дохід розрахований за ставкою відповідного місяця.</span>`;
     const meta=$('#customRangeMeta');
     if(meta){if(state.statsRange==='custom'){const rawA=$('#rangeFrom').value,rawB=$('#rangeTo').value,swapped=rawA&&rawB&&rawA>rawB;meta.textContent=`${swapped?'Дати впорядковано автоматично · ':''}${parseDate(a).toLocaleDateString('uk-UA')} — ${parseDate(b).toLocaleDateString('uk-UA')} · ${Math.max(1,Math.round((parseDate(b)-parseDate(a))/864e5)+1)} дн.`}else meta.textContent=''}
     const series=monthSeries(a,b);drawLine($('#hoursChart'),series,'hours','hours');drawLine($('#incomeChart'),series,'income','income');
@@ -8615,11 +8681,12 @@ function initRossmannModule(){
     const rb=e.target.closest('.rangeBtn');if(rb){state.statsRange=rb.dataset.range;$$('.rangeBtn').forEach(b=>b.classList.toggle('on',b===rb));$('#customRange').classList.toggle('on',state.statsRange==='custom');renderStats();return}
   });
   $('#prevMonth').addEventListener('click',()=>goMonth(-1));$('#nextMonth').addEventListener('click',()=>goMonth(1));$('#goToday').addEventListener('click',goToday);
-  $('#monthSelect').addEventListener('change',e=>{state.month=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;renderAll()});
-  $('#yearSelect').addEventListener('change',e=>{state.year=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;renderAll()});
+  $('#monthSelect').addEventListener('change',e=>{state.month=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;applyRotationDefaults(state.selected);renderAll()});
+  $('#yearSelect').addEventListener('change',e=>{state.year=Number(e.target.value);state.selected=`${state.year}-${pad(state.month+1)}-01`;applyRotationDefaults(state.selected);renderAll()});
   $('#startTime').addEventListener('input',renderEditor);$('#endTime').addEventListener('input',renderEditor);
   $('#saveShift').addEventListener('click',saveShift);$('#saveOff').addEventListener('click',saveOff);$('#deleteEntry').addEventListener('click',deleteEntry);
   $('#rateInput').addEventListener('input',()=>{saveCurrentRate();const s=calc(monthEntries(state.year,state.month));$('#mIncome').textContent=money(s.income).toLocaleString('pl-PL',{maximumFractionDigits:2});renderEditor();if($('#statsOverlay').classList.contains('open'))renderStats()});
+  $('#rateInput').addEventListener('blur',()=>{syncRateInput(true);renderEditor();});
   $('#countStartMonth').addEventListener('change',saveCountStart);$('#countStartYear').addEventListener('change',saveCountStart);
   $('#openJournal').addEventListener('click',openJournal);$('#closeJournal').addEventListener('click',()=>$('#journalOverlay').classList.remove('open'));$('#journalOverlay').addEventListener('click',e=>{if(e.target===$('#journalOverlay'))$('#journalOverlay').classList.remove('open')});
   $('#journalPrev').addEventListener('click',()=>moveJournalMonth(-1));$('#journalNext').addEventListener('click',()=>moveJournalMonth(1));
@@ -8627,7 +8694,7 @@ function initRossmannModule(){
   $('#openStats').addEventListener('click',()=>{$('#statsOverlay').classList.add('open');renderStats()});$('#closeStats').addEventListener('click',()=>$('#statsOverlay').classList.remove('open'));$('#statsOverlay').addEventListener('click',e=>{if(e.target===$('#statsOverlay'))$('#statsOverlay').classList.remove('open')});
   $('#rangeFrom').addEventListener('change',renderStats);$('#rangeTo').addEventListener('change',renderStats);
 
-  fillSelectors();ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=`${state.year}-01-01`;$('#rangeTo').value=todayIso();applyRotationDefaults(state.selected);syncRateInput();syncCountStart();renderAll();
+  fillSelectors();ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;$('#rangeFrom').value=recordedDates()[0]||todayIso();$('#rangeTo').value=recordedDates().at(-1)||todayIso();applyRotationDefaults(state.selected);syncRateInput();syncCountStart();renderAll();
   window.refreshRossmann=function(){ensureData();const n=new Date();state.year=n.getFullYear();state.month=n.getMonth();state.selected=todayIso();state.journalYear=state.year;state.journalMonth=state.month;state.diff='';applyRotationDefaults(state.selected);syncRateInput();syncCountStart();renderAll()};
   window.rossmannCloseOverlays=function(){$('#statsOverlay').classList.remove('open');$('#journalOverlay').classList.remove('open')};
 }
