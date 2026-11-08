@@ -19096,6 +19096,7 @@ const OLD_ID='t1786230161938',OLD_TITLE='Запуск презентації к�
 const nowDay=()=>iso(new Date()),dateOnly=s=>/^\d{4}-\d{2}-\d{2}/.test(String(s||''))?String(s).slice(0,10):'';
 const dayAdd=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return iso(d)};
 const dateLabel=k=>k?k.slice(8,10)+'.'+k.slice(5,7):'—';
+let taskSourcesSeenV22=false;
 let initialized=false,previousTasks=new Map(),completionStates=new Map(),completionReady=false,saveFrame=0,suppressSphereClickUntil=0;
 
 function unwanted(x){return x&&(String(x.id)===OLD_ID||norm(x.t||x.name)===norm(OLD_TITLE));}
@@ -19138,6 +19139,7 @@ function recordSourceCompletions(){
 function reconcileSources(){
  purgeUnwanted();recordSourceCompletions();plannerStageSync();
  const current=new Set((DB.tasks||[]).map(t=>String(t.id)));
+ for(const t of DB.tasks||[])if(!t.analyticsSinceV22)t.analyticsSinceV22=taskSourcesSeenV22&&!previousTasks.has(String(t.id))?nowDay():START;
  for(const [id,t]of previousTasks)if(!current.has(id)){
   DB.deletedTaskIdsV11=Array.from(new Set([...(DB.deletedTaskIdsV11||[]),id]));
   if(t.isSprintTask){const s=(DB.sprints||[]).find(s=>String(s.id)===String(t.sourceSprintId)),item=s?.tasks?.find(x=>String(x.id)===String(t.sourceSprintTaskId));if(item)item.inToday=false;}
@@ -19149,7 +19151,7 @@ function reconcileSources(){
   return true;
  });
  DB.workBlocks=(DB.workBlocks||[]).filter(validBlock);
- previousTasks=new Map((DB.tasks||[]).map(t=>[String(t.id),{...t}]));
+ previousTasks=new Map((DB.tasks||[]).map(t=>[String(t.id),{...t}]));taskSourcesSeenV22=true;
 }
 
 /* Stable overlay layers; popup calendars are children of a native dialog when needed. */
@@ -19248,6 +19250,7 @@ function enhanceFinance(){
 
 /* Today is a projection of its sources; hiding a day never deletes the source. */
 function sourceValid(t){
+ if(t.isWorkoutV22)return !!window.plannerWorkoutsV22?.planOn(t.workoutDay);
  if(t.isWorkBlock)return (DB.workBlocks||[]).some(b=>'work:'+b.id===t.id&&validBlock(b));
  if(t.isStageDeadline)return !!DB.sph?.[t.s]?.stages?.some(x=>String(x.id)===String(t.stageId));
  if(t.isSprintTask)return (DB.sprints||[]).some(s=>String(s.id)===String(t.sourceSprintId)&&s.tasks?.some(x=>String(x.id)===String(t.sourceSprintTaskId)));
@@ -19257,6 +19260,7 @@ function flashTarget(selector){requestAnimationFrame(()=>requestAnimationFrame((
 function openSphere(id,selector){window.INVESTOR_V8.openSphere(id);if(selector)flashTarget(selector);}
 function routeToday(kind,id){
  id=String(id);const q=CSS.escape;
+ if(id==='workout:v22'){window.plannerWorkoutsV22?.open();return;}
  if(kind==='ws'){go('ws');const x=(DB.ws||[]).find(x=>String(x.id)===id);if(x&&itemDone(x)){const details=$('.v8-note-history');if(details)details.open=true;}flashTarget(`[data-ws6-id="${q(id)}"],[data-v8-note-title="${q(id)}"]`);return;}
  if(kind==='order'){openSphere('s_text',`[data-ocl="${q(id)}"],[data-order-id="${q(id)}"]`);return;}
  if(id.startsWith('stage:')){const [,sid,...rest]=id.split(':');openSphere(sid,`[data-stage-row="${q(rest.join(':'))}"]`);return;}
@@ -19373,20 +19377,33 @@ function installTimer(){
 
 /* Daily statistics. Linked work blocks share their source key, preventing double counts. */
 function canonical(t){
+ if(t.isWorkoutV22)return 'workout:v22';
  if(t.isWorkBlock){const b=(DB.workBlocks||[]).find(b=>'work:'+b.id===t.id);if(b?.source==='globalws'&&b.itemId)return 'ws:'+b.itemId;if(b?.source==='workspace'&&b.itemId)return 'spherews:'+b.s+':'+b.itemId;}
  return 'task:'+t.id;
+}
+// Evaluate historical stage availability as it was on that date, not after a later completion.
+function statsStageAvailableV22(sid,stage,day){
+ const onDate=item=>{const p=plannerStageSchedule(item),closed=item.d&&plannerStageDay(item)&&plannerStageDay(item)<=day;return !item.deleted&&!item.archived&&!item.off&&!closed&&!!p&&day>=p.a&&day<=p.b&&(!p.custom||p.days.includes(day));};
+ if(!stage||!onDate(stage))return false;
+ if(stage.parallelV16)return true;
+ const first=(DB.sph?.[sid]?.stages||[]).map((item,index)=>({item,index,p:plannerStageSchedule(item)})).filter(row=>!row.item.parallelV16&&onDate(row.item)).sort((a,b)=>a.p.a.localeCompare(b.p.a)||a.index-b.index)[0];
+ return first?.item.id===stage.id;
 }
 function dayItems(day){
  if(day<HAB_TRACKING_START)return {};
  const map=new Map(),skip=DB.daySkip?.[day]||{},marks=DB.done?.[day]||{};
  const put=(id,name,done,kind='task')=>{const old=map.get(id);map.set(id,{id,name,done:!!done||!!old?.done,kind});};
  for(const t of scheduledTasksFor(day)){
-  if(skip[t.id])continue;const key=canonical(t);if(skip[key])continue;
+  if(skip[t.id]||(!t.date&&!t.dateStart&&!t.dateEnd&&t.analyticsSinceV22&&day<t.analyticsSinceV22))continue;
+  if(t.isStageDeadline&&day<nowDay()&&!statsStageAvailableV22(t.s,(DB.sph?.[t.s]?.stages||[]).find(st=>st.id===t.stageId),day))continue;
+  const key=canonical(t);if(skip[key])continue;
   let done=!!marks[t.id];if(key.startsWith('ws:')){const x=(DB.ws||[]).find(x=>'ws:'+x.id===key);const closed=dateOnly(x?.closedAt);done=done||!!(x&&itemDone(x)&&(!closed||closed<=day));}
-  put(key,t.t,done,t.isStageDeadline?'stage':t.isWorkBlock?'block':'task');
+  put(key,t.t,done,t.isWorkoutV22?'workout':t.isStageDeadline?'stage':t.isWorkBlock?'block':'task');
  }
  for(const x of DB.ws||[])if((plannerNotebookOnDay(x,day)||dateOnly(x.closedAt)===day&&itemDone(x))&&!skip['ws:'+x.id]){const closed=dateOnly(x.closedAt);put('ws:'+x.id,x.t,itemDone(x)&&(!closed||closed<=day),'workspace');}
  for(const o of ordersDueFor(day))if(!skip['order:'+o.id])put('order:'+o.id,(o.client||'Замовлення')+(o.type?' · '+o.type:''),marks[o.id],'order');
+ // Historical stage plans remain a single sequential obligation, with explicit parallels.
+ if(day<nowDay())for(const [sid,sp]of Object.entries(DB.sph||{}))for(const st of sp.stages||[])if(statsStageAvailableV22(sid,st,day)&&!skip['stage:'+sid+':'+st.id])put('task:stage:'+sid+':'+st.id,st.t,marks['stage:'+sid+':'+st.id],'stage');
  // A completed stage/sprint may be omitted from Today. Keep the actual check-in/completion date.
  for(const [sid,sp]of Object.entries(DB.sph||{}))for(const st of sp.stages||[]){const id='stage:'+sid+':'+st.id,key='task:'+id;if(skip[id])continue;if(plannerStageEligible(st)&&plannerStageDay(st)===day||marks[id]){put(key,st.t,true,'stage');if(!marks[id])map.get(key).completionOnlyV13=true;}}
  for(const t of DB.tasks||[])if(marks[t.id]&&!skip[t.id])put('task:'+t.id,t.t,true,t.isSprintTask?'project':'task');
@@ -19397,23 +19414,61 @@ function dayItems(day){
 }
 function habitDay(day){const hs=activeHabitsOn(day),log=DB.habitLog?.[day]||{};return {total:hs.length,done:hs.filter(h=>!!log[h.id]).length};}
 function statsStore(){DB.plannerStatsV11=DB.plannerStatsV11||{days:{}};DB.plannerStatsV11.days=DB.plannerStatsV11.days||{};return DB.plannerStatsV11.days;}
+/* A removed source or an explicitly cancelled day is never a missed obligation. */
+function statsSourceV22(id,item,day){
+ if(id==='workout:v22')return !!window.plannerWorkoutsV22?.planOn(day);
+ if(id.startsWith('task:stage:')){
+  const key=id.slice(11),entry=Object.entries(DB.sph||{}).flatMap(([sid,sphere])=>(sphere.stages||[]).map(stage=>({sid,stage}))).find(row=>row.sid+':'+row.stage.id===key),stage=entry?.stage;
+  if(!stage||stage.deleted||stage.archived||stage.off)return false;
+  if(item.completionOnlyV13)return plannerStageEligible(stage)&&plannerStageDay(stage)===day;
+  const plan=plannerStageSchedule(stage),completed=plannerStageDay(stage);
+  return !!plan&&day>=plan.a&&day<=plan.b&&(!plan.custom||plan.days.includes(day))&&!(stage.d&&completed&&completed<day)&&(item.done||day===nowDay()||statsStageAvailableV22(entry.sid,stage,day));
+ }
+ if(id.startsWith('task:work:')){const b=(DB.workBlocks||[]).find(b=>'task:work:'+b.id===id);return !!b&&validBlock(b)&&b.dates?.includes(day);}
+ if(id.startsWith('task:')){const t=(DB.tasks||[]).find(t=>'task:'+t.id===id);return !!t&&sourceValid(t)&&(!(t.off||t.archived)||item.done);}
+ if(id.startsWith('ws:'))return (DB.ws||[]).some(x=>'ws:'+x.id===id);
+ if(id.startsWith('spherews:'))return Object.entries(DB.workspaces||{}).some(([sid,w])=>(DB.spheres||[]).some(s=>s.id===sid)&&(w.items||[]).some(x=>'spherews:'+sid+':'+x.id===id));
+ if(id.startsWith('project:'))return (DB.sprints||[]).some(s=>(s.tasks||[]).some(t=>'project:'+s.id+':'+t.id===id));
+ if(id.startsWith('order:'))return (DB.orders||[]).some(o=>'order:'+o.id===id);
+ return false;
+}
 function withoutSkipped(items,day){
- const skip=DB.daySkip?.[day]||{};
- return Object.fromEntries(Object.entries(items).filter(([id,item])=>{
-  if(skip[id]||(id.startsWith('task:')&&skip[id.slice(5)]))return false;
-  if(item.completionOnlyV13&&id.startsWith('task:stage:')){const key=id.slice(11),stage=Object.entries(DB.sph||{}).flatMap(([sid,sphere])=>(sphere.stages||[]).map(stage=>({sid,stage}))).find(row=>row.sid+':'+row.stage.id===key)?.stage;return plannerStageEligible(stage)&&plannerStageDay(stage)===day;}
-  return true;
- }));
+ const skip=DB.daySkip?.[day]||{},marks=DB.done?.[day]||{},out={};
+ for(const [id,original]of Object.entries(items||{})){
+  if(!original||skip[id]||(id.startsWith('task:')&&skip[id.slice(5)]))continue;
+  const item={...original};
+  const mark=id==='workout:v22'?id:id.startsWith('task:')?id.slice(5):id.startsWith('order:')?id.slice(6):null;
+  if(mark&&Object.hasOwn(marks,mark)&&!item.completionOnlyV13)item.done=!!marks[mark];
+  if(statsSourceV22(id,item,day))out[id]=item;
+ }
+ return out;
+}
+function currentStatsItemsV22(day){
+ const old=statsStore()[day]?.items||{},live=dayItems(day);
+ return withoutSkipped(day===nowDay()?live:{...old,...live},day);
 }
 function captureStats(){
- const store=statsStore(),today=nowDay();for(const day of new Set([today,cur]))if(day&&day>=HAB_TRACKING_START&&day<=today){const live=dayItems(day),old=store[day];store[day]={items:withoutSkipped(day===today?live:{...(old?.items||{}),...live},day),habits:habitDay(day)};}
-
+ const store=statsStore(),today=nowDay();
+ for(const day of new Set([today,cur]))if(day&&day>=HAB_TRACKING_START&&day<=today)store[day]={items:currentStatsItemsV22(day),habits:habitDay(day)};
+}
+function outcomeV22(total,done,day){
+ const missed=day<nowDay()?Math.max(0,total-done):0,pending=day===nowDay()?Math.max(0,total-done):0,settled=done+missed;
+ return {total,done,missed,pending,settled,pct:total?Math.round(done/total*100):null,score:settled?Math.round(done/settled*100):null};
 }
 function rowFor(day){
- if(day<HAB_TRACKING_START)return {day,total:0,done:0,pct:null,habits:{total:0,done:0},habitPct:null};
- const record=statsStore()[day],live=dayItems(day),items=withoutSkipped(day===nowDay()?live:{...(record?.items||{}),...live},day),values=Object.values(items),total=values.length,done=values.filter(x=>x.done).length,habits=habitDay(day);
- if(record?.habits&&day<nowDay()&&!habits.total)Object.assign(habits,record.habits);
- return {day,total,done,pct:total?Math.round(done/total*100):null,habits,habitPct:habits.total?Math.round(habits.done/habits.total*100):null};
+ if(day<HAB_TRACKING_START||day>nowDay())return {day,...outcomeV22(0,0,day),habits:outcomeV22(0,0,day),workouts:outcomeV22(0,0,day),habitPct:null};
+ const values=Object.values(currentStatsItemsV22(day)),h=habitDay(day),w=values.filter(x=>x.kind==='workout');
+ const habits=outcomeV22(h.total,h.done,day),workouts=outcomeV22(w.length,w.filter(x=>x.done).length,day);
+ return {day,...outcomeV22(values.length,values.filter(x=>x.done).length,day),habits,workouts,habitPct:habits.pct};
+}
+function summarizeV22(rows,kind='task'){
+ const sum={total:0,done:0,missed:0,pending:0};
+ for(const row of rows){const part=kind==='task'?row:row[kind];for(const key of Object.keys(sum))sum[key]+=part?.[key]||0;}
+ sum.settled=sum.done+sum.missed;sum.score=sum.settled?Math.round(sum.done/sum.settled*100):null;return sum;
+}
+function outcomeRowsV22(rows){
+ const totals={task:{done:0,settled:0},habits:{done:0,settled:0},workouts:{done:0,settled:0}};
+ return rows.map(row=>{const result={...row};for(const [kind,prop]of [['task','trendPct'],['habits','habitTrendPct'],['workouts','workoutTrendPct']]){const part=kind==='task'?row:row[kind],t=totals[kind];t.done+=part?.done||0;t.settled+=part?.settled||0;result[prop]=t.settled?Math.round(t.done/t.settled*100):null;result[prop+'Point']=!!part?.settled;}return result;});
 }
 function overdue(){
  const today=nowDay(),out=[];
@@ -19459,9 +19514,13 @@ function analyticsGrid(W,H,max,format){
   const grid=values.map(value=>`<path d="M${L} ${y(value)}H${R}" stroke="#e8e2d4" stroke-width=".8"/><text x="${L-9}" y="${y(value)+4}" text-anchor="end" fill="#8e9884" font-size="10">${format(value)}</text>`).join('');
   return {L,R,T,B,x,y,grid};
 }
-let statsRange='all',customStatsRange=null,visibleSeries={task:true,habit:true},statsMarkupKey='',dailyExpanded=false;
+let statsRange='month',customStatsRange=null,visibleSeries={task:true,habit:true,workout:true},statsMarkupKey='',dailyExpanded=false;
+// Re-entering analytics always opens the current month, independent of a prior manual selection.
+function resetAnalyticsPeriodV23(){
+ statsRange='month';customStatsRange=null;dailyExpanded=false;statsMarkupKey='';DB.analyticsViewV20={preset:'month'};
+}
 function analyticsPeriodV20(){
- const today=nowDay();let end=today,start=statsRange==='all'?START:dayAdd(end,1-Number(statsRange));
+ const today=nowDay();let end=today,start=statsRange==='month'?today.slice(0,7)+'-01':statsRange==='all'?START:dayAdd(end,1-Number(statsRange));
  if(statsRange==='custom'&&customStatsRange){start=customStatsRange.start;end=customStatsRange.end>today?today:customStatsRange.end;}
  if(start<START)start=START;if(start>end&&end>=START)start=end;
  return {start,end};
@@ -19471,7 +19530,7 @@ function analyticsPeriodLabelV20(start,end){
  return (start.slice(0,4)===end.slice(0,4)?dateLabel(start):dateLabel(start)+'.'+start.slice(0,4))+' — '+dateLabel(end)+'.'+end.slice(0,4);
 }
 function setAnalyticsPeriodV20(preset,start='',end=''){
- if(!['7','30','90','all','custom'].includes(preset))return false;
+ if(!['month','7','30','90','all','custom'].includes(preset))return false;
  if(preset==='custom'){
   if(!fin2ValidDate(start)||!fin2ValidDate(end))return false;
   if(start>end)[start,end]=[end,start];if(start<START)start=START;if(end>nowDay())end=nowDay();if(start>end)return false;
@@ -19493,34 +19552,32 @@ function bindAnalyticsPeriodV20(box){
 function analyticsCurveV20(points){
  return points.map((p,i)=>{if(!i)return `M${p.x.toFixed(2)} ${p.y.toFixed(2)}`;const a=points[i-1],dx=(p.x-a.x)*.29;return Math.abs(p.y-a.y)<.01?`L${p.x.toFixed(2)} ${p.y.toFixed(2)}`:`C${(a.x+dx).toFixed(2)} ${a.y.toFixed(2)} ${(p.x-dx).toFixed(2)} ${p.y.toFixed(2)} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`;}).join(' ');
 }
-function statsChart(rows){
- const W=innerWidth<=600?360:960,H=innerWidth<=600?255:240,{L,R,T,B,x,y,grid}=analyticsGrid(W,H,100,value=>value+'%');
+function statsChart(input){
+ const rows=outcomeRowsV22(input),W=innerWidth<=600?360:960,H=innerWidth<=600?270:240,{L,R,T,B,x,y,grid}=analyticsGrid(W,H,100,value=>value+'%');
  let paths='';
- for(const [key,prop,color,label]of [['task','pct','#2e7356','Завдання'],['habit','habitPct','#bd9545','Звички']]){
+ const definitions=[['task','trendPct','#2e7356','Завдання','task',''],['habit','habitTrendPct','#bd9545','Звички','habits','7 7'],['workout','workoutTrendPct','#63889c','Тренування','workouts','2 7']];
+ for(const [key,prop,color,label,kind,dash]of definitions){
   if(!visibleSeries[key])continue;
-  const task=key==='task',hasCompletion=rows.some(row=>task?row.done>0:row.habits.done>0);
-  let series=`<circle data-v13-daily-start="${key}" cx="${L}" cy="${B}" r="${task?5.5:3}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.3:1}" vector-effect="non-scaling-stroke"><title>${label} · початок · 0%</title></circle>`;
+  const task=key==='task',hasCompletion=rows.some(row=>(kind==='task'?row:row[kind]).done>0),r=task?5.5:key==='habit'?3.2:2;
+  let series=`<circle data-v13-daily-start="${key}" cx="${L}" cy="${B}" r="${r}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.3:1}" vector-effect="non-scaling-stroke"><title>${label} · початок · 0%</title></circle>`;
   if(hasCompletion){
-   let segment=[{x:L,y:B}],segments=[];
-   rows.forEach((row,i)=>{if(row[prop]==null){if(segment.length)segments.push(segment);segment=[];return;}segment.push({x:x((i+1)/Math.max(1,rows.length)),y:y(row[prop]),row,value:row[prop]});});if(segment.length)segments.push(segment);
-   for(const segment of segments){
-    const line=analyticsCurveV20(segment);
-    if(segment.length>1)series+=`<path data-v13-daily-line="${key}" class="v20-trend-line" d="${line}" fill="none" stroke="${color}" stroke-width="${task?4.8:2.8}" ${task?'':'stroke-dasharray="7 7"'} stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
-    series+=segment.filter(point=>point.row).map(point=>`<circle data-v13-daily-point="${key}" data-day="${point.row.day}" data-value="${point.value}" cx="${point.x}" cy="${point.y}" r="${task?5.3:2.9}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.1:1}" vector-effect="non-scaling-stroke"><title>${point.row.day} · ${label}: ${point.value}%</title></circle>`).join('');
-   }
+   const points=[{x:L,y:B}];
+   rows.forEach((row,i)=>{if(row[prop]!==null&&row[prop+'Point'])points.push({x:x((i+1)/Math.max(1,rows.length)),y:y(row[prop]),row,value:row[prop]});});
+   if(points.length>1)series+=`<path data-v13-daily-line="${key}" class="v20-trend-line" d="${analyticsCurveV20(points)}" fill="none" stroke="${color}" stroke-width="${task?4.8:key==='habit'?2.8:2.3}" ${dash?`stroke-dasharray="${dash}"`:''} stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+   series+=points.filter(p=>p.row).map(p=>`<circle data-v13-daily-point="${key}" data-day="${p.row.day}" data-value="${p.value}" cx="${p.x}" cy="${p.y}" r="${r}" fill="${task?'#fffdf8':color}" stroke="${color}" stroke-width="${task?2.1:1}" vector-effect="non-scaling-stroke"><title>${p.row.day} · ${label}: ${p.value}% від початку періоду</title></circle>`).join('');
   }
   paths+=`<g class="v20-series-reveal" data-v20-series="${key}">${series}</g>`;
  }
  const labels=rows.length?[...new Set([0,Math.floor((rows.length-1)/2),rows.length-1])].map(i=>`<text x="${x((i+1)/rows.length)}" y="${H-9}" text-anchor="${i===rows.length-1?'end':'middle'}" fill="#82917b" font-size="10">${dateLabel(rows[i].day)}</text>`).join(''):'';
- const hits=rows.map((row,i)=>{const center=x((i+1)/rows.length),left=i?x((i+.5)/rows.length):L,right=i===rows.length-1?R:x((i+1.5)/rows.length);return `<rect class="v20-chart-hit" data-v20-chart-day="${row.day}" data-x="${center}" data-task="${row.done}" data-task-total="${row.total}" data-habit="${row.habits.done}" data-habit-total="${row.habits.total}" x="${left}" y="${T-8}" width="${right-left}" height="${B-T+16}" fill="transparent" tabindex="0" role="button" aria-label="${row.day}: завдання ${row.done} з ${row.total}; звички ${row.habits.done} з ${row.habits.total}"/>`;}).join('');
- return `<div class="v20-chart-frame"><svg class="planner-stat-chart v13-daily-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Виконання по днях. Зелена суцільна лінія — завдання, золота пунктирна — звички."><title>Кожна точка — фактичний результат дня. За однакових значень видно обидва кольори.</title>${grid}<line class="v20-chart-cursor" x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="#a9b39d" stroke-dasharray="3 5" opacity="0"/>${paths}${labels}${hits}</svg><div class="v20-chart-tooltip" hidden role="status" aria-live="polite"></div></div>`;
+ const hits=rows.map((row,i)=>{const center=x((i+1)/rows.length),left=i?x((i+.5)/rows.length):L,right=i===rows.length-1?R:x((i+1.5)/rows.length);return `<rect class="v20-chart-hit" data-v20-chart-day="${row.day}" data-x="${center}" data-task="${row.done}" data-task-total="${row.total}" data-habit="${row.habits.done}" data-habit-total="${row.habits.total}" data-workout="${row.workouts.done}" data-workout-total="${row.workouts.total}" data-pending="${row.pending+row.habits.pending}" data-score="${row.trendPct??''}" data-habit-score="${row.habitTrendPct??''}" data-workout-score="${row.workoutTrendPct??''}" x="${left}" y="${T-8}" width="${right-left}" height="${B-T+16}" fill="transparent" tabindex="0" role="button" aria-label="${row.day}: завдання ${row.done} з ${row.total}; звички ${row.habits.done} з ${row.habits.total}; тренування ${row.workouts.done} з ${row.workouts.total}"/>`;}).join('');
+ return `<div class="v20-chart-frame"><svg class="planner-stat-chart v13-daily-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Накопичене виконання плану: завдання, звички й тренування."><title>Результат виконаних і пропущених справ. Відпочинок і скасовані справи не знижують оцінку.</title>${grid}<line class="v20-chart-cursor" x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="#a9b39d" stroke-dasharray="3 5" opacity="0"/>${paths}${labels}${hits}</svg><div class="v20-chart-tooltip" hidden role="status" aria-live="polite"></div></div>`;
 }
 function bindAnalyticsTooltipV20(box){
  const frame=$('.v20-chart-frame',box);if(!frame)return;const chart=$('svg',frame),tip=$('.v20-chart-tooltip',frame),cursor=$('.v20-chart-cursor',chart);
  const hide=()=>{tip.hidden=true;cursor.style.opacity='0';};
  const show=hit=>{
-  if(!hit)return;const d=hit.dataset,part=(done,total)=>Number(total)?`${done} / ${total} · ${Math.round(Number(done)/Number(total)*100)}%`:'Немає плану';
-  tip.innerHTML=`<time datetime="${d.v20ChartDay}">${analyticsPeriodLabelV20(d.v20ChartDay,d.v20ChartDay)}</time><span><i></i>Завдання <b>${part(d.task,d.taskTotal)}</b></span><span class="gold"><i></i>Звички <b>${part(d.habit,d.habitTotal)}</b></span>`;tip.hidden=false;
+  if(!hit)return;const d=hit.dataset,part=(done,total)=>Number(total)?`${done} / ${total}`:'Немає плану',score=value=>value===''?'—':value+'%';
+  tip.innerHTML=`<time datetime="${d.v20ChartDay}">${analyticsPeriodLabelV20(d.v20ChartDay,d.v20ChartDay)}</time><small>За день · оцінка від початку періоду</small><span><i></i>Завдання <b>${part(d.task,d.taskTotal)} · ${score(d.score)}</b></span><span class="gold"><i></i>Звички <b>${part(d.habit,d.habitTotal)} · ${score(d.habitScore)}</b></span><span class="blue"><i></i>Тренування <b>${part(d.workout,d.workoutTotal)} · ${score(d.workoutScore)}</b></span>${Number(d.pending)?`<small>Ще ${d.pending} у плані сьогодні — не пропущено</small>`:''}`;tip.hidden=false;
   cursor.setAttribute('x1',d.x);cursor.setAttribute('x2',d.x);cursor.style.opacity='1';
   const center=Number(d.x)/chart.viewBox.baseVal.width*frame.clientWidth,left=Math.max(0,Math.min(frame.clientWidth-tip.offsetWidth,center-tip.offsetWidth/2));tip.style.left=left+'px';
  };
@@ -19548,19 +19605,20 @@ function renderStats(){
   plannerStageSync();const shell=$('#pg-review .review-shell');let box=$('#plannerDailyStats');
   if(!box){box=document.createElement('section');box.id='plannerDailyStats';box.className='planner-stat-card v13-analytics';$('.review-head',shell).insertAdjacentElement('afterend',box);}
   const {start,end}=analyticsPeriodV20(),started=end>=START,dayCount=started?Math.round((pd(end)-pd(start))/86400000)+1:0;
-  const rows=Array.from({length:dayCount},(_,i)=>rowFor(dayAdd(start,i))),active=rows.filter(row=>row.total),total=rows.reduce((sum,row)=>sum+row.total,0),done=rows.reduce((sum,row)=>sum+row.done,0),avg=active.length?Math.round(active.reduce((sum,row)=>sum+row.pct,0)/active.length):0,ht=rows.reduce((sum,row)=>sum+row.habits.total,0),hd=rows.reduce((sum,row)=>sum+row.habits.done,0),late=overdue().filter(item=>item.due>=start&&item.due<=end),income=incomeData(start,end),stages=stageStats(start,end),stageDone=stages.reduce((sum,sphere)=>sum+sphere.done,0),habitPct=ht?Math.round(hd/ht*100):null;
+  const rows=Array.from({length:dayCount},(_,i)=>rowFor(dayAdd(start,i))),active=rows.filter(row=>row.settled),taskSummary=summarizeV22(rows),habitSummary=summarizeV22(rows,'habits'),workoutSummary=summarizeV22(rows,'workouts'),{total,done}=taskSummary,avg=taskSummary.score,ht=habitSummary.total,hd=habitSummary.done,late=overdue().filter(item=>item.due>=start&&item.due<=end),income=incomeData(start,end),stages=stageStats(start,end),stageDone=stages.reduce((sum,sphere)=>sum+sphere.done,0),habitPct=habitSummary.score;
   $('.review-head h2',shell).textContent='Аналітичний центр';$('.review-kicker',shell).textContent='МІЙ ПРОГРЕС';$('#reviewWeekLabel').textContent=started?dateLabel(start)+' — '+dateLabel(end)+' · '+end.slice(0,4)+' · облік від 01.11.2026':'Облік від 01.11.2026';
   box.classList.add('v13-analytics');box.classList.toggle('v12-stats-not-started',!started);
   const key=JSON.stringify([start,end,statsRange,rows,late,income,stages.map(sphere=>[sphere.id,sphere.name,sphere.total,sphere.rows.map(row=>[row.stage.id,row.day])]),visibleSeries,dailyExpanded,innerWidth<=600]);
   if(key===statsMarkupKey&&box.children.length)return;statsMarkupKey=key;
   const recent=rows.slice(-7),tableRows=(dailyExpanded?rows:rows.slice(-14)).slice().reverse();
-  box.innerHTML=`<div class="v13-toolbar"><span class="v13-cycle"><i></i> Відлік із 1 листопада 2026</span><div class="v20-period-controls">${analyticsPeriodControlV20(start,end)}<div class="planner-stat-ranges" role="group" aria-label="Період аналітики">${[['7','7 днів'],['30','30 днів'],['90','90 днів'],['all','Від старту']].map(([value,label])=>`<button type="button" data-stat-range="${value}" class="${value===statsRange?'active':''}" aria-pressed="${value===statsRange}">${label}</button>`).join('')}</div></div></div>
-  <div class="planner-stat-kpis v13-kpis"><article class="planner-stat-kpi"><span>Виконано завдань</span><strong data-stat-done>${done}<em> / ${total}</em></strong><small>із запланованих за період</small><div class="v13-kpi-meter"><i style="width:${total?done/total*100:0}%"></i></div></article><article class="planner-stat-kpi"><span>Середнє за день</span><strong data-stat-average>${avg}%</strong><small>${active.length} ${analyticsNoun(active.length,['день','дні','днів'])} із завданнями</small><div class="v13-kpi-meter"><i style="width:${avg}%"></i></div></article><article class="planner-stat-kpi gold"><span>Дотримання звичок</span><strong data-stat-habits>${habitPct===null?'—':habitPct+'%'}</strong><small>${hd} із ${ht} виконань</small><div class="v13-kpi-meter"><i style="width:${habitPct||0}%"></i></div></article><article class="planner-stat-kpi"><span>Завершено етапів</span><strong data-stat-stages>${stageDone}</strong><small>у сферах за цей період</small><span class="v13-kpi-status ${late.length?'late':''}"><i></i><span data-stat-overdue>${late.length}</span> прострочених</span></article></div>
-  <section class="v13-panel v13-rhythm"><div class="v13-panel-head"><div><span class="v13-eyebrow">Завдання та звички</span><h3>Ритм виконання</h3></div><div class="v13-series" role="group" aria-label="Лінії графіка">${[['task','Завдання'],['habit','Звички']].map(([key,label])=>`<button type="button" data-stat-series="${key}" aria-pressed="${visibleSeries[key]}" class="${key==='habit'?'gold ':''}${visibleSeries[key]?'active':''}"><i></i>${label}</button>`).join('')}</div></div>${statsChart(rows)}<div class="v20-rhythm-key"><span><i></i>Завдання <b>${done} / ${total}</b></span><span class="gold"><i></i>Звички <b>${hd} / ${ht}</b></span></div><p class="v13-note">Точки показують фактичний результат дня. Пунктир дає змогу бачити обидві лінії за однакових значень. Дні без плану не знижують середнє.</p></section>
+  box.innerHTML=`<div class="v13-toolbar"><span class="v13-cycle"><i></i> Відлік із 1 листопада 2026</span><div class="v20-period-controls">${analyticsPeriodControlV20(start,end)}<div class="planner-stat-ranges" role="group" aria-label="Період аналітики">${[['month','Місяць'],['7','7 днів'],['30','30 днів'],['90','90 днів'],['all','Від старту']].map(([value,label])=>`<button type="button" data-stat-range="${value}" class="${value===statsRange?'active':''}" aria-pressed="${value===statsRange}">${label}</button>`).join('')}</div></div></div>
+  <div class="planner-stat-kpis v13-kpis"><article class="planner-stat-kpi"><span>Виконано завдань</span><strong data-stat-done>${done}<em> / ${total}</em></strong><small>із запланованих за період</small><div class="v13-kpi-meter"><i style="width:${total?done/total*100:0}%"></i></div></article><article class="planner-stat-kpi"><span>Виконання плану</span><strong data-stat-average>${avg===null?'—':avg+'%'}</strong><small>${taskSummary.missed} пропущено · ${taskSummary.pending} ще сьогодні</small><div class="v13-kpi-meter"><i style="width:${avg||0}%"></i></div></article><article class="planner-stat-kpi gold"><span>Дотримання звичок</span><strong data-stat-habits>${habitPct===null?'—':habitPct+'%'}</strong><small>${hd} із ${ht} · ${habitSummary.pending} ще сьогодні</small><div class="v13-kpi-meter"><i style="width:${habitPct||0}%"></i></div></article><article class="planner-stat-kpi"><span>Завершено етапів</span><strong data-stat-stages>${stageDone}</strong><small>у сферах за цей період</small><span class="v13-kpi-status ${late.length?'late':''}"><i></i><span data-stat-overdue>${late.length}</span> прострочених</span></article></div>
+  <section class="v13-panel v13-rhythm"><div class="v13-panel-head"><div><span class="v13-eyebrow">Завдання · звички · тренування</span><h3>Ритм виконання</h3></div><div class="v13-series" role="group" aria-label="Лінії графіка">${[['task','Завдання'],['habit','Звички'],['workout','Тренування']].map(([key,label])=>`<button type="button" data-stat-series="${key}" aria-pressed="${visibleSeries[key]}" class="${key==='habit'?'gold ':key==='workout'?'blue ':''}${visibleSeries[key]?'active':''}"><i></i>${label}</button>`).join('')}</div></div>${statsChart(rows)}<div class="v20-rhythm-key"><span><i></i>Завдання <b>${done} / ${total}</b></span><span class="gold"><i></i>Звички <b>${hd} / ${ht}</b></span><span class="blue"><i></i>Тренування <b>${workoutSummary.done} / ${workoutSummary.total}</b></span></div><p class="v13-note">Накопичений результат за вибраний період. Тренування входять у завдання один раз. Оцінка знижується через невиконаний план минулих днів; сьогоднішні справи ще очікують. Відпочинок, видалені й прибрані на день справи не вважаються пропусками.</p></section>
+  ${window.plannerWorkoutsV22?.analyticsHTML(rows)||''}
   <div class="v13-finance-grid">${incomeSummary(income)}<section class="v13-panel v13-income-trend"><div class="v13-panel-head"><div><span class="v13-eyebrow">Накопичення за період</span><h3>Як зростає дохід</h3></div><span class="v13-unit">UAH</span></div>${incomeChart(income)}<p class="v13-note">Кожна точка — записаний дохід. Суми в інших валютах перераховуються за твоїми курсами у фінансах.</p></section></div>
   <div class="v13-detail-grid"><section class="v13-panel v13-spheres"><div class="v13-panel-head"><div><span class="v13-eyebrow">Крок за кроком</span><h3>Поступ у сферах</h3></div><span class="v13-count">${stageDone} ${analyticsNoun(stageDone,['етап','етапи','етапів'])}</span></div><div class="v13-sphere-list">${stages.map(sphere=>`<button type="button" class="v13-sphere-row" data-stat-sphere="${E(sphere.id)}"><span class="v13-sphere-name"><i style="--source-color:${sourceColor(sphere.name)}"></i><span>${E(sphere.name)}</span></span><span class="v13-sphere-meter"><i style="width:${sphere.total?sphere.done/sphere.total*100:0}%"></i></span><b>${sphere.done}<small> / ${sphere.total}</small></b><span aria-hidden="true">↗</span></button>`).join('')||'<div class="v13-soft-empty">Додай етапи у сферах — тут з’явиться поступ.</div>'}</div><p class="v13-note">Один виконаний етап — одна точка на графіку сфери. Скасування відмітки прибирає її.</p></section>
   <section class="v13-panel v13-habits"><div class="v13-panel-head"><div><span class="v13-eyebrow">Щоденна послідовність</span><h3>Ритм звичок</h3></div><button type="button" class="v13-text-button" data-stat-habits-open>Трекер ↗</button></div><div class="v13-habit-score"><strong>${habitPct===null?'—':habitPct+'%'}</strong><span>${hd} виконань<br>за вибраний період</span></div><div class="v13-habit-days">${recent.map(row=>`<div class="v13-habit-day"><span>${dateLabel(row.day)}</span><i class="${row.habits.done?'has-completion':''}" style="--habit-fill:${row.habits.total?row.habits.done/row.habits.total:0}" title="${row.habits.done} з ${row.habits.total}">${row.habits.total?row.habits.done:'·'}</i><small>${row.habits.total?row.habitPct+'%':'—'}</small></div>`).join('')}</div><p class="v13-note">${recent.length===1?'Останній':'Останні'} ${recent.length} ${analyticsNoun(recent.length,['день','дні','днів'])} періоду. Кожна відмітка одразу змінює результат.</p></section></div>
-  <div class="v13-bottom-grid"><section class="v13-panel"><div class="v13-panel-head"><div><span class="v13-eyebrow">Результат кожного дня</span><h3>Денний зріз</h3></div>${rows.length>14?`<button type="button" class="v13-text-button" data-stat-expand>${dailyExpanded?'Останні 14':'Усі дні'}</button>`:''}</div><div class="v13-table-scroll"><table class="planner-stat-table"><thead><tr><th>Дата</th><th>Завдання</th><th>Звички</th><th>Виконано</th></tr></thead><tbody>${tableRows.map(row=>`<tr data-stat-day="${row.day}"><td>${dateLabel(row.day)}</td><td>${row.done}<span> / ${row.total}</span></td><td>${row.habits.total?row.habits.done+' / '+row.habits.total:'—'}</td><td><b>${row.pct==null?'—':row.pct+'%'}</b></td></tr>`).join('')||'<tr><td colspan="4">Облік почнеться 01.11.2026</td></tr>'}</tbody></table></div></section><section class="v13-panel v13-deadlines"><div class="v13-panel-head"><div><span class="v13-eyebrow">Вибраний період</span><h3>Контроль дедлайнів</h3></div><span class="v13-status-dot ${late.length?'late':''}"></span></div>${late.length?`<strong class="v13-deadline-number">${late.length}</strong><p class="v13-muted">Незавершені завдання, термін яких минув у вибраному періоді</p>`+late.slice(0,8).map(item=>`<button type="button" class="v13-late-row" data-stat-late="${E(item.key)}"><b>${E(item.name)}</b><span>${dateLabel(item.due)} ↗</span></button>`).join(''):'<div class="v13-deadline-clear"><span>✓</span><strong>Усе під контролем</strong><p>Незавершених прострочених завдань у цьому періоді немає.</p></div>'}</section></div>`;
+  <div class="v13-bottom-grid"><section class="v13-panel"><div class="v13-panel-head"><div><span class="v13-eyebrow">Результат кожного дня</span><h3>Денний зріз</h3></div>${rows.length>14?`<button type="button" class="v13-text-button" data-stat-expand>${dailyExpanded?'Останні 14':'Усі дні'}</button>`:''}</div><div class="v13-table-scroll"><table class="planner-stat-table"><thead><tr><th>Дата</th><th>Завдання</th><th>Звички</th><th>Тренування</th><th>За день</th></tr></thead><tbody>${tableRows.map(row=>`<tr data-stat-day="${row.day}"><td>${dateLabel(row.day)}</td><td>${row.done}<span> / ${row.total}</span></td><td>${row.habits.total?row.habits.done+' / '+row.habits.total:'—'}</td><td>${row.workouts.total?row.workouts.done+' / '+row.workouts.total:'—'}</td><td><b>${row.pct==null?'—':row.pct+'%'}</b>${row.pending?'<small class="v22-day-pending">День триває</small>':''}</td></tr>`).join('')||'<tr><td colspan="5">Облік почнеться 01.11.2026</td></tr>'}</tbody></table></div></section><section class="v13-panel v13-deadlines"><div class="v13-panel-head"><div><span class="v13-eyebrow">Вибраний період</span><h3>Контроль дедлайнів</h3></div><span class="v13-status-dot ${late.length?'late':''}"></span></div>${late.length?`<strong class="v13-deadline-number">${late.length}</strong><p class="v13-muted">Незавершені завдання, термін яких минув у вибраному періоді</p>`+late.slice(0,8).map(item=>`<button type="button" class="v13-late-row" data-stat-late="${E(item.key)}"><b>${E(item.name)}</b><span>${dateLabel(item.due)} ↗</span></button>`).join(''):'<div class="v13-deadline-clear"><span>✓</span><strong>Усе під контролем</strong><p>Незавершених прострочених завдань у цьому періоді немає.</p></div>'}</section></div>`;
   bindAnalyticsPeriodV20(box);bindAnalyticsTooltipV20(box);
   $$('[data-stat-range]',box).forEach(button=>button.onclick=()=>{setAnalyticsPeriodV20(button.dataset.statRange);});
   $$('[data-stat-series]',box).forEach(button=>button.onclick=()=>{const key=button.dataset.statSeries;if(visibleSeries[key]&&Object.values(visibleSeries).filter(Boolean).length===1)return;visibleSeries[key]=!visibleSeries[key];renderStats();});
@@ -19583,10 +19641,7 @@ function progressChart(sid,scope,mini=false){return plannerStageChart(sid,scope,
 function init(){
  if(!window.plannerReady||!window.INVESTOR_V9||!window.INVESTOR_V8){setTimeout(init,70);return;}
  if(initialized)return;initialized=true;
- const view=DB.analyticsViewV20;if(view&&['7','30','90','all','custom'].includes(view.preset)){
-  if(view.preset!=='custom')statsRange=view.preset;
-  else if(fin2ValidDate(view.start)&&fin2ValidDate(view.end)&&view.start<=view.end){statsRange='custom';customStatsRange={start:view.start,end:view.end};}
- }
+ resetAnalyticsPeriodV23();
  purgeUnwanted();reconcileSources();
  const history=statsStore(),today=nowDay();for(let n=90;n>0;n--){const day=dayAdd(today,-n);if(day>=HAB_TRACKING_START&&!history[day])history[day]={items:dayItems(day),habits:habitDay(day)};}
  const scheduled=scheduledTasksFor;scheduledTasksFor=function(day){return scheduled(day).filter(t=>!t.archived&&sourceValid(t))};
@@ -19595,14 +19650,14 @@ function init(){
  window.INVESTOR_V9.progressChart=progressChart;window.INVESTOR_V9.sparkline=sid=>progressChart(sid,'big',true);
  const baseSave=save;save=function(...a){reconcileSources();captureStats();const out=baseSave.apply(this,a);if(!saveFrame)saveFrame=requestAnimationFrame(()=>{saveFrame=0;enhanceFinance();if(document.body.dataset.page==='review')renderStats();});return out;};
  const oldReview=window.refreshWeeklyReview;window.refreshWeeklyReview=function(){renderStats()};window.refreshPlannerStats=renderStats;
- const oldGo=go;go=function(p,...a){if(pendingClick){clearTimeout(pendingClick.timer);pendingClick=null;}window.plannerCloseDatePopover?.();closeDeadlinePicker();const out=oldGo.call(this,p,...a);if(p==='review')renderStats();return out;};
+ const oldGo=go;go=function(p,...a){if(pendingClick){clearTimeout(pendingClick.timer);pendingClick=null;}window.plannerCloseDatePopover?.();closeDeadlinePicker();if(p==='review')resetAnalyticsPeriodV23();const out=oldGo.call(this,p,...a);if(p==='review')renderStats();return out;};
  const observer=new MutationObserver(records=>{
   const uiChanged=records.some(r=>r.type==='childList'||r.type==='attributes'&&r.attributeName==='class');
   if(uiChanged){placeLayers();enhanceFinance();}
  });observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
  window.addEventListener('pagehide',()=>{captureStats();try{localStorage.setItem('inv_v19',JSON.stringify(DB))}catch(_){}});
  window.addEventListener('focus',()=>{updateFocusTimerUI();if(document.body.dataset.page==='review')renderStats()});
- window.plannerRepairs={dayItems,rowFor,overdue,kinds,routeToday,progressChart,captureStats};window.plannerAnalytics={period:analyticsPeriodV20,selectPeriod:setAnalyticsPeriodV20,curve:analyticsCurveV20,start:START,incomeData,stagePoints:plannerStagePoints,stageRows:plannerStageRows,stageSync:plannerStageSync};
+ window.plannerRepairs={dayItems,rowFor,overdue,kinds,routeToday,progressChart,captureStats,outcomeRows:outcomeRowsV22,summarize:summarizeV22};window.plannerAnalytics={period:analyticsPeriodV20,selectPeriod:setAnalyticsPeriodV20,curve:analyticsCurveV20,start:START,incomeData,stagePoints:plannerStagePoints,stageRows:plannerStageRows,stageSync:plannerStageSync};
  let analyticsWidth=innerWidth<=600,lastAnalyticsDay=nowDay();window.addEventListener('resize',()=>{const narrow=innerWidth<=600;if(narrow!==analyticsWidth){analyticsWidth=narrow;statsMarkupKey='';if(document.body.dataset.page==='review')renderStats();}});setInterval(()=>{const day=nowDay();if(day!==lastAnalyticsDay){lastAnalyticsDay=day;plannerStageSync();captureStats();rToday();if(document.body.dataset.page==='review')renderStats();}},30000);
  save();rToday();rSph();if(document.body.dataset.page==='review')renderStats();
 }
@@ -19771,7 +19826,7 @@ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailySt
 html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics button:focus-visible{outline:2px solid #b99b55;outline-offset:4px}
 @media(max-width:1100px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-kpis{gap:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi{padding:18px 15px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel{padding:23px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row{gap:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>b{max-width:140px}}
 @media(max-width:850px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-finance-grid,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-detail-grid,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-bottom-grid{grid-template-columns:1fr;gap:16px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-summary{min-height:0}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-summary>.v13-text-button{margin-top:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-days{max-width:430px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-trend .v13-income-chart{max-height:310px!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel h3{font-size:24px!important}}
-@media(max-width:600px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-toolbar{gap:16px;margin:0 0 18px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-cycle{font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-ranges{width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-ranges button{padding:8px 3px;min-height:38px;font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi{padding:17px 15px 14px;border-radius:15px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>span:first-child{font-size:10px;margin-bottom:13px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>strong{font-size:33px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>strong em{font-size:19px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>small{font-size:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel{padding:21px 17px;border-radius:17px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel h3{font-size:23px!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel-head{gap:12px;margin-bottom:18px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-panel-head{flex-direction:column;gap:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series{margin:0 0 -7px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button{min-height:33px;padding:5px 9px;font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-finance-grid,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-detail-grid{margin-bottom:16px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-note{font-size:10px;margin-top:14px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-eyebrow{font-size:8px;letter-spacing:.1em}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-total{font-size:38px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>span{font-size:12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>b{font-size:14px;max-width:155px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-chart,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-daily-chart{min-height:0!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row{grid-template-columns:minmax(0,1fr) 50px auto 10px;gap:12px;padding:15px 0}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-name{font-size:11px;gap:8px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row>b{font-size:14px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-score strong{font-size:43px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-days{gap:7px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-day>i{border-radius:9px;font-size:12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-table th{font-size:9px;padding:0 5px 12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-table td{padding:12px 5px;font-size:11px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-deadline-clear{min-height:150px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-text-button{min-height:38px}}
+@media(max-width:600px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-toolbar{gap:16px;margin:0 0 18px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-cycle{font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-ranges{width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-ranges button{padding:8px 3px;min-height:38px;font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi{padding:17px 15px 14px;border-radius:15px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>span:first-child{font-size:10px;margin-bottom:13px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>strong{font-size:33px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>strong em{font-size:19px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>small{font-size:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel{padding:21px 17px;border-radius:17px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel h3{font-size:23px!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel-head{gap:12px;margin-bottom:18px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm .v13-panel-head{flex-direction:column;gap:9px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series{margin:0 0 -7px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button{min-height:33px;padding:5px 9px;font-size:10px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-rhythm,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-finance-grid,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-detail-grid{margin-bottom:16px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-note{font-size:10px;margin-top:14px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-eyebrow{font-size:8px;letter-spacing:.1em}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-total{font-size:38px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>span{font-size:12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>b{font-size:14px;max-width:155px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-chart,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-daily-chart{min-height:0!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row{grid-template-columns:minmax(0,1fr) 50px auto 10px;gap:12px;padding:15px 0}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-name{font-size:11px;gap:8px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row>b{font-size:14px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-score strong{font-size:43px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-days{gap:7px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-day>i{border-radius:9px;font-size:12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-table th{font-size:9px;padding:0 5px 12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-table td{padding:12px 5px;font-size:11px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-deadline-clear{min-height:150px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-text-button{min-height:38px}}
 @media(max-width:360px){html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi{padding:15px 12px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .planner-stat-kpi>strong{font-size:29px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-panel{padding:20px 14px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-total{font-size:34px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-income-source>b{font-size:13px;max-width:132px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-sphere-row{gap:9px;grid-template-columns:minmax(0,1fr) 35px auto 8px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-days{gap:5px}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-habit-day>span{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.v13-chart-line{animation:none!important;stroke-dasharray:none!important}html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics *,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics button{transition:none!important}}
 
@@ -20831,4 +20886,255 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 
+
+<style id="workout-schedule-and-outcomes-v22">
+/* Scoped to workout controls and analytics; existing sphere typography is untouched. */
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel{position:relative;padding:23px 26px!important;border:1px solid #dcd7be!important;border-radius:21px!important;background:linear-gradient(125deg,#f4f6ecb3,#fffdf6ed 65%)!important;overflow:hidden}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel svg,html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog svg,html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-analytics svg:not(.v22-training-chart),html#investorV8#investorV8#investorV8#investorV8 body .v22-today-workout svg{width:20px;height:20px;flex-shrink:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading{display:flex;align-items:center;gap:12px;margin-bottom:19px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading>div{min-width:0;flex:1}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-mark{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border:1px solid #d9cfaa;border-radius:14px;background:#fbf7e9;color:#ad8a42}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-eyebrow{display:block;font:600 9px/1.4 'Segoe UI',Arial,sans-serif!important;letter-spacing:1.6px!important;text-transform:uppercase;color:#8b957b!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading h3,html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog h3{font:600 24px/1.25 Georgia,serif!important;letter-spacing:0!important;text-transform:none!important;color:#28533f!important;margin:4px 0 0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-edit{display:flex;align-items:center;gap:7px;flex-shrink:0;min-height:38px;padding:8px 12px!important;border:1px solid #ddd3b9!important;border-radius:11px!important;background:#fffcf2!important;color:#947638!important;font:500 12px/1.3 'Segoe UI',Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-edit svg{width:16px;height:16px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:35px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-plan{min-width:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-plan>strong{display:block;font:600 17px/1.4 'Segoe UI',Arial,sans-serif!important;color:#305c47!important;overflow-wrap:anywhere}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-plan>p{font:400 12px/1.6 'Segoe UI',Arial,sans-serif!important;color:#7b8a70!important;margin:5px 0 15px!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day{display:grid;justify-items:center;align-content:start;gap:7px;min-width:0;padding:9px 2px!important;border:1px solid #e3e0ce!important;border-radius:11px!important;background:#fcfbf5!important;color:#7b8973!important;font:500 11px/1.3 'Segoe UI',Arial,sans-serif!important;opacity:1!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day i{display:grid;place-items:center;width:30px;height:27px;font:500 18px/1 'Segoe UI',Arial,sans-serif!important;font-style:normal;color:#8eab98}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day i svg{width:19px;height:19px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day time{font:500 10px/1.2 'Segoe UI',Arial,sans-serif!important;color:inherit}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.rest{border-color:#e5e5d5!important;background:#f3f4eb!important;color:#a0a78e!important;cursor:default}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.rest i svg{width:16px;height:16px;color:#b3baa5}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.done{background:#e8f0e5!important;border-color:#b9cdb5!important;color:#2f6a4e!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.done i{color:#2f6a4e}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.missed{background:#fbf0e9!important;border-color:#e7cbb8!important;color:#b07960!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.missed i{color:#b07960}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.cancelled{border-style:dashed!important;color:#a2a68c!important;background:#f5f4eb!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.pending,html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.planned{background:#fcf6e7!important;border-color:#dcca9c!important;color:#9a7d38!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day.current{box-shadow:0 0 0 2px #b69a5030!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font:400 11px/1.5 'Segoe UI',Arial,sans-serif!important;color:#879276!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer button{display:inline-flex;align-items:center;gap:5px;padding:3px 0!important;border:0!important;background:none!important;color:#a1833e!important;font:600 11px/1.4 'Segoe UI',Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer svg{width:13px;height:13px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress{min-width:0;padding-left:30px;border-left:1px solid #dedecb}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress-head b{display:block;font:600 30px/1.25 Georgia,serif!important;color:#557c82!important;margin-top:5px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress-head b small{font:400 11px/1.4 'Segoe UI',Arial,sans-serif!important;color:#84917b!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-count{font:600 25px/1.3 Georgia,serif!important;color:#326548!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-count small{font:400 13px/1.5 'Segoe UI',Arial,sans-serif!important;color:#8f997f!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-chart{display:block;width:100%!important;height:auto!important;max-height:180px;overflow:visible;margin:8px 0 5px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-outcomes{display:flex;gap:13px;flex-wrap:wrap;font:400 10px/1.4 'Segoe UI',Arial,sans-serif!important;color:#859078!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-outcomes span{display:inline-flex;align-items:center;gap:5px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-outcomes i{width:5px;height:5px;background:#7d9d80;border-radius:50%}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-outcomes .missed{background:#b5876b}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-outcomes .pending{background:#bb9e53}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-note{font:400 11px/1.65 'Segoe UI',Arial,sans-serif!important;color:#879077!important;margin:17px 0 0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel>.v22-workout-note{border-top:1px solid #e4e1cf;padding-top:12px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog{width:min(500px,calc(100vw - 28px))!important;max-width:calc(100vw - 28px)!important;max-height:calc(100dvh - 32px)!important;padding:0!important;margin:auto!important;border:1px solid #d5c399!important;border-radius:23px!important;background:#fffdf6!important;color:#355641!important;box-shadow:0 28px 100px #163b3050!important;overflow:auto!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog::backdrop{background:#203d3366;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog form{padding:0!important;margin:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog header{display:flex;align-items:center;gap:11px;padding:22px 24px;border-bottom:1px solid #e8e0c9}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog header>div{flex:1;min-width:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog header>button{width:34px;height:34px;display:grid;place-items:center;padding:0!important;border:1px solid #dfd0ae!important;border-radius:11px!important;color:#a48746!important;background:#f9f4e7!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields{display:grid;gap:18px;padding:22px 24px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields label,html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields legend{display:grid;gap:8px;font:600 12px/1.5 'Segoe UI',Arial,sans-serif!important;letter-spacing:0!important;text-transform:none!important;color:#647b5e!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields input{display:block;box-sizing:border-box;width:100%!important;min-width:0;height:46px!important;padding:10px 12px!important;border:1px solid #dcd2b9!important;border-radius:11px!important;background:#fffefa!important;color:#355c43!important;font:400 16px/1.4 'Segoe UI',Arial,sans-serif!important;color-scheme:light!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields fieldset{border:0!important;padding:0!important;margin:0!important;min-width:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields legend{margin-bottom:8px!important;padding:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-day-choices{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-day-choices button{min-width:0;min-height:44px;padding:8px 0!important;border:1px solid #ded6bd!important;border-radius:11px!important;background:#faf8ee!important;color:#8e906e!important;font:600 13px/1.4 'Segoe UI',Arial,sans-serif!important;transition:background .16s,border-color .16s}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-day-choices button[aria-pressed=true]{background:#2c674d!important;border-color:#2c674d!important;color:#fff9e9!important;box-shadow:0 3px 8px #315c3f17!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields>.v22-workout-note{margin:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-error{font:500 12px/1.5 'Segoe UI',Arial,sans-serif!important;color:#b2654c!important;margin:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-error[hidden]{display:none!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 24px 21px;border-top:1px solid #e8e0c9}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer button{min-height:43px;padding:10px 13px!important;border:1px solid #ded1af!important;border-radius:11px!important;background:#fbf8ee!important;color:#928154!important;font:600 12px/1.4 'Segoe UI',Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer .v22-save{background:#235d45!important;border-color:#235d45!important;color:#fff9e8!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .chk.v22-today-workout{position:relative;display:grid!important;grid-template-columns:26px minmax(0,1fr) 35px 35px 30px!important;align-items:center!important;gap:10px!important;padding:17px 17px!important;margin:9px 0 13px!important;border:1px solid #d6d3b2!important;border-radius:16px!important;background:linear-gradient(110deg,#edf2e6,#fffaf0)!important;box-shadow:0 4px 18px #556c3410!important;overflow:hidden}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .lbl{min-width:0!important;padding:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .sph-tag{display:none!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .tk-name{display:grid!important;gap:6px!important;padding:0!important;margin:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout-label{display:flex;align-items:center;gap:6px;font:600 9px/1.3 'Segoe UI',Arial,sans-serif!important;letter-spacing:1.3px!important;color:#9e843f!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout-label svg{width:15px;height:15px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .tk-name strong{font:600 18px/1.4 'Segoe UI',Arial,sans-serif!important;color:#2b5e45!important;overflow-wrap:anywhere}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .tk-name small{font:400 11px/1.45 'Segoe UI',Arial,sans-serif!important;color:#7c8d70!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .box{width:24px!important;height:24px!important;min-width:24px!important;grid-column:1!important;grid-row:1!important;border-radius:8px!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout>button{position:static!important;inset:auto!important;width:33px!important;height:35px!important;min-height:35px!important;padding:0!important;border:1px solid #dbd1b5!important;border-radius:10px!important;background:#fffdf4b3!important;color:#9c854a!important;display:grid!important;place-items:center!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout>button svg{width:16px;height:16px}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout.on{background:linear-gradient(110deg,#e5eddf,#f4f7eb)!important;border-color:#bdceb2!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-analytics{margin-bottom:22px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-analytics [data-workout-open]{display:inline-flex!important;gap:6px!important;align-items:center!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-analytics [data-workout-open] svg{width:13px;height:13px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-body{display:flex;align-items:center;gap:35px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-score{display:flex;gap:16px;align-items:center;flex-shrink:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-score>strong{font:600 41px/1.2 Georgia,serif!important;color:#63889c!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-score>span{font:400 11px/1.65 'Segoe UI',Arial,sans-serif!important;color:#89927a!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:5px;width:100%;max-width:770px;min-width:0}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history button{display:grid;gap:7px;justify-items:center;min-width:0;padding:5px 0!important;border:0!important;background:none!important;opacity:1!important;color:#8f987f!important;font:400 10px/1.2 'Segoe UI',Arial,sans-serif!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history i{display:grid;place-items:center;width:100%;min-height:32px;border:1px solid #ddd9c5;border-radius:8px;background:#faf7ed;font-style:normal;color:#a48b4c}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history i svg{width:15px!important;height:15px!important}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history .rest i{background:#f4f5ec;border-color:#e7e5d5;color:#b2b69e}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history .done i{background:#e7efe2;border-color:#bed1b4;color:#3c7551}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history .missed i{background:#fbede4;border-color:#e2c7b1;color:#af775e}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history .cancelled i{border-style:dashed;color:#9b9e86;background:#f6f4e9}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.blue.active{color:#5f879d!important;background:#eff4f5!important;border-color:#d8e3e7!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v13-series button.blue i{height:0!important;background:none!important;border-top:2px dotted #63889c!important;border-radius:0!important}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key .blue i{height:0;border-top:2px dotted #63889c;background:none;border-radius:0}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-rhythm-key .blue b,html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip .blue b{color:#63889c}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip .blue i{background:#63889c}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip{min-width:235px;max-width:100%;box-sizing:border-box}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip>small{display:block;font:400 9px/1.5 'Segoe UI',Arial,sans-serif!important;color:#929880!important;margin:5px 0}
+html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v22-day-pending{display:block;font:400 9px/1.5 'Segoe UI',Arial,sans-serif!important;color:#9b956e!important;margin-top:3px}
+html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel button:focus-visible,html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog button:focus-visible,html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history button:focus-visible,html#investorV8#investorV8#investorV8#investorV8 body #todayList .v22-today-workout .box:focus-visible{outline:2px solid #b49751!important;outline-offset:3px!important}
+@media(max-width:1000px){
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-layout{gap:22px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress{padding-left:20px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-body{gap:20px;flex-wrap:wrap}
+}
+@media(max-width:700px){
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel{padding:17px 15px!important;border-radius:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading{gap:9px;margin-bottom:16px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading h3{font-size:19px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-mark{width:35px;height:35px;flex-basis:35px;border-radius:11px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading .v22-edit{width:34px;min-height:34px;padding:0!important;display:grid;place-items:center}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading .v22-edit span{display:none}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-eyebrow{font-size:8px!important;letter-spacing:1.1px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-layout{grid-template-columns:minmax(0,1fr);gap:17px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-plan>strong{font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-plan>p{font-size:11px!important;margin-bottom:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-week{gap:5px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day{padding:7px 1px!important;gap:5px;border-radius:9px!important;min-height:70px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day i{height:22px;width:25px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-day i svg{width:17px;height:17px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress{padding:16px 0 0;border-left:0;border-top:1px solid #dedecb}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-progress-head b{font-size:28px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer{gap:8px;font-size:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer button{font-size:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-note{font-size:10px!important;margin-top:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel>.v22-workout-note{padding-top:10px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog{border-radius:18px!important;width:calc(100vw - 24px)!important;max-width:480px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog header{padding:17px 16px;gap:9px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog h3{font-size:21px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields{padding:17px 16px;gap:16px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-fields input{height:43px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer{padding:14px 16px 17px;gap:8px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer button{padding:9px 10px!important;font-size:11px!important;min-height:43px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-day-choices{gap:4px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-day-choices button{min-height:42px;border-radius:9px!important;font-size:12px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .chk.v22-today-workout{grid-template-columns:25px minmax(0,1fr) 29px!important;gap:8px!important;padding:13px 12px!important;margin:9px 0!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .lbl{grid-column:2!important;grid-row:1/4!important;align-self:center}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .box{grid-column:1!important;grid-row:1/4!important;align-self:center}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout>button{grid-column:3!important;grid-row:auto!important;width:28px!important;height:29px!important;min-height:29px!important;border-radius:8px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .tk-name strong{font-size:16px!important;line-height:1.4!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout .tk-name small{font-size:11px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-today #todayList .v22-today-workout-label{font-size:8px!important;letter-spacing:1px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-body{gap:17px;display:grid;grid-template-columns:minmax(0,1fr)}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-analytics-score>strong{font-size:35px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history{grid-template-columns:repeat(7,minmax(0,1fr));gap:9px 7px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-history i{min-height:32px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-analytics{margin-bottom:17px}
+ html#investorV8#investorV8#investorV8#investorV8 body #pg-review #plannerDailyStats.v13-analytics .v20-chart-tooltip{min-width:215px;padding:10px 11px}
+}
+@media(max-width:360px){
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-panel{padding:15px 12px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading h3{font-size:18px!important}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading{gap:7px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-heading .v22-edit{width:30px;min-height:32px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-training-week{gap:4px}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-footer{align-items:flex-start}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog header .v22-workout-mark{display:none}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer{flex-wrap:wrap}
+ html#investorV8#investorV8#investorV8#investorV8 body .v22-workout-dialog footer button{flex:1;white-space:nowrap}
+}
+@media(prefers-reduced-motion:reduce){.v22-workout-panel *,.v22-workout-dialog *,.v22-today-workout *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+<script id="workout-schedule-and-outcomes-v22">
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ID='workout:v22',TODAY=()=>iso(new Date()),LABELS=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+const add=(day,n)=>{const d=pd(day);d.setDate(d.getDate()+n);return iso(d);},date=day=>day.split('-').reverse().join('.');
+const paths={training:'<path d="m7 7 10 10M4 10l6-6m4 16 6-6M3 7l4-4m10 18 4-4M2 10l8-8m4 20 8-8"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 2v6m10-6v6M3 11h18"/>',edit:'<path d="m15 4 5 5M4 15 15 4a2 2 0 0 1 5 5L9 20H4z"/>',close:'<path d="m6 6 12 12M6 18 18 6"/>',check:'<path d="m5 12 4 4L19 6"/>',rest:'<path d="M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10z"/>',arrow:'<path d="M5 19 19 5M7 5h12v12"/>'};
+const icon=key=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[key]||paths.training}</svg>`;
+function versions(){return (Array.isArray(DB.workoutPlanV22?.versions)?DB.workoutPlanV22.versions:[]).filter(v=>v&&fin2ValidDate(v.from)).slice().sort((a,b)=>a.from.localeCompare(b.from));}
+function versionOn(day){if(!fin2ValidDate(day)||day<START)return null;return versions().filter(v=>v.from<=day).at(-1)||null;}
+function planOn(day){const v=versionOn(day);return v?.enabled&&Array.isArray(v.days)&&v.days.includes(mon(day))&&(DB.spheres||[]).some(s=>s.id==='s3')?v:null;}
+function scheduled(day){const v=planOn(day);return v?{id:ID,s:'s3',t:v.name||'Тренування',isWorkoutV22:true,workoutDay:day}:null;}
+function status(day){
+ if(!planOn(day))return 'rest';
+ if(DB.daySkip?.[day]?.[ID])return 'cancelled';
+ if(DB.done?.[day]?.[ID]&&day<=TODAY())return 'done';
+ return day<TODAY()?'missed':day===TODAY()?'pending':'planned';
+}
+const statusText=key=>({rest:'Відпочинок',cancelled:'Скасовано',done:'Виконано',missed:'Пропущено',pending:'У плані сьогодні',planned:'Заплановано'})[key];
+function setPlan(input){
+ const from=input?.from,days=[...new Set((input?.days||[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<7))].sort((a,b)=>a-b),name=String(input?.name||'').trim().slice(0,100);
+ if(!fin2ValidDate(from)||from<START||input.enabled!==false&&(!days.length||!name))return false;
+ const next={from,days,name:name||'Тренування',enabled:input.enabled!==false};
+ DB.workoutPlanV22={...(DB.workoutPlanV22||{}),versions:[...versions().filter(v=>v.from<from),next]};
+ save();rToday();if(curSph==='s3'&&document.body.dataset.page==='sph')rSph();if(document.body.dataset.page==='review')window.refreshPlannerStats?.();return true;
+}
+function rowsFor(start,end){const rows=[];for(let day=start;day<=end;day=add(day,1))rows.push(window.plannerRepairs.rowFor(day));return rows;}
+function chart(rows){
+ const points=[{x:14,y:88}],trend=window.plannerRepairs.outcomeRows(rows),hasDone=rows.some(row=>row.workouts?.done),W=400,R=386;
+ trend.forEach((row,i)=>{if(row.workoutTrendPctPoint&&row.workoutTrendPct!==null)points.push({x:14+(R-14)*(i+1)/Math.max(1,rows.length),y:88-row.workoutTrendPct*.68,row});});
+ const line=window.plannerAnalytics.curve(points),last=points.at(-1),start=rows[0]?.day||TODAY(),end=rows.at(-1)?.day||TODAY();
+ return `<svg class="v22-training-chart" viewBox="0 0 ${W} 116" role="img" aria-label="Виконання тренувань за останні ${rows.length} днів"><path d="M14 20H386M14 54H386M14 88H386" stroke="#e1dfcf" stroke-width=".7"/>${hasDone&&points.length>1?`<path d="${line}L${last.x} 88H14Z" fill="#63889c" opacity=".06"/><path d="${line}" fill="none" stroke="#63889c" stroke-width="2.3" stroke-linecap="round"/>`:''}${(hasDone?points:[points[0]]).map(p=>`<circle ${p.row?'data-v22-workout-point="'+p.row.day+'"':'data-v22-workout-start'} cx="${p.x}" cy="${p.y}" r="3.2" fill="#63889c" stroke="#fffdf8" stroke-width="1.5"><title>${p.row?date(p.row.day)+' · '+p.row.workoutTrendPct+'%':'Початок · 0%'}</title></circle>`).join('')}<text x="14" y="110" font-size="10" fill="#84917b">${date(start)}</text><text x="386" y="110" text-anchor="end" font-size="10" fill="#84917b">${date(end)}</text></svg>`;
+}
+function weekHTML(){
+ const today=TODAY(),monday=add(today,-mon(today));
+ return `<div class="v22-training-week" aria-label="Тренування цього тижня">${LABELS.map((label,i)=>{const day=add(monday,i),state=status(day),active=planOn(day),mark=state==='done'?icon('check'):state==='missed'?'−':state==='cancelled'?'×':active?icon('training'):icon('rest');return `<button type="button" class="v22-training-day ${state}${day===today?' current':''}" data-workout-day="${day}" ${active?'':'disabled'} aria-label="${date(day)}: ${statusText(state)}"><span>${label}</span><i>${mark}</i><time datetime="${day}">${day.slice(8)}</time></button>`;}).join('')}</div>`;
+}
+function healthHTML(){
+ const today=TODAY(),plan=versionOn(today),future=versions().find(v=>v.from>today),active=!!plan?.enabled,start=add(today,-27)<START?START:add(today,-27),rows=rowsFor(start,today),sum=window.plannerRepairs.summarize(rows,'workouts');
+ let next='';for(let i=1;i<=28;i++){const day=add(today,i);if(planOn(day)&&!DB.daySkip?.[day]?.[ID]){next=day;break;}}
+ return `<section class="card v22-workout-panel" id="workoutScheduleV22"><div class="v22-workout-heading"><span class="v22-workout-mark">${icon('training')}</span><div><span class="v22-eyebrow">Здоров’я · регулярність</span><h3>Розклад тренувань</h3></div><button type="button" class="v22-edit" data-workout-edit aria-label="Налаштувати розклад тренувань">${icon('edit')}<span>Налаштувати</span></button></div><div class="v22-workout-layout"><div class="v22-workout-plan"><strong>${E(active?plan.name:'Обери свої дні')}</strong><p>${active?plan.days.map(i=>LABELS[i]).join(' · ')+' · від '+date(plan.from):future?'Новий розклад діє від '+date(future.from):'Наприклад, понеділок, середа та п’ятниця. У решту днів — відпочинок.'}</p>${weekHTML()}<div class="v22-workout-footer"><span>${active?(next?'Наступне · '+date(next):'Розклад на паузі'):future?'Налаштовано наперед':'Етапи сфери залишаються окремо'}</span><button type="button" data-workout-edit>${active?'Змінити дні':'Обрати дні'} ${icon('arrow')}</button></div></div><div class="v22-workout-progress"><div class="v22-workout-progress-head"><div><span class="v22-eyebrow">Останні ${rows.length} днів</span><b>${sum.score===null?'—':sum.score+'%'}<small> виконання</small></b></div><span class="v22-workout-count">${sum.done}<small> / ${sum.total}</small></span></div>${chart(rows)}<div class="v22-workout-outcomes"><span><i class="done"></i>${sum.done} виконано</span><span><i class="missed"></i>${sum.missed} пропущено</span>${sum.pending?`<span><i class="pending"></i>${sum.pending} ще сьогодні</span>`:''}</div></div></div><p class="v22-workout-note">Тренування з’являється у «Сьогодні» лише за розкладом. Пропуск рахується після завершення дня; відпочинок і скасування не знижують результат.</p></section>`;
+}
+function analyticsHTML(rows){
+ const sum=window.plannerRepairs.summarize(rows,'workouts'),recent=rows.slice(-14);
+ return `<section class="v13-panel v22-workout-analytics"><div class="v13-panel-head"><div><span class="v13-eyebrow">Здоров’я · ритм тренувань</span><h3>Тренувальна послідовність</h3></div><button type="button" class="v13-text-button" data-workout-open>Розклад ${icon('arrow')}</button></div><div class="v22-training-analytics-body"><div class="v22-training-analytics-score"><strong data-stat-workouts>${sum.score===null?'—':sum.score+'%'}</strong><span>${sum.done} з ${sum.total} тренувань<br>${sum.missed} пропущено${sum.pending?' · '+sum.pending+' ще сьогодні':''}</span></div><div class="v22-training-history" aria-label="Останні дні тренувань">${recent.map(row=>{const state=status(row.day);return `<button type="button" data-workout-day="${row.day}" class="${state}" ${state==='rest'?'disabled':''} title="${date(row.day)}: ${statusText(state)}" aria-label="${date(row.day)}: ${statusText(state)}"><time>${row.day.slice(8)}</time><i>${state==='done'?icon('check'):state==='rest'?'·':state==='missed'?'−':state==='cancelled'?'×':icon('training')}</i></button>`;}).join('')}</div></div><p class="v13-note">У загальному виконанні тренування вже враховані один раз. Тут — окремий зріз; вихідні не входять у план.</p></section>`;
+}
+function open(){
+ window.INVESTOR_V8.openSphere('s3');requestAnimationFrame(()=>$('#workoutScheduleV22')?.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'}));
+}
+function edit(){
+ $('#workoutScheduleDialogV22')?.close();const trigger=document.activeElement,dialog=document.createElement('dialog'),today=TODAY(),list=versions(),plan=list.filter(v=>v.from>=today).at(-1)||versionOn(today),days=plan?.days?.length?plan.days:[0,2,4];
+ dialog.id='workoutScheduleDialogV22';dialog.className='v22-workout-dialog';dialog.setAttribute('aria-labelledby','workoutDialogTitleV22');
+ dialog.innerHTML=`<form id="workoutScheduleFormV22"><header><span class="v22-workout-mark">${icon('training')}</span><div><span class="v22-eyebrow">Мій тижневий ритм</span><h3 id="workoutDialogTitleV22">Розклад тренувань</h3></div><button type="button" data-workout-close aria-label="Закрити">${icon('close')}</button></header><div class="v22-workout-fields"><label>Назва тренування<input name="name" maxlength="100" value="${E(plan?.name||'Силове тренування')}" placeholder="Наприклад, силове тренування" required autocomplete="off"></label><fieldset><legend>Дні тренувань</legend><div class="v22-workout-day-choices">${LABELS.map((label,i)=>`<button type="button" data-workout-weekday="${i}" aria-pressed="${days.includes(i)}">${label}</button>`).join('')}</div></fieldset><label>Застосувати від<input type="date" name="from" value="${plan?.from>today?plan.from:today}" min="${START}" required></label><p class="v22-workout-note">Розклад зміниться від цієї дати. Попередні дні та відмітки залишаться; для виправлення минулого можна обрати ранішу дату.</p><p class="v22-workout-error" role="alert" hidden></p></div><footer>${list.length?'<button type="button" class="v22-pause" data-workout-pause>Пауза від цієї дати</button>':'<button type="button" data-workout-close>Скасувати</button>'}<button type="submit" class="v22-save">Зберегти розклад</button></footer></form>`;
+ document.body.append(dialog);dialog.showModal();const form=$('form',dialog),error=$('.v22-workout-error',dialog);
+ const close=()=>dialog.close();$$('[data-workout-close]',dialog).forEach(b=>b.onclick=close);
+ $$('[data-workout-weekday]',dialog).forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');error.hidden=true;});
+ const submit=enabled=>{if(!form.reportValidity())return;const selected=$$('[data-workout-weekday][aria-pressed="true"]',dialog).map(b=>Number(b.dataset.workoutWeekday));if(enabled&&!selected.length){error.textContent='Обери щонайменше один день тренувань.';error.hidden=false;return;}if(setPlan({from:form.elements.from.value,name:form.elements.name.value,days:selected,enabled}))close();};
+ form.onsubmit=e=>{e.preventDefault();submit(true);};$('[data-workout-pause]',dialog)?.addEventListener('click',()=>submit(false));
+ dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();}});
+ dialog.addEventListener('close',()=>{window.plannerCloseDatePopover?.();dialog.remove();if(trigger?.isConnected)trigger.focus({preventScroll:true});},{once:true});
+}
+function decorateToday(){
+ const row=$('#todayList [data-tk="'+ID+'"]')?.closest('.chk');if(!row)return;
+ row.classList.add('v22-today-workout');row.dataset.workoutToday=cur;
+ const name=$('.tk-name',row),plan=planOn(cur),done=!!DB.done?.[cur]?.[ID];
+ if(name)name.innerHTML=`<span class="v22-today-workout-label">${icon('training')} ТРЕНУВАННЯ</span><strong>${E(plan?.name||'Тренування')}</strong><small>${LABELS[mon(cur)]} · ${date(cur)} · ${done?'Виконано':cur<TODAY()?'Не позначено':cur>TODAY()?'За розкладом':'Час для себе'}</small>`;
+ const box=$('.box',row);if(box){box.setAttribute('role','checkbox');box.setAttribute('aria-checked',String(done));box.setAttribute('aria-label','Позначити тренування виконаним');box.tabIndex=0;box.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();box.click();}};}
+ if(!$('[data-workout-open]',row)){const button=document.createElement('button');button.type='button';button.className='v22-workout-journal';button.dataset.workoutOpen='';button.setAttribute('aria-label','Відкрити тренувальний записник');button.innerHTML=icon('arrow');row.insertBefore(button,$('.today-skip',row));}
+}
+function init(){
+ if(!window.plannerFitnessV21||!window.plannerRepairs?.outcomeRows){setTimeout(init,70);return;}
+ const baseScheduled=scheduledTasksFor;scheduledTasksFor=function(day){const result=baseScheduled(day),item=scheduled(day);return item?[...result,item]:result;};
+ const baseWorkspace=workspaceHTML;workspaceHTML=function(sid,...args){const result=baseWorkspace.call(this,sid,...args);return sid==='s3'?healthHTML()+result:result;};
+ const baseToday=rToday;rToday=function(...args){const result=baseToday.apply(this,args);decorateToday();return result;};
+ const baseTimerInfo=timerInfo;timerInfo=function(key){return key==='task:'+ID?{key,name:planOn(cur)?.name||'Тренування',kind:'task',id:ID}:baseTimerInfo(key);};
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-workout-edit],[data-workout-open],[data-workout-day]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.hasAttribute('data-workout-edit'))edit();else if(b.hasAttribute('data-workout-open'))open();else{cur=b.dataset.workoutDay;go('today');rToday();}});
+ document.addEventListener('click',e=>{if(cur>TODAY()&&e.target.closest('[data-tk="'+ID+'"]')){e.preventDefault();e.stopImmediatePropagation();}},true);
+ window.plannerWorkoutsV22={versions,versionOn,planOn,scheduled,status,setPlan,healthHTML,analyticsHTML,open,edit};
+ rToday();if(curSph==='s3'&&document.body.dataset.page==='sph')rSph();if(document.body.dataset.page==='review')window.refreshPlannerStats?.();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+</script>
 </body></html>
