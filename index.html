@@ -23039,6 +23039,8 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
 }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .task-clock-icon {
  position:relative;
+ box-sizing:border-box;
+ flex:none;
  width:13px;
  height:13px;
  border:1.5px solid currentColor;
@@ -23054,7 +23056,6 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
  border-bottom:1.5px solid currentColor;
  border-left:1.5px solid currentColor;
 }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .today-stage-actions > .task-clock-square { grid-column:auto!important;grid-row:auto!important; }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #focusTimerLayer .ft-setup > div:has(> #ftSetupClose) { display:none!important; }
 @media(max-width:480px) {
  html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-timer { grid-template-columns:89px minmax(0,1fr); padding:8px!important; }
@@ -23400,13 +23401,62 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
  align-items:center;
  justify-content:center;
  gap:5px;
- width:auto!important;
- padding:0 6px!important;
+ width:max-content!important;
+ min-width:max-content!important;
+ padding:0 8px!important;
  white-space:nowrap;
 }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .task-clock-duration {
  font:600 10px/1 system-ui,sans-serif;
  font-variant-numeric:tabular-nums;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk {
+ grid-template-columns:auto minmax(0,1fr) max-content max-content!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk:has(> :is(.v22-workout-journal,.ws-exp)) {
+ grid-template-columns:auto minmax(0,1fr) repeat(3,max-content)!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .box { grid-column:1!important; grid-row:1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .lbl {
+ grid-column:2!important;
+ grid-row:1!important;
+ min-width:0!important;
+ overflow-wrap:anywhere;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.task-clock-square,.today-stage-actions,.today-skip,.today-hide-local,.v22-workout-journal,.ws-exp) {
+ grid-row:1!important;
+ align-self:start!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.task-clock-square,.today-stage-actions) { grid-column:3!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.today-skip,.today-hide-local) { grid-column:4!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .v22-workout-journal,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .wsrow-t:has(> .ws-exp) > .today-hide-local { grid-column:5!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .ws-exp { grid-column:4!important; white-space:nowrap; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .pgc { grid-column:2/-1!important; grid-row:2!important; }
+@media(max-width:760px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk:has(> :is(.v22-workout-journal,.ws-exp)) {
+  grid-template-columns:auto minmax(0,1fr) max-content max-content!important;
+ }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .lbl { grid-column:2/-1!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.task-clock-square,.today-stage-actions,.today-skip,.today-hide-local,.v22-workout-journal,.ws-exp) {
+  grid-row:2!important;
+  position:static!important;
+  align-self:center!important;
+  margin:0!important;
+ }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.task-clock-square,.today-stage-actions) {
+  grid-column:2!important;
+  justify-self:start!important;
+ }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .today-stage-actions {
+  min-width:0;
+  max-width:100%;
+  flex-wrap:wrap;
+ }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > :is(.today-skip,.today-hide-local,.ws-exp) { grid-column:3!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .v22-workout-journal,
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .wsrow-t:has(> .ws-exp) > .today-hide-local { grid-column:4!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayList .chk > .pgc { grid-row:3!important; }
 }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #dayFrameWidgetV25 .shift-timer:not(.shift-timer-idle) {
  grid-template-columns:116px minmax(0,1fr);
