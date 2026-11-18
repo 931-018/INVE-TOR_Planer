@@ -21535,6 +21535,7 @@ const duration=(a,b)=>{a=minutes(a);b=minutes(b);return a===null||b===null?null:
 const stamp=(day,time)=>{const d=pd(day),n=minutes(time);d.setHours(Math.floor(n/60),n%60,0,0);return d.getTime()/60000;};
 const elapsed=(a,b)=>Math.round((b-a)*1000)/1000;
 const hfmt=n=>{n=Math.round(Math.max(0,Number(n)||0));return Math.floor(n/60)+' год'+(n%60?' '+n%60+' хв':'');};
+const sleepKeys=['early','late','night','off'];
 function defaults(){
  const profiles={early:{label:'Рання',start:'06:00',end:'14:00',bed:'21:30',wake:'05:00'},night:{label:'Нічна',start:'22:00',end:'06:00',bed:'07:00',wake:'14:30'},late:{label:'Пізня',start:'14:00',end:'22:00',bed:'23:30',wake:'08:00'},off:{label:'Вихідний',start:'',end:'',bed:'00:00',wake:'08:00'}};
  const old=String(DB.healthSimple?.sleep||''),rows=[...old.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)];
@@ -21576,6 +21577,18 @@ function saveConfig(value){
  const c=clone(value);c.buffer=Math.max(0,Math.min(1440,Number(c.buffer)||0));c.tolerance=Math.max(0,Math.min(180,Number(c.tolerance)||0));
  model().configs=model().configs.filter(v=>v.from!==c.from).concat(c).sort((a,b)=>a.from.localeCompare(b.from));return true;
 }
+function saveSleepSchedule(values){
+ if(!sleepKeys.every(key=>duration(values?.[key]?.bed,values?.[key]?.wake)>0))return false;
+ const day=today(), current=config(day);
+ const withSleep=entry=>({...entry,profiles:Object.fromEntries(sleepKeys.map(key=>{
+  const {bed,wake}=values[key];
+  return [key,{...entry.profiles[key],bed,wake}];
+ }))});
+ if(!saveConfig(withSleep({...current,from:day})))return false;
+ const data=model();
+ data.configs=data.configs.map(entry=>entry.from>day?withSleep(entry):entry);
+ return true;
+}
 function rotation(day){
  const c=config(day),weeks=Math.round((pd(wk(day))-pd(wk(c.anchor)))/604800000),index=((weeks%c.cycle.length)+c.cycle.length)%c.cycle.length;
  const key=c.workDays.includes(mon(day))?c.cycle[index]:'off',p=c.profiles[key];
@@ -21610,22 +21623,30 @@ function shift(day){
  const keys=['early','night','late'];keys.sort((a,b)=>{const dist=k=>{const n=Math.abs(minutes(c.profiles[k].start)-minutes(e.start));return Math.min(n,1440-n)};return dist(a)-dist(b)});
  return {type:'shift',start:e.start,end:e.end,label:e.start+'–'+e.end,profileKey:keys[0],source};
 }
-const dailyRestMinutes=7*60;
-// This reserved interval only positions the shift timer. No actual sleep is recorded.
 function reservedRest(day) {
  const shiftToday=shift(day),c=config(day);
  const profile=c.profiles[shiftToday.profileKey]||c.profiles.off;
- let end=stamp(day,c.profiles.off.wake);
- if(shiftToday.type==='shift'){
-  const lead=Math.max(commuteMinutes(day),duration(profile.wake,profile.start)||0);
-  end=stamp(day,shiftToday.start)-lead;
- } else {
-  const previous=workWindow(add(day,-1));
-  if(previous && previous.end>stamp(day,'00:00')){
-   end=Math.max(end,previous.end+dailyRestMinutes);
-  }
- }
- return {start:end-dailyRestMinutes,end};
+ const {bed,wake}=profile;
+ const bedDay=minutes(bed)>minutes(wake)?add(day,-1):day;
+ return {bed,wake,start:stamp(bedDay,bed),end:stamp(day,wake)};
+}
+function wakeStarted(day){
+ const value=model().wakeStarts?.[day];
+ return Number.isFinite(value)?value:null;
+}
+function setWakeStarted(day,started){
+ if(day!==today())return false;
+ const data=model();
+ data.wakeStarts ||= {};
+ if(started){
+  if(wakeStarted(day)===null)data.wakeStarts[day]=Date.now()/60000;
+ }else delete data.wakeStarts[day];
+ return true;
+}
+function sleepBlock(day, now){
+ const {start,end}=reservedRest(day);
+ const wake=wakeStarted(day);
+ return [start,wake!==null&&wake<=now?Math.min(end,wake):end];
 }
 function workWindow(day){const s=shift(day);if(s.type==='off'||!duration(s.start,s.end))return null;const start=stamp(day,s.start),end=stamp(minutes(s.end)<minutes(s.start)?add(day,1):day,s.end);return {...s,day,startTime:s.start,endTime:s.end,start,end};}
 function union(intervals){
@@ -21692,10 +21713,11 @@ function budget(day) {
  const work=workWindow(day);
  const workMinutes=work?elapsed(work.start,work.end):0;
  const commute=work?commuteMinutes(day):0;
+ const {start,end}=reservedRest(day),sleepMinutes=elapsed(start,end);
  const plannedMinutesForDay=plannedMinutes(day);
- const baseMinutes=Math.max(0,1440-dailyRestMinutes-workMinutes-commute);
+ const baseMinutes=Math.max(0,1440-sleepMinutes-workMinutes-commute);
  const balance=baseMinutes-plannedMinutesForDay;
- return {day,workMinutes,sleepMinutes:dailyRestMinutes,commute,baseMinutes,
+ return {day,workMinutes,sleepMinutes,commute,baseMinutes,
   plannedMinutes:plannedMinutesForDay,remainingMinutes:Math.max(0,balance),
   overbookedMinutes:Math.max(0,-balance)};
 }
@@ -21711,30 +21733,31 @@ function livePersonalTime(day, now=Date.now()) {
  const departure=next?next.start-commuteMinutes(next.day):Infinity;
  if(departure<=start) return {minutes:0,context:'Час на дорогу'};
  const end=Math.min(midnight,departure);
- const rests=[day,tomorrow].map(reservedRest);
- const blocked=union(rests.map(rest=>[Math.max(start,rest.start),Math.min(end,rest.end)]));
+ const rests=[day,tomorrow].map(d=>sleepBlock(d,start));
+ const blocked=union(rests.map(([left,right])=>[Math.max(start,left),Math.min(end,right)]));
  const restMinutes=blocked.reduce((sum,[left,right])=>sum+right-left,0);
  const available=end-start-restMinutes-remainingPlan(day);
  return {minutes:Math.max(0,Math.floor(available+1e-8)),
   context:departure<=midnight?'До виходу':'До кінця дня'};
 }
 function beforeShift(day){
- const live=day===today(),reference=live?Math.floor(Date.now()/60000):reservedRest(day).end;
+ const sleep=reservedRest(day),live=day===today(), now=Date.now()/60000;
+ const reference=live?Math.floor(now):sleep.end, wake=wakeStarted(day);
  const horizon=Math.min(370,Math.max(28,config(day).cycle.length*7+7)),work=[];
  for(let i=-1;i<=horizon;i++){const w=workWindow(add(day,i));if(w&&w.end>w.start)work.push(w);}
  work.sort((a,b)=>a.start-b.start);
  const active=work.find(w=>w.start<=reference&&w.end>reference)||null;
  const next=work.find(w=>live?w.start>reference:w.day>=day&&w.start>=reference)||null;
- if(!next)return {day,live,reference,active,next:null,horizon,untilMinutes:null,freeMinutes:null};
+ if(!next)return {day,live,reference,active,next:null,horizon,untilMinutes:null,freeMinutes:null,sleep,wake};
  const commute=commuteMinutes(next.day),departure=next.start-commute;
- const freeStart=Math.min(departure,reservedRest(next.day).end);
+ const freeStart=Math.min(departure,live&&next.day===day&&wake!==null&&wake<=now?wake:reservedRest(next.day).end);
  const lastDay=iso(new Date(next.start*60000)),blocked=work.map(w=>[w.start,w.end]);
  blocked.push([departure,next.start]);
- for(let d=add(day,-1);d<=add(lastDay,1);d=add(d,1)){const s=reservedRest(d);blocked.push([s.start,s.end]);}
+ for(let d=add(day,-1);d<=add(lastDay,1);d=add(d,1))blocked.push(sleepBlock(d,now));
  const unavailable=union(blocked.filter(([a,z])=>a<next.start&&z>reference).map(([a,z])=>[Math.max(a,reference),Math.min(z,next.start)]));
  const unavailableMinutes=unavailable.reduce((sum,[a,z])=>sum+elapsed(a,z),0),untilMinutes=elapsed(reference,next.start),awakeFreeMinutes=Math.max(0,untilMinutes-unavailableMinutes);
  const windowMinutes=Math.floor(awakeFreeMinutes),remainingPlanMinutes=Math.ceil(remainingPlan(day));
- return {day,live,reference,active,next,horizon,untilMinutes,commute,departure,freeStart,unavailableMinutes,windowMinutes,remainingPlanMinutes,freeMinutes:Math.max(0,windowMinutes-remainingPlanMinutes),overPlanMinutes:Math.max(0,remainingPlanMinutes-windowMinutes)};
+ return {day,live,reference,active,next,horizon,untilMinutes,commute,departure,freeStart,unavailableMinutes,windowMinutes,remainingPlanMinutes,freeMinutes:Math.max(0,windowMinutes-remainingPlanMinutes),overPlanMinutes:Math.max(0,remainingPlanMinutes-windowMinutes),sleep,wake};
 }
 function captureFocus(status){
  const st=typeof focusTimerState==='function'?focusTimerState():null;if(!st?.key)return null;
@@ -21750,7 +21773,7 @@ function summary(start,end){
  const rows=days.map(day=>({day,planned:plannedMinutes(day),focus:focusMinutes(day)}));
  return {rows,planned:rows.reduce((n,r)=>n+r.planned,0),focus:rows.reduce((n,r)=>n+r.focus,0)};
 }
-window.plannerDayFramesCoreV25={model,defaults,config,saveConfig,rotation,shift,shiftPlan,setShiftPlan,reservedRest,workWindow,budget,livePersonalTime,beforeShift,commuteMinutes,setCommuteMinutes,tasks,normalizedKey,allocation,canSchedule,scheduleDate,setAllocation,clearTaskAllocations,plannedMinutes,remainingPlan,captureFocus,focusMinutes,summary,minutes,duration,hfmt,add,today};
+window.plannerDayFramesCoreV25={model,defaults,config,saveConfig,saveSleepSchedule,sleepKeys,rotation,shift,shiftPlan,setShiftPlan,reservedRest,wakeStarted,setWakeStarted,workWindow,budget,livePersonalTime,beforeShift,commuteMinutes,setCommuteMinutes,tasks,normalizedKey,allocation,canSchedule,scheduleDate,setAllocation,clearTaskAllocations,plannedMinutes,remainingPlan,captureFocus,focusMinutes,summary,minutes,duration,hfmt,add,today};
 })();
 </script>
 <script id="day-frame-ui-v25">
@@ -21800,13 +21823,49 @@ function shiftProgress(s, now=Date.now()) {
   departure:free/total*100};
 }
 
+function sleepScheduleHTML(){
+ const {profiles}=C.config();
+ const rows=C.sleepKeys.map(key=>{
+  const p=profiles[key], label=E(p.label);
+  return `<tr><th scope="row">${label}${key==='off'?'':` <small>${E(p.start)}–${E(p.end)}</small>`}</th>
+   <td><input type="time" name="${key}-bed" value="${E(p.bed)}" aria-label="${label} — лягати" required></td>
+   <td><input type="time" name="${key}-wake" value="${E(p.wake)}" aria-label="${label} — вставати" required></td></tr>`;
+ }).join('');
+ return `<form id="daySleepSchedule" class="card">
+  <h3>Графік сну</h3>
+  <table><thead><tr><th scope="col">Зміна</th><th scope="col">Лягати</th><th scope="col">Вставати</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="day-sleep-actions"><button type="submit">Зберегти графік</button><span role="status"></span></div>
+ </form>`;
+}
+function saveSleepForm(form){
+ const values=Object.fromEntries(C.sleepKeys.map(key=>[key,{
+  bed:form.elements.namedItem(key+'-bed').value,
+  wake:form.elements.namedItem(key+'-wake').value
+ }]));
+ const ok=C.saveSleepSchedule(values);
+ if(ok){save();renderFrame(true);}
+ $('[role="status"]',form).textContent=ok?'Графік збережено.':'Вкажи різний час сну й підйому для кожної зміни.';
+}
+function sleepStrip(s){
+ const {bed,wake,start,end}=s.sleep;
+ const yesterday=new Date(start*60000).getDate()!==new Date(end*60000).getDate();
+ const started=s.wake!==null;
+ const walker='<svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.4" cy="3.4" r="1.7"/><path d="m7 10 2-3 2 1 2 2h2M10 8l-1 5-3 4m3-4 3 1 1 4"/></svg>';
+ const button=s.live?`<button type="button" data-wake-start aria-pressed="${started}" title="${started?'Скасувати відмітку підйому':'Зафіксувати підйом зараз'}">${walker}<span>${started?'Встав '+clock(s.wake):'Я встав'}</span></button>`:'';
+ return `<div class="shift-sleep">
+  <span title="${yesterday?'Лягати напередодні':'Лягати'}"><i aria-hidden="true">☾</i><b>${E(bed)}</b></span>
+  <span title="Підйом за графіком"><i aria-hidden="true">☀</i><b>${E(wake)}</b></span>
+  ${button}
+ </div>`;
+}
 function beforeShiftHTML(s, balance=null) {
  const active = s.live && s.active;
  const shift = active ? s.active : s.next;
  const calendar = '<button type="button" class="shift-calendar-open" data-open-shift-calendar title="Календар змін" aria-label="Календар змін"><span aria-hidden="true"></span></button>';
  const free = balance && balance.context!=='Зараз зміна' && balance.context!=='Час на дорогу'
   ? `<span class="shift-free">${balance.context==='До виходу'?'До виходу вільно':balance.context} <b>${C.hfmt(balance.minutes)}</b></span>` : '';
- if (!shift) return `<div class="v26-before-shift shift-timer shift-timer-idle"><div class="shift-timer-head"><strong>Без зміни</strong>${calendar}</div>${free}</div>`;
+ const sleep=sleepStrip(s);
+ if (!shift) return `<div class="v26-before-shift shift-timer shift-timer-idle"><div class="shift-timer-head"><strong>Без зміни</strong>${calendar}</div>${free}${sleep}</div>`;
  const time = shiftClock(s);
  const shiftDate = shift.day !== s.day ? short(shift.day) + ' · ' : '';
  const departure = !active && s.commute ? clock(s.departure) : '';
@@ -21823,15 +21882,18 @@ function beforeShiftHTML(s, balance=null) {
    <div class="shift-timer-head"><strong>Зміна · ${shiftDate}${shift.startTime}–${shift.endTime}</strong>
     <div class="shift-timer-tools">${calendar}<button type="button" class="shift-commute-open" data-open-commute="${shift.day}" title="Час виходу" aria-label="Налаштувати час виходу">···</button></div></div>
    ${departure || free ? `<div class="shift-timer-legend">${departure?`<span class="shift-departure"><span class="departure-sneaker" aria-hidden="true"><i></i><i></i><i></i></span><span>Вихід <b>${departure}</b></span></span>`:''}${free}</div>` : ''}
+   ${sleep}
   </div>
  </div>`;
 }
 
 let shiftSnapshot = null;
 function tickShift() {
- const node = $('[data-shift-live="true"]');
- if (!node || !shiftSnapshot?.live) return;
+ if (!shiftSnapshot?.live) return;
  const now = Date.now();
+ if (Math.floor(now / 60000) !== shiftSnapshot.reference) renderFrame();
+ const node = $('[data-shift-live="true"]');
+ if (!node) return;
  const time = shiftClock(shiftSnapshot, now);
  const clockNode = $('[data-shift-clock]', node);
  const labelNode = $('[data-shift-label]', node);
@@ -21841,7 +21903,6 @@ function tickShift() {
  node.dataset.shiftPhase = time.phase;
  const progress=!shiftSnapshot.active && shiftSnapshot.next ? shiftProgress(shiftSnapshot,now) : null;
  ring.style.cssText = shiftRingStyle(progress);
- if (Math.floor(now / 60000) !== shiftSnapshot.reference) renderFrame();
 }
 
 function openCommute(day, trigger) {
@@ -22023,7 +22084,8 @@ function renderFrame(force = false) {
  const active=document.activeElement;
  const focused=host.contains?.(active)
   ? active.matches('[data-open-shift-calendar]')?'[data-open-shift-calendar]'
-   :active.matches('[data-open-commute]')?'[data-open-commute]':null
+   :active.matches('[data-open-commute]')?'[data-open-commute]'
+   :active.matches('[data-wake-start]')?'[data-wake-start]':null
   : null;
  host.innerHTML=beforeShiftHTML(preShift,balance);
  if(focused) $(focused,host)?.focus({preventScroll:true});
@@ -22239,7 +22301,7 @@ function init(){
  C.model();
  const originalNotebook=plannerNotebookOnDay;plannerNotebookOnDay=function(x,day){return !!x?.extraDatesV25?.includes(day)||originalNotebook(x,day);};
  const oldToday=rToday;rToday=function(...a){const out=oldToday.apply(this,a);renderFrame(true);decorateTasks();return out;};
- healthSleepHTML=()=> '';
+ healthSleepHTML=sleepScheduleHTML;
  const originalTimerInfo=timerInfo;timerInfo=function(key){const item=C.tasks(cur).find(t=>t.timerKey===key||t.key===C.normalizedKey(key));return item?{...originalTimerInfo(key),name:item.name}:originalTimerInfo(key);};
  const oldOpen=openFocusTimerSetup;openFocusTimerSetup=function(key){const out=oldOpen(key);setupPlan(key);return out;};
  const oldStart=startFocusTimer;startFocusTimer=function(){if(cur!==C.today()){notify('Для цієї дати збережи план. Фокус запускається у вкладці поточного дня.');return;}if(!chosenMinutes()){notify('Вкажи тривалість від 1 хв до 24 год.');return;}C.captureFocus('stopped');const result=oldStart();C.captureFocus();save();refresh();return result;};$('#ftStart').onclick=()=>startFocusTimer();
@@ -22247,10 +22309,20 @@ function init(){
  const oldStats=window.refreshPlannerStats;window.refreshPlannerStats=function(...a){const out=oldStats?.apply(this,a);renderRhythmStats();return out;};
  const review=$('#pg-review');if(review)new MutationObserver(refresh).observe(review,{childList:true,subtree:true});
  document.addEventListener('dblclick',e=>{
+  if(e.target.closest('[data-wake-start]'))return;
   const area=e.target.closest('[data-shift-commute-area]');
   if(area)openCommute(area.dataset.shiftCommuteArea,$('[data-open-commute]',area));
  });
+ document.addEventListener('submit',e=>{
+  if(e.target.id!=='daySleepSchedule')return;
+  e.preventDefault();
+  saveSleepForm(e.target);
+ });
  document.addEventListener('click',e=>{
+  if(e.target.closest('[data-wake-start]')){
+   if(C.setWakeStarted(cur,C.wakeStarted(cur)===null)){save();renderFrame(true);}
+   return;
+  }
   const addTask=e.target.closest('[data-today-quick-add]');
   if(addTask){openQuickTask(addTask);return;}
   const commute=e.target.closest('[data-open-commute]');
@@ -23342,6 +23414,87 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #dayFrameWidgetV25 .shift-ring { width:114px; }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #dayFrameWidgetV25 .shift-dial-face { inset:17px; }
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #dayFrameWidgetV25 [data-shift-clock] { font-size:17px; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep {
+ display:flex;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:5px 10px;
+ margin-top:7px;
+ color:#c6dacf;
+ font:500 11px/1.25 system-ui,sans-serif;
+ font-variant-numeric:tabular-nums;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep > span,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep [data-wake-start] {
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+ white-space:nowrap;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep i { color:#e9c983; font:normal 14px/1 system-ui,sans-serif; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep [data-wake-start] {
+ padding:2px 6px!important;
+ min-height:24px;
+ border:1px solid #7ea08c65!important;
+ border-radius:7px!important;
+ background:#e3f3e312!important;
+ color:#e7f4e9!important;
+ letter-spacing:0!important;
+ font:600 11px/1.15 system-ui,sans-serif!important;
+ cursor:pointer;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .shift-sleep [data-wake-start][aria-pressed="true"] {
+ background:#34634b!important;
+ border-color:#86ae8e!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule table {
+ width:100%;
+ margin-top:9px;
+ table-layout:fixed;
+ border-collapse:collapse;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule thead th { font-weight:650; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule :is(th,td) {
+ padding:5px 3px;
+ border-bottom:1px solid #dfe4d5;
+ text-align:left;
+ color:#355845;
+ font:500 12px/1.3 system-ui,sans-serif;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule tbody th small {
+ display:block;
+ color:#697b6d;
+ font-size:11px;
+ white-space:nowrap;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule input {
+ box-sizing:border-box;
+ width:min(100%,132px);
+ padding:6px 4px;
+ border:1px solid #d9d9c7;
+ border-radius:8px;
+ background:#fffdf7;
+ color:#2c5140;
+ font:600 14px/1.2 system-ui,sans-serif;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule .day-sleep-actions {
+ display:flex;
+ flex-wrap:wrap;
+ align-items:center;
+ gap:8px 12px;
+ margin-top:10px;
+ font:500 12px/1.3 system-ui,sans-serif;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #daySleepSchedule button {
+ min-height:34px;
+ padding:6px 10px;
+ border:1px solid #326349;
+ border-radius:8px;
+ background:#326349;
+ color:#fffdf7;
+ font:650 12px/1.2 system-ui,sans-serif;
+ cursor:pointer;
+}
 @media(max-width:480px) {
  html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #dayFrameWidgetV25 .shift-timer:not(.shift-timer-idle) {
   grid-template-columns:99px minmax(0,1fr);
