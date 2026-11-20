@@ -14590,13 +14590,17 @@ function fin2DeleteAccount(id,back){const f=fin2(),a=f.accounts.find(x=>x.id===i
 function fin2ISO(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function fin2ParseDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
 function fin2ValidDate(s){return /^\d{4}-\d{2}-\d{2}$/.test(s||'')&&fin2ISO(fin2ParseDate(s))===s}
-function fin2Preset(key){const now=fin2ParseDate(fin2Date()),y=now.getFullYear(),m=now.getMonth();let start=new Date(y,m,1),end=new Date(y,m+1,0);if(key==='today'){start=now;end=now}else if(key==='week'){start=new Date(y,m,now.getDate()-(now.getDay()+6)%7);end=new Date(start.getFullYear(),start.getMonth(),start.getDate()+6)}else if(key==='lastmonth'){start=new Date(y,m-1,1);end=new Date(y,m,0)}else if(key==='year'){start=new Date(y,0,1);end=new Date(y,11,31)}else if(key==='all'){const dates=fin2().transactions.map(t=>t.date).filter(fin2ValidDate).sort();start=dates.length?fin2ParseDate(dates[0]):now;end=dates.length?fin2ParseDate(dates.at(-1)):now}return {start:fin2ISO(start),end:fin2ISO(end)}}
+function fin2MonthToDateV25(){const today=fin2Date();return {start:today.slice(0,7)+'-01',end:today,preset:'currentmonth'};}
+function fin2StatisticsPeriodV25(){const p=fin2().statisticsPeriodV25;if(!p||p.preset==='currentmonth')return fin2MonthToDateV25();if(p.preset==='tracking')return {start:'2026-11-20',end:fin2Date(),preset:'tracking'};if(p.preset==='all')return {...fin2Preset('all'),preset:'all'};return fin2ValidDate(p.start)&&fin2ValidDate(p.end)&&p.start<=p.end?p:fin2MonthToDateV25();}
+function fin2SetPeriodV25(period){const f=fin2();if(f.activeTab==='statistics')f.statisticsPeriodV25=period;else f.period=period;}
+
+function fin2Preset(key){if(key==='month')return fin2MonthToDateV25();if(key==='tracking')return {start:'2026-11-20',end:fin2Date()};const now=fin2ParseDate(fin2Date()),y=now.getFullYear(),m=now.getMonth();let start=new Date(y,m,1),end=new Date(y,m+1,0);if(key==='today'){start=now;end=now}else if(key==='week'){start=new Date(y,m,now.getDate()-(now.getDay()+6)%7);end=new Date(start.getFullYear(),start.getMonth(),start.getDate()+6)}else if(key==='lastmonth'){start=new Date(y,m-1,1);end=new Date(y,m,0)}else if(key==='year'){start=new Date(y,0,1);end=new Date(y,11,31)}else if(key==='all'){const dates=fin2().transactions.map(t=>t.date).filter(fin2ValidDate).sort();start=dates.length?fin2ParseDate(dates[0]):now;end=dates.length?fin2ParseDate(dates.at(-1)):now}return {start:fin2ISO(start),end:fin2ISO(end)}}
 function fin2Period(){const f=fin2(),p=f.period;if(p&&fin2ValidDate(p.start)&&fin2ValidDate(p.end)&&p.start<=p.end)return p;return fin2Preset('month')}
 function fin2PeriodLabel(){const p=fin2Period(),fmt=s=>s.split('-').reverse().join('.');return p.start===p.end?fmt(p.start):fmt(p.start)+' — '+fmt(p.end)}
 function fin2PeriodTransactions(){const p=fin2Period();return fin2().transactions.filter(t=>t.type!=='debt_payment'&&t.date>=p.start&&t.date<=p.end)}
-function fin2OpenCalendar(){document.querySelector('.fin2-calendar-back')?.remove();const trigger=document.activeElement,period=fin2Period();let start=period.start,end=period.end,month=fin2ParseDate(start),pickEnd=false,selectedPreset=period.preset||'';const back=document.createElement('div');back.className='fin2-modal-back fin2-calendar-back';back.innerHTML=`<section class="fin2-calendar" role="dialog" aria-modal="true" aria-labelledby="fin2CalendarTitle"><header><div><small>СТАТИСТИКА ФІНАНСІВ</small><h3 id="fin2CalendarTitle">Обери період</h3></div><button type="button" class="fin2-cal-close" aria-label="Закрити">×</button></header><div class="fin2-cal-presets">${[['today','Сьогодні'],['week','Тиждень'],['month','Цей місяць'],['lastmonth','Минулий місяць'],['year','Рік'],['all','Увесь час']].map(([id,label])=>`<button type="button" data-cal-preset="${id}">${label}</button>`).join('')}</div><div class="fin2-cal-inputs"><label>Від<input type="date" name="start" aria-label="Початок періоду"></label><span>→</span><label>До<input type="date" name="end" aria-label="Кінець періоду"></label></div><div class="fin2-cal-navigation"><button type="button" data-cal-move="-1" aria-label="Попередній місяць">‹</button><select aria-label="Місяць" data-cal-month>${['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'].map((s,i)=>`<option value="${i}">${s}</option>`).join('')}</select><input type="number" min="1" max="9999" aria-label="Рік" data-cal-year><button type="button" data-cal-move="1" aria-label="Наступний місяць">›</button></div><div class="fin2-cal-week">${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(s=>`<span>${s}</span>`).join('')}</div><div class="fin2-cal-grid"></div><p class="fin2-cal-hint" aria-live="polite"></p><footer><button type="button" data-cal-cancel>Скасувати</button><button type="button" data-cal-apply>Застосувати період</button></footer></section>`;document.body.appendChild(back);const q=s=>back.querySelector(s),close=()=>{back.remove();document.removeEventListener('keydown',onKey);if(trigger?.isConnected)trigger.focus()};function onKey(e){if(e.key==='Escape'){e.preventDefault();close()}if(e.key==='Tab'){const list=[...back.querySelectorAll('button:not(:disabled),select,input')],first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}document.addEventListener('keydown',onKey);back.onclick=e=>{if(e.target===back)close()};q('.fin2-cal-close').onclick=close;q('[data-cal-cancel]').onclick=close;
+function fin2OpenCalendar(){document.querySelector('.fin2-calendar-back')?.remove();const trigger=document.activeElement,period=fin2Period();let start=period.start,end=period.end,month=fin2ParseDate(start),pickEnd=false,selectedPreset=period.preset||'';const back=document.createElement('div');back.className='fin2-modal-back fin2-calendar-back';back.innerHTML=`<section class="fin2-calendar" role="dialog" aria-modal="true" aria-labelledby="fin2CalendarTitle"><header><div><small>СТАТИСТИКА ФІНАНСІВ</small><h3 id="fin2CalendarTitle">Обери період</h3></div><button type="button" class="fin2-cal-close" aria-label="Закрити">×</button></header><div class="fin2-cal-presets">${[['tracking','Від 20.11.2026'],['today','Сьогодні'],['week','Тиждень'],['month','Цей місяць'],['lastmonth','Минулий місяць'],['year','Рік'],['all','Увесь час']].map(([id,label])=>`<button type="button" data-cal-preset="${id}">${label}</button>`).join('')}</div><div class="fin2-cal-inputs"><label>Від<input type="date" name="start" aria-label="Початок періоду"></label><span>→</span><label>До<input type="date" name="end" aria-label="Кінець періоду"></label></div><div class="fin2-cal-navigation"><button type="button" data-cal-move="-1" aria-label="Попередній місяць">‹</button><select aria-label="Місяць" data-cal-month>${['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'].map((s,i)=>`<option value="${i}">${s}</option>`).join('')}</select><input type="number" min="1" max="9999" aria-label="Рік" data-cal-year><button type="button" data-cal-move="1" aria-label="Наступний місяць">›</button></div><div class="fin2-cal-week">${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map(s=>`<span>${s}</span>`).join('')}</div><div class="fin2-cal-grid"></div><p class="fin2-cal-hint" aria-live="polite"></p><footer><button type="button" data-cal-cancel>Скасувати</button><button type="button" data-cal-apply>Застосувати період</button></footer></section>`;document.body.appendChild(back);const q=s=>back.querySelector(s),close=()=>{back.remove();document.removeEventListener('keydown',onKey);if(trigger?.isConnected)trigger.focus()};function onKey(e){if(e.key==='Escape'){e.preventDefault();close()}if(e.key==='Tab'){const list=[...back.querySelectorAll('button:not(:disabled),select,input')],first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}document.addEventListener('keydown',onKey);back.onclick=e=>{if(e.target===back)close()};q('.fin2-cal-close').onclick=close;q('[data-cal-cancel]').onclick=close;
 function render(){q('[name=start]').value=start;q('[name=end]').value=end;q('[data-cal-month]').value=month.getMonth();q('[data-cal-year]').value=month.getFullYear();const lead=(new Date(month.getFullYear(),month.getMonth(),1).getDay()+6)%7,days=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();q('.fin2-cal-grid').innerHTML=Array.from({length:42},(_,i)=>{const day=i-lead+1;if(day<1||day>days)return '<span></span>';const date=fin2ISO(new Date(month.getFullYear(),month.getMonth(),day));return `<button type="button" data-cal-day="${date}" aria-label="${date.split('-').reverse().join('.')}" aria-pressed="${date>=start&&date<=end}" class="${date>=start&&date<=end?'inrange ':''}${date===start?'start ':''}${date===end?'end ':''}${date===fin2Date()?'today':''}">${day}</button>`}).join('');q('.fin2-cal-hint').textContent=pickEnd?'Обери останній день періоду':'Обери перший і останній день або скористайся швидким вибором';back.querySelectorAll('[data-cal-day]').forEach(b=>b.onclick=()=>{selectedPreset='';const date=b.dataset.calDay;if(!pickEnd){start=date;end=date;pickEnd=true}else{if(date<start){end=start;start=date}else end=date;pickEnd=false}render()})}
-back.querySelectorAll('[data-cal-move]').forEach(b=>b.onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+Number(b.dataset.calMove),1);render()});q('[data-cal-month]').onchange=e=>{month=new Date(month.getFullYear(),Number(e.target.value),1);render()};q('[data-cal-year]').onchange=e=>{const y=Number(e.target.value);if(y>=100&&y<=9999)month=new Date(y,month.getMonth(),1);render()};for(const key of ['start','end'])q(`[name=${key}]`).onchange=e=>{if(!fin2ValidDate(e.target.value))return;selectedPreset='';if(key==='start'){start=e.target.value;if(end<start)end=start;month=fin2ParseDate(start)}else{end=e.target.value;if(start>end)start=end}pickEnd=false;render()};back.querySelectorAll('[data-cal-preset]').forEach(b=>b.onclick=()=>{selectedPreset=b.dataset.calPreset==='all'?'all':'';const p=fin2Preset(b.dataset.calPreset);start=p.start;end=p.end;month=fin2ParseDate(start);pickEnd=false;render()});q('[data-cal-apply]').onclick=()=>{const s=q('[name=start]').value,e=q('[name=end]').value;if(!fin2ValidDate(s)||!fin2ValidDate(e)||s>e){q('.fin2-cal-hint').textContent='Вкажи коректні дати: початок має бути не пізніше завершення';return}fin2().period={start:s,end:e,...(selectedPreset==='all'?{preset:'all'}:{})};save();close();fin2Render();document.querySelector('[data-fin2="period"]')?.focus()};render();q('.fin2-cal-close').focus()}
+back.querySelectorAll('[data-cal-move]').forEach(b=>b.onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+Number(b.dataset.calMove),1);render()});q('[data-cal-month]').onchange=e=>{month=new Date(month.getFullYear(),Number(e.target.value),1);render()};q('[data-cal-year]').onchange=e=>{const y=Number(e.target.value);if(y>=100&&y<=9999)month=new Date(y,month.getMonth(),1);render()};for(const key of ['start','end'])q(`[name=${key}]`).onchange=e=>{if(!fin2ValidDate(e.target.value))return;selectedPreset='';if(key==='start'){start=e.target.value;if(end<start)end=start;month=fin2ParseDate(start)}else{end=e.target.value;if(start>end)start=end}pickEnd=false;render()};back.querySelectorAll('[data-cal-preset]').forEach(b=>b.onclick=()=>{selectedPreset=b.dataset.calPreset==='month'?'currentmonth':['all','tracking'].includes(b.dataset.calPreset)?b.dataset.calPreset:'';const p=fin2Preset(b.dataset.calPreset);start=p.start;end=p.end;month=fin2ParseDate(start);pickEnd=false;render()});q('[data-cal-apply]').onclick=()=>{const s=q('[name=start]').value,e=q('[name=end]').value;if(!fin2ValidDate(s)||!fin2ValidDate(e)||s>e){q('.fin2-cal-hint').textContent='Вкажи коректні дати: початок має бути не пізніше завершення';return}fin2SetPeriodV25({start:s,end:e,...(['all','tracking','currentmonth'].includes(selectedPreset)?{preset:selectedPreset}:{})});save();close();fin2Render();document.querySelector('[data-fin2="period"]')?.focus()};render();q('.fin2-cal-close').focus()}
 function fin2StatisticsHTML(){const f=fin2(),t=fin2Totals();return `<section class="fin2-section"><div class="fin2-section-head"><h3>Статистика</h3>${fin2Button('period',fin2Icon('calendar')+fin2PeriodLabel(),'','fin2-period-button','Обрати період статистики')}</div><div class="fin2-grid">${[['Доходи',t.income],['Витрати',t.expense],['Чистий потік',t.income-t.expense],['Перекази',t.transfer]].map(([name,n])=>`<div class="fin2-card"><div class="fin2-label">${name} · ${fin2Esc(f.currency)}</div><div class="fin2-value">${fin2Fmt(n,f.currency)}</div></div>`).join('')}</div><div class="fin2-stat-chart-head"><h3>Рух коштів за обраний період</h3><span>${fin2PeriodTransactions().filter(t=>t.currency===f.currency||t.toCurrency===f.currency).length} операцій</span></div>${fin2Chart()}</section>`}
 
 
@@ -18407,195 +18411,9 @@ function editHabit(id){
 }
 function autosize(el){el.style.height='auto';el.style.height=Math.max(23,el.scrollHeight)+'px'}
 function notebookText(){return (DB.ws||[]).map(x=>(itemDone(x)?'☑ ':'☐ ')+(x.t||'')+(x.subs?.length?'\n'+x.subs.map(s=>'    '+(s.d?'☑ ':'☐ ')+s.t).join('\n'):'')).join('\n')}
-function downloadNotebook(){const rows=(DB.ws||[]).map(x=>`<p>${itemDone(x)?'☑':'☐'} ${E(x.t||'')}</p>${(x.subs||[]).map(s=>`<p style="margin-left:24pt">${s.d?'☑':'☐'} ${E(s.t||'')}</p>`).join('')}`).join('');const html=`<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>Записник</title></head><body><h1>Записник</h1>${rows}<style id="finance-glass-style">
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 {
- --finance-gold:#b7934f;
- background:radial-gradient(ellipse at 0 8%,#b7cfbd35,transparent 44%),radial-gradient(ellipse at 100% 40%,#e4cf9c26,transparent 45%);
- border-radius:24px;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs {
- display:flex!important;
- gap:5px!important;
- padding:6px!important;
- margin-bottom:22px!important;
- border:1px solid #cdbb934d!important;
- border-radius:16px!important;
- background:linear-gradient(120deg,#fffefaad,#f2f1e594)!important;
- -webkit-backdrop-filter:blur(12px);
- backdrop-filter:blur(12px);
- box-shadow:inset 0 1px 0 #ffffffdb,0 5px 18px #23463208!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn {
- min-height:40px!important;
- border-radius:11px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .active {
- background:linear-gradient(135deg,#277156,#124a38)!important;
- color:#ffe3a3!important;
- box-shadow:inset 0 1px 0 #b9e4cb38,0 4px 9px #1a49351c!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-overview { gap:20px!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-panel,
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-budgets {
- background:radial-gradient(ellipse at 100% 0,#e8e0ba26,transparent 65%),linear-gradient(135deg,#ffffffc9,#fbf7ecb5)!important;
- border:1px solid #cab88a66!important;
- border-top-color:#fffef7!important;
- box-shadow:inset 0 1px 0 #ffffff,0 9px 28px #2b48300d!important;
- -webkit-backdrop-filter:blur(14px);
- backdrop-filter:blur(14px);
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance,
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary {
- position:relative;
- background:radial-gradient(ellipse at 0 0,#3ba27b4d,transparent 54%),radial-gradient(ellipse at 100% 100%,#b9984f29,transparent 58%),linear-gradient(122deg,#185a46eb,#0b352de8)!important;
- border:1px solid #bdac7687!important;
- border-top-color:#d5c38bb8!important;
- border-radius:22px!important;
- box-shadow:inset 0 1px 0 #edffe030,inset 0 -1px 0 #081f2447,0 12px 30px #173e2f1c!important;
- -webkit-backdrop-filter:blur(14px);
- backdrop-filter:blur(14px);
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { padding:26px!important; min-height:290px!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-top { color:#e0eee1!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-chip {
- color:#ffe0a0!important;
- border-color:#e1c07870!important;
- background:#fff2c70b!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total {
- color:#ffdfa1!important;
- font:700 clamp(27px,2.65vw,39px)/1.23 system-ui,sans-serif!important;
- letter-spacing:-.025em!important;
- margin:25px 0 22px!important;
- text-shadow:none!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list { gap:9px!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list>div {
- padding:11px 13px!important;
- border:1px solid #ded2a04d!important;
- border-radius:12px!important;
- background:linear-gradient(145deg,#e3f5ce1a,#ffffff08)!important;
- box-shadow:inset 0 1px 0 #faffdf12!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list span { color:#ccdfcb!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list b { color:#f5e8b9!important; font-variant-numeric:tabular-nums; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance footer {
- color:#c5dacb!important;
- border-top-color:#e7d7a533!important;
- padding-top:15px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-on-dark {
- background:#fff3ce14!important;
- color:#ffe3a7!important;
- border-color:#e5c88866!important;
- border-radius:10px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-deco {
- opacity:1!important;
- color:#f4dba110!important;
- right:-7px!important;
- top:37px!important;
- font-size:205px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:23px!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row {
- padding:13px 0!important;
- border-bottom-color:#b9c1a740!important;
- gap:10px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>.f9-symbol {
- background:linear-gradient(145deg,#fffdf5,#efe9d4)!important;
- border-color:#d4b97870!important;
- color:#aa8340!important;
- box-shadow:inset 0 1px 0 #fff,0 2px 4px #4d644109!important;
- border-radius:11px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>div { min-width:0; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row strong { color:#284f3e!important; overflow-wrap:anywhere; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row small { color:#727e69!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b {
- color:#205e45!important;
- font:700 clamp(16px,1.4vw,21px)/1.3 system-ui,sans-serif!important;
- font-variant-numeric:tabular-nums;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-foot { border-top-color:#c6b78f5c!important; padding-top:15px!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-section-head h3 { letter-spacing:-.025em!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:background .15s,border-color .15s,box-shadow .15s; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn:focus-visible { outline:2px solid #b38d45!important; outline-offset:3px; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(h3,strong) { color:#ffdfa1!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(small,.f9-kicker,.f9-debt-progress) { color:#d0e1d1!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note {
- border-top-color:#c7b98866!important;
- padding-top:8px!important;
-}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note[open]>summary { color:#81652c!important; }
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note {
- display:block!important;
- box-sizing:border-box!important;
- width:100%!important;
- min-height:64px!important;
- max-height:none!important;
- overflow-y:hidden!important;
- padding:9px 11px!important;
- border:1px solid #c9ba8f66!important;
- border-radius:10px!important;
- background:linear-gradient(135deg,#fffef6,#edf2e36b)!important;
- color:#35533e!important;
- font:400 13px/1.55 system-ui,sans-serif!important;
- resize:vertical;
-}
-@media(max-width:700px) {
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs { margin-bottom:15px!important; gap:3px!important; padding:4px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn { min-height:42px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { min-height:265px!important; padding:22px 18px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total { font-size:29px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:19px 15px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row { padding-block:12px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b { font-size:17px!important; }
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note { font-size:16px!important; }
-}
-@media(prefers-reduced-motion:reduce) {
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:none; }
-}
-</style>
-<style id="finance-period-v24">
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:16px!important;flex-wrap:wrap!important;padding:18px 0!important;margin:0 0 14px!important;border-block:1px solid #cbb98e38!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period-dates{display:flex!important;align-items:center!important;gap:12px!important;min-width:0!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period-dates>label{display:grid!important;gap:6px!important;font:600 11px/1.3 'Segoe UI',Arial,sans-serif!important;color:#7f876f!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period input{width:158px!important;min-height:43px!important;padding:9px 11px!important;box-sizing:border-box!important;border:1px solid #d6c7a8!important;border-radius:11px!important;background:#fffdf6cf!important;color:#315d47!important;font:600 14px/1.3 'Segoe UI',Arial,sans-serif!important;color-scheme:light!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-presets{display:flex!important;gap:7px!important;flex-wrap:wrap!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-presets .f9-btn{padding:9px 12px!important;min-height:39px!important;font-size:11px!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-presets .active{background:#e4eddf!important;border-color:#b7caae!important;color:#315d47!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-operation-count{font-size:12px!important;color:#8d947f!important;white-space:nowrap!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-history .f9-filters{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:wrap!important;margin:0 0 18px!important;padding:0!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-history select{min-width:145px!important;max-width:100%!important;min-height:43px!important;padding:10px 32px 10px 14px!important;color:#5c7155!important;background-color:#fffdf6e8!important;border:1px solid #dccaa6!important;border-radius:11px!important;font:600 12px/1.4 'Segoe UI',Arial,sans-serif!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-values{display:flex!important;flex-direction:column!important;gap:6px!important;font-variant-numeric:tabular-nums!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-group+.f24-currency-group,html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-flow-currency+.f24-flow-currency{border-top:1px solid #d5c5a544!important;margin-top:18px!important;padding-top:18px!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-heading{font:700 11px/1.4 'Segoe UI',Arial,sans-serif!important;letter-spacing:.09em!important;color:#9c814e!important;padding:3px 0 10px!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f9-stat-heading{margin-bottom:12px!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v8-sphere-card.v24-empty-sphere{background:linear-gradient(140deg,#f0f0ed,#eaece780)!important;border-color:#d8dcd1!important;box-shadow:0 5px 16px #34453206!important;cursor:pointer!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere :is(.v8-sphere-icon,.v8-sphere-pct){color:#92998e!important;background:#e1e5de66!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere .v8-sphere-name{color:#7d887a!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere :is(.v8-sphere-foot,.v8-arrow){color:#91998b!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere .v9-mini-chart{opacity:.35!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere:is(:hover,:focus-visible){border-color:#a2b39c!important;box-shadow:0 8px 22px #34453210!important;transform:translateY(-2px)!important}
-@media(max-width:600px){
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period{gap:12px!important;padding:14px 0!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period-dates{width:100%!important;gap:8px!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period-dates>label{flex:1!important;min-width:0!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-period input{width:100%!important;min-width:0!important;font-size:16px!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-presets{width:100%!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-history select{flex:1!important;min-width:120px!important;font-size:14px!important}
- html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-history .f9-section-head{align-items:center!important;gap:8px!important}
-}
-</style>
-<style id="account-history-v24">
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-name{display:inline-flex!important;align-items:center!important;gap:8px!important;max-width:100%!important;padding:7px 0!important;border:0!important;background:transparent!important;color:#315e46!important;font:650 14px/1.4 'Segoe UI',Arial,sans-serif!important;text-align:left!important;text-transform:none!important;letter-spacing:0!important;cursor:pointer!important;overflow-wrap:anywhere!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-name span{font-size:12px!important;color:#af965e!important;opacity:.4!important;transition:opacity .15s!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-name:is(:hover,:focus-visible) span{opacity:1!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-summary{display:flex!important;gap:12px!important;align-items:center!important;flex-wrap:wrap!important;padding:12px 15px!important;margin-bottom:14px!important;border:1px solid #c4d1bb!important;border-radius:12px!important;background:#e9f0e4a6!important;color:#6b7c61!important;font-size:12px!important}
-html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-summary strong{color:#245840!important;font-size:18px!important;margin-right:auto!important}
-</style>
+function downloadNotebook(){const rows=(DB.ws||[]).map(x=>`<p>${itemDone(x)?'☑':'☐'} ${E(x.t||'')}</p>${(x.subs||[]).map(s=>`<p style="margin-left:24pt">${s.d?'☑':'☐'} ${E(s.t||'')}</p>`).join('')}`).join('');const html=`<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>Записник</title></head><body><h1>Записник</h1>${rows}
+
+
 </body></html>`;const url=URL.createObjectURL(new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='INVESTOR_NOTEBOOK_'+iso(new Date())+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 function renderNotebook(){
  const section=$('#pg-ws .ws-v5-tasks'),project=$('#pg-ws .ws-v5-projects');if(!section)return;
@@ -19006,8 +18824,8 @@ function fin2LedgerV18(){
 }
 function fin2IsDebtPaymentV18(t){return t?.type==='debt_payment'||t?.type==='expense'&&!!t.debtId;}
 function fin2IsExpenseV18(t){return t?.type==='expense'||t?.type==='debt_payment';}
-function fin2StatsTransactionsV18(){
- const p=fin2Period(),today=fin2Date();return fin2LedgerV18().filter(t=>['income','expense','debt_payment'].includes(t.type)&&(!t.statNeutral||fin2IsDebtPaymentV18(t))&&fin2ValidDate(t.date)&&t.date<=today&&t.date>=p.start&&t.date<=p.end&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0);
+function fin2StatsTransactionsV18(period){
+ const p=period||fin2Period(),today=fin2Date();return fin2LedgerV18().filter(t=>['income','expense','debt_payment'].includes(t.type)&&(!t.statNeutral||fin2IsDebtPaymentV18(t))&&fin2ValidDate(t.date)&&t.date<=today&&t.date>=p.start&&t.date<=p.end&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0);
 }
 fin2PeriodTransactions=function(){const p=fin2Period();return fin2LedgerV18().filter(t=>t.date>=p.start&&t.date<=p.end);};
 fin2Totals=function(){
@@ -19038,7 +18856,8 @@ function fin2DeleteDebtV18(id){
  f.debts=f.debts.filter(d=>d.id!==id);f.historyCategoryFilter='';f.transactions=f.transactions.filter(t=>t.debtId!==id);fin2RenderCache=null;save();fin2Render();
 }
 function fin2EnsureDebtPeriodV18(){fin2Period();}
-(function(){const prior=fin2Period;fin2Period=function(){const f=fin2();if(!f.periodVersionV24){f.periodVersionV24=1;f.period={start:'2026-11-20',end:fin2Date(),preset:'tracking'};f.historyTypeV9='';f.historyCategoryFilter='';}const p=f.period;if(p?.preset==='tracking')return {start:'2026-11-20',end:fin2Date(),preset:'tracking'};return p?.preset==='all'?{...fin2Preset('all'),preset:'all'}:prior();};})();
+(function(){const prior=fin2Period;fin2Period=function(){const f=fin2();if(!f.periodVersionV24){f.periodVersionV24=1;f.period={start:'2026-11-20',end:fin2Date(),preset:'tracking'};f.historyTypeV9='';f.historyCategoryFilter='';}if(f.activeTab==='statistics')return fin2StatisticsPeriodV25();const p=f.period;if(p?.preset==='tracking')return {start:'2026-11-20',end:fin2Date(),preset:'tracking'};if(p?.preset==='currentmonth')return fin2MonthToDateV25();return p?.preset==='all'?{...fin2Preset('all'),preset:'all'}:prior();};})();
+
 </script>
 
 <script id="investor-premium-v9-runtime">
@@ -19127,16 +18946,17 @@ function transactionForm(type,budgetId=''){
 function transferForm(){const f=model();if(f.accounts.length<2){fin2Toast('Додай щонайменше два рахунки');return}const opts=f.accounts.map(a=>({value:a.id,label:a.name+' · '+a.currency}));fin2Modal('Переказ між рахунками',[{name:'from',label:'З рахунку',options:opts},{name:'to',label:'На рахунок',value:f.accounts[1].id,options:opts},{name:'amount',label:'Списати',type:'number',min:'.01',step:'.01'},{name:'received',label:'Зарахувати · при обміні валют',type:'number',min:'.01',step:'.01',required:false},{name:'date',label:'Дата',type:'date',value:fin2Date()}],'Переказати',d=>{const a=f.accounts.find(a=>a.id===d.from),b=f.accounts.find(a=>a.id===d.to),n=fin2Money(d.amount),r=d.received.trim()?fin2Money(d.received):null;if(!a||!b||a.id===b.id){fin2Toast('Обери два різні рахунки');return false}if(n===null||n<=0||n>round(fin2Balance(a.id))){fin2Toast('Перевір суму й доступний залишок');return false}if(a.currency!==b.currency&&(r===null||r<=0)){fin2Toast('Вкажи суму, отриману після обміну');return false}if(a.currency===b.currency&&r!==null&&r!==n){fin2Toast('Для однієї валюти суми мають збігатися');return false}if(!fin2ValidDate(d.date))return false;fin2Tx('transfer',n,a.id,b.id,{currency:a.currency,toCurrency:b.currency,toAmount:r??n,date:d.date,category:'Переказ'});render();});}
 function budgetForm(id=''){const f=model(),b=f.budgets.find(x=>x.id===id);fin2Modal(b?'Налаштувати бюджет':'Новий бюджет',[{name:'name',label:'Назва',value:b?.name||''},{name:'limit',label:'Ліміт витрат',value:b?.limit?String(b.limit):'',type:'number',min:'.01',step:'.01'},{name:'currency',label:'Валюта',value:b?.currency||'UAH',options:b?[{value:b.currency,label:b.currency}]:currencies().map(c=>({value:c,label:c}))}],'Зберегти',d=>{const n=fin2Money(d.limit);if(!d.name.trim()||n===null||n<=0)return false;if(b){b.name=d.name.trim();b.limit=n}else f.budgets.push({id:fin2Id('budget'),name:d.name.trim(),limit:n,currency:d.currency,limitOnlyV9:true});save();render();});}
 function budgetsHTML(){const f=model();return `<details class="f9-budgets" ${f.budgetsOpenV9?'open':''}><summary><span>Бюджети <small>${f.budgets.length||''}</small></span><span>⌄</span></summary><div class="f9-budget-body"><div class="f9-section-head"><small>Ліміти витрат · прив’язуй операції до бюджету</small>${btn('addbudget','+ Бюджет')}</div>${f.budgets.map(b=>{const used=fin2BudgetSpent(b.id),pct=b.limit?Math.min(100,used/b.limit*100):0;return `<div class="f9-budget-row"><div><strong>${E(b.name)}</strong><small>${fmt(used,b.currency)} / ${fmt(b.limit,b.currency)}</small><div class="f9-meter ${used>b.limit?'over':''}"><i style="width:${pct}%"></i></div></div>${btn('expense','−',b.id,'','Витрата з бюджету')}${btn('editbudget','⋯',b.id,'','Налаштувати бюджет')}${btn('delbudget','×',b.id,'','Видалити бюджет')}</div>`}).join('')||empty('Створи бюджет, коли захочеш встановити ліміт.')}</div></details>`;}
-function overviewHTML(){const f=model(),map=totals();return `<div class="f9-overview"><section class="f9-balance"><div class="f9-balance-top"><span>Загальний баланс</span><span class="f9-chip">UAH · основна</span></div><div class="f9-total">${equivalent(map)}</div><div class="f9-currency-list">${Object.entries(map).map(([c,n])=>`<div><span>${E(c)}</span><b>${fmt(n,c)}</b></div>`).join('')||'<span class="f9-balance-hint">Додай перший рахунок</span>'}</div><footer><span>${f.accounts.length} рахунків</span>${btn('rates','⇄ Мої курси','','f9-on-dark')}</footer><div class="f9-balance-deco" aria-hidden="true">◇</div></section><section class="f9-panel f9-accounts"><div class="f9-section-head"><h3>Мої рахунки</h3>${btn('addaccount','+ Рахунок')}</div><div class="f9-account-list">${f.accounts.map(a=>`<div class="f9-account-row"><span class="f9-symbol">${symbol(a.kind)}</span><div><button type="button" class="f24-account-name" data-f9="accounthistory" data-id="${E(a.id)}" aria-label="Історія рахунку ${E(a.name)}">${E(a.name)}<span aria-hidden="true">↗</span></button><small>${E(kindName(a))} · ${E(a.currency)}</small></div><b>${fmt(fin2Balance(a.id),a.currency)}</b>${btn('editaccount','⋯',a.id,'f9-icon-btn','Налаштувати '+a.name)}</div>`).join('')||empty('Картка, готівка чи власний тип — усі рахунки будуть тут.')}</div>${f.accounts.length>1?`<div class="f9-account-foot">${btn('transfer','⇄ Переказ / обмін')}</div>`:''}</section></div>${budgetsHTML()}`;}
+function overviewHTML(){const f=model(),map=totals();return `<div class="f9-overview"><section class="f9-balance"><div class="f9-balance-top"><span>Загальний баланс</span><span class="f9-chip">UAH · основна</span></div><div class="f9-total">${equivalent(map)}</div><div class="f9-currency-list">${Object.entries(map).map(([c,n])=>`<div><span>${E(c)}</span><b>${fmt(n,c)}</b></div>`).join('')||'<span class="f9-balance-hint">Додай перший рахунок</span>'}</div><footer><span>${f.accounts.length} рахунків</span>${btn('rates','⇄ Мої курси','','f9-on-dark')}</footer><div class="f9-balance-deco" aria-hidden="true">◇</div></section><section class="f9-panel f9-accounts"><div class="f9-section-head"><h3>Мої рахунки</h3>${btn('addaccount','+ Рахунок')}</div><div class="f9-account-list">${f.accounts.map(a=>`<div class="f9-account-row"><span class="f9-symbol">${symbol(a.kind)}</span><div><button type="button" class="f24-account-name" data-f9="accounthistory" data-id="${E(a.id)}" aria-label="Історія рахунку ${E(a.name)}">${E(a.name)}</button><small>${E(kindName(a))} · ${E(a.currency)}</small></div><b>${fmt(fin2Balance(a.id),a.currency)}</b>${btn('editaccount','⋯',a.id,'f9-icon-btn','Налаштувати '+a.name)}</div>`).join('')||empty('Картка, готівка чи власний тип — усі рахунки будуть тут.')}</div>${f.accounts.length>1?`<div class="f9-account-foot">${btn('transfer','⇄ Переказ / обмін')}</div>`:''}</section></div>${budgetsHTML()}`;}
 
-function financePeriodHTML(){const p=fin2Period();return `<div class="f24-period"><div class="f24-period-dates"><label>Від<input type="date" data-f24-date="start" value="${E(p.start)}" aria-label="Показати операції від дати"></label><span aria-hidden="true">→</span><label>До<input type="date" data-f24-date="end" value="${E(p.end)}" aria-label="Показати операції до дати"></label></div><div class="f24-presets">${btn('trackingperiod','Від 20.11.2026','',p.preset==='tracking'?'active':'')}${btn('monthperiod','Цей місяць')}${btn('period','Інший період')}</div></div>`;}
+function financePeriodHTML(){const p=fin2Period(),short=d=>d.slice(8)+'.'+d.slice(5,7),full=d=>short(d)+'.'+d.slice(0,4),label=p.start===p.end?full(p.end):p.start.slice(0,4)===p.end.slice(0,4)?short(p.start)+' — '+full(p.end):full(p.start)+' — '+full(p.end);return `<div class="f24-period"><button type="button" class="f9-btn f25-period-button" data-f9="period" aria-label="Обрати період: ${E(fin2PeriodLabel())}"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="2.5"/><path d="M6.5 2.5v4m7-4v4M3 8.5h14" stroke-linecap="round"/></svg><span>${E(label)}</span></button></div>`;}
+
 function statsAmounts(map){return `<span class="f24-currency-values">${lines(map)}</span>`;}
-function historyHTML(){const f=model(),p=fin2Period(),type=f.historyTypeV9||'',cat=f.historyCategoryFilter||'',account=historyAccountV24,accounts=[...f.accounts,...f.archivedAccounts],selectedAccount=accounts.find(a=>a.id===account);const arr=f.transactions.filter(t=>t.date>=p.start&&t.date<=p.end&&(!account||t.from===account||t.to===account)&&(!type||(type==='expense'?['expense','debt_payment'].includes(t.type):t.type===type))&&(!cat||historyCategory(t)===cat)).sort((a,b)=>String(b.date).localeCompare(String(a.date))||(b.created||0)-(a.created||0));return `<section class="f9-panel f24-history"><div class="f9-section-head"><h3>${selectedAccount?E(selectedAccount.name):'Історія операцій'}</h3><span class="f24-operation-count">${arr.length} операцій</span></div>${selectedAccount?`<div class="f24-account-summary"><span>Баланс рахунку</span><strong>${fmt(fin2Balance(account),selectedAccount.currency)}</strong>${btn('allaccounts','Усі рахунки')}</div>`:''}${financePeriodHTML()}<div class="f9-filters"><select id="f24Account" aria-label="Рахунок в історії"><option value="">Усі рахунки</option>${accounts.map(a=>`<option value="${E(a.id)}" ${account===a.id?'selected':''}>${E(a.name)} · ${E(a.currency)}</option>`).join('')}</select><select id="f9Type" aria-label="Тип операцій"><option value="">Усі операції</option>${[['income','Доходи'],['expense','Витрати'],['transfer','Перекази']].map(([v,n])=>`<option value="${v}" ${type===v?'selected':''}>${n}</option>`).join('')}</select><select id="f9Category" aria-label="Категорія"><option value="">Усі категорії</option>${[...new Set(f.transactions.map(t=>historyCategory(t)).filter(Boolean))].map(c=>`<option value="${E(c)}" ${cat===c?'selected':''}>${E(c)}</option>`).join('')}</select>${btn('category','+ Категорія')}${type||cat?btn('resetfilters','Скинути фільтри'):''}</div><div>${txRows(arr.slice(0,f.historyLimitV9||80))||empty('За цей період операцій немає.')}</div>${arr.length>(f.historyLimitV9||80)?btn('morehistory','Показати ще'):''}</section>`;}
-function periodTx(){return fin2StatsTransactionsV18();}
+function historyHTML(){const f=model(),p=fin2Period(),type=f.historyTypeV9||'',cat=f.historyCategoryFilter||'',account=historyAccountV24,accounts=[...f.accounts,...f.archivedAccounts],selectedAccount=accounts.find(a=>a.id===account);const arr=f.transactions.filter(t=>t.date>=p.start&&t.date<=p.end&&(!account||t.from===account||t.to===account)&&(!type||(type==='expense'?['expense','debt_payment'].includes(t.type):t.type===type))&&(!cat||historyCategory(t)===cat)).sort((a,b)=>String(b.date).localeCompare(String(a.date))||(b.created||0)-(a.created||0));return `<section class="f9-panel f24-history"><div class="f24-history-head"><div class="f24-history-heading"><h3>${selectedAccount?E(selectedAccount.name):'Історія операцій'}</h3><span class="f24-operation-count">${arr.length} операцій</span></div>${financePeriodHTML()}</div>${selectedAccount?`<div class="f24-account-summary"><span>Баланс рахунку</span><strong>${fmt(fin2Balance(account),selectedAccount.currency)}</strong>${btn('allaccounts','Усі рахунки')}</div>`:''}<div class="f9-filters"><select id="f24Account" aria-label="Рахунок в історії"><option value="">Усі рахунки</option>${accounts.map(a=>`<option value="${E(a.id)}" ${account===a.id?'selected':''}>${E(a.name)} · ${E(a.currency)}</option>`).join('')}</select><select id="f9Type" aria-label="Тип операцій"><option value="">Усі операції</option>${[['income','Доходи'],['expense','Витрати'],['transfer','Перекази']].map(([v,n])=>`<option value="${v}" ${type===v?'selected':''}>${n}</option>`).join('')}</select><select id="f9Category" aria-label="Категорія"><option value="">Усі категорії</option>${[...new Set(f.transactions.map(t=>historyCategory(t)).filter(Boolean))].map(c=>`<option value="${E(c)}" ${cat===c?'selected':''}>${E(c)}</option>`).join('')}</select><div class="f24-filter-actions">${btn('category','+ Категорія')}${type||cat?btn('resetfilters','Скинути фільтри'):''}</div></div><div class="f24-history-list">${txRows(arr.slice(0,f.historyLimitV9||80),true)||empty('За цей період операцій немає.')}</div>${arr.length>(f.historyLimitV9||80)?btn('morehistory','Показати ще'):''}</section>`;}
+function periodTx(){return fin2StatsTransactionsV18(fin2StatisticsPeriodV25());}
 function statsData(){const arr=periodTx(),income={},expense={},cats={income:Object.create(null),expense:Object.create(null)};for(const t of arr){const k=t.type==='income'?'income':'expense',map=k==='income'?income:expense;map[t.currency]=(map[t.currency]||0)+Number(t.amount||0);const name=fin2IsDebtPaymentV18(t)?debtTitle(t):t.category||'Інше',m=cats[k][name]||(cats[k][name]={});m[t.currency]=(m[t.currency]||0)+Number(t.amount||0);}return {arr,income,expense,cats};}
 function flowChart(arr,currency){
  const currencyKey=String(currency).replace(/[^A-Za-z0-9_-]/g,'')||'currency';
- const raw=fin2Period(),p={start:raw.start,end:raw.end>fin2Date()?fin2Date():raw.end},start=new Date(p.start+'T12:00:00'),end=new Date(p.end+'T12:00:00'),days=Math.max(1,Math.round((end-start)/864e5)+1),count=Math.min(days,48),data=Array.from({length:count},()=>({income:0,expense:0})),missing=new Set();
+ const raw=fin2StatisticsPeriodV25(),p={start:raw.start,end:raw.end>fin2Date()?fin2Date():raw.end},start=new Date(p.start+'T12:00:00'),end=new Date(p.end+'T12:00:00'),days=Math.max(1,Math.round((end-start)/864e5)+1),count=Math.min(days,48),data=Array.from({length:count},()=>({income:0,expense:0})),missing=new Set();
  for(const t of arr){if(t.currency!==currency)continue;const r=1;const day=Math.round((new Date(t.date+'T12:00:00')-start)/864e5),i=Math.max(0,Math.min(count-1,Math.floor(day/days*count)));data[i][t.type==='income'?'income':'expense']+=Number(t.amount||0)*r;}
  const max=Math.max(1,...data.flatMap(x=>[x.income,x.expense]))*1.2,w=window.innerWidth<=600?360:850,h=244,l=42,r=w-15,top=25,b=209,x=i=>count===1?(l+r)/2:l+(r-l)*i/(count-1),y=v=>b-(b-top)*v/max;
  const grid=[0,.25,.5,.75,1].map(v=>`<path d="M${l} ${y(max*v)}H${r}" stroke="#e7e5da" stroke-width=".8"/><text x="33" y="${y(max*v)+3}" fill="#919b8a" font-size="8" text-anchor="end">${Number((max*v).toFixed(max<10?1:0)).toLocaleString('uk-UA')}</text>`).join('');
@@ -19145,7 +18965,7 @@ function flowChart(arr,currency){
 }
 function categoryBars(map,type){const cs=[...new Set(Object.values(map).flatMap(m=>Object.keys(m)))].sort();return cs.map(c=>{const rows=Object.entries(map).map(([name,m])=>({name,value:Number(m[c]||0)})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value),total=rows.reduce((n,x)=>n+x.value,0);return `<div class="f24-currency-group"><div class="f24-currency-heading">${E(c)}</div>${rows.map(x=>{const pct=total?x.value/total*100:0;return `<div class="f9-category-row"><span class="f9-symbol">${catIcon(type,x.name)}</span><div><div class="f9-category-label"><strong>${E(x.name)}</strong><b>${fmt(x.value,c)}</b></div><div class="f9-meter ${type==='income'?'':'gold'}"><i style="width:${pct}%"></i></div></div><small>${Math.round(pct)}%</small></div>`}).join('')}</div>`}).join('')||empty(type==='income'?'Ще немає доходів за цей період.':'Ще немає витрат за цей період.');}
 
-function statisticsHTML(){const d=statsData(),net={...d.income};for(const[c,n]of Object.entries(d.expense))net[c]=(net[c]||0)-n;return `<div class="f9-section-head f9-stat-heading"><div><h3>Рух коштів</h3><small class="f9-form-note">${E(fin2PeriodLabel())} · валюти окремо</small></div></div>${financePeriodHTML()}<div class="f9-stat-metrics"><article><span>↙ Доходи</span><strong>${statsAmounts(d.income)}</strong><small>${d.arr.filter(t=>t.type==='income').length} операцій</small></article><article class="gold"><span>↗ Витрати</span><strong>${statsAmounts(d.expense)}</strong><small>${d.arr.filter(t=>t.type!=='income').length} операцій</small></article><article class="deep"><span>Різниця за період</span><strong>${statsAmounts(net)}</strong><small>Доходи мінус витрати</small></article></div><section class="f9-panel"><div class="f9-section-head"><h3>Доходи та витрати</h3><div class="f9-legend"><span><i></i>Дохід</span><span><i class="gold"></i>Витрата</span><small>Без перерахунку валют</small></div></div>${[...new Set(d.arr.map(t=>t.currency))].sort().map(c=>`<div class="f24-flow-currency"><div class="f24-currency-heading">${E(c)}</div>${flowChart(d.arr,c)}</div>`).join('')}${!d.arr.length?'<div class="f9-chart-caption">Графік заповнюватиметься з твоїх операцій</div>':''}</section><div class="f9-stat-columns"><section class="f9-panel"><div class="f9-section-head"><h3>Структура витрат</h3>${btn('category','+','', 'f9-icon-btn','Додати категорію')}</div>${categoryBars(d.cats.expense,'expense')}</section><section class="f9-panel"><div class="f9-section-head"><h3>Джерела доходу</h3></div>${categoryBars(d.cats.income,'income')}</section></div>`;}
+function statisticsHTML(){const d=statsData(),net={...d.income};for(const[c,n]of Object.entries(d.expense))net[c]=(net[c]||0)-n;return `<div class="f9-section-head f9-stat-heading f25-stat-head"><div><h3>${fin2StatisticsPeriodV25().preset==='currentmonth'?'Статистика за місяць':'Рух коштів'}</h3><small class="f9-form-note">Кожна валюта окремо</small></div>${financePeriodHTML()}</div><div class="f9-stat-metrics"><article><span>↙ Доходи</span><strong>${statsAmounts(d.income)}</strong><small>${d.arr.filter(t=>t.type==='income').length} операцій</small></article><article class="gold"><span>↗ Витрати</span><strong>${statsAmounts(d.expense)}</strong><small>${d.arr.filter(t=>t.type!=='income').length} операцій</small></article><article class="deep"><span>Різниця за період</span><strong>${statsAmounts(net)}</strong><small>Доходи мінус витрати</small></article></div><section class="f9-panel"><div class="f9-section-head"><h3>Доходи та витрати</h3><div class="f9-legend"><span><i></i>Дохід</span><span><i class="gold"></i>Витрата</span><small>Без перерахунку валют</small></div></div>${[...new Set(d.arr.map(t=>t.currency))].sort().map(c=>`<div class="f24-flow-currency"><div class="f24-currency-heading">${E(c)}</div>${flowChart(d.arr,c)}</div>`).join('')}${!d.arr.length?'<div class="f9-chart-caption">Графік заповнюватиметься з твоїх операцій</div>':''}</section><div class="f9-stat-columns"><section class="f9-panel"><div class="f9-section-head"><h3>Структура витрат</h3>${btn('category','+','', 'f9-icon-btn','Додати категорію')}</div>${categoryBars(d.cats.expense,'expense')}</section><section class="f9-panel"><div class="f9-section-head"><h3>Джерела доходу</h3></div>${categoryBars(d.cats.income,'income')}</section></div>`;}
 function debtTitle(t,masked=true){
  const f=model(),debt=f.debts.find(d=>d.id===t.debtId);
  return masked&&f.debtNamesHiddenV16?'◇':debt?.name||t.note||'Погашення боргу';
@@ -19242,7 +19062,7 @@ function linkDebtPaymentV19(id){
  const current=t.debtPlanId&&t.debtPlanMonth?JSON.stringify([t.debtPlanMonth,t.debtPlanId]):'';
  fin2Modal('Прив’язка оплати · '+d.name,[{name:'plan',label:'Зарахувати оплату в план',value:current,required:false,options:[{value:'',label:'Без прив’язки · тільки загальний борг'},...planOptionsV19(d)],wide:true}],'Зберегти',data=>{const target=selectedPlanV19(d,data.plan);if(data.plan&&!target){fin2Toast('Цей план уже видалено');return false;}if(target){t.debtPlanId=target.plan.id;t.debtPlanMonth=target.month;}else{delete t.debtPlanId;delete t.debtPlanMonth;}fin2RenderCache=null;save();render();});
 }
-function txRows(arr){return arr.map(t=>{const out=fin2IsExpenseV18(t),income=t.type==='income',isDebt=fin2IsDebtPaymentV18(t),type=income?'Дохід':out?'Витрата':t.type==='transfer'?'Переказ':t.type==='opening_balance'?'Початковий баланс':'Коригування',d=model().debts.find(d=>d.id===t.debtId),title=isDebt?debtTitle(t,tab!=='debts'):t.category||type,target=d&&allDebtPlansV19(d).find(x=>x.plan.id===t.debtPlanId&&x.month===t.debtPlanMonth);return `<div class="f9-tx-row"><span class="f9-symbol ${income?'in':out?'out':''}">${income?'↙':out?'↗':'⇄'}</span><div class="f9-tx-title"><strong>${E(title)}</strong><small>${E(t.date||'')} · ${E(t.from?fin2Name(t.from):fin2Name(t.to))}${t.type==='transfer'?' → '+E(fin2Name(t.to)):''}${t.note&&!isDebt?' · '+E(t.note):''}</small>${isDebt&&d&&tab==='debts'?`<button type="button" class="v19-payment-link" data-f9="linkdebtpayment" data-id="${E(t.id)}">${target?'План · '+fmt(target.plan.amount,d.currency)+(target.plan.due?' · до '+E(target.plan.due.split('-').reverse().join('.')):''):'Прив’язати до плану'}</button>`:''}</div><div class="f9-tx-amount ${income?'in':out?'out':''}"><b>${out?'−':income?'+':''}${fmt(t.amount,t.currency)}</b>${isDebt&&t.debtCurrency&&t.debtCurrency!==t.currency?`<small>Погашено ${fmt(t.debtAmount,t.debtCurrency)}</small>`:''}${t.type==='transfer'&&t.toCurrency!==t.currency?`<small>→ ${fmt(t.toAmount,t.toCurrency)}</small>`:''}<small>${type}</small></div>${btn('deltx','×',t.id,'f9-icon-btn','Видалити операцію')}</div>`;}).join('');}
+function txRows(arr,compact=false){return arr.map(t=>{const out=fin2IsExpenseV18(t),income=t.type==='income',isDebt=fin2IsDebtPaymentV18(t),type=income?'Дохід':out?'Витрата':t.type==='transfer'?'Переказ':t.type==='opening_balance'?'Початковий баланс':'Коригування',d=model().debts.find(d=>d.id===t.debtId),title=isDebt?debtTitle(t,tab!=='debts'):t.category||type,target=d&&allDebtPlansV19(d).find(x=>x.plan.id===t.debtPlanId&&x.month===t.debtPlanMonth);return `<div class="f9-tx-row"><span class="f9-symbol ${income?'in':out?'out':''}">${income?'↙':out?'↗':'⇄'}</span><div class="f9-tx-title"><strong>${E(title)}</strong><small>${E(t.date||'')} · ${E(t.from?fin2Name(t.from):fin2Name(t.to))}${t.type==='transfer'?' → '+E(fin2Name(t.to)):''}${t.note&&!isDebt?' · '+E(t.note):''}</small>${isDebt&&d&&tab==='debts'?`<button type="button" class="v19-payment-link" data-f9="linkdebtpayment" data-id="${E(t.id)}">${target?'План · '+fmt(target.plan.amount,d.currency)+(target.plan.due?' · до '+E(target.plan.due.split('-').reverse().join('.')):''):'Прив’язати до плану'}</button>`:''}</div><div class="f9-tx-amount ${income?'in':out?'out':''}"><b>${out?'−':income?'+':''}${fmt(t.amount,t.currency)}</b>${isDebt&&t.debtCurrency&&t.debtCurrency!==t.currency?`<small>Погашено ${fmt(t.debtAmount,t.debtCurrency)}</small>`:''}${t.type==='transfer'&&t.toCurrency!==t.currency?`<small>→ ${fmt(t.toAmount,t.toCurrency)}</small>`:''}${compact?'':`<small>${type}</small>`}</div>${btn('deltx','×',t.id,'f9-icon-btn','Видалити операцію')}</div>`;}).join('');}
 function orderedDebtsV19(f){
  const order=f.debtOrderV19;if(!Array.isArray(order))return f.debts.slice().sort((a,b)=>Number(fin2DebtPaid(a)>=a.amount)-Number(fin2DebtPaid(b)>=b.amount));
  const ranks=new Map(order.map((id,i)=>[String(id),i]));return f.debts.map((d,i)=>({d,i})).sort((a,b)=>(ranks.get(String(a.d.id))??1e9)-(ranks.get(String(b.d.id))??1e9)||a.i-b.i).map(x=>x.d);
@@ -19265,12 +19085,12 @@ function render(){
   el.closest('details')?.addEventListener('toggle',resize);
   requestAnimationFrame(resize);
  });
- $$('[data-f24-date]',root).forEach(input=>input.onchange=()=>{const start=$('[data-f24-date="start"]',root),end=$('[data-f24-date="end"]',root);if(!fin2ValidDate(start.value)||!fin2ValidDate(end.value)||start.value>end.value){input.setCustomValidity('Дата «Від» має бути не пізніше дати «До».');input.reportValidity();return;}input.setCustomValidity('');f.period={start:start.value,end:end.value};f.historyLimitV9=80;save();render();});
+
  const accountSelect=$('#f24Account');if(accountSelect)accountSelect.onchange=()=>{historyAccountV24=accountSelect.value;f.historyLimitV9=80;render();};
  const type=$('#f9Type'),cat=$('#f9Category');if(type)type.onchange=()=>{f.historyTypeV9=type.value;f.historyLimitV9=80;save();render()};if(cat)cat.onchange=()=>{f.historyCategoryFilter=cat.value;f.historyLimitV9=80;save();render()};
  window.INVESTOR_V8.enhanceSphere();
 }
-function action(a,id,planId=''){const f=model();if(a==='accounthistory'||a==='allaccounts'){historyAccountV24=a==='accounthistory'?id:'';f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;tab='transactions';render();save();return;}if(a==='trackingperiod'||a==='monthperiod'){f.period=a==='trackingperiod'?{start:'2026-11-20',end:fin2Date(),preset:'tracking'}:{...fin2Preset('month'),end:fin2Date()};f.historyLimitV9=80;save();render();return;}if(a==='resetfilters'){f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;save();render();return;}if(a==='debtplan')return debtPlanForm(id);if(a==='editdebtplan')return debtPlanForm(id,planId);if(a==='deldebtplan')return deleteDebtPlanV18(id,planId);if(a==='debtprivacy'){f.debtNamesHiddenV16=!f.debtNamesHiddenV16;f.historyCategoryFilter='';save();render();return;}if(a==='tab'){if(id==='transactions'&&tab!=='transactions'){historyAccountV24='';f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;}tab=['overview','transactions','statistics','debts'].includes(id)?id:'overview';render();save();return;}
+function action(a,id,planId=''){const f=model();if(a==='accounthistory'||a==='allaccounts'){historyAccountV24=a==='accounthistory'?id:'';f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;tab='transactions';render();save();return;}if(a==='trackingperiod'||a==='monthperiod'){fin2SetPeriodV25(a==='trackingperiod'?{start:'2026-11-20',end:fin2Date(),preset:'tracking'}:fin2MonthToDateV25());f.historyLimitV9=80;save();render();return;}if(a==='resetfilters'){f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;save();render();return;}if(a==='debtplan')return debtPlanForm(id);if(a==='editdebtplan')return debtPlanForm(id,planId);if(a==='deldebtplan')return deleteDebtPlanV18(id,planId);if(a==='debtprivacy'){f.debtNamesHiddenV16=!f.debtNamesHiddenV16;f.historyCategoryFilter='';save();render();return;}if(a==='tab'){if(id==='transactions'&&tab!=='transactions'){historyAccountV24='';f.historyTypeV9='';f.historyCategoryFilter='';f.historyLimitV9=80;}tab=['overview','transactions','statistics','debts'].includes(id)?id:'overview';render();save();return;}
  if(a==='income')return transactionForm('income');if(a==='expense')return transactionForm('expense',id);if(a==='transfer')return transferForm();if(a==='rates')return openRates();if(a==='addaccount')return accountForm();if(a==='editaccount')return accountForm(id);if(a==='category')return categoriesForm();if(a==='period')return fin2OpenCalendar();if(a==='addbudget')return budgetForm();if(a==='editbudget')return budgetForm(id);
  if(a==='delbudget'){if(Math.abs(fin2BudgetBalance(id))>=.005){fin2Toast('Спершу перенеси залишок із рахунку цього бюджету');return}if(confirm('Видалити бюджет? Операції залишаться в історії.')){f.budgets=f.budgets.filter(b=>b.id!==id);save();render()}return;}
  if(a==='deltx')return fin2DelTx(id);if(a==='adddebt')return fin2AddDebt();if(a==='editdebt')return fin2EditDebt(id);if(a==='paydebt')return payDebtV19(id);if(a==='paydebtplan')return payDebtV19(id,planId);if(a==='linkdebtpayment')return linkDebtPaymentV19(id);if(a==='deldebt')return fin2DeleteDebtV18(id);if(a==='morehistory'){f.historyLimitV9=(f.historyLimitV9||80)+80;render();}
@@ -23785,6 +23605,22 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
  html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayQuickTaskDialog :is(input,select) { font-size:16px; }
 }
 </style>
+
+
+<style id="finance-period-v24">html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-values{display:flex!important;flex-direction:column!important;gap:6px!important;font-variant-numeric:tabular-nums!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-group+.f24-currency-group,html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-flow-currency+.f24-flow-currency{border-top:1px solid #d5c5a544!important;margin-top:18px!important;padding-top:18px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-currency-heading{font:700 11px/1.4 'Segoe UI',Arial,sans-serif!important;letter-spacing:.09em!important;color:#9c814e!important;padding:3px 0 10px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v8-sphere-card.v24-empty-sphere{background:linear-gradient(140deg,#f0f0ed,#eaece780)!important;border-color:#d8dcd1!important;box-shadow:0 5px 16px #34453206!important;cursor:pointer!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere :is(.v8-sphere-icon,.v8-sphere-pct){color:#92998e!important;background:#e1e5de66!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere .v8-sphere-name{color:#7d887a!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere :is(.v8-sphere-foot,.v8-arrow){color:#91998b!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere .v9-mini-chart{opacity:.35!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .v24-empty-sphere:is(:hover,:focus-visible){border-color:#a2b39c!important;box-shadow:0 8px 22px #34453210!important;transform:translateY(-2px)!important}</style>
+<style id="account-history-v24">
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-summary{display:flex!important;gap:12px!important;align-items:center!important;flex-wrap:wrap!important;padding:12px 15px!important;margin-bottom:14px!important;border:1px solid #c4d1bb!important;border-radius:12px!important;background:#e9f0e4a6!important;color:#6b7c61!important;font-size:12px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .f24-account-summary strong{color:#245840!important;font-size:18px!important;margin-right:auto!important}
+</style>
+
 <style id="finance-glass-style">
 html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 {
  --finance-gold:#b7934f;
@@ -23935,5 +23771,103 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
 @media(prefers-reduced-motion:reduce) {
  html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:none; }
 }
+</style>
+<style id="finance-layout-v25">/* Names remain semantic buttons, presented as plain account titles. */
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-account-name {
+ appearance:none!important; -webkit-appearance:none!important;
+ display:inline-block!important; width:auto!important; max-width:100%!important;
+ min-width:0!important; height:auto!important; min-height:0!important;
+ padding:2px 0!important; margin:0!important;
+ border:0!important; border-radius:2px!important; background:none!important;
+ box-shadow:none!important; color:#285640!important;
+ font:700 16px/1.45 'Segoe UI',Arial,sans-serif!important;
+ letter-spacing:0!important; text-transform:none!important; text-decoration:none!important;
+ text-align:left!important; white-space:normal!important; overflow-wrap:anywhere!important;
+ cursor:pointer!important; transform:none!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-account-name:focus-visible {outline:2px solid #b99b62!important;outline-offset:4px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-account-name:hover {color:#174c35!important;background:none!important;box-shadow:none!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history {padding:24px!important;min-width:0!important;overflow:visible!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-head {
+ display:flex!important; justify-content:space-between!important; align-items:center!important;
+ flex-wrap:wrap!important; gap:14px!important; margin:0 0 20px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-heading {flex:1 1 180px!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-heading h3 {margin:0!important;font:700 clamp(21px,2vw,26px)/1.25 'Segoe UI',Arial,sans-serif!important;color:#204e39!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-operation-count {display:block!important;margin-top:5px!important;font:400 11px/1.4 'Segoe UI',Arial,sans-serif!important;color:#8b957f!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-period {display:block!important;flex:0 1 auto!important;min-width:0!important;max-width:100%!important;padding:0!important;margin:0!important;border:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-period .f25-period-button {
+ display:inline-flex!important; align-items:center!important; justify-content:center!important; gap:9px!important;
+ box-sizing:border-box!important; max-width:100%!important; min-width:0!important; min-height:42px!important;
+ padding:10px 13px!important; margin:0!important;
+ border:1px solid #d6c7a8!important; border-radius:11px!important; background:#fffdf6a6!important;
+ color:#607653!important; font:600 12px/1.45 'Segoe UI',Arial,sans-serif!important;
+ letter-spacing:0!important; text-transform:none!important; white-space:normal!important;
+ box-shadow:inset 0 1px 0 #fff!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f25-period-button svg {width:16px!important;height:16px!important;flex:0 0 16px!important;color:#a98b4a!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f25-period-button span {min-width:0!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-filters {
+ display:grid!important; grid-template-columns:minmax(140px,1fr) minmax(130px,.8fr) minmax(140px,1fr) auto!important;
+ align-items:start!important; gap:10px!important; padding:0 0 18px!important; margin:0!important;
+ border-bottom:1px solid #ded6c34d!important; width:100%!important; min-width:0!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history select {
+ display:block!important; box-sizing:border-box!important; width:100%!important; min-width:0!important; max-width:100%!important;
+ min-height:42px!important; margin:0!important; padding:10px 30px 10px 12px!important;
+ border:1px solid #ded2b7!important; border-radius:10px!important; background-color:#fffdf5bf!important;
+ color:#64765a!important; font:500 12px/1.4 'Segoe UI',Arial,sans-serif!important; text-overflow:ellipsis!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-filter-actions {display:flex!important;gap:8px!important;flex-wrap:wrap!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-filter-actions .f9-btn {min-height:42px!important;margin:0!important;padding:10px 12px!important;font-size:11px!important;white-space:normal!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f24-account-summary {margin:0 0 16px!important;padding:10px 12px!important;gap:10px!important;border-radius:10px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-account-summary strong {font-size:16px!important;min-width:0!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-list {min-width:0!important;margin-top:2px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row {
+ display:grid!important;grid-template-columns:32px minmax(0,1fr) minmax(95px,max-content) 28px!important;
+ align-items:center!important;gap:12px!important;min-width:0!important;padding:15px 0!important;
+ border-bottom:1px solid #ded6c350!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row>.f9-symbol {grid-column:1!important;grid-row:1!important;width:32px!important;height:32px!important;min-width:0!important;border-radius:10px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title {grid-column:2!important;grid-row:1!important;min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title strong {font:600 13px/1.45 'Segoe UI',Arial,sans-serif!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title small {font:400 10px/1.5 'Segoe UI',Arial,sans-serif!important;margin-top:3px!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-amount {grid-column:3!important;grid-row:1!important;min-width:0!important;max-width:220px!important;text-align:right!important;justify-self:end!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-amount b {font:700 16px/1.4 'Segoe UI',Arial,sans-serif!important;overflow-wrap:anywhere!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-amount small {font-size:9px!important;line-height:1.45!important;margin-top:2px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row>.f9-icon-btn {grid-column:4!important;grid-row:1!important;min-width:0!important;width:28px!important;height:34px!important;padding:0!important;margin:0!important;justify-self:end!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-stat-heading+.f24-period {margin:0 0 18px!important}
+@media(max-width:1000px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-filters {grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-filter-actions {grid-column:1 / -1!important}
+}
+@media(max-width:700px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history {padding:20px 15px!important;border-radius:18px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-head {gap:12px!important;margin-bottom:17px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history-heading {flex-basis:100%!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-period .f25-period-button {min-height:43px!important;font-size:12px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-filters {grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding-bottom:15px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history #f24Account {grid-column:1 / -1!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history select {min-height:44px!important;font-size:14px!important;padding-left:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-filter-actions {grid-column:1 / -1!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row {grid-template-columns:30px minmax(0,1fr) 28px!important;column-gap:9px!important;row-gap:5px!important;padding:14px 0!important;align-items:start!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row>.f9-symbol {grid-column:1!important;grid-row:1!important;width:30px!important;height:30px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title {grid-column:2!important;grid-row:1!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title strong {font-size:13px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-title small {font-size:10px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-amount {grid-column:2!important;grid-row:2!important;max-width:100%!important;text-align:left!important;justify-self:start!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-amount b {font-size:16px!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-tx-row>.f9-icon-btn {grid-column:3!important;grid-row:1 / span 2!important;align-self:start!important}
+}
+@media(max-width:350px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-filters {grid-template-columns:minmax(0,1fr)!important}
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-history .f9-filters>* {grid-column:1!important}
+}
+
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f25-stat-head{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:15px!important;flex-wrap:wrap!important;margin-bottom:20px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f25-stat-head>div{min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f25-stat-head h3{font:700 clamp(21px,2vw,26px)/1.3 'Segoe UI',Arial,sans-serif!important;color:#204e39!important;margin:0 0 4px!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-stat-metrics>article{min-width:0!important}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f24-currency-values>span{font:700 clamp(21px,2.3vw,29px)/1.4 'Segoe UI',Arial,sans-serif!important;letter-spacing:-.02em!important;overflow-wrap:anywhere!important}
 </style>
 </body></html>
