@@ -6235,7 +6235,7 @@ function plannerNotebookDateLabel(start,end){if(!start)return 'Обрати де
 
 function rToday(){
   const k=cur,d=pd(k),allTs=scheduledTasksFor(k),hidden=skipOf(k),
-    ts=allTs.filter(t=>!hidden[t.id]),hiddenTs=allTs.filter(t=>hidden[t.id]),dn=doneOf(k),m=meta(k);
+    ts=allTs.filter(t=>!hidden[t.id]),dn=doneOf(k),m=meta(k);
   document.getElementById('dBig').innerHTML=`${d.getDate()} ${MNS[d.getMonth()]}<small>${WDS[d.getDay()]} · день ${dd(START,k)+1}</small>`;
   document.getElementById('dPick').value=k;
   document.getElementById('dayBar').style.width=score(k)+'%';
@@ -6263,16 +6263,6 @@ function rToday(){
       </div>`:''}
     </div>`;}).join(''):'';
 
-  if(hiddenTs.length){
-    document.getElementById('todayList').innerHTML+=`<div class="today-hidden">
-      <div class="today-hidden-h">Приховано тільки на ${d.getDate()} ${MNS[d.getMonth()]} · ${hiddenTs.length}</div>
-      ${hiddenTs.map(t=>{const s=SCf(t.s);return `<div class="today-hidden-row">
-        <span style="color:${s.c}">${s.ic}</span>
-        <span class="today-hidden-name">${esc(t.t)}</span>
-        <button class="today-restore" data-trestore="${t.id}">↩ Повернути</button>
-      </div>`;}).join('')}
-    </div>`;
-  }
 
   const wsDay=(DB.ws||[]).filter(x=>plannerNotebookOnDay(x,k));
   if(wsDay.length){
@@ -6308,7 +6298,7 @@ function rToday(){
       </div>`;}).join('');
   }
 
-  if(!ts.length&&!wsDay.length&&!hiddenTs.length&&!ordersDue.length)
+  if(!ts.length&&!wsDay.length&&!ordersDue.length)
     document.getElementById('todayList').innerHTML='<div class="empty">На цей день нічого не заплановано. Відкрий сферу і додай завдання.</div>';
 
   const tph=document.getElementById('todayProgressHost');
@@ -6320,6 +6310,7 @@ function rToday(){
 
   document.querySelectorAll('[data-tskip]').forEach(e=>e.onclick=ev=>{
     ev.stopPropagation();
+    if(!confirm('Прибрати це завдання зі списку на '+k.split('-').reverse().join('.')+'?'))return;
     hidden[e.dataset.tskip]=true;
     delete dn[e.dataset.tskip];
     save();rToday();rDash();
@@ -19228,6 +19219,14 @@ const rossCSS=`
 .rs{color:#59343c!important}.top{padding:22px 10px 12px!important;margin:0 0 25px!important;border-bottom:1px solid #e8d4ca!important;background:radial-gradient(ellipse at 50% 0,#f5d6cc75,transparent 75%)!important;border-radius:20px 20px 0 0!important}.brand{display:flex!important;justify-content:center!important}.brand b{display:none!important}.v9-ross-logo{width:270px!important;max-width:75vw!important;height:66px!important;object-fit:contain!important;mix-blend-mode:multiply}.topActions{top:auto!important;bottom:17px!important}.btn,.close,.offBtn,.deleteBtn{color:#a34152!important;border-color:#e9c8c7!important;background:#fff8f4!important}.miniStats{gap:14px!important}.stat{border-color:#e5c7c1!important;background:linear-gradient(140deg,#fffdf9,#fff3ed)!important;box-shadow:0 8px 25px #82333c07!important}.stat small{color:#a5666f!important}.stat:first-child strong,.stat:nth-child(3) strong{color:#a51034!important}.stat:nth-child(2){border-color:#d6be8d!important;background:linear-gradient(130deg,#fffaf0,#fcf0d7)!important}.stat:nth-child(2) strong,.rateWrap input{color:#b18a43!important}.countScope{background:#f7e9e3!important;border:1px solid #edd5cb!important}.countScopeText b{color:#8c4954!important}.countScopeText small{color:#b38a88!important}.countScopeControls select,input,select{color:#713c46!important;border-color:#dfc5bb!important;background:#fffdf9!important}.shell{border-color:#e1beb9!important;background:#fffaf6!important;box-shadow:0 12px 35px #7d2a3608!important}.toolbar{background:#f5e4de!important;border-color:#e5c7bf!important}.toolbar select{color:#9e2340!important}.workspace{background:#fffdf9!important;gap:0!important}.calendarPane{background:#fffdf9!important;border-right-color:#ebd2c8!important}.editor{background:linear-gradient(150deg,#fff9f3,#fcf0e8)!important;border-color:#ead2c6!important}.week{background:#fff5f0!important;border-color:#f0dcd3!important}.week span{color:#ad6c74!important}.day{background:#fffdfa!important;border-color:#f0e1d8!important}.dn,.day .num{color:#9a3b50!important}.day.other{background:#faf4ef!important}.day.other .dn{color:#c5aaa6!important}.day.today{outline:1px solid #b18a43!important;outline-offset:-2px}.day.selected{background:#f8dce0!important;border-color:#bd2545!important;box-shadow:inset 0 0 0 1px #bd2545!important}.day.selected .dn{color:#a51235!important}.entry{background:#f9e7e5!important;border-left-color:#c94a64!important;color:#a86872!important}.entry b{color:#9d2540!important}.entry.off{background:#f4ece5!important;border-color:#c5aca3!important}.entry.off b{color:#b0938c!important}.selectedTitle{color:#9f1d3b!important}.editor label{color:#ac7780!important}.presets .btn{background:#fffaf6!important}.diff{background:#fff8f1!important;color:#aa6772!important;border-color:#e4c7bc!important}.diff.on{background:#f4d9dc!important;color:#a51a3b!important;border-color:#ca7c88!important}.duration{border-color:#edd5c6!important;background:#fff8ed!important}.durationValue,#duration{color:#a51d3e!important}.shiftIncome,#shiftIncome{color:#b68e44!important}.save,.saveBtn{background:linear-gradient(135deg,#c30038,#a6002d)!important;border-color:#ad0030!important;color:#fff8f0!important;box-shadow:0 5px 13px #b5003020!important}.save:hover{filter:brightness(1.07)}.editorActions button{color:#a44b5b!important}.ross-rotation-badge{color:#ac6570!important;background:#f9e8e5!important;border-color:#efd5cc!important}.modalHead,.bookHead{background:#f7e3de!important;color:#9b2941!important;border-color:#e1c0b8!important}.modal{background:#fffaf5!important;border-color:#e0bdb4!important}.bookBody,.ledger,.ledgerRow,.ledgerHead,.ledgerFoot,.ledgerTotal,.bookToolbar,.chartCard,.sk,.journal,.jr{color:#8b525c!important;background:#fffaf5!important;border-color:#ead0c5!important}.ledgerHead{background:#f6e9e1!important}.ledgerRow .ledgerDate{color:#a65365!important}.ledgerRow.offRow{background:#f9f0e9!important;color:#b69a91!important}.bookToolbar select,.bookNav{color:#9c3d52!important;background:#fff4ed!important}.chartCard h4{color:#a24355!important}.axis{fill:#a7847d!important}.gridLine{stroke:#ecd9cf!important}.bookCaption,.ledgerRow strong,.ledgerTotal strong,.sk strong{color:#af8845!important}.overlay{background:#4e17296b!important}input:focus-visible,button:focus-visible,select:focus-visible{outline-color:#c24c67!important}
 @media(max-width:1050px){.topActions{position:static!important}.top{gap:16px!important}.v9-ross-logo{width:260px!important;height:60px!important}.workspace{grid-template-columns:minmax(0,1fr)!important}.calendarPane{border-right:0!important}.editor{border-top:1px solid #ead0c5!important}}
 @media(max-width:700px){.rs{display:flex!important;flex-direction:column!important;gap:16px!important}.rs>.top{order:0!important;margin:0!important;padding:13px 5px 17px!important}.shell,.workspace{display:contents!important}.editor{order:1!important;border:1px solid #e0beb4!important;border-radius:18px!important;padding:20px!important;box-shadow:0 9px 25px #7a193508!important}.miniStats{order:2!important;margin:0!important;gap:10px!important}.countScope{order:3!important;margin:0!important}.toolbar{order:4!important;border:1px solid #e3c5bc!important;border-radius:14px!important;margin-bottom:-16px!important}.calendarPane{order:5!important;border:1px solid #e3c5bc!important;border-radius:0 0 16px 16px!important;overflow:hidden!important}.stat{padding:17px!important}.stat strong{font-size:25px!important}.selectedTitle{font-size:20px!important}.v9-ross-logo{width:230px!important;height:51px!important}.topActions{width:100%;display:flex;justify-content:center!important;gap:10px!important}.topActions .btn{font-size:10px!important}.day{min-height:80px!important}.save{min-height:46px!important}.timeGrid input{min-height:46px!important;font-size:17px!important}.duration{padding:14px!important}.presets{gap:7px!important}.presets .btn{min-height:36px!important}.countScopeControls{width:100%!important;flex-wrap:wrap!important}}
+
+#journalOverlay .ledger{background:#fffaf6!important;border-color:#e1c5bc!important}
+#journalOverlay .ledgerRow{color:#673f48!important;border-color:#edcfc5!important}
+#journalOverlay .ledgerTime{color:#5d3440!important;-webkit-text-fill-color:#5d3440!important;font-weight:600!important}
+#journalOverlay .ledgerHours{color:#896020!important;-webkit-text-fill-color:#896020!important;font-weight:650!important}
+#journalOverlay .ledgerDate{color:#a14155!important;-webkit-text-fill-color:#a14155!important}
+#journalOverlay .ledgerHead{background:#f5e5dd!important;color:#8a4655!important}
+#journalOverlay .ledgerEmpty{color:#7c5760!important}
 `;
 function rossmann(){const root=$('#rossmannHost')?.shadowRoot;if(!root||$('#v9RossStyle',root))return;const s=document.createElement('style');s.id='v9RossStyle';s.textContent=rossCSS;root.append(s);const brand=$('.brand',root);if(brand){const img=document.createElement('img');img.className='v9-ross-logo';img.src=ASSETS.rossmann;img.alt='ROSSMANN';brand.append(img);}root.addEventListener('click',e=>{if(innerWidth<=700&&e.target.closest('.day,#today'))requestAnimationFrame(()=>$('.editor',root)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'}));});}
 function init(){
@@ -19609,23 +19608,23 @@ function openFromDoubleClick(kind,id){if(pendingClick){clearTimeout(pendingClick
 
 function decorateToday(){
  const list=$('#todayList');if(!list)return;
- const hidden=DB.daySkip?.[cur]||{},skipped=[];
+ const hidden=DB.daySkip?.[cur]||{};
  const addHide=(row,key)=>{if(!row||$('[data-today-hide]',row))return;const b=document.createElement('button');b.type='button';b.className='today-hide-local';b.dataset.todayHide=key;b.setAttribute('aria-label','Прибрати тільки на цей день');b.textContent='×';row.append(b);};
  for(const label of $$('.lbl[data-wtk],.lbl[data-otk]',list)){
   const kind=label.hasAttribute('data-wtk')?'ws':'order',id=label.dataset.wtk??label.dataset.otk,key=kind+':'+id,row=label.closest(kind==='ws'?'.wsblock':'.chk');
-  if(hidden[key]){skipped.push({key,name:label.textContent.trim()});row?.remove();continue;}
+  if(hidden[key]){row?.remove();continue;}
   addHide(kind==='ws'?$('.wsrow-t',row):row,key);
   const actionRow=kind==='ws'?$('.wsrow-t',row):row;
   if(actionRow&&!$('[data-focus-timer]',actionRow)){const b=document.createElement('button');b.type='button';b.className='today-timer-btn';b.dataset.focusTimer=key;b.setAttribute('aria-label','Таймер завдання');b.textContent='◴';b.onclick=e=>{e.stopPropagation();openFocusTimerSetup(key)};actionRow.insertBefore(b,actionRow.querySelector('[data-today-hide]'));}
  }
  for(const label of $$('.lbl[data-tk],.lbl[data-wtk],.lbl[data-otk]',list)){label.onclick=null;label.tabIndex=0;label.setAttribute('aria-label',label.textContent.trim()+'. Подвійне натискання — відкрити джерело.');}
- if(skipped.length){let box=$('.today-hidden',list);if(!box){box=document.createElement('div');box.className='today-hidden';box.innerHTML='<div class="today-hidden-h">Приховано тільки на цей день</div>';list.append(box)}for(const x of skipped){const row=document.createElement('div');row.className='today-hidden-row';row.innerHTML=`<span class="today-hidden-name">${E(x.name)}</span><button type="button" class="today-restore" data-today-restore="${E(x.key)}">↩ Повернути</button>`;box.append(row)}}
+
 }
 function bindToday(){
  const list=$('#todayList');if(!list)return;
  list.addEventListener('pointerdown',e=>{if(!e.target.closest('.lbl[data-tk],.lbl[data-wtk],.lbl[data-otk]')||e.target.closest('input,textarea,button,a,[contenteditable="true"]'))return;window.scrollTo({left:scrollX,top:scrollY,behavior:'instant'});list.scrollTo({left:list.scrollLeft,top:list.scrollTop,behavior:'instant'});if(e.pointerType==='mouse')e.preventDefault();},true);
  list.addEventListener('click',e=>{
-  const action=e.target.closest('[data-today-hide],[data-today-restore]');if(action){e.preventDefault();e.stopImmediatePropagation();const k=action.dataset.todayHide??action.dataset.todayRestore;if(action.hasAttribute('data-today-hide'))skipOf(cur)[k]=true;else delete skipOf(cur)[k];save();rToday();return;}
+  const action=e.target.closest('[data-today-hide],[data-today-restore]');if(action){e.preventDefault();e.stopImmediatePropagation();const k=action.dataset.todayHide??action.dataset.todayRestore;if(action.hasAttribute('data-today-hide')){if(!confirm('Прибрати це завдання зі списку на '+cur.split('-').reverse().join('.')+'?'))return;skipOf(cur)[k]=true;}else delete skipOf(cur)[k];save();rToday();return;}
   const label=e.target.closest('.lbl[data-tk],.lbl[data-wtk],.lbl[data-otk]');if(!label||e.target.closest('input,textarea,button,a,[contenteditable="true"]'))return;
   e.preventDefault();e.stopImmediatePropagation();
   const kind=label.hasAttribute('data-tk')?'task':label.hasAttribute('data-wtk')?'ws':'order',id=String(label.dataset.tk??label.dataset.wtk??label.dataset.otk),key=kind+':'+id,at=Date.now();
