@@ -18394,7 +18394,158 @@ function editHabit(id){
 }
 function autosize(el){el.style.height='auto';el.style.height=Math.max(23,el.scrollHeight)+'px'}
 function notebookText(){return (DB.ws||[]).map(x=>(itemDone(x)?'☑ ':'☐ ')+(x.t||'')+(x.subs?.length?'\n'+x.subs.map(s=>'    '+(s.d?'☑ ':'☐ ')+s.t).join('\n'):'')).join('\n')}
-function downloadNotebook(){const rows=(DB.ws||[]).map(x=>`<p>${itemDone(x)?'☑':'☐'} ${E(x.t||'')}</p>${(x.subs||[]).map(s=>`<p style="margin-left:24pt">${s.d?'☑':'☐'} ${E(s.t||'')}</p>`).join('')}`).join('');const html=`<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>Записник</title></head><body><h1>Записник</h1>${rows}</body></html>`;const url=URL.createObjectURL(new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='INVESTOR_NOTEBOOK_'+iso(new Date())+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function downloadNotebook(){const rows=(DB.ws||[]).map(x=>`<p>${itemDone(x)?'☑':'☐'} ${E(x.t||'')}</p>${(x.subs||[]).map(s=>`<p style="margin-left:24pt">${s.d?'☑':'☐'} ${E(s.t||'')}</p>`).join('')}`).join('');const html=`<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><title>Записник</title></head><body><h1>Записник</h1>${rows}<style id="finance-glass-style">
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 {
+ --finance-gold:#b7934f;
+ background:radial-gradient(ellipse at 0 8%,#b7cfbd35,transparent 44%),radial-gradient(ellipse at 100% 40%,#e4cf9c26,transparent 45%);
+ border-radius:24px;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs {
+ display:flex!important;
+ gap:5px!important;
+ padding:6px!important;
+ margin-bottom:22px!important;
+ border:1px solid #cdbb934d!important;
+ border-radius:16px!important;
+ background:linear-gradient(120deg,#fffefaad,#f2f1e594)!important;
+ -webkit-backdrop-filter:blur(12px);
+ backdrop-filter:blur(12px);
+ box-shadow:inset 0 1px 0 #ffffffdb,0 5px 18px #23463208!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn {
+ min-height:40px!important;
+ border-radius:11px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .active {
+ background:linear-gradient(135deg,#277156,#124a38)!important;
+ color:#ffe3a3!important;
+ box-shadow:inset 0 1px 0 #b9e4cb38,0 4px 9px #1a49351c!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-overview { gap:20px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-panel,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-budgets {
+ background:radial-gradient(ellipse at 100% 0,#e8e0ba26,transparent 65%),linear-gradient(135deg,#ffffffc9,#fbf7ecb5)!important;
+ border:1px solid #cab88a66!important;
+ border-top-color:#fffef7!important;
+ box-shadow:inset 0 1px 0 #ffffff,0 9px 28px #2b48300d!important;
+ -webkit-backdrop-filter:blur(14px);
+ backdrop-filter:blur(14px);
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary {
+ position:relative;
+ background:radial-gradient(ellipse at 0 0,#3ba27b4d,transparent 54%),radial-gradient(ellipse at 100% 100%,#b9984f29,transparent 58%),linear-gradient(122deg,#185a46eb,#0b352de8)!important;
+ border:1px solid #bdac7687!important;
+ border-top-color:#d5c38bb8!important;
+ border-radius:22px!important;
+ box-shadow:inset 0 1px 0 #edffe030,inset 0 -1px 0 #081f2447,0 12px 30px #173e2f1c!important;
+ -webkit-backdrop-filter:blur(14px);
+ backdrop-filter:blur(14px);
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { padding:26px!important; min-height:290px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-top { color:#e0eee1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-chip {
+ color:#ffe0a0!important;
+ border-color:#e1c07870!important;
+ background:#fff2c70b!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total {
+ color:#ffdfa1!important;
+ font:700 clamp(27px,2.65vw,39px)/1.23 system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
+ margin:25px 0 22px!important;
+ text-shadow:none!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list { gap:9px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list>div {
+ padding:11px 13px!important;
+ border:1px solid #ded2a04d!important;
+ border-radius:12px!important;
+ background:linear-gradient(145deg,#e3f5ce1a,#ffffff08)!important;
+ box-shadow:inset 0 1px 0 #faffdf12!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list span { color:#ccdfcb!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list b { color:#f5e8b9!important; font-variant-numeric:tabular-nums; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance footer {
+ color:#c5dacb!important;
+ border-top-color:#e7d7a533!important;
+ padding-top:15px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-on-dark {
+ background:#fff3ce14!important;
+ color:#ffe3a7!important;
+ border-color:#e5c88866!important;
+ border-radius:10px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-deco {
+ opacity:1!important;
+ color:#f4dba110!important;
+ right:-7px!important;
+ top:37px!important;
+ font-size:205px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:23px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row {
+ padding:13px 0!important;
+ border-bottom-color:#b9c1a740!important;
+ gap:10px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>.f9-symbol {
+ background:linear-gradient(145deg,#fffdf5,#efe9d4)!important;
+ border-color:#d4b97870!important;
+ color:#aa8340!important;
+ box-shadow:inset 0 1px 0 #fff,0 2px 4px #4d644109!important;
+ border-radius:11px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>div { min-width:0; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row strong { color:#284f3e!important; overflow-wrap:anywhere; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row small { color:#727e69!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b {
+ color:#205e45!important;
+ font:700 clamp(16px,1.4vw,21px)/1.3 system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-foot { border-top-color:#c6b78f5c!important; padding-top:15px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-section-head h3 { letter-spacing:-.025em!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:background .15s,border-color .15s,box-shadow .15s; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn:focus-visible { outline:2px solid #b38d45!important; outline-offset:3px; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(h3,strong) { color:#ffdfa1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(small,.f9-kicker,.f9-debt-progress) { color:#d0e1d1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note {
+ border-top-color:#c7b98866!important;
+ padding-top:8px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note[open]>summary { color:#81652c!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note {
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:64px!important;
+ max-height:none!important;
+ overflow-y:hidden!important;
+ padding:9px 11px!important;
+ border:1px solid #c9ba8f66!important;
+ border-radius:10px!important;
+ background:linear-gradient(135deg,#fffef6,#edf2e36b)!important;
+ color:#35533e!important;
+ font:400 13px/1.55 system-ui,sans-serif!important;
+ resize:vertical;
+}
+@media(max-width:700px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs { margin-bottom:15px!important; gap:3px!important; padding:4px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn { min-height:42px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { min-height:265px!important; padding:22px 18px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total { font-size:29px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:19px 15px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row { padding-block:12px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b { font-size:17px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note { font-size:16px!important; }
+}
+@media(prefers-reduced-motion:reduce) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:none; }
+}
+</style>
+</body></html>`;const url=URL.createObjectURL(new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='INVESTOR_NOTEBOOK_'+iso(new Date())+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 function renderNotebook(){
  const section=$('#pg-ws .ws-v5-tasks'),project=$('#pg-ws .ws-v5-projects');if(!section)return;
  let head=$('.v8-section-header',project);if(!head){head=document.createElement('div');head.className='v8-section-header';project.prepend(head)}head.innerHTML=`<h2>Проєкти</h2><span>${(DB.sprints||[]).length} у просторі</span>`;
@@ -19049,7 +19200,7 @@ function orderedDebtsV19(f){
 function debtsHTML(){
  const f=model(),monthData=monthlyDebtData(),all={},paid={},left={};for(const d of f.debts){const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d));all[d.currency]=(all[d.currency]||0)+Number(d.amount||0);paid[d.currency]=(paid[d.currency]||0)+p;left[d.currency]=(left[d.currency]||0)+Math.max(0,d.amount-p);}
  const a=converted(all),p=converted(paid),one=Object.keys(all).length===1?Object.keys(all)[0]:'',pct=!a.missing.length&&!p.missing.length&&a.value?Math.min(100,p.value/a.value*100):one&&all[one]?paid[one]/all[one]*100:null;
- return `<section class="f9-debt-summary"><div class="f9-section-head"><div><span class="f9-kicker">БОРГИ ТА ПОГАШЕННЯ</span><h3>Крок за кроком до свободи</h3></div><div class="v16-debt-head-actions">${btn('debtprivacy',f.debtNamesHiddenV16?'🔒 Назви приховано':'🔓 Назви відкрито','','f9-on-dark','Приховати або показати назви боргів у фінансовій історії та статистиці')}${btn('adddebt','+ Борг','','f9-on-dark')}</div></div><div class="f9-debt-metrics"><div><small>Усього</small><strong>${equivalent(all)}</strong></div><div><small>Вже сплачено</small><strong>${equivalent(paid)}</strong></div><div><small>Залишилось</small><strong>${equivalent(left)}</strong></div></div><div class="f9-debt-progress"><span>${pct===null?'Вкажи курси для загального прогресу':Math.round(pct)+'% погашено'}</span><span>${f.debts.filter(d=>fin2DebtPaid(d)>=d.amount).length} / ${f.debts.length} закрито</span></div><div class="f9-meter" role="progressbar" aria-label="Погашення боргів" aria-valuemin="0" aria-valuemax="100" ${pct!==null?`aria-valuenow="${Math.round(pct)}"`:''}><i style="width:${pct??0}%"></i></div></section>${monthlyDebtHTML(monthData)}<div class="f9-debt-list">${orderedDebtsV19(f).map(d=>{const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d)),l=Math.max(0,d.amount-p),pct=d.amount?p/d.amount*100:0;return `<article class="f9-panel f9-debt-card" data-debt-id="${E(d.id)}"><div class="f9-section-head"><div><h3>${E(d.name)}</h3><small>${d.due?'До '+E(d.due):E(d.currency)}${l===0?' · Закрито':''}</small></div><div class="f9-debt-tools"><button type="button" class="f9-btn f9-icon-btn" data-debt-drag aria-label="Затиснути й перемістити борг" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg></button>${btn('editdebt','⋯',d.id,'f9-icon-btn','Редагувати борг')}${btn('deldebt','×',d.id,'f9-icon-btn','Видалити борг')}</div></div><div class="f9-debt-values"><div><small>Початково</small><b>${fmt(d.amount,d.currency)}</b></div><div><small>Сплачено</small><b>${fmt(p,d.currency)}</b></div><div><small>Залишок</small><b>${fmt(l,d.currency)}</b></div></div><div class="f9-meter"><i style="width:${pct}%"></i></div><div class="f9-debt-foot"><span>${Math.round(pct)}% погашено</span>${l?btn('paydebt','+ Платіж',d.id,'primary'):''}</div>${debtPlanHTML(d,monthData.rows.find(r=>r.debt.id===d.id))}${debtActualHTMLV18(d)}<details class="v19-debt-note"><summary>Примітка${d.note?'<i>●</i>':''}<span>⌄</span></summary><textarea class="f9-debt-note" data-f9-note="${E(d.id)}" placeholder="Примітка до боргу…" aria-label="Примітка до ${E(d.name)}">${E(d.note||'')}</textarea></details></article>`}).join('')||empty('Додай борг, щоб відстежувати погашення.')}</div>${f.transactions.some(fin2IsDebtPaymentV18)?`<details class="f9-budgets"><summary>Історія погашень <span>⌄</span></summary><div class="f9-budget-body">${txRows(fin2LedgerV18().filter(fin2IsDebtPaymentV18).sort((a,b)=>String(b.date).localeCompare(String(a.date))))}</div></details>`:''}`;
+ return `<section class="f9-debt-summary"><div class="f9-section-head"><div><span class="f9-kicker">БОРГИ ТА ПОГАШЕННЯ</span><h3>Крок за кроком до свободи</h3></div><div class="v16-debt-head-actions">${btn('debtprivacy',f.debtNamesHiddenV16?'🔒 Назви приховано':'🔓 Назви відкрито','','f9-on-dark','Приховати або показати назви боргів у фінансовій історії та статистиці')}${btn('adddebt','+ Борг','','f9-on-dark')}</div></div><div class="f9-debt-metrics"><div><small>Усього</small><strong>${equivalent(all)}</strong></div><div><small>Вже сплачено</small><strong>${equivalent(paid)}</strong></div><div><small>Залишилось</small><strong>${equivalent(left)}</strong></div></div><div class="f9-debt-progress"><span>${pct===null?'Вкажи курси для загального прогресу':Math.round(pct)+'% погашено'}</span><span>${f.debts.filter(d=>fin2DebtPaid(d)>=d.amount).length} / ${f.debts.length} закрито</span></div><div class="f9-meter" role="progressbar" aria-label="Погашення боргів" aria-valuemin="0" aria-valuemax="100" ${pct!==null?`aria-valuenow="${Math.round(pct)}"`:''}><i style="width:${pct??0}%"></i></div></section>${monthlyDebtHTML(monthData)}<div class="f9-debt-list">${orderedDebtsV19(f).map(d=>{const p=Math.min(Number(d.amount)||0,fin2DebtPaid(d)),l=Math.max(0,d.amount-p),pct=d.amount?p/d.amount*100:0;return `<article class="f9-panel f9-debt-card" data-debt-id="${E(d.id)}"><div class="f9-section-head"><div><h3>${E(d.name)}</h3><small>${d.due?'До '+E(d.due):E(d.currency)}${l===0?' · Закрито':''}</small></div><div class="f9-debt-tools"><button type="button" class="f9-btn f9-icon-btn" data-debt-drag aria-label="Затиснути й перемістити борг" aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="5" cy="4" r="1"/><circle cx="11" cy="4" r="1"/><circle cx="5" cy="8" r="1"/><circle cx="11" cy="8" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="11" cy="12" r="1"/></svg></button>${btn('editdebt','⋯',d.id,'f9-icon-btn','Редагувати борг')}${btn('deldebt','×',d.id,'f9-icon-btn','Видалити борг')}</div></div><div class="f9-debt-values"><div><small>Початково</small><b>${fmt(d.amount,d.currency)}</b></div><div><small>Сплачено</small><b>${fmt(p,d.currency)}</b></div><div><small>Залишок</small><b>${fmt(l,d.currency)}</b></div></div><div class="f9-meter"><i style="width:${pct}%"></i></div><div class="f9-debt-foot"><span>${Math.round(pct)}% погашено</span>${l?btn('paydebt','+ Платіж',d.id,'primary'):''}</div>${debtPlanHTML(d,monthData.rows.find(r=>r.debt.id===d.id))}${debtActualHTMLV18(d)}<details class="v19-debt-note" ${String(d.note||'').trim()?'open':''}><summary>Примітка${d.note?'<i>●</i>':''}<span>⌄</span></summary><textarea class="f9-debt-note" data-f9-note="${E(d.id)}" placeholder="Примітка до боргу…" aria-label="Примітка до ${E(d.name)}">${E(d.note||'')}</textarea></details></article>`}).join('')||empty('Додай борг, щоб відстежувати погашення.')}</div>${f.transactions.some(fin2IsDebtPaymentV18)?`<details class="f9-budgets"><summary>Історія погашень <span>⌄</span></summary><div class="f9-budget-body">${txRows(fin2LedgerV18().filter(fin2IsDebtPaymentV18).sort((a,b)=>String(b.date).localeCompare(String(a.date))))}</div></details>`:''}`;
 }
 function render(){
  const root=$('#sphDetail');if(!root)return;fin2RenderCache=null;if(tab==='statistics')fin2EnsureDebtPeriodV18();const f=model(),sp=DB.spheres.find(x=>x.id===FIN_ID)||{id:FIN_ID,nm:'Фінанси'};f.activeTab=tab;root.classList.add('finance-sphere','v9-finance');root.classList.remove('v8-sphere-overview');
@@ -19057,7 +19208,12 @@ function render(){
  const strategy=$('.fin2-strategy-content',root);if(strategy){const tasks=document.createElement('div');tasks.className='v9-finance-tasks';tasks.innerHTML=tasksCardHTML(FIN_ID);strategy.append(tasks);bindTasksCard(FIN_ID);}
  fin2BindStrategy(root);$$('.fin2-strategy',root).forEach(d=>d.ontoggle=()=>{f.strategyOpen=d.open;save()});$$('[data-f9]',root).forEach(b=>b.onclick=()=>action(b.dataset.f9,b.dataset.id,b.dataset.planId||''));
  const bp=$('.f9-budgets',root);if(bp&&tab==='overview')bp.ontoggle=()=>{f.budgetsOpenV9=bp.open;save()};
- $$('[data-f9-note]',root).forEach(el=>el.oninput=()=>{const d=f.debts.find(d=>d.id===el.dataset.f9Note);if(d){d.note=el.value;save()}});
+ $$('[data-f9-note]',root).forEach(el=>{
+  const resize=()=>{if(!el.getClientRects().length)return;el.style.height='auto';el.style.height=Math.max(64,el.scrollHeight)+'px';};
+  el.oninput=()=>{const d=f.debts.find(d=>d.id===el.dataset.f9Note);if(d){d.note=el.value;save()}resize();};
+  el.closest('details')?.addEventListener('toggle',resize);
+  requestAnimationFrame(resize);
+ });
  const type=$('#f9Type'),cat=$('#f9Category');if(type)type.onchange=()=>{f.historyTypeV9=type.value;render()};if(cat)cat.onchange=()=>{f.historyCategoryFilter=cat.value;render()};
  window.INVESTOR_V8.enhanceSphere();
 }
@@ -23560,6 +23716,157 @@ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV
 }
 @media(max-width:480px) {
  html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body #todayQuickTaskDialog :is(input,select) { font-size:16px; }
+}
+</style>
+<style id="finance-glass-style">
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 {
+ --finance-gold:#b7934f;
+ background:radial-gradient(ellipse at 0 8%,#b7cfbd35,transparent 44%),radial-gradient(ellipse at 100% 40%,#e4cf9c26,transparent 45%);
+ border-radius:24px;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs {
+ display:flex!important;
+ gap:5px!important;
+ padding:6px!important;
+ margin-bottom:22px!important;
+ border:1px solid #cdbb934d!important;
+ border-radius:16px!important;
+ background:linear-gradient(120deg,#fffefaad,#f2f1e594)!important;
+ -webkit-backdrop-filter:blur(12px);
+ backdrop-filter:blur(12px);
+ box-shadow:inset 0 1px 0 #ffffffdb,0 5px 18px #23463208!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn {
+ min-height:40px!important;
+ border-radius:11px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .active {
+ background:linear-gradient(135deg,#277156,#124a38)!important;
+ color:#ffe3a3!important;
+ box-shadow:inset 0 1px 0 #b9e4cb38,0 4px 9px #1a49351c!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-overview { gap:20px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-panel,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-budgets {
+ background:radial-gradient(ellipse at 100% 0,#e8e0ba26,transparent 65%),linear-gradient(135deg,#ffffffc9,#fbf7ecb5)!important;
+ border:1px solid #cab88a66!important;
+ border-top-color:#fffef7!important;
+ box-shadow:inset 0 1px 0 #ffffff,0 9px 28px #2b48300d!important;
+ -webkit-backdrop-filter:blur(14px);
+ backdrop-filter:blur(14px);
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance,
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary {
+ position:relative;
+ background:radial-gradient(ellipse at 0 0,#3ba27b4d,transparent 54%),radial-gradient(ellipse at 100% 100%,#b9984f29,transparent 58%),linear-gradient(122deg,#185a46eb,#0b352de8)!important;
+ border:1px solid #bdac7687!important;
+ border-top-color:#d5c38bb8!important;
+ border-radius:22px!important;
+ box-shadow:inset 0 1px 0 #edffe030,inset 0 -1px 0 #081f2447,0 12px 30px #173e2f1c!important;
+ -webkit-backdrop-filter:blur(14px);
+ backdrop-filter:blur(14px);
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { padding:26px!important; min-height:290px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-top { color:#e0eee1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-chip {
+ color:#ffe0a0!important;
+ border-color:#e1c07870!important;
+ background:#fff2c70b!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total {
+ color:#ffdfa1!important;
+ font:700 clamp(27px,2.65vw,39px)/1.23 system-ui,sans-serif!important;
+ letter-spacing:-.025em!important;
+ margin:25px 0 22px!important;
+ text-shadow:none!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list { gap:9px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list>div {
+ padding:11px 13px!important;
+ border:1px solid #ded2a04d!important;
+ border-radius:12px!important;
+ background:linear-gradient(145deg,#e3f5ce1a,#ffffff08)!important;
+ box-shadow:inset 0 1px 0 #faffdf12!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list span { color:#ccdfcb!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-currency-list b { color:#f5e8b9!important; font-variant-numeric:tabular-nums; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance footer {
+ color:#c5dacb!important;
+ border-top-color:#e7d7a533!important;
+ padding-top:15px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-on-dark {
+ background:#fff3ce14!important;
+ color:#ffe3a7!important;
+ border-color:#e5c88866!important;
+ border-radius:10px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance-deco {
+ opacity:1!important;
+ color:#f4dba110!important;
+ right:-7px!important;
+ top:37px!important;
+ font-size:205px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:23px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row {
+ padding:13px 0!important;
+ border-bottom-color:#b9c1a740!important;
+ gap:10px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>.f9-symbol {
+ background:linear-gradient(145deg,#fffdf5,#efe9d4)!important;
+ border-color:#d4b97870!important;
+ color:#aa8340!important;
+ box-shadow:inset 0 1px 0 #fff,0 2px 4px #4d644109!important;
+ border-radius:11px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>div { min-width:0; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row strong { color:#284f3e!important; overflow-wrap:anywhere; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row small { color:#727e69!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b {
+ color:#205e45!important;
+ font:700 clamp(16px,1.4vw,21px)/1.3 system-ui,sans-serif!important;
+ font-variant-numeric:tabular-nums;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-foot { border-top-color:#c6b78f5c!important; padding-top:15px!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-section-head h3 { letter-spacing:-.025em!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:background .15s,border-color .15s,box-shadow .15s; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn:focus-visible { outline:2px solid #b38d45!important; outline-offset:3px; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(h3,strong) { color:#ffdfa1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-debt-summary :is(small,.f9-kicker,.f9-debt-progress) { color:#d0e1d1!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note {
+ border-top-color:#c7b98866!important;
+ padding-top:8px!important;
+}
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note[open]>summary { color:#81652c!important; }
+html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note {
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-height:64px!important;
+ max-height:none!important;
+ overflow-y:hidden!important;
+ padding:9px 11px!important;
+ border:1px solid #c9ba8f66!important;
+ border-radius:10px!important;
+ background:linear-gradient(135deg,#fffef6,#edf2e36b)!important;
+ color:#35533e!important;
+ font:400 13px/1.55 system-ui,sans-serif!important;
+ resize:vertical;
+}
+@media(max-width:700px) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs { margin-bottom:15px!important; gap:3px!important; padding:4px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-tabs .f9-btn { min-height:42px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-balance { min-height:265px!important; padding:22px 18px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-total { font-size:29px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-accounts { padding:19px 15px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row { padding-block:12px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-account-row>b { font-size:17px!important; }
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .v19-debt-note .f9-debt-note { font-size:16px!important; }
+}
+@media(prefers-reduced-motion:reduce) {
+ html#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8#investorV8 body .finance-v9 .f9-btn { transition:none; }
 }
 </style>
 </body></html>
